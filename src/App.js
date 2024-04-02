@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import logo from './logo.svg';
 import './App.css';
 import FourOhFour from './pages/FourOhFour';
 import Home from './pages/Home';
@@ -27,7 +28,7 @@ function App() {
                 <Route path='/real' element={<Real />}/>
                 <Route path='/trial' element={<Trial />}/> */}
             {/* </Route> */}
-            
+
             <Route path='*' element={<FourOhFour />}/>
           </Routes>
        </BrowserRouter>

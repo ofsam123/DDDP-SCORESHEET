@@ -9,7 +9,7 @@ function SideBarWrapper(){
 					{/* Sidebar brand start  */}
 					<div className="sidebar-brand p-2">
 						<Link to="/" className="logo">
-							<img src="assets/img/logo_front.png" alt="DACF Support App" width={100} height={60} />
+							<img src="assets/img/logo.jpg" alt="DACF Support App" width={100} height={60} />
 						</Link>
 					</div>
 					{/* Sidebar brand end  */}

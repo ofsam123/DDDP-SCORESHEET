@@ -14,7 +14,7 @@ const generalAssemblyColumns = [
     { title: "Invitation Letter Reference", dataIndex: "invitationLetterReference", key: "invitationLetterReference" },
     { title: "Signatory of Invitation Letter", dataIndex: "signatoryInvitationLetter", key: "signatoryInvitationLetter" },
     { title: "Signatories to minutes of meeting", dataIndex: "signatoriesMinutes", key: "signatoriesMinutes" },
-    
+
 ];
 
 const ECAMeetingColumns = [
@@ -146,7 +146,6 @@ const DPATAssessmentSheet = ({ props }) => {
     };
 
     useEffect(() => {
-
         setMeetingData();
         setDecisionData();
         setMeetingBudgetData();
@@ -223,22 +222,22 @@ const DPATAssessmentSheet = ({ props }) => {
         if (gaMeetings.length < 3) {
             return 'Not Fulfilled';
         }
-    
+
         for (const mt of gaMeetings) {
             const isIntervalTooShort = mt.interval < 14;
             const missingFields =
                 !mt.invitationLetterReference ||
                 !mt.signatoriesMinutes ||
                 !mt.signatoryInvitationLetter;
-    
+
             if (isIntervalTooShort || missingFields) {
                 return 'Not Fulfilled';
             }
         }
-    
+
         return 'Fulfilled';
     }
-    
+
 
     const setManagementMeetingData = () => {
         const temp = [];
@@ -281,7 +280,7 @@ const DPATAssessmentSheet = ({ props }) => {
     const setPRCCMeetingData = () => {
         const temp = [];
         formatData(meetings, "PRCC").forEach((meeting, index) => {
-            
+
             const meetingDataState = {
                 key: index + 1, // Static key (can be dynamic)
                 meeting: getMeetingRank(index, "GA"), // Meeting type
@@ -301,7 +300,7 @@ const DPATAssessmentSheet = ({ props }) => {
     const setPRCCRecommendationMeetingData = () => {
         const temp = [];
         formatData(meetings, "PRCC").forEach((meeting, index) => {
-            
+
             const meetingDataState = {
                 key: index + 1, // Static key (can be dynamic)
                 meeting: getMeetingRank(index, "GA"), // Meeting type
@@ -492,7 +491,6 @@ const DPATAssessmentSheet = ({ props }) => {
 
 
     return (
-        
         <Layout style={{ padding: "20px", background: "#fff" }}>
             {/* Header */}
             <Header style={{ background: "#1890ff", color: "#fff", textAlign: "center", padding: "10px" }}>
@@ -503,17 +501,16 @@ const DPATAssessmentSheet = ({ props }) => {
 
             <Content style={{ padding: "20px" }}>
                 {/* General Assembly Meetings */}
-
                 <Title level={3}>General Assembly Meetings</Title>
-<h6 style={{ marginBottom: "20px", color: "grey" }}>
-  At least three {gaMeetingData.meetings.length} ordinary meetings and minutes were held and duly recorded 
+                {gaMeetingData &&<h6 style={{ marginBottom: "20px", color: "grey" }}>
+  At least three {gaMeetingData.meetings.length} ordinary meetings and minutes were held and duly recorded
   and signed by both the PM and MCD. The table below illustrates
-</h6>
+</h6>}
 
 <Row style={{ marginBottom: "20px" }}>
-  <h4>
-    Number of Decisions: {gaMeetingData ? gaMeetingData.numberOfDecision : "Loading..."}
-  </h4>
+  {gaMeetingData && <h4>
+    Number of Decisions: {gaMeetingData?.numberOfDecision}
+  </h4>}
 </Row>
 
 <Row>
@@ -549,6 +546,7 @@ const DPATAssessmentSheet = ({ props }) => {
                 {/* <Title level={3}>General Assembly Meetings</Title>
                 {JSON.stringify(gaMeetingData)}
                 {gaMeetingData &&
+                    <Table columns={generalAssemblyColumns} dataSource={gaMeetingData.meetings} pagination={false} bordered />}
                     <Table columns={generalAssemblyColumns} dataSource={gaMeetingData.meetings} pagination={false} bordered />} */}
 
                 <Title level={3} style={{ marginTop: "30px" }}>General Assembly Meetings Decision</Title>

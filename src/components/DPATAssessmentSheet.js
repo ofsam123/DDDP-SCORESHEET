@@ -502,15 +502,15 @@ const DPATAssessmentSheet = ({ props }) => {
             <Content style={{ padding: "20px" }}>
                 {/* General Assembly Meetings */}
                 <Title level={3}>General Assembly Meetings</Title>
-<h6 style={{ marginBottom: "20px", color: "grey" }}>
+                {gaMeetingData &&<h6 style={{ marginBottom: "20px", color: "grey" }}>
   At least three {gaMeetingData.meetings.length} ordinary meetings and minutes were held and duly recorded
   and signed by both the PM and MCD. The table below illustrates
-</h6>
+</h6>}
 
 <Row style={{ marginBottom: "20px" }}>
-  <h4>
-    Number of Decisions: {gaMeetingData ? gaMeetingData.numberOfDecision : "Loading..."}
-  </h4>
+  {gaMeetingData && <h4>
+    Number of Decisions: {gaMeetingData?.numberOfDecision}
+  </h4>}
 </Row>
 
 <Row>

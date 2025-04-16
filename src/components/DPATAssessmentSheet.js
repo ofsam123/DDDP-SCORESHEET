@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Layout, Typography, Table, Button } from "antd";
+import { Layout, Typography, Table, Button, Row } from "antd";
 import { PrinterOutlined } from "@ant-design/icons";
 
 const { Header, Content } = Layout;
@@ -14,6 +14,7 @@ const generalAssemblyColumns = [
     { title: "Invitation Letter Reference", dataIndex: "invitationLetterReference", key: "invitationLetterReference" },
     { title: "Signatory of Invitation Letter", dataIndex: "signatoryInvitationLetter", key: "signatoryInvitationLetter" },
     { title: "Signatories to minutes of meeting", dataIndex: "signatoriesMinutes", key: "signatoriesMinutes" },
+
 ];
 
 const ECAMeetingColumns = [
@@ -30,6 +31,13 @@ const PRCCMeetingColumns = [
     { title: "Invitation Date", dataIndex: "invitationDate", key: "invitationDate" },
     { title: "Invitation Letter Reference", dataIndex: "invitationLetterReference", key: "invitationLetterReference" },
     { title: "Availability of Minutes of Meeting", dataIndex: "signatoriesMinutesStatus", key: "signatoriesMinutesStatus" }
+];
+
+const PRCCRecommendationColumns = [
+    { title: "PRCC Meeting", dataIndex: "meeting", key: "meeting" },
+    { title: "No. of complaints received", dataIndex: "complaintsNo", key: "complaintsNo" },
+    { title: "No. of complaints processed and recommendations made", dataIndex: "complaintsProcessedNo", key: "complaintsProcessedNo" },
+    { title: "No. of recommendations acted on", dataIndex: "recommendationActedNo", key: "recommendationActedNo" }
 ];
 
 const ETCMeetingColumns = [
@@ -69,11 +77,11 @@ const subStructureEstablishmentColumns = [
     { title: "No.", dataIndex: "no", key: "no" },
 ];
 
-const subStructureRevenueSharingColumns = [
-    { title: "Name of substructure", dataIndex: "name", key: "name" },
-    { title: "Amount collected (GHS)", dataIndex: "collected", key: "collected" },
-    { title: "Amount Ceded by MMDA (GHS)", dataIndex: "ceded", key: "ceded" },
-    { title: "% Ceded", dataIndex: "percentage", key: "percentage" },
+const membersColumns = [
+    { title: "No", dataIndex: "no", key: "no" },
+    { title: "Member", dataIndex: "member", key: "member" },
+    { title: "Department", dataIndex: "department", key: "department" },
+    { title: "Elected/Appointed ", dataIndex: "appointment", key: "appointment" }
 ];
 
 const budgetData = [
@@ -111,11 +119,19 @@ const DPATAssessmentSheet = ({ props }) => {
     const [gaMeetingData, setGaMeetingData] = useState(null);
     const [meetingDataGroup, setMeetingDataGroup] = useState(null);
     const [meetings, setMeetings] = useState(props?.meetings.meetings);
+    const [members, setMembers] = useState(props?.members.members);
+    const [memberFinanceData, setMemberFinanceData] = useState(null);
+    const [memberSocialData, setMemberSocialData] = useState(null);
+    const [memberPlanningData, setMemberPlanningData] = useState(null);
+    const [memberWorksData, setMemberWorksData] = useState(null);
+    const [memberJusticeData, setMemberJusticeData] = useState(null);
+    const [membersReport, setMembersReport] = useState(props?.members.report);
     const [ecaMeetingData, setEcaMeetingData] = useState(null);
     const [prccMeetingData, setPrccMeetingData] = useState(null);
+    const [prccRecommendationData, setPrccRecommendationData] = useState(null);
     const [etcMeetingData, setEtcMeetingData] = useState(null);
     const [managementMeetingsData, setManagementMeetingsData] = useState(null);
-    const [meetingDecisions, setMeetingDecisions] = useState(props?.decisions);
+    const [meetingDecisions, setMeetingDecisions] = useState(props?.decisions.decisions);
     const [subStructures, setSubStructures] = useState(props?.subStructures.sub);
     const [subReports, setSubReports] = useState(props?.subStructures.reports);
     const [departments, setDepartments] = useState(props?.departments.dep);
@@ -138,6 +154,8 @@ const DPATAssessmentSheet = ({ props }) => {
         setManagementMeetingData();
         setPRCCMeetingData();
         setETCMeetingData();
+        setMemberData();
+
     }, [props]);
 
 
@@ -175,7 +193,9 @@ const DPATAssessmentSheet = ({ props }) => {
     };
 
     const setMeetingData = () => {
-        let temp = [];
+        const temp = [];
+        let decisionNo = 0;
+
         formatData(meetings, "GA").forEach((meeting, index) => {
             const meetingDataState = {
                 key: index + 1, // Static key (can be dynamic)
@@ -190,11 +210,34 @@ const DPATAssessmentSheet = ({ props }) => {
             };
 
             meetingDataState.interval = getDaysBetween(meetingDataState.invitationDate, meetingDataState.meetingDate);
+            decisionNo += parseInt(getAttributeValue("DPAT | Number of Decisions", meeting));
             temp.push(meetingDataState);
         })
 
-        setGaMeetingData(temp);
+
+        setGaMeetingData({meetings: temp, fulfillment: checkGaMeetingFulfillment(temp), numberOfDecision: decisionNo});
     };
+
+    function checkGaMeetingFulfillment(gaMeetings) {
+        if (gaMeetings.length < 3) {
+            return 'Not Fulfilled';
+        }
+
+        for (const mt of gaMeetings) {
+            const isIntervalTooShort = mt.interval < 14;
+            const missingFields =
+                !mt.invitationLetterReference ||
+                !mt.signatoriesMinutes ||
+                !mt.signatoryInvitationLetter;
+
+            if (isIntervalTooShort || missingFields) {
+                return 'Not Fulfilled';
+            }
+        }
+
+        return 'Fulfilled';
+    }
+
 
     const setManagementMeetingData = () => {
         const temp = [];
@@ -237,7 +280,27 @@ const DPATAssessmentSheet = ({ props }) => {
     const setPRCCMeetingData = () => {
         const temp = [];
         formatData(meetings, "PRCC").forEach((meeting, index) => {
-            
+
+            const meetingDataState = {
+                key: index + 1, // Static key (can be dynamic)
+                meeting: getMeetingRank(index, "GA"), // Meeting type
+                invitationDate: getAttributeValue("Invitation letter Date", meeting), // Invitation Date
+                meetingDate: getAttributeValue("DPAT | Meeting Date", meeting),
+                invitationLetterReference: getAttributeValue("Invitation letter Ref. Number", meeting), // Invitation Letter Ref
+                signatoriesMinutesStatus: getAttributeValue("Minute File Number", meeting) ?
+                    "YES" : "NO", // Signatory of Invitation Letter
+            };
+
+            temp.push(meetingDataState);
+        })
+
+        setPrccMeetingData(temp);
+    };
+
+    const setPRCCRecommendationMeetingData = () => {
+        const temp = [];
+        formatData(meetings, "PRCC").forEach((meeting, index) => {
+
             const meetingDataState = {
                 key: index + 1, // Static key (can be dynamic)
                 meeting: getMeetingRank(index, "GA"), // Meeting type
@@ -275,10 +338,11 @@ const DPATAssessmentSheet = ({ props }) => {
     };
 
     const setMeetingBudgetData = () => {
-        let temp = [];
+        const temp = [];
         const meetingTypes = ["GA", "Budget Committee", "EC", "DMPCU"];
+        let fulfillment = 'Not Fulfilled';
 
-        meetingTypes.forEach((type, index) => {
+        meetingTypes?.forEach((type, index) => {
             // Get the first meeting that matches the current meeting type
             const matchingMeeting = formatDataGroup(meetings, [type])[0];
 
@@ -287,22 +351,28 @@ const DPATAssessmentSheet = ({ props }) => {
                 const meetingDataState = {
                     key: index + 1,
                     meeting: type,
-                    date: date,
-                    decisions: date
+                    date: getAttributeValue("DPAT | Meeting Date", matchingMeeting),
+                    decisions: getAttributeValue("AAP Approval Date", matchingMeeting)
                 };
+
+                const meetingDate = new Date(meetingDataState.decisions);
+                const cutoffDate = new Date('2025-10-31');
+
+                if ((meetingDate <= cutoffDate) && getAttributeValue("AAP Approval Date")) {
+                    fulfillment = 'Fulfilled';
+                }
 
                 temp.push(meetingDataState);
             }
         });
 
-        setMeetingDataGroup(temp);
+        setMeetingDataGroup({data:temp, fulfillment: fulfillment});
     };
 
 
     const setDecisionData = () => {
         let temp = [];
-        meetingDecisions
-            .filter(d =>
+        meetingDecisions?.filter(d =>
                 d.attributes?.some(at => at.displayName === "DPAT | Meeting Decision Type" && at.value === "GA")
             )
             .forEach((decision, index) => {
@@ -315,16 +385,13 @@ const DPATAssessmentSheet = ({ props }) => {
                 temp.push(decisionDataState);
             });
 
-
-
-        // console.log("decisions: ", temp);
         setDecisionsData(temp.slice(0, 3));
     };
 
     const setSubtructureEstablishmentsData = () => {
         const temp = [];
         subStructures
-            .forEach((sub, index) => {
+            ?.forEach((sub, index) => {
                 const subStructureDataState = {
                     key: index + 1,
                     name: getAttributeValue("DPAT | Name of Sub Structure", sub),
@@ -339,7 +406,7 @@ const DPATAssessmentSheet = ({ props }) => {
 
         const reportsTemp = [];
 
-        subReports.filter(rep=>rep.dataValues.length > 0)
+        subReports?.filter(rep=>rep.dataValues.length > 0)
                   .forEach((report, index)=>{
                     const instance = subStructures.find(sub=> sub.trackedEntity === report.trackedEntity);
                     reportsTemp.push({
@@ -355,6 +422,24 @@ const DPATAssessmentSheet = ({ props }) => {
         if(reportsTemp.length > 0){
             setSubReportData(reportsTemp);
         }
+    };
+
+    const setMemberData = () => {
+        const temp = [];
+        members
+            ?.forEach((member, index) => {
+                const memberDataState = {
+                    key: index + 1,
+                    no: index+1,
+                    member: `${getAttributeValue("First Name", member)} ${getAttributeValue("Last Name", member)}`,
+                    department: getAttributeValue("Staff Department", member),
+                    appointment: getAttributeValue("Assembly Member Type", member),
+                };
+
+                temp.push( memberDataState);
+            });
+
+        setMemberFinanceData(temp);
     };
 
 
@@ -417,9 +502,52 @@ const DPATAssessmentSheet = ({ props }) => {
             <Content style={{ padding: "20px" }}>
                 {/* General Assembly Meetings */}
                 <Title level={3}>General Assembly Meetings</Title>
-                {/* {JSON.stringify(gaMeetingData)} */}
+<h6 style={{ marginBottom: "20px", color: "grey" }}>
+  At least three {gaMeetingData.meetings.length} ordinary meetings and minutes were held and duly recorded
+  and signed by both the PM and MCD. The table below illustrates
+</h6>
+
+<Row style={{ marginBottom: "20px" }}>
+  <h4>
+    Number of Decisions: {gaMeetingData ? gaMeetingData.numberOfDecision : "Loading..."}
+  </h4>
+</Row>
+
+<Row>
+<h5>
+
+</h5>
+
+{gaMeetingData && (
+  <>
+    <Table
+      columns={generalAssemblyColumns}
+      dataSource={gaMeetingData.meetings}
+      pagination={false}
+      bordered
+    />
+    <div
+      style={{
+        marginTop: "100px",
+        marginLeft: "50px",
+        fontWeight: "bold",
+        fontSize: "20px",
+        padding: "10px",
+        borderRadius: "4px",
+        color: gaMeetingData.fulfillment === "Not Fulfilled" ? "red" : "green",
+      }}
+    >
+      {gaMeetingData.fulfillment}
+    </div>
+  </>
+)}
+
+</Row>
+                {/* <Title level={3}>General Assembly Meetings</Title>
+                {JSON.stringify(gaMeetingData)}
                 {gaMeetingData &&
-                    <Table columns={generalAssemblyColumns} dataSource={gaMeetingData} pagination={false} bordered />}
+                    <Table columns={generalAssemblyColumns} dataSource={gaMeetingData.meetings} pagination={false} bordered />}
+                    <Table columns={generalAssemblyColumns} dataSource={gaMeetingData.meetings} pagination={false} bordered />} */}
 
                 <Title level={3} style={{ marginTop: "30px" }}>General Assembly Meetings Decision</Title>
                 {/* {JSON.stringify(gaMeetingData)} */}
@@ -428,7 +556,7 @@ const DPATAssessmentSheet = ({ props }) => {
 
                 {/* Approval of Budget */}
                 <Title level={3} style={{ marginTop: "30px" }}>Approval of Annual Action Plan & Budget</Title>
-                {meetingDataGroup && <Table columns={budgetColumns} dataSource={meetingDataGroup} pagination={false} bordered />}
+                {meetingDataGroup && <Table columns={budgetColumns} dataSource={meetingDataGroup.data} pagination={false} bordered />}
 
                 {/* Sub-Structures Meetings */}
                 <Title level={3} style={{ marginTop: "30px" }}>Meetings of the Sub-Structures</Title>
@@ -445,6 +573,10 @@ const DPATAssessmentSheet = ({ props }) => {
                {/* ECA Meeting */}
                <Title level={3} style={{ marginTop: "30px" }}>Evidence of EC/A meetings prior to GAM</Title>
                {ecaMeetingData && <Table columns={ECAMeetingColumns} dataSource={ecaMeetingData} pagination={false} bordered />}
+
+               {/* Members section */}
+               <Title level={3} style={{ marginTop: "30px" }}>Membership of Statutory Sub-Committees</Title>
+               {memberFinanceData && <Table columns={membersColumns} dataSource={memberFinanceData} pagination={false} bordered />}
 
                 {/* Management Meeting */}
                 <Title level={3} style={{ marginTop: "30px" }}>Evidence of quarterly Management Meetings</Title>

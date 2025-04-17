@@ -709,56 +709,110 @@ const DPATAssessmentSheet = ({ props }) => {
             <Content style={{ padding: "20px" }}>
                 {/* General Assembly Meetings */}
                 <Title level={3}>General Assembly Meetings</Title>
-                {gaMeetingData && <h6 style={{ marginBottom: "20px", color: "grey" }}>
-                    At least three {gaMeetingData.meetings.length} ordinary meetings and minutes were held and duly recorded
-                    and signed by both the PM and MCD. The table below illustrates
-                </h6>}
+                {gaMeetingData && (
+                    <h6 style={{ marginBottom: "20px", color: "grey" }}>
+                        At least three {gaMeetingData.meetings.length} ordinary meetings and minutes were held and duly recorded
+                        and signed by both the PM and MCD. The table below illustrates
+                    </h6>
+                )}
 
+                
                 <Row style={{ marginBottom: "20px" }}>
-                    {gaMeetingData && <h4>
-                        Number of Decisions: {gaMeetingData?.numberOfDecision}
-                    </h4>}
+                    {gaMeetingData && <h4>Number of Decisions: {gaMeetingData?.numberOfDecision}</h4>}
                 </Row>
-
-                <Row>
-                    <h5>
-
-                    </h5>
-
+                <Row style={{ display: "flex", alignItems: "flex-start" }}>
                     {gaMeetingData && (
                         <>
-                            <Table
-                                columns={generalAssemblyColumns}
-                                dataSource={gaMeetingData.meetings}
-                                pagination={false}
-                                bordered
-                            />
+                            <div style={{ width: "90%", paddingRight: "10px" }}>
+                                <Table
+                                    columns={generalAssemblyColumns}
+                                    dataSource={gaMeetingData.meetings}
+                                    pagination={false}
+                                    bordered
+                                    style={{ width: "100%" }}
+                                />
+                            </div>
                             <div
                                 style={{
+                                    width: "10%",
                                     marginTop: "100px",
-                                    marginLeft: "50px",
                                     fontWeight: "bold",
                                     fontSize: "20px",
                                     padding: "10px",
                                     borderRadius: "4px",
                                     color: gaMeetingData.fulfillment === "Not Fulfilled" ? "red" : "green",
+                                    textAlign: "center",
                                 }}
                             >
                                 {gaMeetingData.fulfillment}
                             </div>
                         </>
                     )}
-
                 </Row>
 
+                {/* General Assembly Meetings Decision */}
                 <Title level={3} style={{ marginTop: "30px" }}>General Assembly Meetings Decision</Title>
-                {/* {JSON.stringify(gaMeetingData)} */}
-                {decisionsData &&
-                    <Table columns={generalAssemblyDecisionColumns} dataSource={decisionsData} pagination={false} bordered />}
+                <Row style={{ display: "flex", alignItems: "flex-start" }}>
+                    {decisionsData && (
+                        <>
+                            <div style={{ width: "90%", paddingRight: "10px" }}>
+                                <Table
+                                    columns={generalAssemblyDecisionColumns}
+                                    dataSource={decisionsData}
+                                    pagination={false}
+                                    bordered
+                                    style={{ width: "100%" }}
+                                />
+                            </div>
+                            <div
+                                style={{
+                                    width: "10%",
+                                    marginTop: "100px",
+                                    fontWeight: "bold",
+                                    fontSize: "20px",
+                                    padding: "10px",
+                                    borderRadius: "4px",
+                                    color: gaMeetingData?.fulfillment === "Not Fulfilled" ? "red" : "green",
+                                    textAlign: "center",
+                                }}
+                            >
+                                {gaMeetingData?.fulfillment || "Loading..."}
+                            </div>
+                        </>
+                    )}
+                </Row>
 
                 {/* Approval of Budget */}
                 <Title level={3} style={{ marginTop: "30px" }}>Approval of Annual Action Plan & Budget</Title>
-                {meetingDataGroup && <Table columns={budgetColumns} dataSource={meetingDataGroup.data} pagination={false} bordered />}
+                <Row style={{ display: "flex", alignItems: "flex-start" }}>
+                    {meetingDataGroup && (
+                        <>
+                            <div style={{ width: "90%", paddingRight: "10px" }}>
+                                <Table
+                                    columns={budgetColumns}
+                                    dataSource={meetingDataGroup.data}
+                                    pagination={false}
+                                    bordered
+                                    style={{ width: "100%" }}
+                                /> 
+                            </div>
+                            <div
+                                style={{
+                                    width: "10%",
+                                    marginTop: "100px",
+                                    fontWeight: "bold",
+                                    fontSize: "20px",
+                                    padding: "10px",
+                                    borderRadius: "4px",
+                                    color: meetingDataGroup.fulfillment === "Not Fulfilled" ? "red" : "green",
+                                    textAlign: "center",
+                                }}
+                            >
+                                {meetingDataGroup.fulfillment}
+                            </div>
+                        </>
+                    )}
+                </Row>
 
                 {/* Sub-Structures Meetings */}
                 <Title level={3} style={{ marginTop: "30px" }}>Meetings of the Sub-Structures</Title>
@@ -829,6 +883,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     columns={cededAmountUtilizationColumns}
                     dataSource={cededRevenueUtilisationData}
                     pagination={false} bordered />}
+
 
                 
                   {/* 1.3 Assembly Support to Substructures Selected Activities that Benefit the Community 

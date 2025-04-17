@@ -884,6 +884,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     dataSource={cededRevenueUtilisationData}
                     pagination={false} bordered />}
 
+
                 
                   {/* 1.3 Assembly Support to Substructures Selected Activities that Benefit the Community 
                   Henry to at it and format it the way it is displayed on the sheet and give the score

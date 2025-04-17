@@ -140,6 +140,26 @@ const serviceDeliveryDecisionColumns = [
     { title: "Service Delivery Decisions", dataIndex: "service", key: "service" }
 ];
 
+const managementServiceDeliveryActionColumns = [
+    { title: "No. of decisions on service delivery improvement", dataIndex: "no", key: "no" },
+    { title: "No. of actions taken on social service improvement decisions", dataIndex: "service", key: "service" },
+    { title: "% of service delivery improvement decisions implemented ", dataIndex: "percentage", key: "percentage" }
+];
+
+const cededAmountUtilizationColumns = [
+    { title: "Name of substructure", dataIndex: "name", key: "name" },
+    { title: "Amount of Ceded Revenue Received (GHS) - A", dataIndex: "collected", key: "collected" },
+    { title: "Amount of Ceded Revenue utilized for Community Activities (GHS)", dataIndex: "ceded", key: "ceded" },
+    { title: "% of Amount utilized for Community Activities ", dataIndex: "percentage", key: "percentage" }
+];
+
+const subStructureActivityColumns = [
+    { title: "No", dataIndex: "no", key: "no" },
+    { title: "Activities ", dataIndex: "activities", key: "collected" },
+    { title: "Substructure", dataIndex: "name", key: "name" },
+    { title: "Amount Utilized", dataIndex: "amount", key: "amount" }
+];
+
 // Main Component
 const DPATAssessmentSheet = ({ props }) => {
 
@@ -147,11 +167,14 @@ const DPATAssessmentSheet = ({ props }) => {
     const [meetingDataGroup, setMeetingDataGroup] = useState(null);
     const [meetings, setMeetings] = useState(props?.meetings.meetings);
     const [members, setMembers] = useState(props?.members.members);
+    const [subStructureActivity, setSubStructureActivity] = useState(props?.subActivity.activities);
     const [memberFinanceData, setMemberFinanceData] = useState(null);
+    const [subStructureActivityData, setSubStructureActivityData] = useState(null);
     const [ecaCompositionData, setEcaCompositionData] = useState(null);
     const [subCommitteCompositionData, setSubCommitteCompositionData] = useState(null);
     const [decisionServiceData, setDecisionServiceData] = useState(null);
     const [decisionDeliveryData, setDecisionDeliveryData] = useState(null);
+    const [managementActionServiceDeliveryData, setManagementActionServiceDeliveryData] = useState(null);
     const [memberSocialData, setMemberSocialData] = useState(null);
     const [memberPlanningData, setMemberPlanningData] = useState(null);
     const [memberWorksData, setMemberWorksData] = useState(null);
@@ -169,6 +192,7 @@ const DPATAssessmentSheet = ({ props }) => {
     const [departmentReport, setDepartmentReport] = useState(props?.departments.reports);
     const [subStructureData, setSubStructureData] = useState(null);
     const [subReportData, setSubReportData] = useState(null);
+    const [cededRevenueUtilisationData, setCededRevenueUtilisationData] = useState(null);
     const [decisionsData, setDecisionsData] = useState(null);
     const [year, setYear] = useState(props?.year);
 
@@ -188,6 +212,7 @@ const DPATAssessmentSheet = ({ props }) => {
         setMemberData();
         setMemberEcaCompositionData();
         setSubCommitteesCompositionData();
+        setSubtructureActivities();
 
     }, [props]);
 
@@ -238,6 +263,7 @@ const DPATAssessmentSheet = ({ props }) => {
     const setMeetingData = () => {
         const temp = [];
         let decisionNo = 0;
+        let decisionOnServiceDeliveryNo = 0;
         const tempDecisions = [];
         const tempDecisionList = [];
 
@@ -260,19 +286,17 @@ const DPATAssessmentSheet = ({ props }) => {
             decisionNo += parseInt(decNo);
             temp.push(meetingDataState);
 
-            //         { title: "GAM", dataIndex: "gam", key: "gam" },
-            // { title: "Total No. of decisions taken", dataIndex: "total", key: "total" },
-            // { title: "No. of decisions on service delivery", dataIndex: "serviceDecision", key: "serviceDecision" },
-            // { title: "% of decisions on service delivery ", dataIndex: "percentage", key: "percentage" }
+            // console.log("Munites decision: ",meetingDecisions)
 
             const serviceDeliveryDecion = getDecisionsByMeeting(meetingDecisions, minuteFileNumber);
             // console.log("dec: ", serviceDeliveryDecion)
             const serviceDeliveryNo = serviceDeliveryDecion ? serviceDeliveryDecion.length : 0;
             const decisionList = serviceDeliveryDecion
-                ?.map((val, index) => `${index +1}. ${getAttributeValue("Decision", val)}`)
+                ?.map((val, index) => `${index + 1}. ${getAttributeValue("Decision", val)}`)
                 .join('\n');
 
             const gam = `${getMeetingRank(index, "EC")}  General Assembly Meeting`;
+
 
             const decisionServiceDelivery = {
                 key: index + 1, // Static key (can be dynamic)
@@ -282,15 +306,19 @@ const DPATAssessmentSheet = ({ props }) => {
                 percentage: calculatePercentage(decNo, serviceDeliveryNo), // Interval (Days)
             };
 
+            decisionOnServiceDeliveryNo += parseInt(serviceDeliveryNo);
+
             tempDecisions.push(decisionServiceDelivery);
-            tempDecisionList.push({gam:gam, service: decisionList})
-        
+            tempDecisionList.push({ gam: gam, service: decisionList })
+
         });
 
 
         setGaMeetingData({ meetings: temp, fulfillment: checkGaMeetingFulfillment(temp), numberOfDecision: decisionNo });
         setDecisionServiceData(tempDecisions);
         setDecisionDeliveryData(tempDecisionList);
+        setManagementActionServiceDeliveryData([{ no: decisionOnServiceDeliveryNo, service: 0, percentage: 0 }])
+
     };
 
     const calculatePercentage = (total, value) => {
@@ -514,9 +542,55 @@ const DPATAssessmentSheet = ({ props }) => {
 
             });
 
-        if (reportsTemp.length > 0) {
-            setSubReportData(reportsTemp);
-        }
+
+        setSubReportData(reportsTemp);
+
+        let collectedTotal = 0;
+        let cededTotal = 0;
+        let percentageTotal = 0;
+
+        const finalRevenueDetails = [];
+
+        reportsTemp.forEach(val => {
+            finalRevenueDetails.push({
+                name: val.name,
+                collected: val.collected,
+                ceded: val.ceded,
+                percentage: val.percentage
+            });
+
+            collectedTotal += parseFloat(val.collected);
+            cededTotal += parseFloat(val.ceded);
+            percentageTotal += parseFloat(val.percentage);
+        });
+
+        finalRevenueDetails.push({
+            name: <strong>Total</strong>,
+            collected: <strong>{collectedTotal}</strong>,
+            ceded: <strong>{cededTotal}</strong>,
+            percentage: <strong>{calculatePercentage(collectedTotal, cededTotal)}</strong>
+        });
+
+        setCededRevenueUtilisationData(finalRevenueDetails);
+    };
+
+    const setSubtructureActivities = () => {
+        const temp = [];
+        subStructureActivity
+            ?.forEach((sub, index) => {
+                const subStructureActivityDataState = {
+                    key: index + 1,
+                    no: index + 1,
+                    activity: getAttributeValue("Activity Description", sub),
+                    name: getAttributeValue("DPAT | Name of Sub Structure", sub),
+                    amount: getAttributeValue("Amount", sub)
+                };
+
+                temp.push(subStructureActivityDataState);
+            });
+
+        setSubStructureActivityData(temp);
+
     };
 
     const setMemberData = () => {
@@ -733,13 +807,40 @@ const DPATAssessmentSheet = ({ props }) => {
                     Annex 2: SECTION B – SERVICE DELIVERY INDICATORS
                 </h5>
 
+                {/* Henry and Samu to give the score and of bellow tables */}
+
                 {/* Entity Tender Committee (ETC) Meeting */}
                 <Title level={3} style={{ marginTop: "30px" }}>SDI 10 - 1.1 General Assembly Decisions</Title>
                 {decisionServiceData && <Table columns={serviceDecisionColumns} dataSource={decisionServiceData} pagination={false} bordered />}
 
                 <Title level={3} style={{ marginTop: "30px" }}>Service Delivery Decisions</Title>
                 {decisionDeliveryData && <Table columns={serviceDeliveryDecisionColumns} dataSource={decisionDeliveryData} pagination={false} bordered />}
-               
+
+                <Title level={3} style={{ marginTop: "30px" }}>Evidence of management actions on service delivery decisions</Title>
+                {managementActionServiceDeliveryData && <Table
+                    columns={managementServiceDeliveryActionColumns}
+                    dataSource={managementActionServiceDeliveryData}
+                    pagination={false} bordered />}
+
+                {/* 1.3 Assembly Support to Substructures Evidence of utilization of ceded revenue
+                 */}
+                <Title level={3} style={{ marginTop: "30px" }}>1.3 Assembly Support to Substructures Evidence of utilization of ceded revenue</Title>
+                {cededRevenueUtilisationData && <Table
+                    columns={cededAmountUtilizationColumns}
+                    dataSource={cededRevenueUtilisationData}
+                    pagination={false} bordered />}
+
+                
+                  {/* 1.3 Assembly Support to Substructures Selected Activities that Benefit the Community 
+                  Henry to at it and format it the way it is displayed on the sheet and give the score
+                  */}
+                  <Title level={3} style={{ marginTop: "30px" }}>Selected Activities that Benefit the Community</Title>
+                {subStructureActivityData && <Table
+                    columns={subStructureActivityColumns}
+                    dataSource={subStructureActivityData}
+                    pagination={false} bordered />}
+
+
                 {/* Print Button */}
                 <Button type="primary" icon={<PrinterOutlined />} onClick={handlePrint} style={{ marginTop: "20px" }}>
                     Print Report

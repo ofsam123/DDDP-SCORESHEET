@@ -31,6 +31,7 @@ function DPATAssessment() {
     const [gaMeeting, setGaMeeting] = useState(null);
     const [meetingDecision, setMeetingDecision] = useState([]);
     const [districtDepartments, setDistrictDepartments] = useState([]);
+    const [districtMembers, setDistrictMembers] = useState([]);
     const [subStructures, setSubStructures] = useState([]);
     const [selectedYear, setSelectedYear] = useState(null);
     const [selectedDistrict, setSelectedDistrict] = useState(null);
@@ -51,11 +52,12 @@ function DPATAssessment() {
 
     function pullTrackerInstance(startDate, endDate, districtId) {
         axios
-            .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=Ch38jUWJpUR&startDate=${startDate}&endDate=${endDate}`)
+            .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=Ch38jUWJpUR&filter=Ub0V9Z06aBc:GE:${startDate}:LE:${endDate}`)
             .then(result => {
                 axios
                     .get(`/tracker/events?program=Ch38jUWJpUR&orgUnit=${districtId}&startDate=${startDate}&endDate=${endDate}`)
                     .then(resp => {
+                        // const meetingsData = result.data.instances
                         setGaMeeting({meetings : result.data.instances, reports: resp.data.instances});
                     })
                     .catch(err => console.log(err))
@@ -63,25 +65,31 @@ function DPATAssessment() {
             .catch(err => console.log(err))
     }
 
-    function pullDecisionTrackerInstance(url, districtId) {
+    function pullDecisionTrackerInstance(startDate, endDate, districtId) {
         axios
-            .get(url)
-            .then(result => {
-                if(result.data.instances.length > 0){
-                    setMeetingDecision(result.data.instances)
-                }
-            })
-            .catch(err => console.log(err))
-    }
-
-    function pullSubStructureEstablishment(url, districtId) {
-        axios
-            .get(url)
+            .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=n8WIhwDrAO7&filter=Ub0V9Z06aBc:GE:${startDate}:LE:${endDate}`)
             .then(result => {
                 if(result.data.instances.length > 0){
 
                     axios
-                    .get(`/tracker/events?program=vkJZ5R2mSJ3&orgUnit=${districtId}`)
+                    .get(`/tracker/events?program=n8WIhwDrAO7&orgUnit=${districtId}&startDate=${startDate}&endDate=${endDate}`)
+                    .then(resp => {
+                        setMeetingDecision({decisions: result.data.instances, reports:resp.data.instances})
+                    })
+                    .catch(err => console.log(err))
+                }
+            })
+            .catch(err => console.log("decisions error ",err))
+    }
+
+    function pullSubStructureEstablishment(startDate, endDate, districtId) {
+        axios
+            .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=vkJZ5R2mSJ3&filter=Ub0V9Z06aBc:GE:${startDate}:LE:${endDate}`)
+            .then(result => {
+                if(result.data.instances.length > 0){
+
+                    axios
+                    .get(`/tracker/events?program=vkJZ5R2mSJ3&orgUnit=${districtId}&startDate=${startDate}&endDate=${endDate}`)
                     .then(resp => {
                         setSubStructures({sub:result.data.instances, reports: resp.data.instances})
                     })
@@ -93,14 +101,14 @@ function DPATAssessment() {
             .catch(err => console.log(err))
     }
 
-    function getDistrictAssemblyDepartment(url, districtId) {
+    function getDistrictAssemblyDepartment(startDate, endDate, districtId) {
         axios
-            .get(url)
+            .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=mAEretIhuqM&filter=Ub0V9Z06aBc:GE:${startDate}:LE:${endDate}`)
             .then(result => {
                 if(result.data.instances.length > 0){
 
                     axios
-                    .get(`/tracker/events?program=mAEretIhuqM&orgUnit=${districtId}`)
+                    .get(`/tracker/events?program=mAEretIhuqM&orgUnit=${districtId}&startDate=${startDate}&endDate=${endDate}`)
                     .then(resp => {
                         setDistrictDepartments({dep: result.data.instances, reports: resp.data.instances})
                     })
@@ -112,7 +120,26 @@ function DPATAssessment() {
             .catch(err => console.log(err))
     }
 
-    
+    function getMembersByDistrict(startDate, endDate, districtId) {
+        axios
+            .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=AJDfCnHCQ2j`)
+            .then(result => {
+                if(result.data.instances.length > 0){
+
+                    axios
+                    .get(`/tracker/events?program=AJDfCnHCQ2j&orgUnit=${districtId}&startDate=${startDate}&endDate=${endDate}`)
+                    .then(resp => {
+                        setDistrictMembers({members: result.data.instances, reports: resp.data.instances})
+                    })
+                    .catch(err => console.log(err))
+                }
+
+
+            })
+            .catch(err => console.log(err))
+    }
+
+
 
     return (
         <>
@@ -152,17 +179,20 @@ function DPATAssessment() {
                             {districts && <div className="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12">
                                 <Select
                                     onChange={(val) => {
-                                        setSelectedDistrict(val)
-                                        pullTrackerInstance('2023-01-01', '2023-12-30', val.value);
+                                        setSelectedDistrict(val);
 
-                                        pullDecisionTrackerInstance(
-                                            `/tracker/trackedEntities?orgUnit=${val.value}&program=n8WIhwDrAO7`, val.value
-                                        );
+                                        const startDate = `${selectedYear.value}-01-01` ;
+                                        const endDate = `${selectedYear.value}-12-31`;
 
-                                        
-                                        pullSubStructureEstablishment( `/tracker/trackedEntities?orgUnit=${val.value}&program=vkJZ5R2mSJ3`, val.value);
+                                        pullTrackerInstance(startDate, endDate, val.value);
 
-                                        getDistrictAssemblyDepartment( `/tracker/trackedEntities?orgUnit=${val.value}&program=vkJZ5R2mSJ3`, val.value);
+                                        pullDecisionTrackerInstance(startDate, endDate, val.value);
+
+                                        pullSubStructureEstablishment(startDate, endDate, val.value);
+
+                                        getDistrictAssemblyDepartment(startDate, endDate, val.value);
+
+                                        getMembersByDistrict(startDate, endDate, val.value);
                                     }}
                                     options={districts}
                                     isSearchable
@@ -178,7 +208,10 @@ function DPATAssessment() {
                                              decisions: meetingDecision, 
                                              subStructures: subStructures,
                                              departments: districtDepartments,
-                                             year: selectedYear?.value }} 
+                                             year: selectedYear?.value,
+                                             district: selectedDistrict,
+                                             members: districtMembers
+                                             }}
                                         />}
 
                     </div>

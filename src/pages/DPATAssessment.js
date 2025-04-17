@@ -125,6 +125,7 @@ function DPATAssessment() {
             .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=AJDfCnHCQ2j`)
             .then(result => {
                 if(result.data.instances.length > 0){
+                    console.log("members: ",result.data.instances)
 
                     axios
                     .get(`/tracker/events?program=AJDfCnHCQ2j&orgUnit=${districtId}&startDate=${startDate}&endDate=${endDate}`)

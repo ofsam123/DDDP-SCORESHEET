@@ -113,6 +113,33 @@ const revenueSharingData = [
     { key: "2", subStructure: "Transport Union", collected: 70000, ceded: 21000, percentage: "30%" },
 ];
 
+const ecaCompositionColumns = [
+    { title: "No", dataIndex: "no", key: "no" },
+    { title: "Name of Members", dataIndex: "name", key: "name" },
+    { title: "Position", dataIndex: "position", key: "position" },
+    { title: "Sub-Committee Represented", dataIndex: "sub", key: "sub" }
+];
+
+const subCommitteeCompositionColumns = [
+    { title: "No", dataIndex: "no", key: "no" },
+    { title: "Name of Sub- Committee", dataIndex: "name", key: "name" },
+    { title: "No. of members determined by MA", dataIndex: "number", key: "number" }
+];
+
+
+// =====================================SDI Columns================================
+const serviceDecisionColumns = [
+    { title: "GAM", dataIndex: "gam", key: "gam" },
+    { title: "Total No. of decisions taken", dataIndex: "total", key: "total" },
+    { title: "No. of decisions on service delivery", dataIndex: "serviceDecision", key: "serviceDecision" },
+    { title: "% of decisions on service delivery ", dataIndex: "percentage", key: "percentage" }
+];
+
+const serviceDeliveryDecisionColumns = [
+    { title: "GAM", dataIndex: "gam", key: "gam" },
+    { title: "Service Delivery Decisions", dataIndex: "service", key: "service" }
+];
+
 // Main Component
 const DPATAssessmentSheet = ({ props }) => {
 
@@ -121,6 +148,10 @@ const DPATAssessmentSheet = ({ props }) => {
     const [meetings, setMeetings] = useState(props?.meetings.meetings);
     const [members, setMembers] = useState(props?.members.members);
     const [memberFinanceData, setMemberFinanceData] = useState(null);
+    const [ecaCompositionData, setEcaCompositionData] = useState(null);
+    const [subCommitteCompositionData, setSubCommitteCompositionData] = useState(null);
+    const [decisionServiceData, setDecisionServiceData] = useState(null);
+    const [decisionDeliveryData, setDecisionDeliveryData] = useState(null);
     const [memberSocialData, setMemberSocialData] = useState(null);
     const [memberPlanningData, setMemberPlanningData] = useState(null);
     const [memberWorksData, setMemberWorksData] = useState(null);
@@ -155,6 +186,8 @@ const DPATAssessmentSheet = ({ props }) => {
         setPRCCMeetingData();
         setETCMeetingData();
         setMemberData();
+        setMemberEcaCompositionData();
+        setSubCommitteesCompositionData();
 
     }, [props]);
 
@@ -163,6 +196,15 @@ const DPATAssessmentSheet = ({ props }) => {
         return meetings.filter(item =>
             item.attributes.some(attr =>
                 attr.displayName === "DPAT | Meeting Type" && attr.value === meetingType
+            )
+        );
+
+    }
+
+    function formatDataGeneral(data, property, value) {
+        return data?.filter(item =>
+            item.attributes.some(attr =>
+                attr.displayName === property && attr.value === value
             )
         );
 
@@ -192,11 +234,15 @@ const DPATAssessmentSheet = ({ props }) => {
         return attr ? attr.value : "N/A";
     };
 
+
     const setMeetingData = () => {
         const temp = [];
         let decisionNo = 0;
+        const tempDecisions = [];
+        const tempDecisionList = [];
 
         formatData(meetings, "GA").forEach((meeting, index) => {
+            const minuteFileNumber = getAttributeValue("Minute File Number", meeting);
             const meetingDataState = {
                 key: index + 1, // Static key (can be dynamic)
                 meeting: getMeetingRank(index, "GA"), // Meeting type
@@ -206,17 +252,66 @@ const DPATAssessmentSheet = ({ props }) => {
                 invitationLetterReference: getAttributeValue("Invitation letter Ref. Number", meeting), // Invitation Letter Ref
                 signatoryInvitationLetter: getAttributeValue("Who Signed the Invitation letter", meeting) === "PM" ?
                     "Presiding Member" : "Convener", // Signatory of Invitation Letter
-                signatoriesMinutes: getAttributeValue("Minute File Number", meeting), // Placeholder for Signatories to minutes of meeting 
+                signatoriesMinutes: minuteFileNumber, // Placeholder for Signatories to minutes of meeting 
             };
 
             meetingDataState.interval = getDaysBetween(meetingDataState.invitationDate, meetingDataState.meetingDate);
-            decisionNo += parseInt(getAttributeValue("DPAT | Number of Decisions", meeting));
+            const decNo = getAttributeValue("DPAT | Number of Decisions", meeting);
+            decisionNo += parseInt(decNo);
             temp.push(meetingDataState);
-        })
+
+            //         { title: "GAM", dataIndex: "gam", key: "gam" },
+            // { title: "Total No. of decisions taken", dataIndex: "total", key: "total" },
+            // { title: "No. of decisions on service delivery", dataIndex: "serviceDecision", key: "serviceDecision" },
+            // { title: "% of decisions on service delivery ", dataIndex: "percentage", key: "percentage" }
+
+            const serviceDeliveryDecion = getDecisionsByMeeting(meetingDecisions, minuteFileNumber);
+            // console.log("dec: ", serviceDeliveryDecion)
+            const serviceDeliveryNo = serviceDeliveryDecion ? serviceDeliveryDecion.length : 0;
+            const decisionList = serviceDeliveryDecion
+                ?.map((val, index) => `${index +1}. ${getAttributeValue("Decision", val)}`)
+                .join('\n');
+
+            const gam = `${getMeetingRank(index, "EC")}  General Assembly Meeting`;
+
+            const decisionServiceDelivery = {
+                key: index + 1, // Static key (can be dynamic)
+                gam: gam, // Meeting type
+                total: decNo, // Total Decision 
+                serviceDecision: serviceDeliveryNo, // Meeting Date
+                percentage: calculatePercentage(decNo, serviceDeliveryNo), // Interval (Days)
+            };
+
+            tempDecisions.push(decisionServiceDelivery);
+            tempDecisionList.push({gam:gam, service: decisionList})
+        
+        });
 
 
-        setGaMeetingData({meetings: temp, fulfillment: checkGaMeetingFulfillment(temp), numberOfDecision: decisionNo});
+        setGaMeetingData({ meetings: temp, fulfillment: checkGaMeetingFulfillment(temp), numberOfDecision: decisionNo });
+        setDecisionServiceData(tempDecisions);
+        setDecisionDeliveryData(tempDecisionList);
     };
+
+    const calculatePercentage = (total, value) => {
+        const totalNum = parseFloat(total);
+        const valueNum = parseFloat(value);
+
+        if (isNaN(totalNum) || isNaN(valueNum) || totalNum === 0) {
+            return 0;
+        }
+
+        return (valueNum / totalNum) * 100;
+    };
+
+
+    const getDecisionsByMeeting = (decisions, meetingReference) => {
+        return decisions?.filter(item =>
+            item.attributes.some(attr =>
+                attr.displayName === "DPAT | Meeting Reference" && attr.value === meetingReference
+            )
+        );
+    }
 
     function checkGaMeetingFulfillment(gaMeetings) {
         if (gaMeetings.length < 3) {
@@ -320,7 +415,7 @@ const DPATAssessmentSheet = ({ props }) => {
     const setETCMeetingData = () => {
         const temp = [];
         formatData(meetings, "Entity Tender Committee (ETC)").forEach((meeting, index) => {
-            
+
             const meetingDataState = {
                 key: index + 1, // Static key (can be dynamic)
                 meeting: getMeetingRank(index, "Entity Tender Committee (ETC)"), // Meeting type
@@ -366,15 +461,15 @@ const DPATAssessmentSheet = ({ props }) => {
             }
         });
 
-        setMeetingDataGroup({data:temp, fulfillment: fulfillment});
+        setMeetingDataGroup({ data: temp, fulfillment: fulfillment });
     };
 
 
     const setDecisionData = () => {
         let temp = [];
         meetingDecisions?.filter(d =>
-                d.attributes?.some(at => at.displayName === "DPAT | Meeting Decision Type" && at.value === "GA")
-            )
+            d.attributes?.some(at => at.displayName === "DPAT | Meeting Decision Type" && at.value === "GA")
+        )
             .forEach((decision, index) => {
                 const decisionDataState = {
                     key: index + 1,
@@ -406,20 +501,20 @@ const DPATAssessmentSheet = ({ props }) => {
 
         const reportsTemp = [];
 
-        subReports?.filter(rep=>rep.dataValues.length > 0)
-                  .forEach((report, index)=>{
-                    const instance = subStructures.find(sub=> sub.trackedEntity === report.trackedEntity);
-                    reportsTemp.push({
-                            key: index + 1,
-                            name: getAttributeValue("DPAT | Name of Sub Structure", instance),
-                            collected: report.dataValues[0].value,
-                            ceded: report.dataValues[1].value,
-                            percentage: report.dataValues[2].value
-                        });
-                    
-                  });
+        subReports?.filter(rep => rep.dataValues.length > 0)
+            .forEach((report, index) => {
+                const instance = subStructures.find(sub => sub.trackedEntity === report.trackedEntity);
+                reportsTemp.push({
+                    key: index + 1,
+                    name: getAttributeValue("DPAT | Name of Sub Structure", instance),
+                    collected: report.dataValues[0].value,
+                    ceded: report.dataValues[1].value,
+                    percentage: report.dataValues[2].value
+                });
 
-        if(reportsTemp.length > 0){
+            });
+
+        if (reportsTemp.length > 0) {
             setSubReportData(reportsTemp);
         }
     };
@@ -430,36 +525,74 @@ const DPATAssessmentSheet = ({ props }) => {
             ?.forEach((member, index) => {
                 const memberDataState = {
                     key: index + 1,
-                    no: index+1,
+                    no: index + 1,
                     member: `${getAttributeValue("First Name", member)} ${getAttributeValue("Last Name", member)}`,
                     department: getAttributeValue("Staff Department", member),
-                    appointment: getAttributeValue("Assembly Member Type", member),
+                    appointment: getAttributeValue("DPAT |  Membership Status", member),
                 };
 
-                temp.push( memberDataState);
+                temp.push(memberDataState);
             });
 
         setMemberFinanceData(temp);
     };
 
+    const setMemberEcaCompositionData = () => {
+        const temp = [];
+
+        formatDataGeneral(members, "DPAT | MMDA Unit", "Assembly Member")
+            ?.forEach((member, index) => {
+                const memberDataState = {
+                    key: index + 1,
+                    no: index + 1,
+                    name: `${getAttributeValue("First Name", member)} ${getAttributeValue("Last Name", member)}`,
+                    position: getAttributeValue("DPAT | Sub Structure Committee - Position", member),
+                    sub: getAttributeValue("DPAT |  Statutory Sub Committee", member),
+                };
+
+                temp.push(memberDataState);
+            });
+
+        setEcaCompositionData(temp);
+    };
+
+    const setSubCommitteesCompositionData = () => {
+        const temp = [];
+
+        formatDataGeneral(members, "DPAT | MMDA Unit", "Assembly Member")
+            ?.forEach((member, index) => {
+                const memberDataState = {
+                    key: index + 1,
+                    no: index + 1,
+                    name: getAttributeValue("DPAT |  Statutory Sub Committee", member),
+                    number: 0
+                };
+
+                temp.push(memberDataState);
+            });
+
+        setSubCommitteCompositionData(temp);
+    };
+
 
     const getMeetingRank = (index, type) => {
-        
-        if(type === 'GA'){
+
+        if (type === 'GA') {
             switch (index) {
                 case 0: return "1st Ordinary Meeting";
                 case 1: return "2nd Ordinary Meeting";
                 case 2: return "3rd Ordinary Meeting";
                 default: return "Bonus Ordinary Meeting";
             }
-        }else if(type === 'EC'){
+        }
+        else if (type === 'EC') {
             switch (index) {
                 case 0: return "1st";
                 case 1: return "2nd";
                 case 2: return "3rd";
                 default: return "Other";
             }
-        }else if(type === 'Management Meetings'){
+        } else if (type === 'Management Meetings') {
             switch (index) {
                 case 0: return "1st";
                 case 1: return "2nd";
@@ -467,7 +600,7 @@ const DPATAssessmentSheet = ({ props }) => {
                 case 3: return "4th";
                 default: return "Other";
             }
-        }else if(type === 'Entity Tender Committee (ETC)'){
+        } else if (type === 'Entity Tender Committee (ETC)') {
             switch (index) {
                 case 0: return "1st Quarter";
                 case 1: return "2nd Quarter";
@@ -476,7 +609,7 @@ const DPATAssessmentSheet = ({ props }) => {
                 default: return "Other";
             }
         }
-        
+
     }
 
     const getDecisionRank = (index) => {
@@ -502,52 +635,47 @@ const DPATAssessmentSheet = ({ props }) => {
             <Content style={{ padding: "20px" }}>
                 {/* General Assembly Meetings */}
                 <Title level={3}>General Assembly Meetings</Title>
-                {gaMeetingData &&<h6 style={{ marginBottom: "20px", color: "grey" }}>
-  At least three {gaMeetingData.meetings.length} ordinary meetings and minutes were held and duly recorded
-  and signed by both the PM and MCD. The table below illustrates
-</h6>}
+                {gaMeetingData && <h6 style={{ marginBottom: "20px", color: "grey" }}>
+                    At least three {gaMeetingData.meetings.length} ordinary meetings and minutes were held and duly recorded
+                    and signed by both the PM and MCD. The table below illustrates
+                </h6>}
 
-<Row style={{ marginBottom: "20px" }}>
-  {gaMeetingData && <h4>
-    Number of Decisions: {gaMeetingData?.numberOfDecision}
-  </h4>}
-</Row>
+                <Row style={{ marginBottom: "20px" }}>
+                    {gaMeetingData && <h4>
+                        Number of Decisions: {gaMeetingData?.numberOfDecision}
+                    </h4>}
+                </Row>
 
-<Row>
-<h5>
+                <Row>
+                    <h5>
 
-</h5>
+                    </h5>
 
-{gaMeetingData && (
-  <>
-    <Table
-      columns={generalAssemblyColumns}
-      dataSource={gaMeetingData.meetings}
-      pagination={false}
-      bordered
-    />
-    <div
-      style={{
-        marginTop: "100px",
-        marginLeft: "50px",
-        fontWeight: "bold",
-        fontSize: "20px",
-        padding: "10px",
-        borderRadius: "4px",
-        color: gaMeetingData.fulfillment === "Not Fulfilled" ? "red" : "green",
-      }}
-    >
-      {gaMeetingData.fulfillment}
-    </div>
-  </>
-)}
+                    {gaMeetingData && (
+                        <>
+                            <Table
+                                columns={generalAssemblyColumns}
+                                dataSource={gaMeetingData.meetings}
+                                pagination={false}
+                                bordered
+                            />
+                            <div
+                                style={{
+                                    marginTop: "100px",
+                                    marginLeft: "50px",
+                                    fontWeight: "bold",
+                                    fontSize: "20px",
+                                    padding: "10px",
+                                    borderRadius: "4px",
+                                    color: gaMeetingData.fulfillment === "Not Fulfilled" ? "red" : "green",
+                                }}
+                            >
+                                {gaMeetingData.fulfillment}
+                            </div>
+                        </>
+                    )}
 
-</Row>
-                {/* <Title level={3}>General Assembly Meetings</Title>
-                {JSON.stringify(gaMeetingData)}
-                {gaMeetingData &&
-                    <Table columns={generalAssemblyColumns} dataSource={gaMeetingData.meetings} pagination={false} bordered />}
-                    <Table columns={generalAssemblyColumns} dataSource={gaMeetingData.meetings} pagination={false} bordered />} */}
+                </Row>
 
                 <Title level={3} style={{ marginTop: "30px" }}>General Assembly Meetings Decision</Title>
                 {/* {JSON.stringify(gaMeetingData)} */}
@@ -568,29 +696,50 @@ const DPATAssessmentSheet = ({ props }) => {
 
                 {/* Revenue Sharing */}
                 <Title level={3} style={{ marginTop: "30px" }}>Evidence of Revenue Sharing</Title>
-               {subReportData && <Table columns={revenueSharingColumns} dataSource={subReportData} pagination={false} bordered />}
+                {subReportData && <Table columns={revenueSharingColumns} dataSource={subReportData} pagination={false} bordered />}
 
-               {/* ECA Meeting */}
-               <Title level={3} style={{ marginTop: "30px" }}>Evidence of EC/A meetings prior to GAM</Title>
-               {ecaMeetingData && <Table columns={ECAMeetingColumns} dataSource={ecaMeetingData} pagination={false} bordered />}
+                {/* ECA Meeting */}
+                <Title level={3} style={{ marginTop: "30px" }}>Evidence of EC/A meetings prior to GAM</Title>
+                {ecaMeetingData && <Table columns={ECAMeetingColumns} dataSource={ecaMeetingData} pagination={false} bordered />}
 
-               {/* Members section */}
-               <Title level={3} style={{ marginTop: "30px" }}>Membership of Statutory Sub-Committees</Title>
-               {memberFinanceData && <Table columns={membersColumns} dataSource={memberFinanceData} pagination={false} bordered />}
+                {/* ECA Composition */}
+                <Title level={3} style={{ marginTop: "30px" }}>Evidence of Composition of EC/A</Title>
+                {ecaCompositionData && <Table columns={ecaCompositionColumns} dataSource={ecaCompositionData} pagination={false} bordered />}
+
+                {/* Members section */}
+                <Title level={3} style={{ marginTop: "30px" }}>Membership of Statutory Sub-Committees</Title>
+                {memberFinanceData && <Table columns={membersColumns} dataSource={memberFinanceData} pagination={false} bordered />}
+
+                {/* Evidence of Sub Committee Composition --Henry sum them and count by sub commity name*/}
+                {/* Also desagrate the members and display list of members by sub-committee
+                    (See the sample sheet as guide:Membership of Statutory Sub-Committees) */}
+                <Title level={3} style={{ marginTop: "30px" }}>Evidence of composition of sub-committees – Summary</Title>
+                {subCommitteCompositionData && <Table columns={subCommitteeCompositionColumns} dataSource={subCommitteCompositionData} pagination={false} bordered />}
 
                 {/* Management Meeting */}
                 <Title level={3} style={{ marginTop: "30px" }}>Evidence of quarterly Management Meetings</Title>
-               {managementMeetingsData && <Table columns={managementMeetingColumns} dataSource={managementMeetingsData} pagination={false} bordered />}
+                {managementMeetingsData && <Table columns={managementMeetingColumns} dataSource={managementMeetingsData} pagination={false} bordered />}
 
-               {/* PRCC Meeting */}
-               <Title level={3} style={{ marginTop: "30px" }}>Evidence of Meetings of PRCC</Title>
-               {prccMeetingData && <Table columns={PRCCMeetingColumns} dataSource={prccMeetingData} pagination={false} bordered />}
+                {/* PRCC Meeting */}
+                <Title level={3} style={{ marginTop: "30px" }}>Evidence of Meetings of PRCC</Title>
+                {prccMeetingData && <Table columns={PRCCMeetingColumns} dataSource={prccMeetingData} pagination={false} bordered />}
 
-               {/* Entity Tender Committee (ETC) Meeting */}
-               <Title level={3} style={{ marginTop: "30px" }}>Evidence of Entity Tender Committee (ETC) meeting</Title>
-               {etcMeetingData && <Table columns={ETCMeetingColumns} dataSource={etcMeetingData} pagination={false} bordered />}
+                {/* Entity Tender Committee (ETC) Meeting */}
+                <Title level={3} style={{ marginTop: "30px" }}>Evidence of Entity Tender Committee (ETC) meeting</Title>
+                {etcMeetingData && <Table columns={ETCMeetingColumns} dataSource={etcMeetingData} pagination={false} bordered />}
 
+                <hr />
+                <h5>
+                    Annex 2: SECTION B – SERVICE DELIVERY INDICATORS
+                </h5>
 
+                {/* Entity Tender Committee (ETC) Meeting */}
+                <Title level={3} style={{ marginTop: "30px" }}>SDI 10 - 1.1 General Assembly Decisions</Title>
+                {decisionServiceData && <Table columns={serviceDecisionColumns} dataSource={decisionServiceData} pagination={false} bordered />}
+
+                <Title level={3} style={{ marginTop: "30px" }}>Service Delivery Decisions</Title>
+                {decisionDeliveryData && <Table columns={serviceDeliveryDecisionColumns} dataSource={decisionDeliveryData} pagination={false} bordered />}
+               
                 {/* Print Button */}
                 <Button type="primary" icon={<PrinterOutlined />} onClick={handlePrint} style={{ marginTop: "20px" }}>
                     Print Report

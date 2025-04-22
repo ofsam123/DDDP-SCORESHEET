@@ -313,6 +313,8 @@ const DPATAssessmentSheet = ({ props }) => {
 
         });
 
+        console.log('GA Decisions: ', JSON.stringify(tempDecisions,null,2));
+
 
         setGaMeetingData({ meetings: temp, fulfillment: checkGaMeetingFulfillment(temp), numberOfDecision: decisionNo });
         setDecisionServiceData(tempDecisions);
@@ -631,19 +633,30 @@ const DPATAssessmentSheet = ({ props }) => {
     };
 
     const setSubCommitteesCompositionData = () => {
-        const temp = [];
+        const temp = [], trialTemp = {};
 
         formatDataGeneral(members, "DPAT | MMDA Unit", "Assembly Member")
             ?.forEach((member, index) => {
-                const memberDataState = {
-                    key: index + 1,
-                    no: index + 1,
-                    name: getAttributeValue("DPAT |  Statutory Sub Committee", member),
-                    number: 0
-                };
 
-                temp.push(memberDataState);
+                if(trialTemp?.[`${getAttributeValue("DPAT |  Statutory Sub Committee", member)}`] ){
+                    trialTemp[`${getAttributeValue("DPAT |  Statutory Sub Committee", member)}`] = 
+                    trialTemp[`${getAttributeValue("DPAT |  Statutory Sub Committee", member)}`] + 1;
+                }else{
+                    trialTemp[`${getAttributeValue("DPAT |  Statutory Sub Committee", member)}`] = 1;
+                }
             });
+
+        Object.keys(trialTemp).map((tempKey, index) => {
+
+            const memberDataState = {
+                key: index + 1,
+                no: index + 1,
+                name: tempKey,
+                number: trialTemp[tempKey]
+            };
+
+            temp.push(memberDataState);
+        });
 
         setSubCommitteCompositionData(temp);
     };

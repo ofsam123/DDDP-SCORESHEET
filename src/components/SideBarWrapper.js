@@ -7,11 +7,15 @@ function SideBarWrapper(){
         <nav id="sidebar" className="sidebar-wrapper">
 
 					{/* Sidebar brand start  */}
-					<div className="sidebar-brand p-2">
-						<Link to="/" className="logo">
-							<img src="assets/img/logodddp2.png" alt="DACF Support App" width={100} height={200} />
-						</Link>
-					</div>
+					<div className="sidebar-brand p-21">
+  <Link to="/" className="1">
+    <img
+      src="assets/img/logo3.png"
+      alt="DACF Support App"
+      style={{ width: '100%', height: '99%', objectFit: 'cover' }}
+    />
+  </Link>
+</div>
 					{/* Sidebar brand end  */}
 
 					{/* Sidebar content start */}

@@ -160,6 +160,21 @@ const subStructureActivityColumns = [
     { title: "Amount Utilized", dataIndex: "amount", key: "amount" }
 ];
 
+const serviceProvidersColumn = [
+    { title: "No", dataIndex: "no", key: "no" },
+    { title: "Service Provider", dataIndex: "provider", key: "provider" },
+    { title: "Contract Duration", dataIndex: "contract", key: "contract" },
+    { title: "Start Date", dataIndex: "date", key: "date" }
+];
+
+const buildingInspectorateColumn = [
+    { title: "Date Established", dataIndex: "date", key: "date" },
+    { title: "Supervisor", dataIndex: "supervisor", key: "supervisor" },
+    { title: "address", dataIndex: "address", key: "address" },
+    { title: "Category of staff", dataIndex: "category", key: "category" },
+    { title: "Function performed by Works Department", dataIndex: "department", key: "department" }
+];
+
 // Main Component
 const DPATAssessmentSheet = ({ props }) => {
 
@@ -168,6 +183,14 @@ const DPATAssessmentSheet = ({ props }) => {
     const [meetings, setMeetings] = useState(props?.meetings.meetings);
     const [members, setMembers] = useState(props?.members.members);
     const [subStructureActivity, setSubStructureActivity] = useState(props?.subActivity.activities);
+    const [serviceProviders, setServiceProviders] = useState(props?.serviceProviders.providers);
+    const [serviceProvidersReport, setServiceProvidersReport] = useState(props?.serviceProviders.report);
+    const [buildingInspectorate, setBuildingInspectorate] = useState(props?.inspectorates.inspectorates);
+    const [buildingInspectorateReport, setBuildingInspectorateReport] = useState(props?.inspectorates.reports);
+    const [buildingInspectorateData, setBuildingInspectorateData] = useState(null);
+    const [waterProvidersData, setWaterProvidersData] = useState(null);
+    const [electricityProvidersData, setElectricityProvidersData] = useState(null);
+    const [sanitationProvidersData, setSanitationProvidersData] = useState(null);
     const [memberFinanceData, setMemberFinanceData] = useState(null);
     const [subStructureActivityData, setSubStructureActivityData] = useState(null);
     const [ecaCompositionData, setEcaCompositionData] = useState(null);
@@ -213,6 +236,8 @@ const DPATAssessmentSheet = ({ props }) => {
         setMemberEcaCompositionData();
         setSubCommitteesCompositionData();
         setSubtructureActivities();
+        setServiceProvidersData();
+        setBuildingInspectoratesData();
 
     }, [props]);
 
@@ -342,6 +367,65 @@ const DPATAssessmentSheet = ({ props }) => {
             )
         );
     }
+
+    const setServiceProvidersData = () => {
+
+        const serviceProviderTypes = {
+            "Water Service Provider": [],
+            "Sanitation Service Provider": [],
+            "Electricity Service Provider": [],
+        };
+        
+        const populateServiceProviderData = (type) => {
+            const providers = formatDataGeneral(serviceProviders, "DPAT | Service Provider", type) || [];
+            providers.forEach((service, index) => {
+                serviceProviderTypes[type].push({
+                    key: index + 1,
+                    no: index + 1,
+                    provider: getAttributeValue("Name of Business", service),
+                    contract: getAttributeValue("DPAT | Period of Contract", service),
+                    date: getAttributeValue("Start Date", service),
+                });
+            });
+        };
+    
+        Object.keys(serviceProviderTypes).forEach(populateServiceProviderData);
+        
+        const tempWater = serviceProviderTypes["Water Service Provider"];
+        const tempSanitation = serviceProviderTypes["Sanitation Service Provider"];
+        const tempElectricity = serviceProviderTypes["Electricity Service Provider"];
+
+        setWaterProvidersData(tempWater);
+        setSanitationProvidersData(tempSanitation);
+        setElectricityProvidersData(tempElectricity);
+
+       
+    }
+
+    const setBuildingInspectoratesData = () => {
+            const temp = [];
+
+            formatDataGeneral(buildingInspectorate, "DPAT | Inspectorate Type", "Planning and Building")
+            ?.forEach((building, index) => {
+
+                const buildingInspectorateDateSet = {
+                    key: index + 1,
+                    date: getAttributeValue("Name of Business", building),
+                    supervisor: getAttributeValue("Supervisor", building),
+                    address: getAttributeValue("Address Location", building),
+                    category: getAttributeValue("DPAT | Stakeholders Involved", building),
+                    department: "None"
+                };
+
+                temp.push(buildingInspectorateDateSet);
+            });
+
+            console.log("Building ",temp)
+
+            setBuildingInspectorateData(temp);
+           
+    }
+
 
     function checkGaMeetingFulfillment(gaMeetings) {
         if (gaMeetings.length < 3) {
@@ -722,56 +806,110 @@ const DPATAssessmentSheet = ({ props }) => {
             <Content style={{ padding: "20px" }}>
                 {/* General Assembly Meetings */}
                 <Title level={3}>General Assembly Meetings</Title>
-                {gaMeetingData && <h6 style={{ marginBottom: "20px", color: "grey" }}>
-                    At least three {gaMeetingData.meetings.length} ordinary meetings and minutes were held and duly recorded
-                    and signed by both the PM and MCD. The table below illustrates
-                </h6>}
+                {gaMeetingData && (
+                    <h6 style={{ marginBottom: "20px", color: "grey" }}>
+                        At least three {gaMeetingData.meetings.length} ordinary meetings and minutes were held and duly recorded
+                        and signed by both the PM and MCD. The table below illustrates
+                    </h6>
+                )}
 
+                
                 <Row style={{ marginBottom: "20px" }}>
-                    {gaMeetingData && <h4>
-                        Number of Decisions: {gaMeetingData?.numberOfDecision}
-                    </h4>}
+                    {gaMeetingData && <h4>Number of Decisions: {gaMeetingData?.numberOfDecision}</h4>}
                 </Row>
-
-                <Row>
-                    <h5>
-
-                    </h5>
-
+                <Row style={{ display: "flex", alignItems: "flex-start" }}>
                     {gaMeetingData && (
                         <>
-                            <Table
-                                columns={generalAssemblyColumns}
-                                dataSource={gaMeetingData.meetings}
-                                pagination={false}
-                                bordered
-                            />
+                            <div style={{ width: "90%", paddingRight: "10px" }}>
+                                <Table
+                                    columns={generalAssemblyColumns}
+                                    dataSource={gaMeetingData.meetings}
+                                    pagination={false}
+                                    bordered
+                                    style={{ width: "100%" }}
+                                />
+                            </div>
                             <div
                                 style={{
+                                    width: "10%",
                                     marginTop: "100px",
-                                    marginLeft: "50px",
                                     fontWeight: "bold",
                                     fontSize: "20px",
                                     padding: "10px",
                                     borderRadius: "4px",
                                     color: gaMeetingData.fulfillment === "Not Fulfilled" ? "red" : "green",
+                                    textAlign: "center",
                                 }}
                             >
                                 {gaMeetingData.fulfillment}
                             </div>
                         </>
                     )}
-
                 </Row>
 
+                {/* General Assembly Meetings Decision */}
                 <Title level={3} style={{ marginTop: "30px" }}>General Assembly Meetings Decision</Title>
-                {/* {JSON.stringify(gaMeetingData)} */}
-                {decisionsData &&
-                    <Table columns={generalAssemblyDecisionColumns} dataSource={decisionsData} pagination={false} bordered />}
+                <Row style={{ display: "flex", alignItems: "flex-start" }}>
+                    {decisionsData && (
+                        <>
+                            <div style={{ width: "90%", paddingRight: "10px" }}>
+                                <Table
+                                    columns={generalAssemblyDecisionColumns}
+                                    dataSource={decisionsData}
+                                    pagination={false}
+                                    bordered
+                                    style={{ width: "100%" }}
+                                />
+                            </div>
+                            <div
+                                style={{
+                                    width: "10%",
+                                    marginTop: "100px",
+                                    fontWeight: "bold",
+                                    fontSize: "20px",
+                                    padding: "10px",
+                                    borderRadius: "4px",
+                                    color: gaMeetingData?.fulfillment === "Not Fulfilled" ? "red" : "green",
+                                    textAlign: "center",
+                                }}
+                            >
+                                {gaMeetingData?.fulfillment || "Loading..."}
+                            </div>
+                        </>
+                    )}
+                </Row>
 
                 {/* Approval of Budget */}
                 <Title level={3} style={{ marginTop: "30px" }}>Approval of Annual Action Plan & Budget</Title>
-                {meetingDataGroup && <Table columns={budgetColumns} dataSource={meetingDataGroup.data} pagination={false} bordered />}
+                <Row style={{ display: "flex", alignItems: "flex-start" }}>
+                    {meetingDataGroup && (
+                        <>
+                            <div style={{ width: "90%", paddingRight: "10px" }}>
+                                <Table
+                                    columns={budgetColumns}
+                                    dataSource={meetingDataGroup.data}
+                                    pagination={false}
+                                    bordered
+                                    style={{ width: "100%" }}
+                                /> 
+                            </div>
+                            <div
+                                style={{
+                                    width: "10%",
+                                    marginTop: "100px",
+                                    fontWeight: "bold",
+                                    fontSize: "20px",
+                                    padding: "10px",
+                                    borderRadius: "4px",
+                                    color: meetingDataGroup.fulfillment === "Not Fulfilled" ? "red" : "green",
+                                    textAlign: "center",
+                                }}
+                            >
+                                {meetingDataGroup.fulfillment}
+                            </div>
+                        </>
+                    )}
+                </Row>
 
                 {/* Sub-Structures Meetings */}
                 <Title level={3} style={{ marginTop: "30px" }}>Meetings of the Sub-Structures</Title>
@@ -795,7 +933,7 @@ const DPATAssessmentSheet = ({ props }) => {
 
                 {/* Members section */}
                 <Title level={3} style={{ marginTop: "30px" }}>Membership of Statutory Sub-Committees</Title>
-                {memberFinanceData && <Table columns={membersColumns} dataSource={memberFinanceData} pagination={false} bordered />}
+                {memberFinanceData && <Table columns={membersColumns} dataSource={memberFinanceData} pagination={true} bordered />}
 
                 {/* Evidence of Sub Committee Composition --Henry sum them and count by sub commity name*/}
                 {/* Also desagrate the members and display list of members by sub-committee
@@ -843,6 +981,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     dataSource={cededRevenueUtilisationData}
                     pagination={false} bordered />}
 
+
                 
                   {/* 1.3 Assembly Support to Substructures Selected Activities that Benefit the Community 
                   Henry to at it and format it the way it is displayed on the sheet and give the score
@@ -852,6 +991,47 @@ const DPATAssessmentSheet = ({ props }) => {
                     columns={subStructureActivityColumns}
                     dataSource={subStructureActivityData}
                     pagination={false} bordered />}
+
+                
+                {/* Water Service Provider List 
+                  Henry to consume the data from the report and get second table(Data is already pulled here)
+                  */}
+                  <Title level={3} style={{ marginTop: "30px" }}>Water Service Provider List</Title>
+                {waterProvidersData && <Table
+                    columns={serviceProvidersColumn}
+                    dataSource={waterProvidersData}
+                    pagination={true} bordered />}
+
+                {/* Electricity Service Provider List  
+                   Henry to consume the data from the report and get second table(Data is already pulled here)
+                  */}
+                  <Title level={3} style={{ marginTop: "30px" }}>Electricity Service Provider List</Title>
+                {electricityProvidersData && <Table
+                    columns={serviceProvidersColumn}
+                    dataSource={electricityProvidersData}
+                    pagination={true} bordered />}
+
+                {/* Sanitation Service Provider List
+                   Henry to consume the data from the report and get second table(Data is already pulled here)
+                  */}
+                  <Title level={3} style={{ marginTop: "30px" }}>Sanitation Service Provider List</Title>
+                {sanitationProvidersData && <Table
+                    columns={serviceProvidersColumn}
+                    dataSource={sanitationProvidersData}
+                    pagination={true} bordered />}
+
+                
+                  {/* Evidence of establishment of Planning & Building Inspectorate Unit
+                   Henry to consume the data from the report and get second table(Data is already pulled here)
+                  */}
+                  {/* {JSON.stringify(buildingInspectorate)} */}
+                  <Title level={3} style={{ marginTop: "30px" }}>Evidence of establishment of Planning & Building Inspectorate Unit</Title>
+                {buildingInspectorateData && <Table
+                    columns={buildingInspectorateColumn}
+                    dataSource={buildingInspectorateData}
+                    pagination={true} bordered />}
+
+
 
 
                 {/* Print Button */}

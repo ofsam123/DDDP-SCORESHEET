@@ -1,11 +1,11 @@
 import { Link } from "react-router-dom";
-// import useAuth from "../hooks/useAuth";
+ import useAuth from "../hooks/useAuth";
 
 function Navbar(){
-    // const { user, dispatch } = useAuth();
+     const { user, dispatch } = useAuth();
 
     const handleLogout = ()=>{
-        // dispatch({ type: 'LOGOUT'});  
+         dispatch({ type: 'LOGOUT'});  
     }
 
     return(
@@ -140,12 +140,12 @@ function Navbar(){
 											Sign Out
                                            {/* <a> */}
 												<i className="icon-log-out1"></i>
-										    	{/* <input 
+										    	<input 
 													type="button" 
 													className="btn btn-light"  
 													value="Sign Out"
 													onClick={()=>{handleLogout()}}
-													/>  */}
+													/> 
 											{/* </a> */}
                                         </Link>
 										

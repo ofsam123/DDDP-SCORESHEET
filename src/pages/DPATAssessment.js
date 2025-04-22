@@ -32,6 +32,8 @@ function DPATAssessment() {
     const [meetingDecision, setMeetingDecision] = useState([]);
     const [districtDepartments, setDistrictDepartments] = useState([]);
     const [districtMembers, setDistrictMembers] = useState([]);
+    const [serviceProviders, setServiceProviders] = useState([]);
+    const [inspectorates, setInspectorates] = useState([]);
     const [subStructures, setSubStructures] = useState([]);
     const [subStructuresActivity, setSubStructuresActivity] = useState([]);
     const [selectedYear, setSelectedYear] = useState(null);
@@ -160,6 +162,46 @@ function DPATAssessment() {
             .catch(err => console.log(err))
     }
 
+    function getServiceProviderList(startDate, endDate, districtId) {
+        axios
+            .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=nGFVo65uUE4`)
+            .then(result => {
+                if(result.data.instances.length > 0){
+                    // console.log("members: ",result.data.instances)
+
+                    axios
+                    .get(`/tracker/events?program=nGFVo65uUE4&orgUnit=${districtId}&startDate=${startDate}&endDate=${endDate}`)
+                    .then(resp => {
+                        setServiceProviders({providers: result.data.instances, reports: resp.data.instances})
+                    })
+                    .catch(err => console.log(err))
+                }
+
+
+            })
+            .catch(err => console.log(err))
+    }
+
+    function getInspectorateList(startDate, endDate, districtId) {
+        axios
+            .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=p1ccS2ROn0Q`)
+            .then(result => {
+                if(result.data.instances.length > 0){
+                    console.log("inspectorates: ",result.data.instances)
+
+                    axios
+                    .get(`/tracker/events?program=p1ccS2ROn0Q&orgUnit=${districtId}&startDate=${startDate}&endDate=${endDate}`)
+                    .then(resp => {
+                        setInspectorates({inspectorates: result.data.instances, reports: resp.data.instances})
+                    })
+                    .catch(err => console.log(err))
+                }
+
+
+            })
+            .catch(err => console.log(err))
+    }
+
 
 
     return (
@@ -216,6 +258,9 @@ function DPATAssessment() {
                                         getMembersByDistrict(startDate, endDate, val.value);
                                         
                                         getSubStructuresActivity(startDate, endDate, val.value);
+                                        getServiceProviderList(startDate, endDate, val.value);
+
+                                        getInspectorateList(startDate, endDate, val.value);
                                     }}
                                     options={districts}
                                     isSearchable
@@ -234,7 +279,9 @@ function DPATAssessment() {
                                              year: selectedYear?.value,
                                              district: selectedDistrict,
                                              members: districtMembers,
-                                             subActivity: subStructuresActivity
+                                             subActivity: subStructuresActivity,
+                                             serviceProviders: serviceProviders,
+                                             inspectorates : inspectorates
                                              }}
                                         />}
 

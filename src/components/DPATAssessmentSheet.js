@@ -160,6 +160,21 @@ const subStructureActivityColumns = [
     { title: "Amount Utilized", dataIndex: "amount", key: "amount" }
 ];
 
+const serviceProvidersColumn = [
+    { title: "No", dataIndex: "no", key: "no" },
+    { title: "Service Provider", dataIndex: "provider", key: "provider" },
+    { title: "Contract Duration", dataIndex: "contract", key: "contract" },
+    { title: "Start Date", dataIndex: "date", key: "date" }
+];
+
+const buildingInspectorateColumn = [
+    { title: "Date Established", dataIndex: "date", key: "date" },
+    { title: "Supervisor", dataIndex: "supervisor", key: "supervisor" },
+    { title: "address", dataIndex: "address", key: "address" },
+    { title: "Category of staff", dataIndex: "category", key: "category" },
+    { title: "Function performed by Works Department", dataIndex: "department", key: "department" }
+];
+
 // Main Component
 const DPATAssessmentSheet = ({ props }) => {
 
@@ -168,6 +183,14 @@ const DPATAssessmentSheet = ({ props }) => {
     const [meetings, setMeetings] = useState(props?.meetings.meetings);
     const [members, setMembers] = useState(props?.members.members);
     const [subStructureActivity, setSubStructureActivity] = useState(props?.subActivity.activities);
+    const [serviceProviders, setServiceProviders] = useState(props?.serviceProviders.providers);
+    const [serviceProvidersReport, setServiceProvidersReport] = useState(props?.serviceProviders.report);
+    const [buildingInspectorate, setBuildingInspectorate] = useState(props?.inspectorates.inspectorates);
+    const [buildingInspectorateReport, setBuildingInspectorateReport] = useState(props?.inspectorates.reports);
+    const [buildingInspectorateData, setBuildingInspectorateData] = useState(null);
+    const [waterProvidersData, setWaterProvidersData] = useState(null);
+    const [electricityProvidersData, setElectricityProvidersData] = useState(null);
+    const [sanitationProvidersData, setSanitationProvidersData] = useState(null);
     const [memberFinanceData, setMemberFinanceData] = useState(null);
     const [subStructureActivityData, setSubStructureActivityData] = useState(null);
     const [ecaCompositionData, setEcaCompositionData] = useState(null);
@@ -213,6 +236,8 @@ const DPATAssessmentSheet = ({ props }) => {
         setMemberEcaCompositionData();
         setSubCommitteesCompositionData();
         setSubtructureActivities();
+        setServiceProvidersData();
+        setBuildingInspectoratesData();
 
     }, [props]);
 
@@ -340,6 +365,65 @@ const DPATAssessmentSheet = ({ props }) => {
             )
         );
     }
+
+    const setServiceProvidersData = () => {
+
+        const serviceProviderTypes = {
+            "Water Service Provider": [],
+            "Sanitation Service Provider": [],
+            "Electricity Service Provider": [],
+        };
+        
+        const populateServiceProviderData = (type) => {
+            const providers = formatDataGeneral(serviceProviders, "DPAT | Service Provider", type) || [];
+            providers.forEach((service, index) => {
+                serviceProviderTypes[type].push({
+                    key: index + 1,
+                    no: index + 1,
+                    provider: getAttributeValue("Name of Business", service),
+                    contract: getAttributeValue("DPAT | Period of Contract", service),
+                    date: getAttributeValue("Start Date", service),
+                });
+            });
+        };
+    
+        Object.keys(serviceProviderTypes).forEach(populateServiceProviderData);
+        
+        const tempWater = serviceProviderTypes["Water Service Provider"];
+        const tempSanitation = serviceProviderTypes["Sanitation Service Provider"];
+        const tempElectricity = serviceProviderTypes["Electricity Service Provider"];
+
+        setWaterProvidersData(tempWater);
+        setSanitationProvidersData(tempSanitation);
+        setElectricityProvidersData(tempElectricity);
+
+       
+    }
+
+    const setBuildingInspectoratesData = () => {
+            const temp = [];
+
+            formatDataGeneral(buildingInspectorate, "DPAT | Inspectorate Type", "Planning and Building")
+            ?.forEach((building, index) => {
+
+                const buildingInspectorateDateSet = {
+                    key: index + 1,
+                    date: getAttributeValue("Name of Business", building),
+                    supervisor: getAttributeValue("Supervisor", building),
+                    address: getAttributeValue("Address Location", building),
+                    category: getAttributeValue("DPAT | Stakeholders Involved", building),
+                    department: "None"
+                };
+
+                temp.push(buildingInspectorateDateSet);
+            });
+
+            console.log("Building ",temp)
+
+            setBuildingInspectorateData(temp);
+           
+    }
+
 
     function checkGaMeetingFulfillment(gaMeetings) {
         if (gaMeetings.length < 3) {
@@ -836,7 +920,7 @@ const DPATAssessmentSheet = ({ props }) => {
 
                 {/* Members section */}
                 <Title level={3} style={{ marginTop: "30px" }}>Membership of Statutory Sub-Committees</Title>
-                {memberFinanceData && <Table columns={membersColumns} dataSource={memberFinanceData} pagination={false} bordered />}
+                {memberFinanceData && <Table columns={membersColumns} dataSource={memberFinanceData} pagination={true} bordered />}
 
                 {/* Evidence of Sub Committee Composition --Henry sum them and count by sub commity name*/}
                 {/* Also desagrate the members and display list of members by sub-committee
@@ -894,6 +978,47 @@ const DPATAssessmentSheet = ({ props }) => {
                     columns={subStructureActivityColumns}
                     dataSource={subStructureActivityData}
                     pagination={false} bordered />}
+
+                
+                {/* Water Service Provider List 
+                  Henry to consume the data from the report and get second table(Data is already pulled here)
+                  */}
+                  <Title level={3} style={{ marginTop: "30px" }}>Water Service Provider List</Title>
+                {waterProvidersData && <Table
+                    columns={serviceProvidersColumn}
+                    dataSource={waterProvidersData}
+                    pagination={true} bordered />}
+
+                {/* Electricity Service Provider List  
+                   Henry to consume the data from the report and get second table(Data is already pulled here)
+                  */}
+                  <Title level={3} style={{ marginTop: "30px" }}>Electricity Service Provider List</Title>
+                {electricityProvidersData && <Table
+                    columns={serviceProvidersColumn}
+                    dataSource={electricityProvidersData}
+                    pagination={true} bordered />}
+
+                {/* Sanitation Service Provider List
+                   Henry to consume the data from the report and get second table(Data is already pulled here)
+                  */}
+                  <Title level={3} style={{ marginTop: "30px" }}>Sanitation Service Provider List</Title>
+                {sanitationProvidersData && <Table
+                    columns={serviceProvidersColumn}
+                    dataSource={sanitationProvidersData}
+                    pagination={true} bordered />}
+
+                
+                  {/* Evidence of establishment of Planning & Building Inspectorate Unit
+                   Henry to consume the data from the report and get second table(Data is already pulled here)
+                  */}
+                  {/* {JSON.stringify(buildingInspectorate)} */}
+                  <Title level={3} style={{ marginTop: "30px" }}>Evidence of establishment of Planning & Building Inspectorate Unit</Title>
+                {buildingInspectorateData && <Table
+                    columns={buildingInspectorateColumn}
+                    dataSource={buildingInspectorateData}
+                    pagination={true} bordered />}
+
+
 
 
                 {/* Print Button */}

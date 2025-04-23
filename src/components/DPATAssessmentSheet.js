@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Layout, Typography, Table, Button, Row, Space, Col } from "antd";
 import { PrinterOutlined } from "@ant-design/icons";
+import GAMeeting from "./GAMeeting";
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
@@ -212,6 +213,21 @@ const districtHotlineNumberColumn = [
     { title: "Hotline Number publicized on DA notice boards & at sub-structures (Yes/No)", dataIndex: "publication", key: "publication" }
 ];
 
+const dumpingSiteColumn = [
+    { title: "No.", dataIndex: "no", key: "no" },
+    { title: "Name of Site", dataIndex: "name", key: "name" },
+    { title: "Location", dataIndex: "location", key: "location" },
+    { title: "Solid / Liquid waste", dataIndex: "type", key: "type" },
+];
+
+const foodVendorsColumn = [
+    { title: "Register of Food and Beverage Vendors available(Yes/No)", dataIndex: "registration", key: "registration" },
+    { title: "No. of Food and Beverage Vendors registered", dataIndex: "numberBVRegistered", key: "numberBVRegistered" },
+    { title: "No. of Food and beverage vendors screened", dataIndex: "numberBVScreened", key: "numberBVScreened" },
+    { title: "No. of screened vendors issued with certificates", dataIndex: "numberSVIssued", key: "numberSVIssued" },
+    { title: "Availability of Monitoring Reports (Yes/No)", dataIndex: "availability", key: "availability" }
+];
+
 // Main Component
 const DPATAssessmentSheet = ({ props }) => {
 
@@ -232,7 +248,9 @@ const DPATAssessmentSheet = ({ props }) => {
     const [districtGeneralData, setDistrictGeneralData] = useState(null);
     const [pwd, setPwd] = useState(props?.pwd.data);
     const [dumpingSite, setDumpingSite] = useState(props?.dumpingSite.data);
-    const [dumpingSiteData, setDumpingSiteData] = useState(null);
+    const [dumpingSiteData, setDumpingSiteData] = useState([]);
+    const [foodVendors, setFoodVendors] = useState(props?.foodVendors.data);
+    const [foodVendorsData, setFoodVendorsData] = useState([]);
     const [pwdData, setPwdData] = useState(null);
     const [streetNamingData, setStreetNamingData] = useState([]);
     const [streetNamingCountingData, setStreetNamingCountingData] = useState([]);
@@ -296,6 +314,7 @@ const DPATAssessmentSheet = ({ props }) => {
         setDistrictGeneralDataDisplay();
         setPwdDataDisplay();
         setDumpingSiteDataDisplay();
+        setFoodVendorsDiplay();
 
     }, [props]);
 
@@ -395,8 +414,6 @@ const DPATAssessmentSheet = ({ props }) => {
             tempDecisionList.push({ gam: gam, service: decisionList })
 
         });
-
-        console.log('GA Decisions: ', JSON.stringify(tempDecisions, null, 2));
 
 
         setGaMeetingData({ meetings: temp, fulfillment: checkGaMeetingFulfillment(temp), numberOfDecision: decisionNo });
@@ -533,6 +550,22 @@ const DPATAssessmentSheet = ({ props }) => {
     const setPwdDataDisplay = () => {
         const temp = [];
         console.log("street: ", props.pwd);
+        /* 
+        Sow to do the counting based on the requirement from the score sheet table
+        Name from Sheet:4.3 Availability of Dedicated Hotline for the Vulnerable
+        The variables to use:
+         pwd / props.pwd
+
+         state for the result:
+            pwdData
+            
+        */
+
+    }
+
+    const setFoodVendorsDiplay = () => {
+        const temp = [];
+        console.log("food vendors: ", props.foodVendors);
         /* 
         Sow to do the counting based on the requirement from the score sheet table
         Name from Sheet:4.3 Availability of Dedicated Hotline for the Vulnerable
@@ -935,85 +968,35 @@ const DPATAssessmentSheet = ({ props }) => {
             {/* Header */}
             <Header style={{ background: "#1890ff", color: "#fff", textAlign: "center", padding: "10px" }}>
                 <Title level={2} style={{ color: "#fff", margin: 0 }}>
-                    DISTRICT ASSEMBLY PERFORMANCE ASSESSMENT REPORT {year && <span>{year}</span>}
+                    DISTRICT ASSEMBLY PERFORMANCE ASSESSMENT REPORT {year && <span style={{ color: "#fff", fontSize: "30px" }}>{year}</span>}
                 </Title>
             </Header>
 
             <Content style={{ padding: "20px" }}>
-                {/* General Assembly Meetings */}
-                <Title level={3}>General Assembly Meetings</Title>
-                {gaMeetingData && (
-                    <h6 style={{ marginBottom: "20px", color: "grey" }}>
-                        At least three {gaMeetingData.meetings.length} ordinary meetings and minutes were held and duly recorded
-                        and signed by both the PM and MCD. The table below illustrates
-                    </h6>
-                )}
-
-
-                <Row style={{ marginBottom: "20px" }}>
-                    {gaMeetingData && <h4>Number of Decisions: {gaMeetingData?.numberOfDecision}</h4>}
+                <Row className="py-2">
+                    <Col span={8} className="gutter-row">
+                        <Text strong>Name of MMDA: </Text> <Text className="ms-3">{district?.label}</Text>
+                    </Col>
+                    <Col span={8} className="gutter-row">
+                        <Text strong>Zone: </Text> <Text>Six (6)</Text>
+                    </Col>
+                    <Col span={8} className="gutter-row">
+                        <Text strong>Date of Assessment: </Text> <Text>5th & 8th August, {year}</Text>
+                    </Col>
                 </Row>
-                <Row style={{ display: "flex", alignItems: "flex-start" }}>
-                    {gaMeetingData && (
-                        <>
-                            <div style={{ width: "90%", paddingRight: "10px" }}>
-                                <Table
-                                    columns={generalAssemblyColumns}
-                                    dataSource={gaMeetingData.meetings}
-                                    pagination={true}
-                                    bordered
-                                    style={{ width: "100%" }}
-                                />
-                            </div>
-                            <div
-                                style={{
-                                    width: "10%",
-                                    marginTop: "100px",
-                                    fontWeight: "bold",
-                                    fontSize: "20px",
-                                    padding: "10px",
-                                    borderRadius: "4px",
-                                    color: gaMeetingData.fulfillment === "Not Fulfilled" ? "red" : "green",
-                                    textAlign: "center",
-                                }}
-                            >
-                                {gaMeetingData.fulfillment}
-                            </div>
-                        </>
-                    )}
-                </Row>
-
-                {/* General Assembly Meetings Decision */}
-                <Title level={3} style={{ marginTop: "30px" }}>General Assembly Meetings Decision</Title>
-                <Row style={{ display: "flex", alignItems: "flex-start" }}>
-                    {decisionsData && (
-                        <>
-                            <div style={{ width: "90%", paddingRight: "10px" }}>
-                                <Table
-                                    columns={generalAssemblyDecisionColumns}
-                                    dataSource={decisionsData}
-                                    pagination={true}
-                                    bordered
-                                    style={{ width: "100%" }}
-                                />
-                            </div>
-                            <div
-                                style={{
-                                    width: "10%",
-                                    marginTop: "100px",
-                                    fontWeight: "bold",
-                                    fontSize: "20px",
-                                    padding: "10px",
-                                    borderRadius: "4px",
-                                    color: gaMeetingData?.fulfillment === "Not Fulfilled" ? "red" : "green",
-                                    textAlign: "center",
-                                }}
-                            >
-                                {gaMeetingData?.fulfillment || "Loading..."}
-                            </div>
-                        </>
-                    )}
-                </Row>
+                <h3 style={{ textAlign: "center", padding: "10px" }}>
+                    Annex 1: SECTION A - COMPLIANCE INDICATORS
+                </h3>
+                {/* General Assembly Meetings and Decision Start */}
+                {gaMeetingData && <GAMeeting 
+                    data={gaMeetingData} 
+                    year={year} 
+                    columns={generalAssemblyColumns}
+                    decisions={decisionsData}
+                    decisionColumns={generalAssemblyDecisionColumns}
+                    />}
+                 {/* General Assembly Meetings and Decision End */}
+                 <hr/>
 
                 {/* Approval of Budget */}
                 <Title level={3} style={{ marginTop: "30px" }}>Approval of Annual Action Plan & Budget</Title>
@@ -1090,22 +1073,12 @@ const DPATAssessmentSheet = ({ props }) => {
                 {etcMeetingData && <Table columns={ETCMeetingColumns} dataSource={etcMeetingData} pagination={true} bordered />}
 
                 <hr />
-                <h5>
+                <h3 style={{ textAlign: "center", padding: "10px" }}>
                     Annex 2: SECTION B – SERVICE DELIVERY INDICATORS
-                </h5>
+                </h3>
 
                 {/* Henry and Samu to give the score and of bellow tables */}
-                <Row>
-                    <Col span={8} className="gutter-row">
-                        <Text strong>Name of MMDA: </Text> <Text className="ms-3">{district?.label}</Text>
-                    </Col>
-                    <Col span={8} className="gutter-row">
-                        <Text strong>Zone: </Text> <Text>Six (6)</Text>
-                    </Col>
-                    <Col span={8} className="gutter-row">
-                        <Text strong>Date of Assessment: </Text> <Text>5th & 8th August, {year}</Text>
-                    </Col>
-                </Row>
+
 
                 <div>
                     <Text strong>THEMATIC AREA: </Text> <Text>
@@ -1186,7 +1159,7 @@ const DPATAssessmentSheet = ({ props }) => {
                 <Title level={4} style={{ marginTop: "30px" }}>Assessment Guide/ Requirement</Title>
                 <Content>
                     <div className="mb-3">From the DCD, receive reports on the activities of all established sub-structures of
-                    the Assembly and Assembly’s DACF allocation to Sub-structures:</div>
+                        the Assembly and Assembly’s DACF allocation to Sub-structures:</div>
                     <ol>
                         <li>If all the sub-structures utilized at least 30% of their ceded Revenue to support
                             activities that benefit the Community, score 1, else score 0 </li>
@@ -1295,13 +1268,27 @@ const DPATAssessmentSheet = ({ props }) => {
                     dataSource={districtGeneralData}
                     pagination={true} bordered />}
 
+
+
                 {/* Evidence of Nutrition-Oriented Activities in the Assembly
                     Sow to use AAP data to fill this
                 */}
 
-                 {/* 5.1 Availability of Sanitation Service Providers
+                {/* 5.1 Availability of Sanitation Service Providers
                     Sow to use service provider data and diplay table and then score
                 */}
+
+                <Title level={3} style={{ marginTop: "30px" }}>List of dumping /final disposal site</Title>
+                {dumpingSiteData && <Table
+                    columns={dumpingSiteColumn}
+                    dataSource={dumpingSiteData}
+                    pagination={true} bordered />}
+
+                <Title level={3} style={{ marginTop: "30px" }}>Evidance of Beverage Vendors</Title>
+                {foodVendorsData && <Table
+                    columns={foodVendorsColumn}
+                    dataSource={foodVendorsData}
+                    pagination={true} bordered />}
 
 
                 {/* Print Button */}

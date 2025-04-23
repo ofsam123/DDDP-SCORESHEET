@@ -270,7 +270,7 @@ function DPATAssessment() {
 
                         </div>
 
-                        {gaMeeting && <DPATAssessmentSheet 
+                        {gaMeeting && <DPATAssessmentSheet key={selectedDistrict}
                                         props={{
                                              meetings: gaMeeting, 
                                              decisions: meetingDecision, 

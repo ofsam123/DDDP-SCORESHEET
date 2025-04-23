@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Layout, Typography, Table, Button, Row } from "antd";
+import { Layout, Typography, Table, Button, Row, Space, Col } from "antd";
 import { PrinterOutlined } from "@ant-design/icons";
 
 const { Header, Content } = Layout;
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 // Table Data & Columns
 const generalAssemblyColumns = [
@@ -267,10 +267,14 @@ const DPATAssessmentSheet = ({ props }) => {
     const [cededRevenueUtilisationData, setCededRevenueUtilisationData] = useState(null);
     const [decisionsData, setDecisionsData] = useState(null);
     const [year, setYear] = useState(props?.year);
+    const [district, setDistrict] = useState(props.district);
+    const [gaDecisionScore, setGaDecisionScore] = useState(0);
 
     const handlePrint = () => {
         window.print();
     };
+
+
 
     useEffect(() => {
         setMeetingData();
@@ -392,7 +396,7 @@ const DPATAssessmentSheet = ({ props }) => {
 
         });
 
-        console.log('GA Decisions: ', JSON.stringify(tempDecisions,null,2));
+        console.log('GA Decisions: ', JSON.stringify(tempDecisions, null, 2));
 
 
         setGaMeetingData({ meetings: temp, fulfillment: checkGaMeetingFulfillment(temp), numberOfDecision: decisionNo });
@@ -854,10 +858,10 @@ const DPATAssessmentSheet = ({ props }) => {
         formatDataGeneral(members, "DPAT | MMDA Unit", "Assembly Member")
             ?.forEach((member, index) => {
 
-                if(trialTemp?.[`${getAttributeValue("DPAT |  Statutory Sub Committee", member)}`] ){
-                    trialTemp[`${getAttributeValue("DPAT |  Statutory Sub Committee", member)}`] = 
-                    trialTemp[`${getAttributeValue("DPAT |  Statutory Sub Committee", member)}`] + 1;
-                }else{
+                if (trialTemp?.[`${getAttributeValue("DPAT |  Statutory Sub Committee", member)}`]) {
+                    trialTemp[`${getAttributeValue("DPAT |  Statutory Sub Committee", member)}`] =
+                        trialTemp[`${getAttributeValue("DPAT |  Statutory Sub Committee", member)}`] + 1;
+                } else {
                     trialTemp[`${getAttributeValue("DPAT |  Statutory Sub Committee", member)}`] = 1;
                 }
             });
@@ -1091,13 +1095,84 @@ const DPATAssessmentSheet = ({ props }) => {
                 </h5>
 
                 {/* Henry and Samu to give the score and of bellow tables */}
+                <Row>
+                    <Col span={8} className="gutter-row">
+                        <Text strong>Name of MMDA: </Text> <Text className="ms-3">{district?.label}</Text>
+                    </Col>
+                    <Col span={8} className="gutter-row">
+                        <Text strong>Zone: </Text> <Text>Six (6)</Text>
+                    </Col>
+                    <Col span={8} className="gutter-row">
+                        <Text strong>Date of Assessment: </Text> <Text>5th & 8th August, {year}</Text>
+                    </Col>
+                </Row>
+
+                <div>
+                    <Text strong>THEMATIC AREA: </Text> <Text>
+                        MANAGEMENT & COORDINATION – IMPLEMENTATION OF SERVICE DELIVERY DECISIONS (5)
+                    </Text>
+                </div>
 
                 {/* Entity Tender Committee (ETC) Meeting */}
                 <Title level={3} style={{ marginTop: "30px" }}>SDI 10 - 1.1 General Assembly Decisions</Title>
-                {decisionServiceData && <Table columns={serviceDecisionColumns} dataSource={decisionServiceData} pagination={true} bordered />}
 
-                <Title level={3} style={{ marginTop: "30px" }}>Service Delivery Decisions</Title>
-                {decisionDeliveryData && <Table columns={serviceDeliveryDecisionColumns} dataSource={decisionDeliveryData} pagination={true} bordered />}
+                <Title level={4} style={{ marginTop: "30px" }}>Assessment Guide/ Requirement</Title>
+                <Content>
+                    From the DCD, receive signed Minutes of Meetings of the three mandatory Meetings of the General Assembly:<br /><br />
+                    <ol>
+                        <li>If The General Assembly took at least 50% decisions on improving service delivery in any sector of the District, score 1;</li>
+                    </ol>
+                    Examples of services: Water, Electric power, Health, Education, Transportation, Roads, Sanitation, Recreational services and Security.
+                    <br /><br /><i>(Local Governance Act, 2016 (Act 936) Section 18)3</i>
+                </Content>
+
+                <Title level={4} style={{ marginTop: "30px" }}>Maximum Score</Title>
+                <Content>1</Content>
+
+                {/* <Title level={4} style={{ marginTop: "30px" }}>Minimum Score</Title>
+                    <Content>{gaDecisionScore > 50 ? '1' : '0'}</Content> */}
+
+                <Title level={4} style={{ marginTop: "30px" }}>Findings / Observations & Conclusion</Title>
+
+
+                <Title level={5} style={{ marginTop: "30px" }}>Service Delivery Decisions</Title>
+                <Space><Text strong>Actual Score: </Text> <Text>{gaDecisionScore > 50 ? '1' : '0'}</Text></Space>
+                {decisionServiceData && <Table columns={serviceDecisionColumns} dataSource={decisionServiceData} pagination={false} bordered
+                    summary={pageData => {
+                        let totalDecision = 0, totalDelivered = 0, totalPercent = 0;
+
+                        pageData.forEach(({ total, serviceDecision, percentage }) => {
+                            totalDecision += Number(total);
+                            totalDelivered += Number(serviceDecision);
+                            totalPercent += Number(percentage);
+                        });
+
+                        setGaDecisionScore(totalPercent);
+
+                        return (<>
+                            <Table.Summary.Row style={{ fontWeight: 'bold' }}>
+                                <Table.Summary.Cell>Total Decisions</Table.Summary.Cell>
+                                <Table.Summary.Cell>
+                                    <Text>{totalDecision}</Text>
+                                </Table.Summary.Cell>
+                                <Table.Summary.Cell>
+                                    <Text>{totalDelivered}</Text>
+                                </Table.Summary.Cell>
+                                <Table.Summary.Cell>
+                                    <Text>{totalPercent}</Text>
+                                </Table.Summary.Cell>
+                            </Table.Summary.Row>
+                        </>)
+                    }}
+                />}
+
+                <Title level={5} style={{ marginTop: "30px" }}>Service Delivery Decisions</Title>
+                {decisionDeliveryData && <Table columns={serviceDeliveryDecisionColumns} dataSource={decisionDeliveryData} pagination={false} bordered />}
+
+                <Title level={5} style={{ marginTop: "30px" }}>Conclusion</Title>
+                <Content>
+                    The decisions that were on improving service delivery was {`${gaDecisionScore}%`} of the total no. of decisions made at GA Meetings in {year}.
+                </Content>
 
                 <Title level={3} style={{ marginTop: "30px" }}>Evidence of management actions on service delivery decisions</Title>
                 {managementActionServiceDeliveryData && <Table
@@ -1107,7 +1182,33 @@ const DPATAssessmentSheet = ({ props }) => {
 
                 {/* 1.3 Assembly Support to Substructures Evidence of utilization of ceded revenue
                  */}
-                <Title level={3} style={{ marginTop: "30px" }}>1.3 Assembly Support to Substructures Evidence of utilization of ceded revenue</Title>
+                <Title level={3} style={{ marginTop: "30px" }}>1.3 Assembly Support to Sub-structures</Title>
+                <Title level={4} style={{ marginTop: "30px" }}>Assessment Guide/ Requirement</Title>
+                <Content>
+                    <div className="mb-3">From the DCD, receive reports on the activities of all established sub-structures of
+                    the Assembly and Assembly’s DACF allocation to Sub-structures:</div>
+                    <ol>
+                        <li>If all the sub-structures utilized at least 30% of their ceded Revenue to support
+                            activities that benefit the Community, score 1, else score 0 </li>
+                        <li>If the Assembly has spent at least 90% of the up-to 2% DACF release to its
+                            Sub-Structures, to support the substructures, score 1, else score 0.</li>
+                    </ol>
+                    <div style={{ fontStyle: 'italic' }}>
+                        (Local Government (Urban, Zonal and Town Councils and Unit Committees)
+                        Establishment Instrument of 2010, LI 1961) Guidelines for the Disbursement
+                        and Management of the District Assembly Common Fund Allocation
+                    </div>
+                </Content>
+
+                <Title level={4} style={{ marginTop: "30px" }}>Maximum Score</Title>
+                <Content>2</Content>
+
+                <Title level={4} style={{ marginTop: "30px" }}>Findings / Observations & Conclusion</Title>
+                <Content>
+                    We received and reviewed information on the activities of established sub-structures and noted the following:
+                </Content>
+
+                <Title level={5} style={{ marginTop: "30px" }}>Evidence of utilization of ceded revenue</Title>
                 {cededRevenueUtilisationData && <Table
                     columns={cededAmountUtilizationColumns}
                     dataSource={cededRevenueUtilisationData}
@@ -1115,15 +1216,17 @@ const DPATAssessmentSheet = ({ props }) => {
 
 
 
+
+
                 {/* 1.3 Assembly Support to Substructures Selected Activities that Benefit the Community 
                   Henry to at it and format it the way it is displayed on the sheet and give the score
                   */}
-                <Title level={3} style={{ marginTop: "30px" }}>Selected Activities that Benefit the Community</Title>
+                <Title level={5} style={{ marginTop: "30px" }}>Selected Activities that Benefit the Community</Title>
+
                 {subStructureActivityData && <Table
                     columns={subStructureActivityColumns}
                     dataSource={subStructureActivityData}
                     pagination={true} bordered />}
-
 
                 {/* Water Service Provider List 
                   Henry to consume the data from the report and get second table(Data is already pulled here)

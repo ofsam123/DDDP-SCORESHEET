@@ -1,246 +1,311 @@
 import Chart from "react-apexcharts";
 import Navbar from "../layout/Navbar";
-// import CardBox from "../components/CardBox";
-// import GenderReport from "../components/GenderReport";
-// import AgeCategoryReport from "../components/AgeCategoryReport";
 import { useEffect, useState } from "react";
 import axios from "../api/axios";
-// import useAuth from "../hooks/useAuth";
-// import Helper from "../utils/utils";
 import SideBarWrapper from "../components/SideBarWrapper";
 import CardBox from "../components/CardBox";
 import RegionalReport from "../components/RegionalReport";
+import MeetingRegionalReport from "../components/MeetingsReport";
 import GeneralChart from "../components/GeneralChart";
 import Select from "react-select";
-// import Loading from "../components/Loading";
-
-
-const males = {
-	name: 'Completed',
-	data: [44, 55, 41, 67, 22, 43, 21, 33, 49, 15, 26],
-	color: 'rgb(34,93,228)'
+import { EditOutlined, DeleteOutlined, ExclamationCircleOutlined, SearchOutlined, EyeOutlined, EllipsisOutlined } from '@ant-design/icons';
+const plans = {
+  name: "Plans",
+  color: "rgb(29, 82, 136)",
 };
 
-const females = {
-	name: 'Pending',
-	data: [13, 23, 20, 8, 13, 27, 36, 22, 54, 28, 31],
-	color: 'rgb(136,136,136)'
+const completed = {
+  name: "Completed",
+  color: "rgb(255,165,0)",
+};
+
+const meetingsData = {
+  name: "Meetings",
+  color: "rgb(3, 61, 24)", // Blue
+};
+
+const generalmeetingsData = {
+  name: "General Meetings",
+  color: "rgb(29, 82, 136)", // Orange
 };
 
 const projects = {
-	name: 'Projects',
-	data: [44, 55, 41, 67, 22, 43, 21, 33, 49, 15, 26],
-	color: 'rgb(34,93,228)'
+  name: "Projects",
+  data: [44, 55, 41, 67, 22, 43, 21, 33, 49, 15, 26],
+  color: "rgb(34,93,228)",
 };
 
 const program = {
-	name: 'Program',
-	data: [13, 23, 20, 8, 13, 27, 36, 22, 54, 28, 31],
-	color: 'rgb(136,136,136)'
+  name: "Program",
+  data: [13, 23, 20, 8, 13, 27, 36, 22, 54, 28, 31],
+  color: "rgb(136,136,136)",
 };
 
-var gender = [];
-
-var maleData = [];
-var femaleData = [];
-
-var ageCategories = [];
-
-var disabilityTypes = [];
-
-var recommandations = [];
-
-var educationLevel = [];
-
-var reportType = [];
-var heardFrom = [];
-var heardFromLables = ['District Assembly/Assembly Member', 'Social Welfare/C'];
-
-
 function Home() {
-	const [instances, setInstances] = useState('');
-	const [report, setReport] = useState('');
-	const [districts, setDistricts] = useState(null);
-	const [selectedDistrict, setSelectedDistrict] = useState(null);
-	const [isLoading, setIsLoading] = useState(true);
+  const [instances, setInstances] = useState("");
+  const [report, setReport] = useState("");
+  const [districts, setDistricts] = useState(null);
+  const [selectedDistrict, setSelectedDistrict] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [aapTotal, setAapTotal] = useState(0);
+  const [projectsTotal, setProjectsTotal] = useState(0);
+  const [programsTotal, setProgramsTotal] = useState(0);
+  const [meetingsTotal, setMeetingsTotal] = useState(0);
+  const [departmentsTotal, setDepartmentsTotal] = useState(0);
 
+  useEffect(() => {
+    getData("/organisationUnits?level=3&paging=false");
+    fetchTotals();
+  }, []);
 
-	useEffect(() => {
-		getData('/organisationUnits?level=3&paging=false');
+  async function fetchTotals(orgUnit = "rHkDRHKXIdP") {
+    setIsLoading(true);
+    try {
+      const aapResp = await axios.get(
+        `/analytics.json?dimension=dx:L2oTOp0EA1A&orgUnit=${orgUnit}&filter=pe:2024-01-01;2024-12-31`
+      );
+      console.log("AAP Analytics Response:", aapResp.data);
+      const aapRows = aapResp.data.rows || [];
+      const aapCount = aapRows.length > 0 ? parseFloat(aapRows[0][1]) || 0 : 0;
+      setAapTotal(aapCount);
 
-	}, []);
+      const projectsResp = await axios.get(
+        `/analytics.json?dimension=dx:cHp5d6g8Z1K&orgUnit=${orgUnit}&filter=pe:2024-01-01;2024-12-31`
+      );
+      console.log("Projects Analytics Response:", projectsResp.data);
+      const projectsRows = projectsResp.data.rows || [];
+      const projectsCount = projectsRows.length > 0 ? parseFloat(projectsRows[0][1]) || 0 : 0;
+      setProjectsTotal(projectsCount);
 
+      const programsResp = await axios.get(
+        `/analytics.json?dimension=dx:WR0IO6mvdmw&orgUnit=${orgUnit}&filter=pe:2024-01-01;2024-12-31`
+      );
+      console.log("Programs Analytics Response:", programsResp.data);
+      const programsRows = programsResp.data.rows || [];
+      const programsCount = programsRows.length > 0 ? parseFloat(programsRows[0][1]) || 0 : 0;
+      setProgramsTotal(programsCount);
 
+      const meetingsResp = await axios.get(
+        `/analytics.json?dimension=dx:aeKyGvo5OIp&orgUnit=${orgUnit}&filter=pe:2024-01-01;2024-12-31`
+      );
+      console.log("Meetings Analytics Response:", meetingsResp.data);
+      const meetingsRows = meetingsResp.data.rows || [];
+      const meetingsCount = meetingsRows.length > 0 ? parseFloat(meetingsRows[0][1]) || 0 : 0;
+      setMeetingsTotal(meetingsCount);
 
-	function getData(url) {
-		 // Check if districts exist in localStorage
-		 const storedDistricts = localStorage.getItem("districts");
+      const departmentsResp = await axios.get(
+        `/analytics.json?dimension=dx:wGeWq6JhDQA&orgUnit=${orgUnit}&filter=pe:2024-01-01;2024-12-31`
+      );
+      console.log("Departments Analytics Response:", departmentsResp.data);
+      const departmentsRows = departmentsResp.data.rows || [];
+      const departmentsCount = departmentsRows.length > 0 ? parseFloat(departmentsRows[0][1]) || 0 : 0;
+      setDepartmentsTotal(departmentsCount);
 
-		 if (storedDistricts) {
-			 console.log("Loading districts from localStorage...");
-			 setDistricts(JSON.parse(storedDistricts));
-			 return; // Exit the function to prevent unnecessary API calls
-		 }
+      setIsLoading(false);
+    } catch (err) {
+      console.error("Error fetching totals:", err);
+      setIsLoading(false);
+    }
+  }
 
+  function getData(url) {
+    const storedDistricts = localStorage.getItem("districts");
+    if (storedDistricts) {
+      console.log("Loading districts from localStorage...");
+      setDistricts(JSON.parse(storedDistricts));
+      return;
+    }
 
-		axios
-			.get(url)
-			.then(result => {
-				console.log(result.data);
-				let temp = [];
-				result.data.organisationUnits.forEach(district => {
-					const currentDistrict = { value: district.id, label: district.displayName };
-					temp.push(currentDistrict);
-				});
+    axios
+      .get(url)
+      .then((result) => {
+        console.log(result.data);
+        let temp = [];
+        result.data.organisationUnits.forEach((district) => {
+          const currentDistrict = { value: district.id, label: district.displayName };
+          temp.push(currentDistrict);
+        });
 
-				localStorage.setItem("districts", JSON.stringify(temp));
+        localStorage.setItem("districts", JSON.stringify(temp));
+        setDistricts(temp);
+      })
+      .catch((err) => console.log(err));
+  }
 
-				setDistricts(temp);
+  async function pullTrackerInstance(url, districtId) {
+    try {
+      const aapResult = await axios.get(
+        `/analytics.json?dimension=dx:L2oTOp0EA1A&orgUnit=${districtId}&filter=pe:2024-01-01;2024-12-31`
+      );
+      console.log("District AAP Response:", aapResult.data);
+      const aapRows = aapResult.data.rows || [];
+      const aapCount = aapRows.length > 0 ? parseFloat(aapRows[0][1]) || 0 : 0;
+      setAapTotal(aapCount);
 
-			})
-			.catch(err => console.log(err))
-	}
+      const projectsResult = await axios.get(
+        `/analytics.json?dimension=dx:cHp5d6g8Z1K&orgUnit=${districtId}&filter=pe:2024-01-01;2024-12-31`
+      );
+      console.log("District Projects Response:", projectsResult.data);
+      const projectsRows = projectsResult.data.rows || [];
+      const projectsCount = projectsRows.length > 0 ? parseFloat(projectsRows[0][1]) || 0 : 0;
+      setProjectsTotal(projectsCount);
 
-	function pullTrackerInstance(url, districtId) {
-		axios
-			.get(url)
-			.then(result => {
-				axios
-					.get(`/tracker/events?program=Ch38jUWJpUR&orgUnit=${districtId}`)
-					.then(resp => {
+      const programsResult = await axios.get(
+        `/analytics.json?dimension=dx:WR0IO6mvdmw&orgUnit=${districtId}&filter=pe:2024-01-01;2024-12-31`
+      );
+      console.log("District Programs Response:", programsResult.data);
+      const programsRows = programsResult.data.rows || [];
+      const programsCount = programsRows.length > 0 ? parseFloat(programsRows[0][1]) || 0 : 0;
+      setProgramsTotal(programsCount);
 
-						formatData(result.data.instances, resp.data.instances)
-					})
-					.catch(err => console.log(err))
-			})
-			.catch(err => console.log(err))
-	}
+      const meetingsResult = await axios.get(
+        `/analytics.json?dimension=dx:aeKyGvo5OIp&orgUnit=${districtId}&filter=pe:2024-01-01;2024-12-31`
+      );
+      console.log("District Meetings Response:", meetingsResult.data);
+      const meetingsRows = meetingsResult.data.rows || [];
+      const meetingsCount = meetingsRows.length > 0 ? parseFloat(meetingsRows[0][1]) || 0 : 0;
+      setMeetingsTotal(meetingsCount);
 
-	function formatData(meetings, reports) {
-		const generalAssemblyMeetings = meetings.filter(item => 
-			item.attributes.some(attr => 
-			  attr.displayName === "DPAT | Meeting Type" && attr.value === "GA"
-			)
-		  );
+      const departmentsResult = await axios.get(
+        `/analytics.json?dimension=dx:wGeWq6JhDQA&orgUnit=${districtId}&filter=pe:2024-01-01;2024-12-31`
+      );
+      console.log("District Departments Response:", departmentsResult.data);
+      const departmentsRows = departmentsResult.data.rows || [];
+      const departmentsCount = departmentsRows.length > 0 ? parseFloat(departmentsRows[0][1]) || 0 : 0;
+      setDepartmentsTotal(departmentsCount);
 
-	}
+      const result = await axios.get(url);
+      const resp = await axios.get(`/tracker/events?program=Ch38jUWJpUR&orgUnit=${districtId}`);
+      formatData(result.data.instances, resp.data.instances);
+    } catch (err) {
+      console.error("Error in pullTrackerInstance:", err);
+    }
+  }
 
+  function formatData(meetings, reports) {
+    const generalAssemblyMeetings = meetings.filter((item) =>
+      item.attributes.some(
+        (attr) => attr.displayName === "DPAT | Meeting Type" && attr.value === "GA"
+      )
+    );
+    setInstances(generalAssemblyMeetings);
+  }
 
-	return (
-		<>
-
-			{/* Page wrapper start */}
-			<div className="page-wrapper">
-
-				{/* Sidebar wrapper start */}
-				<SideBarWrapper />
-				{/* Sidebar wrapper end */}
-
-				{/* Page content start  */}
-				<div className="page-content">
-					{/* Header start */}
-					<Navbar />
-					{/* Header end */}
-					{/* Page header start */}
-					<div className="page-header">
-						<ol className="breadcrumb">
-							<li className="breadcrumb-item">Home</li>
-							<li className="breadcrumb-item active">Admin Dashboard</li>
-						</ol>
-
-					</div>
-					{/* Page header end */}
-					{/* Main container start */}
-					<div className="main-container">
-						<div className="row gutters mb-3">
-							{districts && <div className="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12">
-								<Select
-									onChange={(val) => {
-										const startDate = "2024-01-01";
-										const endDate = "2024-12-31"; 
-										pullTrackerInstance(
-											`/tracker/trackedEntities?orgUnit=${val.value}&program=Ch38jUWJpUR&startDate=${startDate}&endDate=${endDate}`, val.value
-										);
-									}}
-									options={districts}
-									isSearchable
-									placeholder='Select District'
-								/>
-							</div>}
-							<div className="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
-
-							</div>
-						</div>
-						{/* Row end */}
-						{/* Row start */}
-						<div className="row gutters">
-							<div className="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
-								<CardBox name="AAP Total" counter='256' icon="icon-insert_comment" />
-							</div>
-							<div className="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
-								<CardBox name="Projects" counter='200' icon="icon-phone-incoming" />
-							</div>
-							<div className="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
-								<CardBox name="Programs" counter='150' icon="icon-tablet" />
-							</div>
-							<div className="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
-								<CardBox name="Meetings" counter='500' icon="icon-accessibility" />
-							</div>
-							<div className="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
-								<CardBox name="Departments" counter='25' icon="icon-wc" />
-							</div>
-						</div>
-						{/* Row end */}
-						{/* Row start */}
-						<div className="row gutters">
-							<div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-								<RegionalReport title="Annual Action Plan Yearly Report" males={males} females={females} />
-							</div>
-						</div>
-						{/* Row end */}
-						{/* Row start */}
-						<div className="row gutters">
-							<div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-								<RegionalReport title="Project & Program Yearly Report" males={projects} females={program} />
-							</div>
-						</div>
-						{/* Row end */}
-						{/* Row start */}
-						<div className="row gutters">
-							<div className="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12">
-								<GeneralChart
-									title="AAP Proportion of the DMTDP Implemented"
-									data={[23, 30, 20, 27]}
-									labels={['Completed', 'Ongoing', 'Abandoned', 'Yet to Start']}
-									type="pie"
-									width={450}
-									height={450}
-								/>
-
-							</div>
-							<div className="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12">
-								<GeneralChart
-									title="Proportion of health facilities that are functional"
-									data={[23, 30, 20, 27, 25]}
-									labels={['CHPS Compound', 'Clinic', 'Health Center', 'Polyclinic', 'Hospital']}
-									type="donut"
-									width={450}
-									height={450}
-								/>
-
-							</div>
-
-						</div>
-						{/* Row end */}
-					</div>
-					{/* Main container end */}
-				</div>
-				{/* Page content end */}
-
-			</div>
-			{/* Page wrapper end */}
-
-		</>
-	);
+  return (
+    <>
+      <div className="page-wrapper">
+        <SideBarWrapper />
+        <div className="page-content">
+          <Navbar />
+          <div className="page-header">
+            <ol className="breadcrumb">
+              <li className="breadcrumb-item">Home</li>
+              <li className="breadcrumb-item active">Admin Dashboard</li>
+            </ol>
+          </div>
+          <div className="main-container">
+            <div className="row gutters mb-3">
+              {districts && (
+                <div className="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12">
+                  <Select
+                    onChange={(val) => {
+                      setSelectedDistrict(val);
+                      pullTrackerInstance(
+                        `/tracker/trackedEntities?orgUnit=${val.value}&program=Ch38jUWJpUR&startDate=2024-01-01&endDate=2024-12-31&paging=false`,
+                        val.value
+                      );
+                    }}
+                    options={districts}
+                    isSearchable
+                    placeholder="Select District"
+                  />
+                </div>
+              )}
+              <div className="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12"></div>
+            </div>
+            <div className="row gutters">
+              <div className="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
+                <CardBox
+                  name="AAP Total"
+                  counter={isLoading ? "Loading..." : aapTotal}
+                  icon="icon-insert_comment"
+                />
+              </div>
+              <div className="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
+                <CardBox
+                  name="Projects"
+                  counter={isLoading ? "Loading..." : projectsTotal}
+                  icon="icon-phone-incoming"
+                />
+              </div>
+              <div className="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
+                <CardBox
+                  name="Programs"
+                  counter={isLoading ? "Loading..." : programsTotal}
+                  icon="icon-tablet"
+                />
+              </div>
+              <div className="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                <CardBox
+                  name="Meetings"
+                  counter={isLoading ? "Loading..." : meetingsTotal}
+                  icon="icon-accessibility"
+                />
+              </div>
+              <div className="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                <CardBox
+                  name="Departments"
+                  counter={isLoading ? "Loading..." : departmentsTotal}
+                  icon="icon-wc"
+                />
+              </div>
+            </div>
+          
+            <div className="row gutters">
+              <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <MeetingRegionalReport
+                  title="Meetings Yearly Report"
+                  meetingsData={meetingsData}
+                  generalmeetingsData={generalmeetingsData}
+                />
+              </div>
+            </div>
+			<div className="row gutters">
+              <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <RegionalReport
+                  title="Annual Action Plan Yearly Report"
+                  plans={plans}
+                  completed={completed}
+                />
+              </div>
+            </div>
+            <div className="row gutters">
+              <div className="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12">
+                <GeneralChart
+                  title="AAP Proportion of the DMTDP Implemented"
+                  data={[23, 30, 20, 27]}
+                  labels={["Completed", "Ongoing", "Abandoned", "Yet to Start"]}
+                  type="pie"
+                  width={450}
+                  height={450}
+                />
+              </div>
+              <div className="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12">
+                <GeneralChart
+                  title="Proportion of health facilities that are functional"
+                  data={[23, 30, 20, 27, 25]}
+                  labels={["CHPS Compound", "Clinic", "Health Center", "Polyclinic", "Hospital"]}
+                  type="donut"
+                  width={450}
+                  height={450}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
 }
+
 export default Home;

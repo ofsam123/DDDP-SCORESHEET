@@ -175,6 +175,43 @@ const buildingInspectorateColumn = [
     { title: "Function performed by Works Department", dataIndex: "department", key: "department" }
 ];
 
+const permitRequestColumn = [
+    { title: "No. of Building Permit Requests Received (A)", dataIndex: "permitReceived", key: "permitReceived" },
+    { title: "No. of Building Permit Requests Processed & Issued (B)", dataIndex: "permitProcessed", key: "permitProcessed" },
+    { title: "No. of approved permits traced to Local Plans (C)", dataIndex: "permitTraced", key: "permitTraced" }
+];
+
+const streetNamingColumn = [
+    { title: "Street Naming and Property Addressing Data base (NOT Excel) available (Yes/No)", dataIndex: "street", key: "street" },
+    { title: "Street Addressing Map of district displayed at Assembly Premises (Yes/No)", dataIndex: "displayed", key: "displayed" },
+    { title: "Street Addressing Map of district displayed at Substructures (Yes/No)", dataIndex: "map", key: "map" }
+];
+
+const streetNamingInstallationColumn = [
+    { title: "No. of streets available on database (a)", dataIndex: "street", key: "street" },
+    { title: "Number of streets named (b)", dataIndex: "displayed", key: "displayed" },
+    { title: "Number of street signage’s installed (c)", dataIndex: "map", key: "map" }
+];
+
+const socialServiceDisseminationColumn = [
+    { title: "List of Social Services Available (Yes/No)", dataIndex: "street", key: "street" },
+    { title: "List of Social Services published on Notice boards or website (Yes/No)", dataIndex: "displayed", key: "displayed" },
+    { title: "Date and Location of dissemination of social services to citizens", dataIndex: "map", key: "map" }
+];
+
+const socialServicePlansColumn = [
+    { title: "a. Number of activities in AAP", dataIndex: "aap", key: "aap" },
+    { title: "b. Number of Social Protection activities in AAP", dataIndex: "socialProtection", key: "socialProtection" },
+    { title: "c. Number of Social Protection activities in AAP implemented", dataIndex: "implemented", key: "implemented" },
+    { title: "d. Percentage of Social Protection activities implemented (c/b x 100) ", dataIndex: "percentage", key: "percentage" }
+];
+
+const districtHotlineNumberColumn = [
+    { title: "Dedicated hotline exist (Yes/No)", dataIndex: "hotline", key: "hotline" },
+    { title: "Hotline Number", dataIndex: "number", key: "number" },
+    { title: "Hotline Number publicized on DA notice boards & at sub-structures (Yes/No)", dataIndex: "publication", key: "publication" }
+];
+
 // Main Component
 const DPATAssessmentSheet = ({ props }) => {
 
@@ -184,9 +221,21 @@ const DPATAssessmentSheet = ({ props }) => {
     const [members, setMembers] = useState(props?.members.members);
     const [subStructureActivity, setSubStructureActivity] = useState(props?.subActivity.activities);
     const [serviceProviders, setServiceProviders] = useState(props?.serviceProviders.providers);
+    const [permitRequest, setPermitRequest] = useState(props?.permitRequest.permits);
     const [serviceProvidersReport, setServiceProvidersReport] = useState(props?.serviceProviders.report);
     const [buildingInspectorate, setBuildingInspectorate] = useState(props?.inspectorates.inspectorates);
     const [buildingInspectorateReport, setBuildingInspectorateReport] = useState(props?.inspectorates.reports);
+    const [permitRequestData, setPermitRequestData] = useState(null);
+    const [permitRequestReport, setPermitRequestReport] = useState(props?.permitRequest.reports);
+    const [streetNaming, setStreetNaming] = useState(props?.streets.streetNaming);
+    const [districtGeneral, setDistrictGeneral] = useState(props?.districtGeneral.data);
+    const [districtGeneralData, setDistrictGeneralData] = useState(null);
+    const [pwd, setPwd] = useState(props?.pwd.data);
+    const [dumpingSite, setDumpingSite] = useState(props?.dumpingSite.data);
+    const [dumpingSiteData, setDumpingSiteData] = useState(null);
+    const [pwdData, setPwdData] = useState(null);
+    const [streetNamingData, setStreetNamingData] = useState([]);
+    const [streetNamingCountingData, setStreetNamingCountingData] = useState([]);
     const [buildingInspectorateData, setBuildingInspectorateData] = useState(null);
     const [waterProvidersData, setWaterProvidersData] = useState(null);
     const [electricityProvidersData, setElectricityProvidersData] = useState(null);
@@ -242,6 +291,11 @@ const DPATAssessmentSheet = ({ props }) => {
         setSubtructureActivities();
         setServiceProvidersData();
         setBuildingInspectoratesData();
+        setPermitRequestDataDisplay();
+        setStreetNamingDataDisplay();
+        setDistrictGeneralDataDisplay();
+        setPwdDataDisplay();
+        setDumpingSiteDataDisplay();
 
     }, [props]);
 
@@ -427,6 +481,84 @@ const DPATAssessmentSheet = ({ props }) => {
         console.log("Building ", temp)
 
         setBuildingInspectorateData(temp);
+
+    }
+
+    const setPermitRequestDataDisplay = () => {
+        const temp = [];
+        console.log("permits: ", props.permitRequest);
+        /* 
+        Henry to do the counting based on the requirement from the score sheet table
+        Name from Sheet: 3.2 Planning and Development Permit Processing & Issuance
+        The variables to use:
+         permitRequest and permitRequestReport / props.permitRequest
+
+         state for the result:permitRequestData
+        */
+
+    }
+
+    const setStreetNamingDataDisplay = () => {
+        const temp = [];
+        console.log("street: ", props.streets);
+        /* 
+        Henry to do the counting based on the requirement from the score sheet table
+        Name from Sheet: 3.3 Street Naming Database and Property Addressing
+        The variables to use:
+         streetNaming / props.permitRequest
+
+         state for the result:
+            streetNamingData
+            streetNamingCountingData
+        */
+
+    }
+
+    const setDistrictGeneralDataDisplay = () => {
+        const temp = [];
+        console.log("street: ", props.districtGeneral);
+        /* 
+        Sow to do the counting based on the requirement from the score sheet table
+        Name from Sheet:4.3 Availability of Dedicated Hotline for the Vulnerable
+        The variables to use:
+         districtGeneral / props.districtGeneral
+
+         state for the result:
+            districtGeneralData
+            
+        */
+
+    }
+
+    const setPwdDataDisplay = () => {
+        const temp = [];
+        console.log("street: ", props.pwd);
+        /* 
+        Sow to do the counting based on the requirement from the score sheet table
+        Name from Sheet:4.3 Availability of Dedicated Hotline for the Vulnerable
+        The variables to use:
+         pwd / props.pwd
+
+         state for the result:
+            pwdData
+            
+        */
+
+    }
+
+    const setDumpingSiteDataDisplay = () => {
+        const temp = [];
+        console.log("street: ", props.dumpingSite);
+        /* 
+        Sow to do the counting based on the requirement from the score sheet table
+        Name from Sheet:4.3 Availability of Dedicated Hotline for the Vulnerable
+        The variables to use:
+         pwd / props.pwd
+
+         state for the result:
+            pwdData
+            
+        */
 
     }
 
@@ -828,7 +960,7 @@ const DPATAssessmentSheet = ({ props }) => {
                                 <Table
                                     columns={generalAssemblyColumns}
                                     dataSource={gaMeetingData.meetings}
-                                    pagination={false}
+                                    pagination={true}
                                     bordered
                                     style={{ width: "100%" }}
                                 />
@@ -860,7 +992,7 @@ const DPATAssessmentSheet = ({ props }) => {
                                 <Table
                                     columns={generalAssemblyDecisionColumns}
                                     dataSource={decisionsData}
-                                    pagination={false}
+                                    pagination={true}
                                     bordered
                                     style={{ width: "100%" }}
                                 />
@@ -892,7 +1024,7 @@ const DPATAssessmentSheet = ({ props }) => {
                                 <Table
                                     columns={budgetColumns}
                                     dataSource={meetingDataGroup.data}
-                                    pagination={false}
+                                    pagination={true}
                                     bordered
                                     style={{ width: "100%" }}
                                 />
@@ -917,23 +1049,23 @@ const DPATAssessmentSheet = ({ props }) => {
 
                 {/* Sub-Structures Meetings */}
                 <Title level={3} style={{ marginTop: "30px" }}>Meetings of the Sub-Structures</Title>
-                <Table columns={subStructureColumns} dataSource={subStructuresData} pagination={false} bordered />
+                <Table columns={subStructureColumns} dataSource={subStructuresData} pagination={true} bordered />
 
                 {/* II.	Evidence of establishment of sub-structures */}
                 <Title level={3} style={{ marginTop: "30px" }}>Evidence of establishment of sub-structures</Title>
-                {subStructureData && <Table columns={subStructureEstablishmentColumns} dataSource={subStructureData} pagination={false} bordered />}
+                {subStructureData && <Table columns={subStructureEstablishmentColumns} dataSource={subStructureData} pagination={true} bordered />}
 
                 {/* Revenue Sharing */}
                 <Title level={3} style={{ marginTop: "30px" }}>Evidence of Revenue Sharing</Title>
-                {subReportData && <Table columns={revenueSharingColumns} dataSource={subReportData} pagination={false} bordered />}
+                {subReportData && <Table columns={revenueSharingColumns} dataSource={subReportData} pagination={true} bordered />}
 
                 {/* ECA Meeting */}
                 <Title level={3} style={{ marginTop: "30px" }}>Evidence of EC/A meetings prior to GAM</Title>
-                {ecaMeetingData && <Table columns={ECAMeetingColumns} dataSource={ecaMeetingData} pagination={false} bordered />}
+                {ecaMeetingData && <Table columns={ECAMeetingColumns} dataSource={ecaMeetingData} pagination={true} bordered />}
 
                 {/* ECA Composition */}
                 <Title level={3} style={{ marginTop: "30px" }}>Evidence of Composition of EC/A</Title>
-                {ecaCompositionData && <Table columns={ecaCompositionColumns} dataSource={ecaCompositionData} pagination={false} bordered />}
+                {ecaCompositionData && <Table columns={ecaCompositionColumns} dataSource={ecaCompositionData} pagination={true} bordered />}
 
                 {/* Members section */}
                 <Title level={3} style={{ marginTop: "30px" }}>Membership of Statutory Sub-Committees</Title>
@@ -943,19 +1075,19 @@ const DPATAssessmentSheet = ({ props }) => {
                 {/* Also desagrate the members and display list of members by sub-committee
                     (See the sample sheet as guide:Membership of Statutory Sub-Committees) */}
                 <Title level={3} style={{ marginTop: "30px" }}>Evidence of composition of sub-committees – Summary</Title>
-                {subCommitteCompositionData && <Table columns={subCommitteeCompositionColumns} dataSource={subCommitteCompositionData} pagination={false} bordered />}
+                {subCommitteCompositionData && <Table columns={subCommitteeCompositionColumns} dataSource={subCommitteCompositionData} pagination={true} bordered />}
 
                 {/* Management Meeting */}
                 <Title level={3} style={{ marginTop: "30px" }}>Evidence of quarterly Management Meetings</Title>
-                {managementMeetingsData && <Table columns={managementMeetingColumns} dataSource={managementMeetingsData} pagination={false} bordered />}
+                {managementMeetingsData && <Table columns={managementMeetingColumns} dataSource={managementMeetingsData} pagination={true} bordered />}
 
                 {/* PRCC Meeting */}
                 <Title level={3} style={{ marginTop: "30px" }}>Evidence of Meetings of PRCC</Title>
-                {prccMeetingData && <Table columns={PRCCMeetingColumns} dataSource={prccMeetingData} pagination={false} bordered />}
+                {prccMeetingData && <Table columns={PRCCMeetingColumns} dataSource={prccMeetingData} pagination={true} bordered />}
 
                 {/* Entity Tender Committee (ETC) Meeting */}
                 <Title level={3} style={{ marginTop: "30px" }}>Evidence of Entity Tender Committee (ETC) meeting</Title>
-                {etcMeetingData && <Table columns={ETCMeetingColumns} dataSource={etcMeetingData} pagination={false} bordered />}
+                {etcMeetingData && <Table columns={ETCMeetingColumns} dataSource={etcMeetingData} pagination={true} bordered />}
 
                 <hr />
                 <h5>
@@ -983,6 +1115,7 @@ const DPATAssessmentSheet = ({ props }) => {
 
                 {/* Entity Tender Committee (ETC) Meeting */}
                 <Title level={3} style={{ marginTop: "30px" }}>SDI 10 - 1.1 General Assembly Decisions</Title>
+
                 <Title level={4} style={{ marginTop: "30px" }}>Assessment Guide/ Requirement</Title>
                 <Content>
                     From the DCD, receive signed Minutes of Meetings of the three mandatory Meetings of the General Assembly:<br /><br />
@@ -1045,7 +1178,7 @@ const DPATAssessmentSheet = ({ props }) => {
                 {managementActionServiceDeliveryData && <Table
                     columns={managementServiceDeliveryActionColumns}
                     dataSource={managementActionServiceDeliveryData}
-                    pagination={false} bordered />}
+                    pagination={true} bordered />}
 
                 {/* 1.3 Assembly Support to Substructures Evidence of utilization of ceded revenue
                  */}
@@ -1079,7 +1212,9 @@ const DPATAssessmentSheet = ({ props }) => {
                 {cededRevenueUtilisationData && <Table
                     columns={cededAmountUtilizationColumns}
                     dataSource={cededRevenueUtilisationData}
-                    pagination={false} bordered />}
+                    pagination={true} bordered />}
+
+
 
 
 
@@ -1087,11 +1222,11 @@ const DPATAssessmentSheet = ({ props }) => {
                   Henry to at it and format it the way it is displayed on the sheet and give the score
                   */}
                 <Title level={5} style={{ marginTop: "30px" }}>Selected Activities that Benefit the Community</Title>
+
                 {subStructureActivityData && <Table
                     columns={subStructureActivityColumns}
                     dataSource={subStructureActivityData}
-                    pagination={false} bordered />}
-
+                    pagination={true} bordered />}
 
                 {/* Water Service Provider List 
                   Henry to consume the data from the report and get second table(Data is already pulled here)
@@ -1131,7 +1266,42 @@ const DPATAssessmentSheet = ({ props }) => {
                     dataSource={buildingInspectorateData}
                     pagination={true} bordered />}
 
+                {/* Henry to follow the instruction in the function to get the data */}
 
+                <Title level={3} style={{ marginTop: "30px" }}>Evidence of Processing & Issuance of Building Permit Requests</Title>
+                {permitRequestData && <Table
+                    columns={permitRequestColumn}
+                    dataSource={permitRequestData}
+                    pagination={true} bordered />}
+
+                {/* Henry to follow the instruction in the function to get the data */}
+
+                <Title level={3} style={{ marginTop: "30px" }}>Evidence of Street Naming Database</Title>
+                {streetNamingData && <Table
+                    columns={streetNamingColumn}
+                    dataSource={streetNamingData}
+                    pagination={true} bordered />}
+
+                <Title level={3} style={{ marginTop: "30px" }}>Evidence of Installation of named streets</Title>
+                {streetNamingCountingData && <Table
+                    columns={streetNamingInstallationColumn}
+                    dataSource={streetNamingCountingData}
+                    pagination={true} bordered />}
+
+
+                <Title level={3} style={{ marginTop: "30px" }}>Evidence of Dedicated Functional Hotline for Vulnerable Groups</Title>
+                {districtGeneralData && <Table
+                    columns={districtHotlineNumberColumn}
+                    dataSource={districtGeneralData}
+                    pagination={true} bordered />}
+
+                {/* Evidence of Nutrition-Oriented Activities in the Assembly
+                    Sow to use AAP data to fill this
+                */}
+
+                 {/* 5.1 Availability of Sanitation Service Providers
+                    Sow to use service provider data and diplay table and then score
+                */}
 
 
                 {/* Print Button */}

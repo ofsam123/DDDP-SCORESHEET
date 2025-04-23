@@ -127,7 +127,7 @@ button.ghost {
 }
 
 .overlay {
-  background: #1846ff;
+  background: #1d5288;
   background: linear-gradient(to right, #1d5288, #1d5288);
   color: #fff;
   position: relative;
@@ -205,7 +205,7 @@ button.ghost {
 
 .popup-content h2 {
   margin-bottom: 20px;
-  color: #1890ff;
+  color: #1d5288;
 }
 
 .popup-content p {
@@ -215,7 +215,7 @@ button.ghost {
 
 .popup-content button {
   margin-top: 20px;
-  background: #1890ff;
+  background: #1d5288;
   border: none;
   padding: 10px 20px;
   cursor: pointer;

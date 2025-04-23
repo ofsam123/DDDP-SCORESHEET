@@ -32,8 +32,14 @@ function DPATAssessment() {
     const [meetingDecision, setMeetingDecision] = useState([]);
     const [districtDepartments, setDistrictDepartments] = useState([]);
     const [districtMembers, setDistrictMembers] = useState([]);
+    const [districtGeneral, setDistrictGeneral] = useState([]);
+    const [pwd, setPWD] = useState([]);
+    const [dumpingSite, setDumpingSite] = useState([]);
     const [serviceProviders, setServiceProviders] = useState([]);
     const [inspectorates, setInspectorates] = useState([]);
+    const [permiRequest, setPermiRequest] = useState([]);
+    const [streetNaming, setStreetNaming] = useState([]);
+    const [annualActionPlan, setAnnualActionPlan] = useState([]);
     const [subStructures, setSubStructures] = useState([]);
     const [subStructuresActivity, setSubStructuresActivity] = useState([]);
     const [selectedYear, setSelectedYear] = useState(null);
@@ -167,7 +173,6 @@ function DPATAssessment() {
             .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=nGFVo65uUE4`)
             .then(result => {
                 if(result.data.instances.length > 0){
-                    // console.log("members: ",result.data.instances)
 
                     axios
                     .get(`/tracker/events?program=nGFVo65uUE4&orgUnit=${districtId}&startDate=${startDate}&endDate=${endDate}`)
@@ -187,8 +192,7 @@ function DPATAssessment() {
             .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=p1ccS2ROn0Q`)
             .then(result => {
                 if(result.data.instances.length > 0){
-                    console.log("inspectorates: ",result.data.instances)
-
+                    
                     axios
                     .get(`/tracker/events?program=p1ccS2ROn0Q&orgUnit=${districtId}&startDate=${startDate}&endDate=${endDate}`)
                     .then(resp => {
@@ -202,6 +206,119 @@ function DPATAssessment() {
             .catch(err => console.log(err))
     }
 
+    function getPermitRequest(startDate, endDate, districtId) {
+        axios
+            .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=w2au8V5taU8&startDate=${startDate}&endDate=${endDate}`)
+            .then(result => {
+                if(result.data.instances.length > 0){
+                    
+                    axios
+                    .get(`/tracker/events?program=w2au8V5taU8&orgUnit=${districtId}&startDate=${startDate}&endDate=${endDate}`)
+                    .then(resp => {
+                        setPermiRequest({permits: result.data.instances, reports: resp.data.instances })
+                    })
+                    .catch(err => console.log(err))
+                }
+
+
+            })
+            .catch(err => console.log(err))
+    }
+
+    function getStreetNaming(startDate, endDate, districtId) {
+        axios
+            .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=joUkaNeiZ0O&startDate=${startDate}&endDate=${endDate}`)
+            .then(result => {
+                if(result.data.instances.length > 0){
+                    
+                    axios
+                    .get(`/tracker/events?program=joUkaNeiZ0O&orgUnit=${districtId}&startDate=${startDate}&endDate=${endDate}`)
+                    .then(resp => {
+                        setStreetNaming({streets: result.data.instances, reports: resp.data.instances })
+                    })
+                    .catch(err => console.log(err))
+                }
+
+
+            })
+            .catch(err => console.log(err))
+    }
+
+    function getAnnualActionPlan(startDate, endDate, districtId) {
+        axios
+            .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=ArLnAxhykoz&startDate=${startDate}&endDate=${endDate}`)
+            .then(result => {
+                if(result.data.instances.length > 0){
+                    
+                    axios
+                    .get(`/tracker/events?program=ArLnAxhykoz&orgUnit=${districtId}&startDate=${startDate}&endDate=${endDate}`)
+                    .then(resp => {
+                        setAnnualActionPlan({aap: result.data.instances, reports: resp.data.instances })
+                    })
+                    .catch(err => console.log(err))
+                }
+
+
+            })
+            .catch(err => console.log(err))
+    }
+
+    function getDistrictGeneral(startDate, endDate, districtId) {
+        axios
+            .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=RwWtjFaorvN`)
+            .then(result => {
+                if(result.data.instances.length > 0){
+                    
+                    axios
+                    .get(`/tracker/events?program=RwWtjFaorvN&orgUnit=${districtId}&startDate=${startDate}&endDate=${endDate}`)
+                    .then(resp => {
+                        setDistrictGeneral({data: result.data.instances, reports: resp.data.instances })
+                    })
+                    .catch(err => console.log(err))
+                }
+
+
+            })
+            .catch(err => console.log(err))
+    }
+
+    function getPWDs(startDate, endDate, districtId) {
+        axios
+            .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=OiDekszWx2p`)
+            .then(result => {
+                if(result.data.instances.length > 0){
+                    
+                    axios
+                    .get(`/tracker/events?program=OiDekszWx2p&orgUnit=${districtId}&startDate=${startDate}&endDate=${endDate}`)
+                    .then(resp => {
+                        setPWD({data: result.data.instances, reports: resp.data.instances })
+                    })
+                    .catch(err => console.log(err))
+                }
+
+
+            })
+            .catch(err => console.log(err))
+    }
+
+    function getDumpingSite(startDate, endDate, districtId) {
+        axios
+            .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=Txcfc03kUCi`)
+            .then(result => {
+                if(result.data.instances.length > 0){
+                    
+                    axios
+                    .get(`/tracker/events?program=Txcfc03kUCi&orgUnit=${districtId}&startDate=${startDate}&endDate=${endDate}`)
+                    .then(resp => {
+                        setDumpingSite({data: result.data.instances, reports: resp.data.instances })
+                    })
+                    .catch(err => console.log(err))
+                }
+
+
+            })
+            .catch(err => console.log(err))
+    }
 
 
     return (
@@ -261,6 +378,13 @@ function DPATAssessment() {
                                         getServiceProviderList(startDate, endDate, val.value);
 
                                         getInspectorateList(startDate, endDate, val.value);
+
+                                        getPermitRequest(startDate, endDate, val.value);
+
+                                        getStreetNaming(startDate, endDate, val.value);
+                                        getAnnualActionPlan(startDate, endDate, val.value);
+                                        getDistrictGeneral(startDate, endDate, val.value);
+                                        getPWDs(startDate, endDate, val.value)
                                     }}
                                     options={districts}
                                     isSearchable
@@ -281,7 +405,13 @@ function DPATAssessment() {
                                              members: districtMembers,
                                              subActivity: subStructuresActivity,
                                              serviceProviders: serviceProviders,
-                                             inspectorates : inspectorates
+                                             inspectorates: inspectorates,
+                                             permitRequest: permiRequest,
+                                             streets: streetNaming,
+                                             plans: annualActionPlan,
+                                             districtGeneral: districtGeneral,
+                                             pwd: pwd,
+                                             dumpingSite: dumpingSite
                                              }}
                                         />}
 

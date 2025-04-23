@@ -7,8 +7,10 @@ import CardBox from "../components/CardBox";
 import RegionalReport from "../components/RegionalReport";
 import MeetingRegionalReport from "../components/MeetingsReport";
 import GeneralChart from "../components/GeneralChart";
+import MintueNinvitaionChart from "../components/minutesNinvitationLetterCart";
 import Select from "react-select";
-import { EditOutlined, DeleteOutlined, ExclamationCircleOutlined, SearchOutlined, EyeOutlined, EllipsisOutlined } from '@ant-design/icons';
+import { EyeOutlined, ProjectOutlined, AppstoreOutlined, TeamOutlined, ApartmentOutlined } from "@ant-design/icons";
+
 const plans = {
   name: "Plans",
   color: "rgb(29, 82, 136)",
@@ -21,12 +23,12 @@ const completed = {
 
 const meetingsData = {
   name: "Meetings",
-  color: "rgb(3, 61, 24)", // Blue
+  color: "rgb(3, 61, 24)", // Dark Green
 };
 
 const generalmeetingsData = {
   name: "General Meetings",
-  color: "rgb(29, 82, 136)", // Orange
+  color: "rgb(29, 82, 136)", // Blue
 };
 
 const projects = {
@@ -43,7 +45,6 @@ const program = {
 
 function Home() {
   const [instances, setInstances] = useState("");
-  const [report, setReport] = useState("");
   const [districts, setDistricts] = useState(null);
   const [selectedDistrict, setSelectedDistrict] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -52,11 +53,96 @@ function Home() {
   const [programsTotal, setProgramsTotal] = useState(0);
   const [meetingsTotal, setMeetingsTotal] = useState(0);
   const [departmentsTotal, setDepartmentsTotal] = useState(0);
+  const [meetingChartData, setMeetingChartData] = useState([]);
+  const [meetingChartError, setMeetingChartError] = useState(null);
+  const [minuteInvitationData, setMinuteInvitationData] = useState([]);
+  const [minuteInvitationError, setMinuteInvitationError] = useState(null);
 
   useEffect(() => {
     getData("/organisationUnits?level=3&paging=false");
     fetchTotals();
+    fetchMeetingChartData();
+    fetchMinuteInvitationData();
   }, []);
+
+  async function fetchMeetingChartData() {
+    try {
+      const response = await axios.get(
+        "/analytics.json?dimension=dx:aeKyGvo5OIp;BEUJdCeTGIE;M86dDnKObvx;cz086QtLaoW;wGeWq6JhDQA&dimension=ou:LEVEL-2;sQ7uY7OfGh9&filter=pe:2024-01-01;2024-12-30"
+      );
+      console.log("Meeting Chart Analytics Response:", response.data);
+      const rows = response.data.rows || [];
+
+      const counts = {
+        aeKyGvo5OIp: 0, // Meetings (total)
+        BEUJdCeTGIE: 0, // General Meetings
+        M86dDnKObvx: 0, // Executive Meetings
+        cz086QtLaoW: 0, // Statutory Meetings
+        wGeWq6JhDQA: 0, // Sub Structure Meetings
+      };
+
+      rows.forEach(([dataElement, orgUnit, value]) => {
+        if (counts.hasOwnProperty(dataElement)) {
+          counts[dataElement] += parseFloat(value) || 0;
+        } else {
+          console.warn(`Unknown data element: ${dataElement}`);
+        }
+      });
+
+      const totalMeetings = counts.aeKyGvo5OIp || 1; // Avoid division by zero
+      const percentages = [
+        (counts.BEUJdCeTGIE / totalMeetings) * 100,
+        (counts.M86dDnKObvx / totalMeetings) * 100,
+        (counts.cz086QtLaoW / totalMeetings) * 100,
+        (counts.wGeWq6JhDQA / totalMeetings) * 100,
+      ].map(val => Number(val.toFixed(2)));
+
+      console.log("Total Meetings:", totalMeetings);
+      console.log("Processed Meeting Chart Percentages:", percentages);
+      setMeetingChartData(percentages);
+    } catch (err) {
+      console.error("Error fetching meeting chart data:", err);
+      setMeetingChartError("Failed to load meeting chart data.");
+    }
+  }
+
+  async function fetchMinuteInvitationData() {
+    try {
+      const response = await axios.get(
+        "/analytics.json?dimension=dx:yhzMdqZp0Qh;RsgxfezgTyr&dimension=ou:LEVEL-2;sQ7uY7OfGh9&filter=pe:2024-01-01;2024-12-30"
+      );
+      console.log("Minute Invitation Chart Analytics Response:", response.data);
+      const rows = response.data.rows || [];
+
+      const counts = {
+        yhzMdqZp0Qh: 0, // Invitations
+        RsgxfezgTyr: 0, // Minutes
+      };
+
+      rows.forEach(([dataElement, orgUnit, value]) => {
+        if (counts.hasOwnProperty(dataElement)) {
+          counts[dataElement] += parseFloat(value) || 0;
+        } else {
+          console.warn(`Unknown data element: ${dataElement}`);
+        }
+      });
+
+      const total = counts.yhzMdqZp0Qh + counts.RsgxfezgTyr || 1; // Avoid division by zero
+      const percentages = [
+        (counts.yhzMdqZp0Qh / total) * 100, // Invitations
+        (counts.RsgxfezgTyr / total) * 100, // Minutes
+      ].map(val => Number(val.toFixed(2)));
+
+      console.log("Total Invitations + Minutes:", total);
+      console.log("Processed Minute Invitation Percentages:", percentages);
+      setMinuteInvitationData(percentages);
+    } catch (err) {
+      console.error("Error fetching minute invitation data:", err);
+      setMinuteInvitationError("Failed to load invitation and minutes chart data.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   async function fetchTotals(orgUnit = "rHkDRHKXIdP") {
     setIsLoading(true);
@@ -100,10 +186,9 @@ function Home() {
       const departmentsRows = departmentsResp.data.rows || [];
       const departmentsCount = departmentsRows.length > 0 ? parseFloat(departmentsRows[0][1]) || 0 : 0;
       setDepartmentsTotal(departmentsCount);
-
-      setIsLoading(false);
     } catch (err) {
       console.error("Error fetching totals:", err);
+    } finally {
       setIsLoading(false);
     }
   }
@@ -191,6 +276,15 @@ function Home() {
     setInstances(generalAssemblyMeetings);
   }
 
+  const meetingChartLabels = [
+    "General Meetings",
+    "Executive Meetings",
+    "Statutory Meetings",
+    "Sub Structure Meetings",
+  ];
+
+  const minuteInvitationLabels = ["Invitations", "Minutes"];
+
   return (
     <>
       <div className="page-wrapper">
@@ -224,7 +318,7 @@ function Home() {
               <div className="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12"></div>
             </div>
             <div className="row gutters">
-              <div className="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
+			<div className="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
                 <CardBox
                   name="AAP Total"
                   counter={isLoading ? "Loading..." : aapTotal}
@@ -260,8 +354,8 @@ function Home() {
                 />
               </div>
             </div>
-          
-            <div className="row gutters">
+
+			<div className="row gutters">
               <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                 <MeetingRegionalReport
                   title="Meetings Yearly Report"
@@ -270,7 +364,7 @@ function Home() {
                 />
               </div>
             </div>
-			<div className="row gutters">
+            <div className="row gutters">
               <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                 <RegionalReport
                   title="Annual Action Plan Yearly Report"
@@ -279,25 +373,30 @@ function Home() {
                 />
               </div>
             </div>
+          
             <div className="row gutters">
               <div className="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12">
                 <GeneralChart
-                  title="AAP Proportion of the DMTDP Implemented"
-                  data={[23, 30, 20, 27]}
-                  labels={["Completed", "Ongoing", "Abandoned", "Yet to Start"]}
+                  title="Proportion of Meeting Types"
+                  data={meetingChartData.length > 0 ? meetingChartData : [0, 0, 0, 0]}
+                  labels={meetingChartLabels}
                   type="pie"
                   width={450}
                   height={450}
+                  isLoading={isLoading}
+                  error={meetingChartError}
                 />
               </div>
               <div className="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12">
-                <GeneralChart
-                  title="Proportion of health facilities that are functional"
-                  data={[23, 30, 20, 27, 25]}
-                  labels={["CHPS Compound", "Clinic", "Health Center", "Polyclinic", "Hospital"]}
+                <MintueNinvitaionChart
+                  title="Proportion of Invitations and Minutes"
+                  data={minuteInvitationData.length > 0 ? minuteInvitationData : [0, 0]}
+                  labels={minuteInvitationLabels}
                   type="donut"
                   width={450}
                   height={450}
+                  isLoading={isLoading}
+                  error={minuteInvitationError}
                 />
               </div>
             </div>

@@ -17,6 +17,8 @@ import ElectricityServices from "./ElectricityServices";
 import SanitationServices from "./SanitationSevices";
 import MaintenanceInfrastructure from "./MaintenanceInfrastructure";
 import ClientServiceCharter from "./ClientServiceCharter";
+import GeneralAssemblyDecision from "./GeneralAssemblyDecision";
+import ManagementActionsONGAD from "./ManagementActionsONGAD";
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
@@ -144,9 +146,58 @@ const subCommitteeCompositionColumns = [
 
 
 // =====================================SDI Columns================================
+const serviceDecisionColumns = [
+    { title: "GAM", dataIndex: "gam", key: "gam" },
+    { title: "Total No. of decisions taken", dataIndex: "total", key: "total" },
+    { title: "No. of decisions on service delivery", dataIndex: "serviceDecision", key: "serviceDecision" },
+    { title: "% of decisions on service delivery ", dataIndex: "percentage", key: "percentage" }
+];
 
+const serviceDeliveryDecisionColumns = [
+    { title: "GAM", dataIndex: "gam", key: "gam" },
+    { title: "Service Delivery Decisions", dataIndex: "service", key: "service" }
+];
 
+const managementServiceDeliveryActionColumns = [
+    { title: "No. of decisions on service delivery improvement", dataIndex: "no", key: "no" },
+    { title: "No. of actions taken on social service improvement decisions", dataIndex: "service", key: "service" },
+    { title: "% of service delivery improvement decisions implemented ", dataIndex: "percentage", key: "percentage" }
+];
 
+const cededAmountUtilizationColumns = [
+    { title: "Name of substructure", dataIndex: "name", key: "name" },
+    { title: "Amount of Ceded Revenue Received (GHS) - A", dataIndex: "collected", key: "collected" },
+    { title: "Amount of Ceded Revenue utilized for Community Activities (GHS)", dataIndex: "ceded", key: "ceded" },
+    { title: "% of Amount utilized for Community Activities ", dataIndex: "percentage", key: "percentage" }
+];
+
+const subStructureActivityColumns = [
+    { title: "No", dataIndex: "no", key: "no" },
+    { title: "Activities ", dataIndex: "activities", key: "collected" },
+    { title: "Substructure", dataIndex: "name", key: "name" },
+    { title: "Amount Utilized", dataIndex: "amount", key: "amount" }
+];
+
+const serviceProvidersColumn = [
+    { title: "No", dataIndex: "no", key: "no" },
+    { title: "Service Provider", dataIndex: "provider", key: "provider" },
+    { title: "Contract Duration", dataIndex: "contract", key: "contract" },
+    { title: "Start Date", dataIndex: "date", key: "date" }
+];
+
+const buildingInspectorateColumn = [
+    { title: "Date Established", dataIndex: "date", key: "date" },
+    { title: "Supervisor", dataIndex: "supervisor", key: "supervisor" },
+    { title: "address", dataIndex: "address", key: "address" },
+    { title: "Category of staff", dataIndex: "category", key: "category" },
+    { title: "Function performed by Works Department", dataIndex: "department", key: "department" }
+];
+
+const permitRequestColumn = [
+    { title: "No. of Building Permit Requests Received (A)", dataIndex: "permitReceived", key: "permitReceived" },
+    { title: "No. of Building Permit Requests Processed & Issued (B)", dataIndex: "permitProcessed", key: "permitProcessed" },
+    { title: "No. of approved permits traced to Local Plans (C)", dataIndex: "permitTraced", key: "permitTraced" }
+];
 
 const streetNamingColumn = [
     { title: "Street Naming and Property Addressing Data base (NOT Excel) available (Yes/No)", dataIndex: "street", key: "street" },
@@ -470,11 +521,11 @@ const DPATAssessmentSheet = ({ props }) => {
 
     const setSubStructureMeetingDataDisplay = () => {
         const temp = [];
-
+      
         const generalAssemblyMeeting = formatData(meetings, "GA") || [];
         const executiveCommitteeMeeting = formatData(meetings, "EC") || [];
         const subStructureMeeting = formatData(meetings, "Sub Structure Committee") || [];
-
+      
         const createMeetingData = (label, data) => ({
             key: label,
             meeting: `${label}`,
@@ -482,14 +533,14 @@ const DPATAssessmentSheet = ({ props }) => {
             secondMeeting: getAttributeValue("DPAT | Meeting Date", data[1]),
             thirdMeeting: getAttributeValue("DPAT | Meeting Date", data[2]),
         });
-
+      
         temp.push(createMeetingData("General Assembly Meeting", generalAssemblyMeeting));
         temp.push(createMeetingData("Executive Committee Meeting", executiveCommitteeMeeting));
         temp.push(createMeetingData("Sub Structure Meeting", subStructureMeeting));
-
-        setSubStructuresMeetingData({ data: temp, fulfillment: "Not Fulfiled" });
-    };
-
+      
+        setSubStructuresMeetingData({data: temp, fulfillment: "Not Fulfiled"});
+      };
+      
 
     const setPermitRequestDataDisplay = () => {
         const temp = [];
@@ -648,13 +699,13 @@ const DPATAssessmentSheet = ({ props }) => {
         const temp = [];
         const gaMeeting = formatData(meetings, "GA"); // GA Meeting data
         const ecaMeeting = formatData(meetings, "EC"); // EC Meeting data
-
+    
         // Preprocess GA meeting dates
         const gaMeetingDates = gaMeeting.map((meeting, index) => ({
             key: index + 1,
             date: getAttributeValue("DPAT | Meeting Date", meeting),
         }));
-
+    
         ecaMeeting.forEach((meeting, index) => {
             const meetingDataState = {
                 key: index + 1,
@@ -665,14 +716,14 @@ const DPATAssessmentSheet = ({ props }) => {
                 ecaMeetingDate: getAttributeValue("DPAT | Meeting Date", meeting),
                 signatoriesMinutesStatus: getAttributeValue("Minute File Number", meeting) ? "YES" : "NO",
             };
-
+    
             temp.push(meetingDataState);
         });
-
+    
         const fulfillment = checkECANDGAMeetingFulfillment(temp);
         setEcaMeetingData({ data: temp, fulfillment });
     };
-
+    
 
     const setPRCCMeetingData = () => {
         const temp = [];
@@ -1037,7 +1088,7 @@ const DPATAssessmentSheet = ({ props }) => {
 
                 {/* Sub-Structures Meetings Start */}
                 {/* {JSON.stringify(subReportData)} */}
-
+                
                 {subStructuresMeetingData && <SubStructureMeeting
                     data={subStructuresMeetingData}
                     year={year}
@@ -1062,7 +1113,7 @@ const DPATAssessmentSheet = ({ props }) => {
 
                 {/* Sub Committe Meeting and Members section Start*/}
                 {/* {JSON.stringify(memberFinanceData)} */}
-                {/* Evidence of Sub Committee Composition --Henry sum them and count by sub commity name*/}
+                 {/* Evidence of Sub Committee Composition --Henry sum them and count by sub commity name*/}
                 {/* Also desagrate the members and display list of members by sub-committee
                     (See the sample sheet as guide:Membership of Statutory Sub-Committees) */}
                 {memberFinanceData && <SubStructureCommiteeMeeting
@@ -1073,20 +1124,20 @@ const DPATAssessmentSheet = ({ props }) => {
                     memberColumns={membersColumns}
                 />}
                 {/* <Title level={3} style={{ marginTop: "30px" }}>Membership of Statutory Sub-Committees</Title>
-                {memberFinanceData && <Table columns={membersColumns} dataSource={memberFinanceData} pagination={false} bordered />} */}
+                {memberFinanceData && <Table columns={membersColumns} dataSource={memberFinanceData} pagination={true} bordered />} */}
 
                 {/* Sub Committe Meeting and Members section End*/}
                 <hr />
 
                 {/* Management Meeting Start */}
-                {/* {JSON.stringify(managementMeetingsData)} */}
-                {managementMeetingsData && <ManagementMeeting
-                    data={managementMeetingsData}
-                    year={year}
+                 {/* {JSON.stringify(managementMeetingsData)} */}
+                 {managementMeetingsData && <ManagementMeeting
+                    data={managementMeetingsData} 
+                    year={year} 
                     columns={managementMeetingColumns}
                 />}
 
-                {/* Management Meeting End */}
+                 {/* Management Meeting End */}
                 {/* PRCC Meeting */}
                 {/* {JSON.stringify(prccMeetingData)} */}
                 {prccMeetingData && <PRCCMeeting
@@ -1108,6 +1159,9 @@ const DPATAssessmentSheet = ({ props }) => {
                 {/* Entity Tender Committee (ETC) Meeting End*/}
 
                 <hr />
+
+                {/* <hr /> */}
+                <div style={{ height: '4px', backgroundColor: '#000', width: '100%', margin: '20px 0' }} />
 
                 <h3 style={{ textAlign: "center", padding: "10px" }}>
                     Annex 2: SECTION B – SERVICE DELIVERY INDICATORS

@@ -2,6 +2,13 @@ import React, { useEffect, useState } from "react";
 import { Layout, Typography, Table, Button, Row, Space, Col } from "antd";
 import { PrinterOutlined } from "@ant-design/icons";
 import GAMeeting from "./GAMeeting";
+import AAPBudgetAproval from "./AAPBudgetAproval";
+import SubStructureMeeting from "./SubStructureMeeting";
+import ExecutiveCommitteeMember from "./ExecutiveCommitteeMember";
+import SubStructureCommiteeMeeting from "./SubStructureCommitteMeeting";
+import ManagementMeeting from "./ManagementMeeting";
+import PRCCMeeting from "./PRCCMeeting";
+import EntityTenderCommitteeMeeting from "./EntityTenderCommiteeMeeting";
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
@@ -91,16 +98,16 @@ const budgetData = [
 ];
 
 const subStructureColumns = [
-    { title: "Sub-Structure", dataIndex: "subStructure", key: "subStructure" },
+    { title: " ", dataIndex: "meeting", key: "meeting" },
     { title: "1st Meeting Date", dataIndex: "firstMeeting", key: "firstMeeting" },
     { title: "2nd Meeting Date", dataIndex: "secondMeeting", key: "secondMeeting" },
     { title: "3rd Meeting Date", dataIndex: "thirdMeeting", key: "thirdMeeting" },
 ];
 
-const subStructuresData = [
-    { key: "1", subStructure: "Executive Committee", firstMeeting: "12-Jan", secondMeeting: "15-Apr", thirdMeeting: "20-Jul" },
-    { key: "2", subStructure: "Finance Committee", firstMeeting: "10-Feb", secondMeeting: "14-May", thirdMeeting: "22-Aug" },
-];
+// const subStructuresData = [
+//     { key: "1", subStructure: "Executive Committee", firstMeeting: "12-Jan", secondMeeting: "15-Apr", thirdMeeting: "20-Jul" },
+//     { key: "2", subStructure: "Finance Committee", firstMeeting: "10-Feb", secondMeeting: "14-May", thirdMeeting: "22-Aug" },
+// ];
 
 const revenueSharingColumns = [
     { title: "Name of substructure", dataIndex: "name", key: "name" },
@@ -232,11 +239,12 @@ const foodVendorsColumn = [
 const DPATAssessmentSheet = ({ props }) => {
 
     const [gaMeetingData, setGaMeetingData] = useState(null);
-    const [meetingDataGroup, setMeetingDataGroup] = useState(null);
+    const [meetingDataGroup, setMeetingDataGroup] = useState();
     const [meetings, setMeetings] = useState(props?.meetings.meetings);
     const [members, setMembers] = useState(props?.members.members);
     const [subStructureActivity, setSubStructureActivity] = useState(props?.subActivity.activities);
     const [serviceProviders, setServiceProviders] = useState(props?.serviceProviders.providers);
+    const [subStructuresMeetingData, setSubStructuresMeetingData] = useState([]);
     const [permitRequest, setPermitRequest] = useState(props?.permitRequest.permits);
     const [serviceProvidersReport, setServiceProvidersReport] = useState(props?.serviceProviders.report);
     const [buildingInspectorate, setBuildingInspectorate] = useState(props?.inspectorates.inspectorates);
@@ -299,6 +307,7 @@ const DPATAssessmentSheet = ({ props }) => {
         setDecisionData();
         setMeetingBudgetData();
         setSubtructureEstablishmentsData();
+        setSubStructureMeetingDataDisplay();
         setECAMeetingData();
         setManagementMeetingData();
         setPRCCMeetingData();
@@ -388,10 +397,7 @@ const DPATAssessmentSheet = ({ props }) => {
             decisionNo += parseInt(decNo);
             temp.push(meetingDataState);
 
-            // console.log("Munites decision: ",meetingDecisions)
-
             const serviceDeliveryDecion = getDecisionsByMeeting(meetingDecisions, minuteFileNumber);
-            // console.log("dec: ", serviceDeliveryDecion)
             const serviceDeliveryNo = serviceDeliveryDecion ? serviceDeliveryDecion.length : 0;
             const decisionList = serviceDeliveryDecion
                 ?.map((val, index) => `${index + 1}. ${getAttributeValue("Decision", val)}`)
@@ -500,6 +506,29 @@ const DPATAssessmentSheet = ({ props }) => {
         setBuildingInspectorateData(temp);
 
     }
+
+    const setSubStructureMeetingDataDisplay = () => {
+        const temp = [];
+      
+        const generalAssemblyMeeting = formatData(meetings, "GA") || [];
+        const executiveCommitteeMeeting = formatData(meetings, "EC") || [];
+        const subStructureMeeting = formatData(meetings, "Sub Structure Committee") || [];
+      
+        const createMeetingData = (label, data) => ({
+          key: label,
+          meeting: `${label}`,
+          firstMeeting: getAttributeValue("DPAT | Meeting Date", data[0]),
+          secondMeeting: getAttributeValue("DPAT | Meeting Date", data[1]),
+          thirdMeeting: getAttributeValue("DPAT | Meeting Date", data[2]),
+        });
+      
+        temp.push(createMeetingData("General Assembly Meeting", generalAssemblyMeeting));
+        temp.push(createMeetingData("Executive Committee Meeting", executiveCommitteeMeeting));
+        temp.push(createMeetingData("Sub Structure Meeting", subStructureMeeting));
+      
+        setSubStructuresMeetingData({data: temp, fulfillment: "Not Fulfiled"});
+      };
+      
 
     const setPermitRequestDataDisplay = () => {
         const temp = [];
@@ -616,6 +645,24 @@ const DPATAssessmentSheet = ({ props }) => {
         return 'Fulfilled';
     }
 
+    function checkECANDGAMeetingFulfillment(meetings) {
+
+        for (const mt of meetings) {
+
+            const ecDate = new Date(mt.ecaMeetingDate);
+            const gaDate = new Date(mt.gaMeetingDate);
+
+            const missingFields =
+                !mt.invitationLetterReference
+
+            if (ecDate > gaDate) {
+                return 'Not Fulfilled';
+            }
+        }
+
+        return 'Fulfilled';
+    }
+
 
     const setManagementMeetingData = () => {
         const temp = [];
@@ -632,28 +679,39 @@ const DPATAssessmentSheet = ({ props }) => {
             temp.push(meetingDataState);
         })
 
-        setManagementMeetingsData(temp);
+        const fulfillment = "Not Fulfilled";
+        setManagementMeetingsData({data: temp, fulfillment: fulfillment});
     };
 
     const setECAMeetingData = () => {
         const temp = [];
-        formatData(meetings, "EC").forEach((meeting, index) => {
+        const gaMeeting = formatData(meetings, "GA"); // GA Meeting data
+        const ecaMeeting = formatData(meetings, "EC"); // EC Meeting data
+    
+        // Preprocess GA meeting dates
+        const gaMeetingDates = gaMeeting.map((meeting, index) => ({
+            key: index + 1,
+            date: getAttributeValue("DPAT | Meeting Date", meeting),
+        }));
+    
+        ecaMeeting.forEach((meeting, index) => {
             const meetingDataState = {
-                key: index + 1, // Static key (can be dynamic)
-                meeting: getMeetingRank(index, "EC"), // Meeting type
-                invitationDate: getAttributeValue("Invitation letter Date", meeting), // Invitation Date
-                invitationLetterReference: getAttributeValue("Invitation letter Ref. Number", meeting), // Invitation Letter Ref
-                gaMeetingDate: 'date', // gaMeeting Date
-                ecaMeetingDate: getAttributeValue("DPAT | Meeting Date", meeting), // ecaMeeting Date
-                signatoriesMinutesStatus: getAttributeValue("Minute File Number", meeting) ?
-                    "YES" : "NO", // Signatory of Invitation Letter
+                key: index + 1,
+                meeting: getMeetingRank(index, "EC"),
+                invitationDate: getAttributeValue("Invitation letter Date", meeting),
+                invitationLetterReference: getAttributeValue("Invitation letter Ref. Number", meeting),
+                gaMeetingDate: gaMeetingDates[index]?.date || "", // Fallback to empty string if GA date is not available
+                ecaMeetingDate: getAttributeValue("DPAT | Meeting Date", meeting),
+                signatoriesMinutesStatus: getAttributeValue("Minute File Number", meeting) ? "YES" : "NO",
             };
-
+    
             temp.push(meetingDataState);
-        })
-
-        setEcaMeetingData(temp);
+        });
+    
+        const fulfillment = checkECANDGAMeetingFulfillment(temp);
+        setEcaMeetingData({ data: temp, fulfillment });
     };
+    
 
     const setPRCCMeetingData = () => {
         const temp = [];
@@ -672,7 +730,9 @@ const DPATAssessmentSheet = ({ props }) => {
             temp.push(meetingDataState);
         })
 
-        setPrccMeetingData(temp);
+        const fulfillment = "Not Fulfilled";
+
+        setPrccMeetingData({data: temp, fulfillment:fulfillment});
     };
 
     const setPRCCRecommendationMeetingData = () => {
@@ -710,9 +770,11 @@ const DPATAssessmentSheet = ({ props }) => {
             };
 
             temp.push(meetingDataState);
-        })
+        });
 
-        setEtcMeetingData(temp);
+        const fulfillment= "Not Fulfilled";
+
+        setEtcMeetingData({data: temp, fulfillment:fulfillment});
     };
 
     const setMeetingBudgetData = () => {
@@ -725,11 +787,12 @@ const DPATAssessmentSheet = ({ props }) => {
             const matchingMeeting = formatDataGroup(meetings, [type])[0];
 
             if (matchingMeeting) { // Ensure there's a match before adding
-                const date = getAttributeValue("DPAT | Meeting Date", matchingMeeting);
+                // const date = getAttributeValue("DPAT | Meeting Date", matchingMeeting);
                 const meetingDataState = {
                     key: index + 1,
                     meeting: type,
                     date: getAttributeValue("DPAT | Meeting Date", matchingMeeting),
+                    documents: getAttributeValue("DPAT | Meeting Agenda", matchingMeeting),
                     decisions: getAttributeValue("AAP Approval Date", matchingMeeting)
                 };
 
@@ -910,8 +973,9 @@ const DPATAssessmentSheet = ({ props }) => {
 
             temp.push(memberDataState);
         });
+        const fulfillment = "Not Fulffiled";
 
-        setSubCommitteCompositionData(temp);
+        setSubCommitteCompositionData({data: temp, fulfillment:fulfillment});
     };
 
 
@@ -998,79 +1062,87 @@ const DPATAssessmentSheet = ({ props }) => {
                  {/* General Assembly Meetings and Decision End */}
                  <hr/>
 
-                {/* Approval of Budget */}
-                <Title level={3} style={{ marginTop: "30px" }}>Approval of Annual Action Plan & Budget</Title>
-                <Row style={{ display: "flex", alignItems: "flex-start" }}>
-                    {meetingDataGroup && (
-                        <>
-                            <div style={{ width: "90%", paddingRight: "10px" }}>
-                                <Table
-                                    columns={budgetColumns}
-                                    dataSource={meetingDataGroup.data}
-                                    pagination={true}
-                                    bordered
-                                    style={{ width: "100%" }}
-                                />
-                            </div>
-                            <div
-                                style={{
-                                    width: "10%",
-                                    marginTop: "100px",
-                                    fontWeight: "bold",
-                                    fontSize: "20px",
-                                    padding: "10px",
-                                    borderRadius: "4px",
-                                    color: meetingDataGroup.fulfillment === "Not Fulfilled" ? "red" : "green",
-                                    textAlign: "center",
-                                }}
-                            >
-                                {meetingDataGroup.fulfillment}
-                            </div>
-                        </>
-                    )}
-                </Row>
+                {/* Approval of Annual Action Plan Budget Start */}
+                {/* {JSON.stringify(meetingDataGroup)} */}
+                {meetingDataGroup && <AAPBudgetAproval
+                    data={meetingDataGroup} 
+                    year={year} 
+                    columns={budgetColumns}
+                    />}
+                {/* Approval of Annual Action Plan Budget End */}
+                <hr />
 
-                {/* Sub-Structures Meetings */}
-                <Title level={3} style={{ marginTop: "30px" }}>Meetings of the Sub-Structures</Title>
-                <Table columns={subStructureColumns} dataSource={subStructuresData} pagination={true} bordered />
+                {/* Sub-Structures Meetings Start */}
+                {/* {JSON.stringify(subReportData)} */}
+                
+                {subStructuresMeetingData && <SubStructureMeeting
+                    data={subStructuresMeetingData} 
+                    year={year} 
+                    columns={subStructureColumns}
+                    establishment={subStructureData}
+                    establishmentColumns={subStructureEstablishmentColumns}
+                    revenueSharing={subReportData}
+                    revenuSharingColumns={revenueSharingColumns}
+                    />}
+                {/* Sub-Structures Meetings End */}
+               <hr/>
 
-                {/* II.	Evidence of establishment of sub-structures */}
-                <Title level={3} style={{ marginTop: "30px" }}>Evidence of establishment of sub-structures</Title>
-                {subStructureData && <Table columns={subStructureEstablishmentColumns} dataSource={subStructureData} pagination={true} bordered />}
+                {/* ECA Meeting Start */}
+                {/* {JSON.stringify(ecaMeetingData)} */}
+                {ecaMeetingData && <ExecutiveCommitteeMember
+                    data={ecaMeetingData} 
+                    year={year} 
+                    columns={ECAMeetingColumns}
+                    />}
+                {/* ECA Meeting End */}
+                <hr/>
 
-                {/* Revenue Sharing */}
-                <Title level={3} style={{ marginTop: "30px" }}>Evidence of Revenue Sharing</Title>
-                {subReportData && <Table columns={revenueSharingColumns} dataSource={subReportData} pagination={true} bordered />}
-
-                {/* ECA Meeting */}
-                <Title level={3} style={{ marginTop: "30px" }}>Evidence of EC/A meetings prior to GAM</Title>
-                {ecaMeetingData && <Table columns={ECAMeetingColumns} dataSource={ecaMeetingData} pagination={true} bordered />}
-
-                {/* ECA Composition */}
-                <Title level={3} style={{ marginTop: "30px" }}>Evidence of Composition of EC/A</Title>
-                {ecaCompositionData && <Table columns={ecaCompositionColumns} dataSource={ecaCompositionData} pagination={true} bordered />}
-
-                {/* Members section */}
-                <Title level={3} style={{ marginTop: "30px" }}>Membership of Statutory Sub-Committees</Title>
-                {memberFinanceData && <Table columns={membersColumns} dataSource={memberFinanceData} pagination={true} bordered />}
-
-                {/* Evidence of Sub Committee Composition --Henry sum them and count by sub commity name*/}
+                {/* Sub Committe Meeting and Members section Start*/}
+                {/* {JSON.stringify(memberFinanceData)} */}
+                 {/* Evidence of Sub Committee Composition --Henry sum them and count by sub commity name*/}
                 {/* Also desagrate the members and display list of members by sub-committee
                     (See the sample sheet as guide:Membership of Statutory Sub-Committees) */}
-                <Title level={3} style={{ marginTop: "30px" }}>Evidence of composition of sub-committees – Summary</Title>
-                {subCommitteCompositionData && <Table columns={subCommitteeCompositionColumns} dataSource={subCommitteCompositionData} pagination={true} bordered />}
+                {memberFinanceData && <SubStructureCommiteeMeeting
+                    data={subCommitteCompositionData} 
+                    year={year} 
+                    columns={subCommitteeCompositionColumns}
+                    members={memberFinanceData}
+                    memberColumns = {membersColumns}
+                    />}
+                {/* <Title level={3} style={{ marginTop: "30px" }}>Membership of Statutory Sub-Committees</Title>
+                {memberFinanceData && <Table columns={membersColumns} dataSource={memberFinanceData} pagination={true} bordered />} */}
 
-                {/* Management Meeting */}
-                <Title level={3} style={{ marginTop: "30px" }}>Evidence of quarterly Management Meetings</Title>
-                {managementMeetingsData && <Table columns={managementMeetingColumns} dataSource={managementMeetingsData} pagination={true} bordered />}
+                {/* Sub Committe Meeting and Members section End*/}
+               <hr/>
+                
+                {/* Management Meeting Start */}
+                 {/* {JSON.stringify(managementMeetingsData)} */}
+                 {managementMeetingsData && <ManagementMeeting
+                    data={managementMeetingsData} 
+                    year={year} 
+                    columns={managementMeetingColumns}
+                    />}
 
+                 {/* Management Meeting End */}
                 {/* PRCC Meeting */}
-                <Title level={3} style={{ marginTop: "30px" }}>Evidence of Meetings of PRCC</Title>
-                {prccMeetingData && <Table columns={PRCCMeetingColumns} dataSource={prccMeetingData} pagination={true} bordered />}
+                 {/* {JSON.stringify(prccMeetingData)} */}
+                 {prccMeetingData && <PRCCMeeting
+                    data={prccMeetingData} 
+                    year={year} 
+                    columns={PRCCMeetingColumns}
+                    />}
 
-                {/* Entity Tender Committee (ETC) Meeting */}
-                <Title level={3} style={{ marginTop: "30px" }}>Evidence of Entity Tender Committee (ETC) meeting</Title>
-                {etcMeetingData && <Table columns={ETCMeetingColumns} dataSource={etcMeetingData} pagination={true} bordered />}
+                <hr/>
+                
+                {/* Entity Tender Committee (ETC) Meeting Start* Sow to review the fulfillement/}
+                 {/* {JSON.stringify(etcMeetingData)} */}
+                 {etcMeetingData && <EntityTenderCommitteeMeeting
+                    data={etcMeetingData} 
+                    year={year} 
+                    columns={ETCMeetingColumns}
+                    />}
+
+                {/* Entity Tender Committee (ETC) Meeting End*/}
 
                 <hr />
                 <h3 style={{ textAlign: "center", padding: "10px" }}>

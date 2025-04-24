@@ -35,6 +35,7 @@ function DPATAssessment() {
     const [districtGeneral, setDistrictGeneral] = useState([]);
     const [pwd, setPWD] = useState([]);
     const [dumpingSite, setDumpingSite] = useState([]);
+    const [foodVendors, setFoodVendors] = useState([]);
     const [serviceProviders, setServiceProviders] = useState([]);
     const [inspectorates, setInspectorates] = useState([]);
     const [permiRequest, setPermiRequest] = useState([]);
@@ -320,6 +321,25 @@ function DPATAssessment() {
             .catch(err => console.log(err))
     }
 
+    function getFoodVendors(startDate, endDate, districtId) {
+        axios
+            .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=abiQOocP8YA`)
+            .then(result => {
+                if(result.data.instances.length > 0){
+                    
+                    axios
+                    .get(`/tracker/events?program=abiQOocP8YA&orgUnit=${districtId}&startDate=${startDate}&endDate=${endDate}`)
+                    .then(resp => {
+                        setFoodVendors({data: result.data.instances, reports: resp.data.instances })
+                    })
+                    .catch(err => console.log(err))
+                }
+
+
+            })
+            .catch(err => console.log(err))
+    }
+
 
     return (
         <>
@@ -384,7 +404,9 @@ function DPATAssessment() {
                                         getStreetNaming(startDate, endDate, val.value);
                                         getAnnualActionPlan(startDate, endDate, val.value);
                                         getDistrictGeneral(startDate, endDate, val.value);
-                                        getPWDs(startDate, endDate, val.value)
+                                        getPWDs(startDate, endDate, val.value);
+                                        getDumpingSite(startDate, endDate, val.value);
+                                        getFoodVendors(startDate, endDate, val.value);
                                     }}
                                     options={districts}
                                     isSearchable
@@ -411,7 +433,8 @@ function DPATAssessment() {
                                              plans: annualActionPlan,
                                              districtGeneral: districtGeneral,
                                              pwd: pwd,
-                                             dumpingSite: dumpingSite
+                                             dumpingSite: dumpingSite,
+                                             foodVendors: foodVendors
                                              }}
                                         />}
 

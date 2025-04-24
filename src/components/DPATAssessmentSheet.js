@@ -1219,14 +1219,41 @@ const DPATAssessmentSheet = ({ props }) => {
                     The decisions that were on improving service delivery was {`${gaDecisionScore}%`} of the total no. of decisions made at GA Meetings in {year}.
                 </Content>
 
-                <Title level={3} style={{ marginTop: "30px" }}>Evidence of management actions on service delivery decisions</Title>
+                
+                <Title level={3} style={{ marginTop: "30px" }}>1.2 Management Actions taken on Assembly decisions</Title>
+                <Title level={4} style={{ marginTop: "30px" }}>Assessment Guide/ Requirement</Title>
+                <Content>
+                    <div className="mb-3">From the DCD, receive signed minutes of meetings of the Management of the Assembly:</div>
+                    <ol>
+                        <li>If Management has implemented at least 50% of the 
+                        service delivery improvement decisions (1.1i) of The General Assembly, 
+                        evidenced by reports and relevant supporting documents, score 2.
+                        </li>
+                    </ol>
+                    <div style={{ fontStyle: 'italic' }}>
+                        Local Governance Act, 2016 (Act 936) Section 18
+                    </div>
+                </Content>
+                <Title level={3} style={{ marginTop: "30px" }}>I. Evidence of management actions on service delivery decisions</Title>
                 {managementActionServiceDeliveryData && <Table
                     columns={managementServiceDeliveryActionColumns}
                     dataSource={managementActionServiceDeliveryData}
                     pagination={true} bordered />}
+                <Title level={3} style={{ marginTop: "30px" }}>II. Examples of actions taken decisions</Title>
 
-                {/* 1.3 Assembly Support to Substructures Evidence of utilization of ceded revenue
-                 */}
+                <Title level={5} style={{ marginTop: "30px" }}>Conclusion</Title>
+                <Content>
+                    100% of the total no. of decisions on improving service delivery were implemented in {year}.
+                </Content>
+                <Title level={5} style={{ marginTop: "30px" }}>Source:</Title>
+                <Content>
+                    <ol>
+                        <li>EMA/MAM/VOL.5 (GENERAL ASSEMBLY MEETING)</li>
+                        <li>Minutes of GAM (see folio 06: folio 07: folio 10)</li>
+                    </ol>
+                </Content>
+
+                {/* 1.3 Assembly Support to Substructures Evidence of utilization of ceded revenue */}
                 <Title level={3} style={{ marginTop: "30px" }}>1.3 Assembly Support to Sub-structures</Title>
                 <Title level={4} style={{ marginTop: "30px" }}>Assessment Guide/ Requirement</Title>
                 <Content>
@@ -1258,10 +1285,6 @@ const DPATAssessmentSheet = ({ props }) => {
                     columns={cededAmountUtilizationColumns}
                     dataSource={cededRevenueUtilisationData}
                     pagination={true} bordered />}
-
-
-
-
 
                 {/* 1.3 Assembly Support to Substructures Selected Activities that Benefit the Community 
                   Henry to at it and format it the way it is displayed on the sheet and give the score

@@ -34,6 +34,7 @@ function DPATAssessment() {
     const [districtMembers, setDistrictMembers] = useState([]);
     const [districtGeneral, setDistrictGeneral] = useState([]);
     const [pwd, setPWD] = useState([]);
+    const [schools, setSchools] = useState([]);
     const [dumpingSite, setDumpingSite] = useState([]);
     const [foodVendors, setFoodVendors] = useState([]);
     const [serviceProviders, setServiceProviders] = useState([]);
@@ -82,8 +83,9 @@ function DPATAssessment() {
                 if(result.data.instances.length > 0){
 
                     axios
-                    .get(`/tracker/events?program=n8WIhwDrAO7&orgUnit=${districtId}&startDate=${startDate}&endDate=${endDate}`)
+                    .get(`/tracker/events?program=n8WIhwDrAO7&orgUnit=${districtId}`)
                     .then(resp => {
+                        console.log("Sow decisions", result.data.instances)
                         setMeetingDecision({decisions: result.data.instances, reports:resp.data.instances})
                     })
                     .catch(err => console.log(err))
@@ -302,6 +304,25 @@ function DPATAssessment() {
             .catch(err => console.log(err))
     }
 
+    function getSchoolRegistered(startDate, endDate, districtId) {
+        axios
+            .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=g27TeeehRQC`)
+            .then(result => {
+                if(result.data.instances.length > 0){
+                    
+                    axios
+                    .get(`/tracker/events?program=g27TeeehRQC&orgUnit=${districtId}&startDate=${startDate}&endDate=${endDate}`)
+                    .then(resp => {
+                        setSchools({data: result.data.instances, reports: resp.data.instances })
+                    })
+                    .catch(err => console.log(err))
+                }
+
+
+            })
+            .catch(err => console.log(err))
+    }
+
     function getDumpingSite(startDate, endDate, districtId) {
         axios
             .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=Txcfc03kUCi`)
@@ -393,20 +414,17 @@ function DPATAssessment() {
                                         getDistrictAssemblyDepartment(startDate, endDate, val.value);
 
                                         getMembersByDistrict(startDate, endDate, val.value);
-                                        
                                         getSubStructuresActivity(startDate, endDate, val.value);
                                         getServiceProviderList(startDate, endDate, val.value);
-
                                         getInspectorateList(startDate, endDate, val.value);
-
                                         getPermitRequest(startDate, endDate, val.value);
-
                                         getStreetNaming(startDate, endDate, val.value);
                                         getAnnualActionPlan(startDate, endDate, val.value);
                                         getDistrictGeneral(startDate, endDate, val.value);
                                         getPWDs(startDate, endDate, val.value);
                                         getDumpingSite(startDate, endDate, val.value);
                                         getFoodVendors(startDate, endDate, val.value);
+                                        getSchoolRegistered(startDate, endDate, val.value);
                                     }}
                                     options={districts}
                                     isSearchable
@@ -434,7 +452,8 @@ function DPATAssessment() {
                                              districtGeneral: districtGeneral,
                                              pwd: pwd,
                                              dumpingSite: dumpingSite,
-                                             foodVendors: foodVendors
+                                             foodVendors: foodVendors,
+                                             schools: schools
                                              }}
                                         />}
 

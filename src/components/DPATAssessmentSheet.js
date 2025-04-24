@@ -19,6 +19,7 @@ import MaintenanceInfrastructure from "./MaintenanceInfrastructure";
 import ClientServiceCharter from "./ClientServiceCharter";
 import GeneralAssemblyDecision from "./GeneralAssemblyDecision";
 import ManagementActionsONGAD from "./ManagementActionsONGAD";
+import DistrictHotlineNumber from "./DistrictHotlineNumber";
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
@@ -252,6 +253,7 @@ const DPATAssessmentSheet = ({ props }) => {
     const [meetingDataGroup, setMeetingDataGroup] = useState();
     const [meetings, setMeetings] = useState(props?.meetings.meetings);
     const [members, setMembers] = useState(props?.members.members);
+    const [schools, setSchools] = useState(props?.schools.data);
     const [subStructureActivity, setSubStructureActivity] = useState(props?.subActivity.activities);
     const [serviceProviders, setServiceProviders] = useState(props?.serviceProviders.providers);
     const [subStructuresMeetingData, setSubStructuresMeetingData] = useState([]);
@@ -264,6 +266,7 @@ const DPATAssessmentSheet = ({ props }) => {
     const [streetNaming, setStreetNaming] = useState(props?.streets.streetNaming);
     const [districtGeneral, setDistrictGeneral] = useState(props?.districtGeneral.data);
     const [districtGeneralData, setDistrictGeneralData] = useState(null);
+    const [districtHotlineNumberData, setDistrictHotlineNumberData] = useState([]);
     const [pwd, setPwd] = useState(props?.pwd.data);
     const [dumpingSite, setDumpingSite] = useState(props?.dumpingSite.data);
     const [dumpingSiteData, setDumpingSiteData] = useState([]);
@@ -336,6 +339,8 @@ const DPATAssessmentSheet = ({ props }) => {
         setPwdDataDisplay();
         setDumpingSiteDataDisplay();
         setFoodVendorsDiplay();
+        setAllDataFromDistrictGeneral();
+        setAllFromSchools();
 
     }, [props]);
 
@@ -495,6 +500,30 @@ const DPATAssessmentSheet = ({ props }) => {
 
     }
 
+    const setAllDataFromDistrictGeneral = () => {
+        // console.log("hotline number: ", districtGeneral);
+        // Hotline number details
+        const hotline = [];
+
+        if (districtGeneral.length > 0) {
+            hotline.push({
+                hotline: getAttributeValue("Public Hotline", districtGeneral[0]),
+                number: getAttributeValue("Contact Number", districtGeneral[0]),
+                publication: "YES"
+            });
+
+            setDistrictHotlineNumberData({ data: hotline, score: 1 });
+        } else {
+            setDistrictHotlineNumberData({ data: [], score: 0 });
+        }
+
+    }
+
+    const setAllFromSchools = () => {
+        console.log("hotline number: ", props?.schools);
+        // Henry to count and populate the data here
+    }
+
     const setBuildingInspectoratesData = () => {
         const temp = [];
 
@@ -537,10 +566,10 @@ const DPATAssessmentSheet = ({ props }) => {
         temp.push(createMeetingData("General Assembly Meeting", generalAssemblyMeeting));
         temp.push(createMeetingData("Executive Committee Meeting", executiveCommitteeMeeting));
         temp.push(createMeetingData("Sub Structure Meeting", subStructureMeeting));
-      
-        setSubStructuresMeetingData({data: temp, fulfillment: "Not Fulfiled"});
-      };
-      
+
+        setSubStructuresMeetingData({ data: temp, fulfillment: "Not Fulfiled" });
+    };
+
 
     const setPermitRequestDataDisplay = () => {
         const temp = [];
@@ -1166,18 +1195,17 @@ const DPATAssessmentSheet = ({ props }) => {
                 <h3 style={{ textAlign: "center", padding: "10px" }}>
                     Annex 2: SECTION B – SERVICE DELIVERY INDICATORS
                 </h3>
+                {/* SDI- General Assembly Decisions Start*/}
+                {decisionServiceData && <GeneralAssemblyDecision
+                    data={decisionServiceData}
+                    year={year}
+                    columns={serviceDecisionColumns}
+                    decisionDeliveryData={decisionDeliveryData}
+                    serviceDeliveryDecisionColumns={serviceDeliveryDecisionColumns}
+                />}
+                {/* SDI- General Assembly Decisions End */}
 
-                {/* Henry and Samu to give the score and of bellow tables */}
-                <div>
-                    <Text strong>THEMATIC AREA: </Text> <Text>
-                        MANAGEMENT & COORDINATION – IMPLEMENTATION OF SERVICE DELIVERY DECISIONS (5)
-                    </Text>
-                </div>
-
-                {/* Entity Tender Committee (ETC) Meeting */}
-                <GeneralAssemblyDecisions year={year}
-                    decisionServiceData={decisionServiceData}
-                    decisionDeliveryData={decisionDeliveryData} />
+                <hr />
 
 
                 <GeneralAssemblyManagementActions year={year}
@@ -1238,12 +1266,14 @@ const DPATAssessmentSheet = ({ props }) => {
                     pagination={false} bordered />}
 
 
-                <Title level={3} style={{ marginTop: "30px" }}>Evidence of Dedicated Functional Hotline for Vulnerable Groups</Title>
-                {districtGeneralData && <Table
-                    columns={districtHotlineNumberColumn}
-                    dataSource={districtGeneralData}
-                    pagination={false} bordered />}
+                {/* Dedicated Hotline Number for the District Start */}
 
+
+                {districtHotlineNumberData && <DistrictHotlineNumber
+                    data={districtHotlineNumberData}
+                    year={year}
+                    columns={districtHotlineNumberColumn} />}
+                {/* Dedicated Hotline Number for the District End */}
 
 
                 {/* Evidence of Nutrition-Oriented Activities in the Assembly
@@ -1254,11 +1284,23 @@ const DPATAssessmentSheet = ({ props }) => {
                     Sow to use service provider data and diplay table and then score
                 */}
 
+                {/* 5.4 Availability of Institutional Toilet facilities and Water in Public Schools
+                    Henry to use the count from school data for it
+                */}
+
+                {/* 5.5 Climate Change Interventions
+                    Sow to add the data to use the count from the AAP data for it
+                */}
+
+                {/* 6.1 Availability of District LED activities in the AAP
+                    Sow to add the data to use the count from the AAP data for it
+                */}
+
                 <Title level={3} style={{ marginTop: "30px" }}>List of dumping /final disposal site</Title>
                 {dumpingSiteData && <Table
                     columns={dumpingSiteColumn}
                     dataSource={dumpingSiteData}
-                    pagination={false} bordered />}
+                    pagination={true} bordered />}
 
                 <Title level={3} style={{ marginTop: "30px" }}>Evidance of Beverage Vendors</Title>
                 {foodVendorsData && <Table

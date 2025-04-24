@@ -10,21 +10,21 @@ function ManagementActionsONGAD({ data, year, columns, decisionDeliveryData, ser
 
     return (
         <>
-            
+
             <Title level={3}>SDI 1.0 - 1.2 Management Actions taken on Assembly decisions</Title>
             <Title level={4} style={{ marginTop: "10px" }}>Assessment Guide/ Requirement</Title>
             <Content>
                 From the DCD, receive signed minutes of meetings of the Management of the Assembly:<br /><br />
                 <ol>
                     <li type="i">
-                    If Management has implemented at least 50% of the service delivery improvement decisions (1.1i) 
-                    of The General Assembly, evidenced by reports and relevant supporting documents, score 2
+                        If Management has implemented at least 50% of the service delivery improvement decisions (1.1i)
+                        of The General Assembly, evidenced by reports and relevant supporting documents, score 2
                     </li>
 
                 </ol>
 
-                <i>Examples of services: Water, Electric power, Health, Education,
-                    Transportation, Roads, Sanitation, Recreational services and Security.
+                <i>
+                    Local Governance Act, 2016 (Act 936) Section 18
                 </i>
             </Content>
             <Title level={5} style={{ marginTop: "20px" }}>Maximum Score <strong>2</strong>
@@ -33,43 +33,20 @@ function ManagementActionsONGAD({ data, year, columns, decisionDeliveryData, ser
             <Title level={5} style={{ marginTop: "20px" }}>SDI 1.0-1.2 Actual Score: <strong>{gaDecisionScore > 50 ? '1' : '0'}</strong>
             </Title>
 
-            <Title level={4} style={{ marginTop: "20px" }}>Evidence of Quarterly Management Meetings</Title>
-            {/* {data && <Table columns={columns} dataSource={data?.data} pagination={true} bordered />} */}
-            {data && <Table columns={columns} dataSource={data} pagination={true} bordered
-                summary={pageData => {
-                    let totalDecision = 0, totalDelivered = 0, totalPercent = 0;
+            <Title level={4} style={{ marginTop: "20px" }}>I. Evidence of management actions on service delivery decisions            </Title>
 
-                    pageData.forEach(({ total, serviceDecision, percentage }) => {
-                        totalDecision += Number(total);
-                        totalDelivered += Number(serviceDecision);
-                        totalPercent += Number(percentage);
-                    });
+            {data && <Table
+                columns={columns}
+                dataSource={data?.data}
+                pagination={true} bordered />}
 
-                    setGaDecisionScore(totalPercent);
+            <Title level={5} style={{ marginTop: "20px" }}>II. Examples of actions taken decisions</Title>
+            {decisionDeliveryData && <Table columns={serviceDeliveryDecisionColumns} dataSource={decisionDeliveryData} pagination={false} bordered />}
 
-                    return (<>
-                        <Table.Summary.Row style={{ fontWeight: 'bold' }}>
-                            <Table.Summary.Cell>Total Decisions</Table.Summary.Cell>
-                            <Table.Summary.Cell>
-                                <Text>{totalDecision}</Text>
-                            </Table.Summary.Cell>
-                            <Table.Summary.Cell>
-                                <Text>{totalDelivered}</Text>
-                            </Table.Summary.Cell>
-                            <Table.Summary.Cell>
-                                <Text>{totalPercent}</Text>
-                            </Table.Summary.Cell>
-                        </Table.Summary.Row>
-                    </>)
-                }}
-            />}
-            <Title level={5} style={{ marginTop: "20px" }}>Service Delivery Decisions</Title>
-                            {decisionDeliveryData && <Table columns={serviceDeliveryDecisionColumns} dataSource={decisionDeliveryData} pagination={false} bordered />}
-            
-                            <Title level={5} style={{ marginTop: "20px" }}>Conclusion</Title>
-                            <Content>
-                                The decisions that were on improving service delivery was {`${gaDecisionScore}%`} of the total no. of decisions made at GA Meetings in {year}.
-                            </Content>
+            <Title level={5} style={{ marginTop: "20px" }}>Conclusion</Title>
+            <Content>
+                The decisions that were on improving service delivery was {`${gaDecisionScore}%`} of the total no. of decisions made at GA Meetings in {year}.
+            </Content>
 
         </>
     );

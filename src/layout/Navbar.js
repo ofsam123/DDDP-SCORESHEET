@@ -23,7 +23,7 @@ function Navbar(){
 						<div className="custom-search">
 							{/* <input type="text" className="search-query" placeholder="Search here ..."/>
 							<i className="icon-search1"></i> */}
-							<h6 className="font-weight-bolder">Welcome to DDDP Reporting Tool Dashboard</h6>
+							<h6 className="font-weight-bolder">Welcome to DDDP Reporting Tool</h6>
 						</div>
 						{/* Custom search end */}
 

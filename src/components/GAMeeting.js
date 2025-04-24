@@ -36,10 +36,10 @@ function GAMeeting({ data, year, columns, decisions, decisionColumns }) {
 
             <Title level={5} style={{ marginTop: "10px" }}>Number of Decisions: <strong>{data?.numberOfDecision}</strong> </Title>
             <Title level={4} style={{ marginTop: "20px" }}>Illustration of Meetings held in the table bellow:</Title>
-            {data?.meetings && <Table columns={columns} dataSource={data?.meetings} pagination={true} bordered />}
+            {data?.meetings && <Table columns={columns} dataSource={data?.meetings} pagination={false} bordered />}
 
             <Title level={4} style={{ marginTop: "10px" }}>Illustration of Decision taken in the table bellow:</Title>
-            {decisions && <Table columns={decisionColumns} dataSource={decisions} pagination={true} bordered />}
+            {decisions && <Table columns={decisionColumns} dataSource={decisions} pagination={false} bordered />}
         </>
     );
 }

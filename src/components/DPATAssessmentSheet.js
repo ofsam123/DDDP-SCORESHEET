@@ -9,6 +9,14 @@ import SubStructureCommiteeMeeting from "./SubStructureCommitteMeeting";
 import ManagementMeeting from "./ManagementMeeting";
 import PRCCMeeting from "./PRCCMeeting";
 import EntityTenderCommitteeMeeting from "./EntityTenderCommiteeMeeting";
+import GeneralAssemblyDecisions from "./GeneralAssemblyDecisions";
+import GeneralAssemblyManagementActions from "./GeneralAssemblyManagmentActions";
+import GASupport from "./GASupport";
+import WaterServices from "./WaterServices";
+import ElectricityServices from "./ElectricityServices";
+import SanitationServices from "./SanitationSevices";
+import MaintenanceInfrastructure from "./MaintenanceInfrastructure";
+import ClientServiceCharter from "./ClientServiceCharter";
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
@@ -136,58 +144,9 @@ const subCommitteeCompositionColumns = [
 
 
 // =====================================SDI Columns================================
-const serviceDecisionColumns = [
-    { title: "GAM", dataIndex: "gam", key: "gam" },
-    { title: "Total No. of decisions taken", dataIndex: "total", key: "total" },
-    { title: "No. of decisions on service delivery", dataIndex: "serviceDecision", key: "serviceDecision" },
-    { title: "% of decisions on service delivery ", dataIndex: "percentage", key: "percentage" }
-];
 
-const serviceDeliveryDecisionColumns = [
-    { title: "GAM", dataIndex: "gam", key: "gam" },
-    { title: "Service Delivery Decisions", dataIndex: "service", key: "service" }
-];
 
-const managementServiceDeliveryActionColumns = [
-    { title: "No. of decisions on service delivery improvement", dataIndex: "no", key: "no" },
-    { title: "No. of actions taken on social service improvement decisions", dataIndex: "service", key: "service" },
-    { title: "% of service delivery improvement decisions implemented ", dataIndex: "percentage", key: "percentage" }
-];
 
-const cededAmountUtilizationColumns = [
-    { title: "Name of substructure", dataIndex: "name", key: "name" },
-    { title: "Amount of Ceded Revenue Received (GHS) - A", dataIndex: "collected", key: "collected" },
-    { title: "Amount of Ceded Revenue utilized for Community Activities (GHS)", dataIndex: "ceded", key: "ceded" },
-    { title: "% of Amount utilized for Community Activities ", dataIndex: "percentage", key: "percentage" }
-];
-
-const subStructureActivityColumns = [
-    { title: "No", dataIndex: "no", key: "no" },
-    { title: "Activities ", dataIndex: "activities", key: "collected" },
-    { title: "Substructure", dataIndex: "name", key: "name" },
-    { title: "Amount Utilized", dataIndex: "amount", key: "amount" }
-];
-
-const serviceProvidersColumn = [
-    { title: "No", dataIndex: "no", key: "no" },
-    { title: "Service Provider", dataIndex: "provider", key: "provider" },
-    { title: "Contract Duration", dataIndex: "contract", key: "contract" },
-    { title: "Start Date", dataIndex: "date", key: "date" }
-];
-
-const buildingInspectorateColumn = [
-    { title: "Date Established", dataIndex: "date", key: "date" },
-    { title: "Supervisor", dataIndex: "supervisor", key: "supervisor" },
-    { title: "address", dataIndex: "address", key: "address" },
-    { title: "Category of staff", dataIndex: "category", key: "category" },
-    { title: "Function performed by Works Department", dataIndex: "department", key: "department" }
-];
-
-const permitRequestColumn = [
-    { title: "No. of Building Permit Requests Received (A)", dataIndex: "permitReceived", key: "permitReceived" },
-    { title: "No. of Building Permit Requests Processed & Issued (B)", dataIndex: "permitProcessed", key: "permitProcessed" },
-    { title: "No. of approved permits traced to Local Plans (C)", dataIndex: "permitTraced", key: "permitTraced" }
-];
 
 const streetNamingColumn = [
     { title: "Street Naming and Property Addressing Data base (NOT Excel) available (Yes/No)", dataIndex: "street", key: "street" },
@@ -294,7 +253,9 @@ const DPATAssessmentSheet = ({ props }) => {
     const [decisionsData, setDecisionsData] = useState(null);
     const [year, setYear] = useState(props?.year);
     const [district, setDistrict] = useState(props.district);
-    const [gaDecisionScore, setGaDecisionScore] = useState(0);
+
+
+    const [cededRevenueUtilisationScore, setCededRevenueUtilisationScore] = useState(0);
 
     const handlePrint = () => {
         window.print();
@@ -509,26 +470,26 @@ const DPATAssessmentSheet = ({ props }) => {
 
     const setSubStructureMeetingDataDisplay = () => {
         const temp = [];
-      
+
         const generalAssemblyMeeting = formatData(meetings, "GA") || [];
         const executiveCommitteeMeeting = formatData(meetings, "EC") || [];
         const subStructureMeeting = formatData(meetings, "Sub Structure Committee") || [];
-      
+
         const createMeetingData = (label, data) => ({
-          key: label,
-          meeting: `${label}`,
-          firstMeeting: getAttributeValue("DPAT | Meeting Date", data[0]),
-          secondMeeting: getAttributeValue("DPAT | Meeting Date", data[1]),
-          thirdMeeting: getAttributeValue("DPAT | Meeting Date", data[2]),
+            key: label,
+            meeting: `${label}`,
+            firstMeeting: getAttributeValue("DPAT | Meeting Date", data[0]),
+            secondMeeting: getAttributeValue("DPAT | Meeting Date", data[1]),
+            thirdMeeting: getAttributeValue("DPAT | Meeting Date", data[2]),
         });
-      
+
         temp.push(createMeetingData("General Assembly Meeting", generalAssemblyMeeting));
         temp.push(createMeetingData("Executive Committee Meeting", executiveCommitteeMeeting));
         temp.push(createMeetingData("Sub Structure Meeting", subStructureMeeting));
-      
-        setSubStructuresMeetingData({data: temp, fulfillment: "Not Fulfiled"});
-      };
-      
+
+        setSubStructuresMeetingData({ data: temp, fulfillment: "Not Fulfiled" });
+    };
+
 
     const setPermitRequestDataDisplay = () => {
         const temp = [];
@@ -680,20 +641,20 @@ const DPATAssessmentSheet = ({ props }) => {
         })
 
         const fulfillment = "Not Fulfilled";
-        setManagementMeetingsData({data: temp, fulfillment: fulfillment});
+        setManagementMeetingsData({ data: temp, fulfillment: fulfillment });
     };
 
     const setECAMeetingData = () => {
         const temp = [];
         const gaMeeting = formatData(meetings, "GA"); // GA Meeting data
         const ecaMeeting = formatData(meetings, "EC"); // EC Meeting data
-    
+
         // Preprocess GA meeting dates
         const gaMeetingDates = gaMeeting.map((meeting, index) => ({
             key: index + 1,
             date: getAttributeValue("DPAT | Meeting Date", meeting),
         }));
-    
+
         ecaMeeting.forEach((meeting, index) => {
             const meetingDataState = {
                 key: index + 1,
@@ -704,14 +665,14 @@ const DPATAssessmentSheet = ({ props }) => {
                 ecaMeetingDate: getAttributeValue("DPAT | Meeting Date", meeting),
                 signatoriesMinutesStatus: getAttributeValue("Minute File Number", meeting) ? "YES" : "NO",
             };
-    
+
             temp.push(meetingDataState);
         });
-    
+
         const fulfillment = checkECANDGAMeetingFulfillment(temp);
         setEcaMeetingData({ data: temp, fulfillment });
     };
-    
+
 
     const setPRCCMeetingData = () => {
         const temp = [];
@@ -732,7 +693,7 @@ const DPATAssessmentSheet = ({ props }) => {
 
         const fulfillment = "Not Fulfilled";
 
-        setPrccMeetingData({data: temp, fulfillment:fulfillment});
+        setPrccMeetingData({ data: temp, fulfillment: fulfillment });
     };
 
     const setPRCCRecommendationMeetingData = () => {
@@ -772,9 +733,9 @@ const DPATAssessmentSheet = ({ props }) => {
             temp.push(meetingDataState);
         });
 
-        const fulfillment= "Not Fulfilled";
+        const fulfillment = "Not Fulfilled";
 
-        setEtcMeetingData({data: temp, fulfillment:fulfillment});
+        setEtcMeetingData({ data: temp, fulfillment: fulfillment });
     };
 
     const setMeetingBudgetData = () => {
@@ -889,7 +850,9 @@ const DPATAssessmentSheet = ({ props }) => {
             percentage: <strong>{calculatePercentage(collectedTotal, cededTotal)}</strong>
         });
 
+
         setCededRevenueUtilisationData(finalRevenueDetails);
+        setCededRevenueUtilisationScore(calculatePercentage(collectedTotal, cededTotal));
     };
 
     const setSubtructureActivities = () => {
@@ -975,7 +938,7 @@ const DPATAssessmentSheet = ({ props }) => {
         });
         const fulfillment = "Not Fulffiled";
 
-        setSubCommitteCompositionData({data: temp, fulfillment:fulfillment});
+        setSubCommitteCompositionData({ data: temp, fulfillment: fulfillment });
     };
 
 
@@ -1030,7 +993,7 @@ const DPATAssessmentSheet = ({ props }) => {
     return (
         <Layout style={{ padding: "20px", background: "#fff" }}>
             {/* Header */}
-            <Header style={{ background: "#1890ff", color: "#fff", textAlign: "center", padding: "10px" }}>
+            <Header style={{ background: "#1890ff", color: "#fff", textAlign: "center", padding: "10px", height: 'auto' }}>
                 <Title level={2} style={{ color: "#fff", margin: 0 }}>
                     DISTRICT ASSEMBLY PERFORMANCE ASSESSMENT REPORT {year && <span style={{ color: "#fff", fontSize: "30px" }}>{year}</span>}
                 </Title>
@@ -1052,106 +1015,105 @@ const DPATAssessmentSheet = ({ props }) => {
                     Annex 1: SECTION A - COMPLIANCE INDICATORS
                 </h3>
                 {/* General Assembly Meetings and Decision Start */}
-                {gaMeetingData && <GAMeeting 
-                    data={gaMeetingData} 
-                    year={year} 
+                {gaMeetingData && <GAMeeting
+                    data={gaMeetingData}
+                    year={year}
                     columns={generalAssemblyColumns}
                     decisions={decisionsData}
                     decisionColumns={generalAssemblyDecisionColumns}
-                    />}
-                 {/* General Assembly Meetings and Decision End */}
-                 <hr/>
+                />}
+                {/* General Assembly Meetings and Decision End */}
+                <hr />
 
                 {/* Approval of Annual Action Plan Budget Start */}
                 {/* {JSON.stringify(meetingDataGroup)} */}
                 {meetingDataGroup && <AAPBudgetAproval
-                    data={meetingDataGroup} 
-                    year={year} 
+                    data={meetingDataGroup}
+                    year={year}
                     columns={budgetColumns}
-                    />}
+                />}
                 {/* Approval of Annual Action Plan Budget End */}
                 <hr />
 
                 {/* Sub-Structures Meetings Start */}
                 {/* {JSON.stringify(subReportData)} */}
-                
+
                 {subStructuresMeetingData && <SubStructureMeeting
-                    data={subStructuresMeetingData} 
-                    year={year} 
+                    data={subStructuresMeetingData}
+                    year={year}
                     columns={subStructureColumns}
                     establishment={subStructureData}
                     establishmentColumns={subStructureEstablishmentColumns}
                     revenueSharing={subReportData}
                     revenuSharingColumns={revenueSharingColumns}
-                    />}
+                />}
                 {/* Sub-Structures Meetings End */}
-               <hr/>
+                <hr />
 
                 {/* ECA Meeting Start */}
                 {/* {JSON.stringify(ecaMeetingData)} */}
                 {ecaMeetingData && <ExecutiveCommitteeMember
-                    data={ecaMeetingData} 
-                    year={year} 
+                    data={ecaMeetingData}
+                    year={year}
                     columns={ECAMeetingColumns}
-                    />}
+                />}
                 {/* ECA Meeting End */}
-                <hr/>
+                <hr />
 
                 {/* Sub Committe Meeting and Members section Start*/}
                 {/* {JSON.stringify(memberFinanceData)} */}
-                 {/* Evidence of Sub Committee Composition --Henry sum them and count by sub commity name*/}
+                {/* Evidence of Sub Committee Composition --Henry sum them and count by sub commity name*/}
                 {/* Also desagrate the members and display list of members by sub-committee
                     (See the sample sheet as guide:Membership of Statutory Sub-Committees) */}
                 {memberFinanceData && <SubStructureCommiteeMeeting
-                    data={subCommitteCompositionData} 
-                    year={year} 
+                    data={subCommitteCompositionData}
+                    year={year}
                     columns={subCommitteeCompositionColumns}
                     members={memberFinanceData}
-                    memberColumns = {membersColumns}
-                    />}
+                    memberColumns={membersColumns}
+                />}
                 {/* <Title level={3} style={{ marginTop: "30px" }}>Membership of Statutory Sub-Committees</Title>
-                {memberFinanceData && <Table columns={membersColumns} dataSource={memberFinanceData} pagination={true} bordered />} */}
+                {memberFinanceData && <Table columns={membersColumns} dataSource={memberFinanceData} pagination={false} bordered />} */}
 
                 {/* Sub Committe Meeting and Members section End*/}
-               <hr/>
-                
+                <hr />
+
                 {/* Management Meeting Start */}
-                 {/* {JSON.stringify(managementMeetingsData)} */}
-                 {managementMeetingsData && <ManagementMeeting
-                    data={managementMeetingsData} 
-                    year={year} 
+                {/* {JSON.stringify(managementMeetingsData)} */}
+                {managementMeetingsData && <ManagementMeeting
+                    data={managementMeetingsData}
+                    year={year}
                     columns={managementMeetingColumns}
-                    />}
+                />}
 
-                 {/* Management Meeting End */}
+                {/* Management Meeting End */}
                 {/* PRCC Meeting */}
-                 {/* {JSON.stringify(prccMeetingData)} */}
-                 {prccMeetingData && <PRCCMeeting
-                    data={prccMeetingData} 
-                    year={year} 
+                {/* {JSON.stringify(prccMeetingData)} */}
+                {prccMeetingData && <PRCCMeeting
+                    data={prccMeetingData}
+                    year={year}
                     columns={PRCCMeetingColumns}
-                    />}
+                />}
 
-                <hr/>
-                
+                <hr />
+
                 {/* Entity Tender Committee (ETC) Meeting Start* Sow to review the fulfillement/}
                  {/* {JSON.stringify(etcMeetingData)} */}
-                 {etcMeetingData && <EntityTenderCommitteeMeeting
-                    data={etcMeetingData} 
-                    year={year} 
+                {etcMeetingData && <EntityTenderCommitteeMeeting
+                    data={etcMeetingData}
+                    year={year}
                     columns={ETCMeetingColumns}
-                    />}
+                />}
 
                 {/* Entity Tender Committee (ETC) Meeting End*/}
 
                 <hr />
+
                 <h3 style={{ textAlign: "center", padding: "10px" }}>
                     Annex 2: SECTION B – SERVICE DELIVERY INDICATORS
                 </h3>
 
                 {/* Henry and Samu to give the score and of bellow tables */}
-
-
                 <div>
                     <Text strong>THEMATIC AREA: </Text> <Text>
                         MANAGEMENT & COORDINATION – IMPLEMENTATION OF SERVICE DELIVERY DECISIONS (5)
@@ -1159,188 +1121,53 @@ const DPATAssessmentSheet = ({ props }) => {
                 </div>
 
                 {/* Entity Tender Committee (ETC) Meeting */}
-                <Title level={3} style={{ marginTop: "30px" }}>SDI 10 - 1.1 General Assembly Decisions</Title>
-
-                <Title level={4} style={{ marginTop: "30px" }}>Assessment Guide/ Requirement</Title>
-                <Content>
-                    From the DCD, receive signed Minutes of Meetings of the three mandatory Meetings of the General Assembly:<br /><br />
-                    <ol>
-                        <li>If The General Assembly took at least 50% decisions on improving service delivery in any sector of the District, score 1;</li>
-                    </ol>
-                    Examples of services: Water, Electric power, Health, Education, Transportation, Roads, Sanitation, Recreational services and Security.
-                    <br /><br /><i>(Local Governance Act, 2016 (Act 936) Section 18)3</i>
-                </Content>
-
-                <Title level={4} style={{ marginTop: "30px" }}>Maximum Score</Title>
-                <Content>1</Content>
-
-                {/* <Title level={4} style={{ marginTop: "30px" }}>Minimum Score</Title>
-                    <Content>{gaDecisionScore > 50 ? '1' : '0'}</Content> */}
-
-                <Title level={4} style={{ marginTop: "30px" }}>Findings / Observations & Conclusion</Title>
+                <GeneralAssemblyDecisions year={year}
+                    decisionServiceData={decisionServiceData}
+                    decisionDeliveryData={decisionDeliveryData} />
 
 
-                <Title level={5} style={{ marginTop: "30px" }}>Service Delivery Decisions</Title>
-                <Space><Text strong>Actual Score: </Text> <Text>{gaDecisionScore > 50 ? '1' : '0'}</Text></Space>
-                {decisionServiceData && <Table columns={serviceDecisionColumns} dataSource={decisionServiceData} pagination={false} bordered
-                    summary={pageData => {
-                        let totalDecision = 0, totalDelivered = 0, totalPercent = 0;
-
-                        pageData.forEach(({ total, serviceDecision, percentage }) => {
-                            totalDecision += Number(total);
-                            totalDelivered += Number(serviceDecision);
-                            totalPercent += Number(percentage);
-                        });
-
-                        setGaDecisionScore(totalPercent);
-
-                        return (<>
-                            <Table.Summary.Row style={{ fontWeight: 'bold' }}>
-                                <Table.Summary.Cell>Total Decisions</Table.Summary.Cell>
-                                <Table.Summary.Cell>
-                                    <Text>{totalDecision}</Text>
-                                </Table.Summary.Cell>
-                                <Table.Summary.Cell>
-                                    <Text>{totalDelivered}</Text>
-                                </Table.Summary.Cell>
-                                <Table.Summary.Cell>
-                                    <Text>{totalPercent}</Text>
-                                </Table.Summary.Cell>
-                            </Table.Summary.Row>
-                        </>)
-                    }}
-                />}
-
-                <Title level={5} style={{ marginTop: "30px" }}>Service Delivery Decisions</Title>
-                {decisionDeliveryData && <Table columns={serviceDeliveryDecisionColumns} dataSource={decisionDeliveryData} pagination={false} bordered />}
-
-                <Title level={5} style={{ marginTop: "30px" }}>Conclusion</Title>
-                <Content>
-                    The decisions that were on improving service delivery was {`${gaDecisionScore}%`} of the total no. of decisions made at GA Meetings in {year}.
-                </Content>
-
-                
-                <Title level={3} style={{ marginTop: "30px" }}>1.2 Management Actions taken on Assembly decisions</Title>
-                <Title level={4} style={{ marginTop: "30px" }}>Assessment Guide/ Requirement</Title>
-                <Content>
-                    <div className="mb-3">From the DCD, receive signed minutes of meetings of the Management of the Assembly:</div>
-                    <ol>
-                        <li>If Management has implemented at least 50% of the 
-                        service delivery improvement decisions (1.1i) of The General Assembly, 
-                        evidenced by reports and relevant supporting documents, score 2.
-                        </li>
-                    </ol>
-                    <div style={{ fontStyle: 'italic' }}>
-                        Local Governance Act, 2016 (Act 936) Section 18
-                    </div>
-                </Content>
-                <Title level={3} style={{ marginTop: "30px" }}>I. Evidence of management actions on service delivery decisions</Title>
-                {managementActionServiceDeliveryData && <Table
-                    columns={managementServiceDeliveryActionColumns}
-                    dataSource={managementActionServiceDeliveryData}
-                    pagination={true} bordered />}
-                <Title level={3} style={{ marginTop: "30px" }}>II. Examples of actions taken decisions</Title>
-
-                <Title level={5} style={{ marginTop: "30px" }}>Conclusion</Title>
-                <Content>
-                    100% of the total no. of decisions on improving service delivery were implemented in {year}.
-                </Content>
-                <Title level={5} style={{ marginTop: "30px" }}>Source:</Title>
-                <Content>
-                    <ol>
-                        <li>EMA/MAM/VOL.5 (GENERAL ASSEMBLY MEETING)</li>
-                        <li>Minutes of GAM (see folio 06: folio 07: folio 10)</li>
-                    </ol>
-                </Content>
+                <GeneralAssemblyManagementActions year={year}
+                    decisions={decisionsData}
+                    managementActionServiceDeliveryData={managementActionServiceDeliveryData} />
 
                 {/* 1.3 Assembly Support to Substructures Evidence of utilization of ceded revenue */}
-                <Title level={3} style={{ marginTop: "30px" }}>1.3 Assembly Support to Sub-structures</Title>
-                <Title level={4} style={{ marginTop: "30px" }}>Assessment Guide/ Requirement</Title>
-                <Content>
-                    <div className="mb-3">From the DCD, receive reports on the activities of all established sub-structures of
-                        the Assembly and Assembly’s DACF allocation to Sub-structures:</div>
-                    <ol>
-                        <li>If all the sub-structures utilized at least 30% of their ceded Revenue to support
-                            activities that benefit the Community, score 1, else score 0 </li>
-                        <li>If the Assembly has spent at least 90% of the up-to 2% DACF release to its
-                            Sub-Structures, to support the substructures, score 1, else score 0.</li>
-                    </ol>
-                    <div style={{ fontStyle: 'italic' }}>
-                        (Local Government (Urban, Zonal and Town Councils and Unit Committees)
-                        Establishment Instrument of 2010, LI 1961) Guidelines for the Disbursement
-                        and Management of the District Assembly Common Fund Allocation
-                    </div>
-                </Content>
+                <GASupport year={year}
+                    cededRevenueUtilisationData={cededRevenueUtilisationData}
+                    subStructureActivityData={subStructureActivityData}
+                    cededRevenueUtilisationScore={cededRevenueUtilisationScore} />
 
-                <Title level={4} style={{ marginTop: "30px" }}>Maximum Score</Title>
-                <Content>2</Content>
 
-                <Title level={4} style={{ marginTop: "30px" }}>Findings / Observations & Conclusion</Title>
-                <Content>
-                    We received and reviewed information on the activities of established sub-structures and noted the following:
-                </Content>
-
-                <Title level={5} style={{ marginTop: "30px" }}>Evidence of utilization of ceded revenue</Title>
-                {cededRevenueUtilisationData && <Table
-                    columns={cededAmountUtilizationColumns}
-                    dataSource={cededRevenueUtilisationData}
-                    pagination={true} bordered />}
-
-                {/* 1.3 Assembly Support to Substructures Selected Activities that Benefit the Community 
-                  Henry to at it and format it the way it is displayed on the sheet and give the score
-                  */}
-                <Title level={5} style={{ marginTop: "30px" }}>Selected Activities that Benefit the Community</Title>
-
-                {subStructureActivityData && <Table
-                    columns={subStructureActivityColumns}
-                    dataSource={subStructureActivityData}
-                    pagination={true} bordered />}
 
                 {/* Water Service Provider List 
                   Henry to consume the data from the report and get second table(Data is already pulled here)
                   */}
-                <Title level={3} style={{ marginTop: "30px" }}>Water Service Provider List</Title>
-                {waterProvidersData && <Table
-                    columns={serviceProvidersColumn}
-                    dataSource={waterProvidersData}
-                    pagination={true} bordered />}
+                <WaterServices year={year}
+                    waterProvidersData={waterProvidersData} />
+
 
                 {/* Electricity Service Provider List  
                    Henry to consume the data from the report and get second table(Data is already pulled here)
                   */}
-                <Title level={3} style={{ marginTop: "30px" }}>Electricity Service Provider List</Title>
-                {electricityProvidersData && <Table
-                    columns={serviceProvidersColumn}
-                    dataSource={electricityProvidersData}
-                    pagination={true} bordered />}
+                <ElectricityServices year={year}
+                    electricityProvidersData={electricityProvidersData} />
 
                 {/* Sanitation Service Provider List
                    Henry to consume the data from the report and get second table(Data is already pulled here)
                   */}
-                <Title level={3} style={{ marginTop: "30px" }}>Sanitation Service Provider List</Title>
-                {sanitationProvidersData && <Table
-                    columns={serviceProvidersColumn}
-                    dataSource={sanitationProvidersData}
-                    pagination={true} bordered />}
+                <SanitationServices year={year}
+                    sanitationProvidersData={sanitationProvidersData} />
 
 
                 {/* Evidence of establishment of Planning & Building Inspectorate Unit
                    Henry to consume the data from the report and get second table(Data is already pulled here)
                   */}
                 {/* {JSON.stringify(buildingInspectorate)} */}
-                <Title level={3} style={{ marginTop: "30px" }}>Evidence of establishment of Planning & Building Inspectorate Unit</Title>
-                {buildingInspectorateData && <Table
-                    columns={buildingInspectorateColumn}
-                    dataSource={buildingInspectorateData}
-                    pagination={true} bordered />}
+                <MaintenanceInfrastructure year={year}
+                    buildingInspectorateData={buildingInspectorateData} />
 
                 {/* Henry to follow the instruction in the function to get the data */}
-
-                <Title level={3} style={{ marginTop: "30px" }}>Evidence of Processing & Issuance of Building Permit Requests</Title>
-                {permitRequestData && <Table
-                    columns={permitRequestColumn}
-                    dataSource={permitRequestData}
-                    pagination={true} bordered />}
+                <ClientServiceCharter year={year}
+                    permitRequestData={permitRequestData} />
 
                 {/* Henry to follow the instruction in the function to get the data */}
 
@@ -1348,20 +1175,20 @@ const DPATAssessmentSheet = ({ props }) => {
                 {streetNamingData && <Table
                     columns={streetNamingColumn}
                     dataSource={streetNamingData}
-                    pagination={true} bordered />}
+                    pagination={false} bordered />}
 
                 <Title level={3} style={{ marginTop: "30px" }}>Evidence of Installation of named streets</Title>
                 {streetNamingCountingData && <Table
                     columns={streetNamingInstallationColumn}
                     dataSource={streetNamingCountingData}
-                    pagination={true} bordered />}
+                    pagination={false} bordered />}
 
 
                 <Title level={3} style={{ marginTop: "30px" }}>Evidence of Dedicated Functional Hotline for Vulnerable Groups</Title>
                 {districtGeneralData && <Table
                     columns={districtHotlineNumberColumn}
                     dataSource={districtGeneralData}
-                    pagination={true} bordered />}
+                    pagination={false} bordered />}
 
 
 
@@ -1377,13 +1204,13 @@ const DPATAssessmentSheet = ({ props }) => {
                 {dumpingSiteData && <Table
                     columns={dumpingSiteColumn}
                     dataSource={dumpingSiteData}
-                    pagination={true} bordered />}
+                    pagination={false} bordered />}
 
                 <Title level={3} style={{ marginTop: "30px" }}>Evidance of Beverage Vendors</Title>
                 {foodVendorsData && <Table
                     columns={foodVendorsColumn}
                     dataSource={foodVendorsData}
-                    pagination={true} bordered />}
+                    pagination={false} bordered />}
 
 
                 {/* Print Button */}

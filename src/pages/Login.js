@@ -38,31 +38,36 @@ export default function App() {
       setError("Please fill in both username and email");
       return;
     }
-      axios
-                        .get(`/users?filter=username:eq:${userName}&filter=email:eq:${email}&filter=disabled:eq:false&fields=username,displayName,email,phoneNumber,disabled`)
-                        .then(resp => {
-                            // setMeetingDecision({decisions: result.data.instances, reports:resp.data.instances})
-                            const userList = resp.data.users;
-
-                            if(userList.length != 0){
-                              const user = userList[0];
-                              const payload = {
-                                user: {
-                                  fullName: user.displayName,
-                                  username: user.username,
-                                  phone: user.phoneNumber,
-                                  disabled: user.disabled,
-                                  email: user.email
-                                }};
-
-                              dispatch({ type: 'LOGIN_SUCCESS', payload: payload });
-                              navigate(from, { replace: true });
-
-                            }
-                 
-                        })
-                        .catch(err => console.log(err))
-                    }
+    
+    axios
+      .get(`/users?filter=username:eq:${userName}&filter=email:eq:${email}&filter=disabled:eq:false&fields=username,displayName,email,phoneNumber,disabled`)
+      .then(resp => {
+        const userList = resp.data.users;
+    
+        if (userList.length === 0) {
+          setError("Incorrect username or email");
+          return;
+        }
+    
+        const user = userList[0];
+        const payload = {
+          user: {
+            fullName: user.displayName,
+            username: user.username,
+            phone: user.phoneNumber,
+            disabled: user.disabled,
+            email: user.email
+          }
+        };
+    
+        dispatch({ type: 'LOGIN_SUCCESS', payload: payload });
+        navigate(from, { replace: true });
+      })
+      .catch(err => {
+        console.log(err);
+        setError("An error occurred. Please try again.");
+      });
+    }
 
   
 

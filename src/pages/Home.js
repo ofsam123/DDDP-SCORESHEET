@@ -322,35 +322,35 @@ function Home() {
                 <CardBox
                   name="AAP Total"
                   counter={isLoading ? "Loading..." : aapTotal}
-                  icon="icon-insert_comment"
+                  icon="icon-zap-off"
                 />
               </div>
               <div className="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
                 <CardBox
                   name="Projects"
                   counter={isLoading ? "Loading..." : projectsTotal}
-                  icon="icon-phone-incoming"
+                  icon="icon-globe"
                 />
               </div>
               <div className="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
                 <CardBox
                   name="Programs"
                   counter={isLoading ? "Loading..." : programsTotal}
-                  icon="icon-tablet"
+                  icon="icon-pocket"
                 />
               </div>
               <div className="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
                 <CardBox
                   name="Meetings"
                   counter={isLoading ? "Loading..." : meetingsTotal}
-                  icon="icon-accessibility"
+                  icon="icon-people"
                 />
               </div>
               <div className="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
                 <CardBox
-                  name="Departments"
+                  name="Sub Statutory"
                   counter={isLoading ? "Loading..." : departmentsTotal}
-                  icon="icon-wc"
+                  icon="icon-server"
                 />
               </div>
             </div>

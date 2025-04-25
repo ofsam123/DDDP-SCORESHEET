@@ -20,6 +20,15 @@ import ClientServiceCharter from "./ClientServiceCharter";
 import GeneralAssemblyDecision from "./GeneralAssemblyDecision";
 import ManagementActionsONGAD from "./ManagementActionsONGAD";
 import DistrictHotlineNumber from "./DistrictHotlineNumber";
+import AAPImplementation from "./AAPImplementation";
+import MonitoringProjectAndActivity from "./MonitoringProjectAndActivity";
+import ContractManagementAndAdmins from "./ContractManagementAndAdmins";
+import FollowUpDeduction from "./FollowUpDeduction";
+import EnvironmentalAndSocialSafeGuard from "./EnvironmentalAndSocialSafeGuard";
+import CapacityBuildingImplementation from "./CapacityBuildingImplementation";
+import PostTrainingEvaluation from "./PostTrainingEvaluation";
+import PaymentPoints from "./PaymentPoints";
+import RateableRevenu from "./RateableRevenu";
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
@@ -262,6 +271,8 @@ const DPATAssessmentSheet = ({ props }) => {
     const [buildingInspectorate, setBuildingInspectorate] = useState(props?.inspectorates.inspectorates);
     const [buildingInspectorateReport, setBuildingInspectorateReport] = useState(props?.inspectorates.reports);
     const [permitRequestData, setPermitRequestData] = useState(null);
+    const [aapImplemenention, setAapImplemenention] = useState(null);
+    const [actityAndProject, setActityAndProject] = useState(null);
     const [permitRequestReport, setPermitRequestReport] = useState(props?.permitRequest.reports);
     const [streetNaming, setStreetNaming] = useState(props?.streets.streetNaming);
     const [districtGeneral, setDistrictGeneral] = useState(props?.districtGeneral.data);
@@ -280,6 +291,17 @@ const DPATAssessmentSheet = ({ props }) => {
     const [electricityProvidersData, setElectricityProvidersData] = useState(null);
     const [sanitationProvidersData, setSanitationProvidersData] = useState(null);
     const [memberFinanceData, setMemberFinanceData] = useState(null);
+    const [contracts, setContracts] = useState(null);
+    const [followUps, setFollowUps] = useState(null);
+    const [guards, setGuards] = useState(null);
+    const [capacityBuilding, setCapacityBuilding] = useState(null);
+    const [timeLineSubmission, setTimeLineSubmission] = useState(null);
+    const [trainingEvaluation, setTrainingEvaluation] = useState(null);
+    const [payments, setPayments] = useState(null);
+    const [billing, setBilling] = useState(null);
+    const [issuance, setIssuance] = useState(null);
+    const [billingFollowup, setBillingFollowup] = useState(null);
+    const [contingencies, setContingencies] = useState(null);
     const [subStructureActivityData, setSubStructureActivityData] = useState(null);
     const [ecaCompositionData, setEcaCompositionData] = useState(null);
     const [subCommitteCompositionData, setSubCommitteCompositionData] = useState(null);
@@ -866,13 +888,27 @@ const DPATAssessmentSheet = ({ props }) => {
                 const decisionDataState = {
                     key: index + 1,
                     gam: getDecisionRank(index),
-                    decision: decision.attributes?.find(attr => attr.displayName === "Decision")?.value || "N/A"
+                    decision: decision.attributes?.find(attr => attr.displayName === "Decision")?.value || "N/A",
+                    reference: getAttributeValue("DPAT | Meeting Reference", decision)
                 };
 
                 temp.push(decisionDataState);
             });
 
-        setDecisionsData(temp.slice(0, 3));
+        const finalTemp = [];
+
+        meetings.forEach(mt => {
+            const meetDecisions = temp.find(t => t.reference = getAttributeValue("Minute File Number", mt));
+
+            console.log("Decisions - meeting: ", meetDecisions)
+
+            finalTemp.push(meetDecisions);
+        });
+
+
+        console.log("Decisions linked to meeting: ", finalTemp)
+
+        setDecisionsData(finalTemp);
     };
 
     const setSubtructureEstablishmentsData = () => {
@@ -1100,6 +1136,8 @@ const DPATAssessmentSheet = ({ props }) => {
                     Annex 1: SECTION A - COMPLIANCE INDICATORS
                 </h3>
                 {/* General Assembly Meetings and Decision Start */}
+                {/* Sow
+                {JSON.stringify(props?.decisions?.decisions)} */}
                 {gaMeetingData && <GAMeeting
                     data={gaMeetingData}
                     year={year}
@@ -1311,11 +1349,72 @@ const DPATAssessmentSheet = ({ props }) => {
                     dataSource={foodVendorsData}
                     pagination={false} bordered />}
 
+                <div style={{ height: '4px', backgroundColor: '#000', width: '100%', margin: '20px 0' }} />
+
+                <h3 style={{ textAlign: "center", padding: "10px" }}>
+                    Annex 3: SECTION C – PERFORMANCE INDICATORS
+                </h3>
+
+                <AAPImplementation year={year}
+                    aapImplementation={aapImplemenention} />
+                <hr />
+
+                <MonitoringProjectAndActivity year={year}
+                    actityAndProject={actityAndProject} />
+                <hr />
+
+                <ContractManagementAndAdmins
+                    year={year}
+                    contracts={contracts}
+                    contingencies={contingencies}
+                />
+                <hr />
+
+                <FollowUpDeduction
+                    year={year}
+                    followUp={followUps}
+                />
+                <hr />
+
+                <EnvironmentalAndSocialSafeGuard
+                    year={year}
+                    guards={guards}
+                />
+                <hr />
+
+                <CapacityBuildingImplementation
+                    year={year}
+                    capacityBuilding={capacityBuilding}
+                    timeLineSubmission={timeLineSubmission}
+                />
+                <hr />
+
+                <PostTrainingEvaluation
+                    year={year}
+                    trainingEvaluation={trainingEvaluation} 
+                />
+                <hr />
+
+                <PaymentPoints
+                    year={year}
+                    payments={payments} 
+                />
+                <hr />
+
+                <RateableRevenu
+                    year={year}
+                    billing={billing}
+                    issuance={issuance}
+                    followup={billingFollowup}
+                />
+                <hr />
+
 
                 {/* Print Button */}
                 <Button type="primary" icon={<PrinterOutlined />} onClick={handlePrint} style={{ marginTop: "20px" }}>
                     Print Report
                 </Button>
+
             </Content>
         </Layout>
     );

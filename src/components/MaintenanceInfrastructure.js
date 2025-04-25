@@ -24,9 +24,9 @@ function MaintenanceInfrastructure({
             <Content>
                 From the DCD receive information on the Operations & Maintenance Plan and its implementation:<br /><br />
                 <ol>
-                    <li>If the plan includes public places of interest such as Markets, Community Centres, Lorry Parks, U-Drains, Schools, Hospitals or Clinics, CHPS Compounds, etc, score 1;</li>
-                    <li>If the budget allocation for O&M is at least 10% of Capital expenditure budget, score 1; and</li>
-                    <li>If there is evidence of expenditure for O&M Budget proportional to 10% of the Capital Expenditure and there is evidence of implementation of the O&M Plan, score 1</li>
+                    <li type="i">If the plan includes public places of interest such as Markets, Community Centres, Lorry Parks, U-Drains, Schools, Hospitals or Clinics, CHPS Compounds, etc, score 1;</li>
+                    <li type="i" className="py-1">If the budget allocation for O&M is at least 10% of Capital expenditure budget, score 1; and</li>
+                    <li type="i">If there is evidence of expenditure for O&M Budget proportional to 10% of the Capital Expenditure and there is evidence of implementation of the O&M Plan, score 1</li>
                 </ol>
 
                 <br /><br /><i>Local Governance Act, 2016 (Act 936) Section 12 (Sub section 3)</i>

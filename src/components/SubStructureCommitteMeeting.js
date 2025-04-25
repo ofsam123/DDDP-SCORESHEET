@@ -34,10 +34,10 @@ function SubStructureCommiteeMeeting({ data, columns, year, members, memberColum
             </Title>
 
             <Title level={4} style={{ marginTop: "20px" }}>Evidence of composition of sub-committees – Summary</Title>
-            {data && <Table columns={columns} dataSource={data?.data} pagination={true} bordered />}
+            {data && <Table columns={columns} dataSource={data?.data} pagination={false} bordered />}
 
             <Title level={4} style={{ marginTop: "20px" }}>Membership of Statutory Sub-Committees</Title>
-            {members && <Table columns={memberColumns} dataSource={members} pagination={true} bordered />}
+            {members && <Table columns={memberColumns} dataSource={members} pagination={false} bordered />}
 
             
         </>

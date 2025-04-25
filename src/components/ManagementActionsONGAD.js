@@ -38,7 +38,7 @@ function ManagementActionsONGAD({ data, year, columns, decisionDeliveryData, ser
             {data && <Table
                 columns={columns}
                 dataSource={data?.data}
-                pagination={true} bordered />}
+                pagination={false} bordered />}
 
             <Title level={5} style={{ marginTop: "20px" }}>II. Examples of actions taken decisions</Title>
             {decisionDeliveryData && <Table columns={serviceDeliveryDecisionColumns} dataSource={decisionDeliveryData} pagination={false} bordered />}

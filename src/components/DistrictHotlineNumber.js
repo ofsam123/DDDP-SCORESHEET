@@ -36,7 +36,7 @@ function DistrictHotlineNumber({ data, year, columns }) {
             </Title>
 
             <Title level={4} style={{ marginTop: "20px" }}>Evidence of Dedicated Functional Hotline for Vulnerable Groups</Title>
-            {/* {data && <Table columns={columns} dataSource={data?.data} pagination={true} bordered />} */}
+            {/* {data && <Table columns={columns} dataSource={data?.data} pagination={false} bordered />} */}
             {data &&
                 <Table
                     columns={columns}

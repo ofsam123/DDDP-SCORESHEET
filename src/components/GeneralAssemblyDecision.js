@@ -39,8 +39,8 @@ function GeneralAssemblyDecision({ data, year, columns, decisionDeliveryData, se
             </Title>
 
             <Title level={4} style={{ marginTop: "20px" }}>Evidence of Quarterly Management Meetings</Title>
-            {/* {data && <Table columns={columns} dataSource={data?.data} pagination={true} bordered />} */}
-            {data && <Table columns={columns} dataSource={data} pagination={true} bordered
+            {/* {data && <Table columns={columns} dataSource={data?.data} pagination={false} bordered />} */}
+            {data && <Table columns={columns} dataSource={data} pagination={false} bordered
                 summary={pageData => {
                     let totalDecision = 0, totalDelivered = 0, totalPercent = 0;
 

@@ -504,18 +504,23 @@ const DPATAssessmentSheet = ({ props }) => {
         // console.log("hotline number: ", districtGeneral);
         // Hotline number details
         const hotline = [];
+        let score = 0;
 
-        if (districtGeneral.length > 0) {
+        if (districtGeneral?.length > 0) {
+            const hotlineNumber = getAttributeValue("Public Hotline", districtGeneral[0]);
             hotline.push({
-                hotline: getAttributeValue("Public Hotline", districtGeneral[0]),
-                number: getAttributeValue("Contact Number", districtGeneral[0]),
+                hotline: hotlineNumber != "N/A" ? "YES" : "NO",
+                number: hotlineNumber,
                 publication: "YES"
             });
 
-            setDistrictHotlineNumberData({ data: hotline, score: 1 });
-        } else {
-            setDistrictHotlineNumberData({ data: [], score: 0 });
+            if (hotlineNumber != "N/A") {
+                score = 1;
+            }
         }
+
+
+        setDistrictHotlineNumberData({ data: hotline, score: score })
 
     }
 
@@ -550,11 +555,11 @@ const DPATAssessmentSheet = ({ props }) => {
 
     const setSubStructureMeetingDataDisplay = () => {
         const temp = [];
-      
+
         const generalAssemblyMeeting = formatData(meetings, "GA") || [];
         const executiveCommitteeMeeting = formatData(meetings, "EC") || [];
         const subStructureMeeting = formatData(meetings, "Sub Structure Committee") || [];
-      
+
         const createMeetingData = (label, data) => ({
             key: label,
             meeting: `${label}`,
@@ -562,7 +567,7 @@ const DPATAssessmentSheet = ({ props }) => {
             secondMeeting: getAttributeValue("DPAT | Meeting Date", data[1]),
             thirdMeeting: getAttributeValue("DPAT | Meeting Date", data[2]),
         });
-      
+
         temp.push(createMeetingData("General Assembly Meeting", generalAssemblyMeeting));
         temp.push(createMeetingData("Executive Committee Meeting", executiveCommitteeMeeting));
         temp.push(createMeetingData("Sub Structure Meeting", subStructureMeeting));
@@ -728,13 +733,13 @@ const DPATAssessmentSheet = ({ props }) => {
         const temp = [];
         const gaMeeting = formatData(meetings, "GA"); // GA Meeting data
         const ecaMeeting = formatData(meetings, "EC"); // EC Meeting data
-    
+
         // Preprocess GA meeting dates
         const gaMeetingDates = gaMeeting.map((meeting, index) => ({
             key: index + 1,
             date: getAttributeValue("DPAT | Meeting Date", meeting),
         }));
-    
+
         ecaMeeting.forEach((meeting, index) => {
             const meetingDataState = {
                 key: index + 1,
@@ -745,14 +750,14 @@ const DPATAssessmentSheet = ({ props }) => {
                 ecaMeetingDate: getAttributeValue("DPAT | Meeting Date", meeting),
                 signatoriesMinutesStatus: getAttributeValue("Minute File Number", meeting) ? "YES" : "NO",
             };
-    
+
             temp.push(meetingDataState);
         });
-    
+
         const fulfillment = checkECANDGAMeetingFulfillment(temp);
         setEcaMeetingData({ data: temp, fulfillment });
     };
-    
+
 
     const setPRCCMeetingData = () => {
         const temp = [];
@@ -1117,7 +1122,7 @@ const DPATAssessmentSheet = ({ props }) => {
 
                 {/* Sub-Structures Meetings Start */}
                 {/* {JSON.stringify(subReportData)} */}
-                
+
                 {subStructuresMeetingData && <SubStructureMeeting
                     data={subStructuresMeetingData}
                     year={year}
@@ -1142,7 +1147,7 @@ const DPATAssessmentSheet = ({ props }) => {
 
                 {/* Sub Committe Meeting and Members section Start*/}
                 {/* {JSON.stringify(memberFinanceData)} */}
-                 {/* Evidence of Sub Committee Composition --Henry sum them and count by sub commity name*/}
+                {/* Evidence of Sub Committee Composition --Henry sum them and count by sub commity name*/}
                 {/* Also desagrate the members and display list of members by sub-committee
                     (See the sample sheet as guide:Membership of Statutory Sub-Committees) */}
                 {memberFinanceData && <SubStructureCommiteeMeeting
@@ -1153,20 +1158,20 @@ const DPATAssessmentSheet = ({ props }) => {
                     memberColumns={membersColumns}
                 />}
                 {/* <Title level={3} style={{ marginTop: "30px" }}>Membership of Statutory Sub-Committees</Title>
-                {memberFinanceData && <Table columns={membersColumns} dataSource={memberFinanceData} pagination={true} bordered />} */}
+                {memberFinanceData && <Table columns={membersColumns} dataSource={memberFinanceData} pagination={false} bordered />} */}
 
                 {/* Sub Committe Meeting and Members section End*/}
                 <hr />
 
                 {/* Management Meeting Start */}
-                 {/* {JSON.stringify(managementMeetingsData)} */}
-                 {managementMeetingsData && <ManagementMeeting
-                    data={managementMeetingsData} 
-                    year={year} 
+                {/* {JSON.stringify(managementMeetingsData)} */}
+                {managementMeetingsData && <ManagementMeeting
+                    data={managementMeetingsData}
+                    year={year}
                     columns={managementMeetingColumns}
                 />}
 
-                 {/* Management Meeting End */}
+                {/* Management Meeting End */}
                 {/* PRCC Meeting */}
                 {/* {JSON.stringify(prccMeetingData)} */}
                 {prccMeetingData && <PRCCMeeting
@@ -1186,8 +1191,6 @@ const DPATAssessmentSheet = ({ props }) => {
                 />}
 
                 {/* Entity Tender Committee (ETC) Meeting End*/}
-
-                <hr />
 
                 {/* <hr /> */}
                 <div style={{ height: '4px', backgroundColor: '#000', width: '100%', margin: '20px 0' }} />
@@ -1211,34 +1214,34 @@ const DPATAssessmentSheet = ({ props }) => {
                 <GeneralAssemblyManagementActions year={year}
                     decisions={decisionsData}
                     managementActionServiceDeliveryData={managementActionServiceDeliveryData} />
-
+                <hr />
                 {/* 1.3 Assembly Support to Substructures Evidence of utilization of ceded revenue */}
                 <GASupport year={year}
                     cededRevenueUtilisationData={cededRevenueUtilisationData}
                     subStructureActivityData={subStructureActivityData}
                     cededRevenueUtilisationScore={cededRevenueUtilisationScore} />
 
-
+                <hr />
 
                 {/* Water Service Provider List 
                   Henry to consume the data from the report and get second table(Data is already pulled here)
                   */}
                 <WaterServices year={year}
                     waterProvidersData={waterProvidersData} />
-
+                <hr />
 
                 {/* Electricity Service Provider List  
                    Henry to consume the data from the report and get second table(Data is already pulled here)
                   */}
                 <ElectricityServices year={year}
                     electricityProvidersData={electricityProvidersData} />
-
+                <hr />
                 {/* Sanitation Service Provider List
                    Henry to consume the data from the report and get second table(Data is already pulled here)
                   */}
                 <SanitationServices year={year}
                     sanitationProvidersData={sanitationProvidersData} />
-
+                <hr />
 
                 {/* Evidence of establishment of Planning & Building Inspectorate Unit
                    Henry to consume the data from the report and get second table(Data is already pulled here)
@@ -1246,11 +1249,11 @@ const DPATAssessmentSheet = ({ props }) => {
                 {/* {JSON.stringify(buildingInspectorate)} */}
                 <MaintenanceInfrastructure year={year}
                     buildingInspectorateData={buildingInspectorateData} />
-
+                <hr />
                 {/* Henry to follow the instruction in the function to get the data */}
                 <ClientServiceCharter year={year}
                     permitRequestData={permitRequestData} />
-
+                <hr />
                 {/* Henry to follow the instruction in the function to get the data */}
 
                 <Title level={3} style={{ marginTop: "30px" }}>Evidence of Street Naming Database</Title>
@@ -1300,7 +1303,7 @@ const DPATAssessmentSheet = ({ props }) => {
                 {dumpingSiteData && <Table
                     columns={dumpingSiteColumn}
                     dataSource={dumpingSiteData}
-                    pagination={true} bordered />}
+                    pagination={false} bordered />}
 
                 <Title level={3} style={{ marginTop: "30px" }}>Evidance of Beverage Vendors</Title>
                 {foodVendorsData && <Table

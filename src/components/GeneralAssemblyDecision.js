@@ -32,10 +32,12 @@ function GeneralAssemblyDecision({ data, year, columns, decisionDeliveryData, se
                     Transportation, Roads, Sanitation, Recreational services and Security.
                 </i>
             </Content>
-            <Title level={5} style={{ marginTop: "20px" }}>Maximum Score <strong>1</strong>
+            <Title level={5} style={{ marginTop: "20px" }}>
+                Maximum Score <strong>1</strong>
             </Title>
 
-            <Title level={5} style={{ marginTop: "20px" }}>SDI 1.0-1.1 Actual Score: <strong>{gaDecisionScore > 50 ? '1' : '0'}</strong>
+            <Title level={5} style={{ marginTop: "20px" }}>
+                SDI 1.0-1.1 Actual Score: <strong>{gaDecisionScore > 50 ? '1' : '0'}</strong>
             </Title>
 
             <Title level={4} style={{ marginTop: "20px" }}>Evidence of Quarterly Management Meetings</Title>

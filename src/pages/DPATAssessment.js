@@ -78,7 +78,7 @@ function DPATAssessment() {
 
     function pullDecisionTrackerInstance(startDate, endDate, districtId) {
         axios
-            .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=n8WIhwDrAO7&filter=Ub0V9Z06aBc:GE:${startDate}:LE:${endDate}`)
+            .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=n8WIhwDrAO7&`)
             .then(result => {
                 if(result.data.instances.length > 0){
 

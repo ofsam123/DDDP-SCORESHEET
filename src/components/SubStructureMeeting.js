@@ -37,13 +37,13 @@ function SubStructureMeeting({ data, columns, establishment, establishmentColumn
             </Title>
 
             <Title level={4} style={{ marginTop: "20px" }}>Evidence of meetings of sub-structures prior to General Annual Meeting</Title>
-            {data && <Table columns={columns} dataSource={data?.data} pagination={true} bordered />}
+            {data && <Table columns={columns} dataSource={data?.data} pagination={false} bordered />}
 
             <Title level={4} style={{ marginTop: "20px" }}>Evidence of establishment of sub-structures</Title>
-            {establishment && <Table columns={establishmentColumns} dataSource={establishment} pagination={true} bordered />}
+            {establishment && <Table columns={establishmentColumns} dataSource={establishment} pagination={false} bordered />}
 
             <Title level={4} style={{ marginTop: "20px" }}>Evidence of revenue sharing</Title>
-            {revenueSharing && <Table columns={revenuSharingColumns} dataSource={revenueSharing} pagination={true} bordered />}
+            {revenueSharing && <Table columns={revenuSharingColumns} dataSource={revenueSharing} pagination={false} bordered />}
 
         </>
     );

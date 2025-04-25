@@ -17,6 +17,9 @@ import ElectricityServices from "./ElectricityServices";
 import SanitationServices from "./SanitationSevices";
 import MaintenanceInfrastructure from "./MaintenanceInfrastructure";
 import ClientServiceCharter from "./ClientServiceCharter";
+import GeneralAssemblyDecision from "./GeneralAssemblyDecision";
+import ManagementActionsONGAD from "./ManagementActionsONGAD";
+import DistrictHotlineNumber from "./DistrictHotlineNumber";
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
@@ -144,9 +147,58 @@ const subCommitteeCompositionColumns = [
 
 
 // =====================================SDI Columns================================
+const serviceDecisionColumns = [
+    { title: "GAM", dataIndex: "gam", key: "gam" },
+    { title: "Total No. of decisions taken", dataIndex: "total", key: "total" },
+    { title: "No. of decisions on service delivery", dataIndex: "serviceDecision", key: "serviceDecision" },
+    { title: "% of decisions on service delivery ", dataIndex: "percentage", key: "percentage" }
+];
 
+const serviceDeliveryDecisionColumns = [
+    { title: "GAM", dataIndex: "gam", key: "gam" },
+    { title: "Service Delivery Decisions", dataIndex: "service", key: "service" }
+];
 
+const managementServiceDeliveryActionColumns = [
+    { title: "No. of decisions on service delivery improvement", dataIndex: "no", key: "no" },
+    { title: "No. of actions taken on social service improvement decisions", dataIndex: "service", key: "service" },
+    { title: "% of service delivery improvement decisions implemented ", dataIndex: "percentage", key: "percentage" }
+];
 
+const cededAmountUtilizationColumns = [
+    { title: "Name of substructure", dataIndex: "name", key: "name" },
+    { title: "Amount of Ceded Revenue Received (GHS) - A", dataIndex: "collected", key: "collected" },
+    { title: "Amount of Ceded Revenue utilized for Community Activities (GHS)", dataIndex: "ceded", key: "ceded" },
+    { title: "% of Amount utilized for Community Activities ", dataIndex: "percentage", key: "percentage" }
+];
+
+const subStructureActivityColumns = [
+    { title: "No", dataIndex: "no", key: "no" },
+    { title: "Activities ", dataIndex: "activities", key: "collected" },
+    { title: "Substructure", dataIndex: "name", key: "name" },
+    { title: "Amount Utilized", dataIndex: "amount", key: "amount" }
+];
+
+const serviceProvidersColumn = [
+    { title: "No", dataIndex: "no", key: "no" },
+    { title: "Service Provider", dataIndex: "provider", key: "provider" },
+    { title: "Contract Duration", dataIndex: "contract", key: "contract" },
+    { title: "Start Date", dataIndex: "date", key: "date" }
+];
+
+const buildingInspectorateColumn = [
+    { title: "Date Established", dataIndex: "date", key: "date" },
+    { title: "Supervisor", dataIndex: "supervisor", key: "supervisor" },
+    { title: "address", dataIndex: "address", key: "address" },
+    { title: "Category of staff", dataIndex: "category", key: "category" },
+    { title: "Function performed by Works Department", dataIndex: "department", key: "department" }
+];
+
+const permitRequestColumn = [
+    { title: "No. of Building Permit Requests Received (A)", dataIndex: "permitReceived", key: "permitReceived" },
+    { title: "No. of Building Permit Requests Processed & Issued (B)", dataIndex: "permitProcessed", key: "permitProcessed" },
+    { title: "No. of approved permits traced to Local Plans (C)", dataIndex: "permitTraced", key: "permitTraced" }
+];
 
 const streetNamingColumn = [
     { title: "Street Naming and Property Addressing Data base (NOT Excel) available (Yes/No)", dataIndex: "street", key: "street" },
@@ -201,6 +253,7 @@ const DPATAssessmentSheet = ({ props }) => {
     const [meetingDataGroup, setMeetingDataGroup] = useState();
     const [meetings, setMeetings] = useState(props?.meetings.meetings);
     const [members, setMembers] = useState(props?.members.members);
+    const [schools, setSchools] = useState(props?.schools.data);
     const [subStructureActivity, setSubStructureActivity] = useState(props?.subActivity.activities);
     const [serviceProviders, setServiceProviders] = useState(props?.serviceProviders.providers);
     const [subStructuresMeetingData, setSubStructuresMeetingData] = useState([]);
@@ -213,6 +266,7 @@ const DPATAssessmentSheet = ({ props }) => {
     const [streetNaming, setStreetNaming] = useState(props?.streets.streetNaming);
     const [districtGeneral, setDistrictGeneral] = useState(props?.districtGeneral.data);
     const [districtGeneralData, setDistrictGeneralData] = useState(null);
+    const [districtHotlineNumberData, setDistrictHotlineNumberData] = useState([]);
     const [pwd, setPwd] = useState(props?.pwd.data);
     const [dumpingSite, setDumpingSite] = useState(props?.dumpingSite.data);
     const [dumpingSiteData, setDumpingSiteData] = useState([]);
@@ -285,6 +339,8 @@ const DPATAssessmentSheet = ({ props }) => {
         setPwdDataDisplay();
         setDumpingSiteDataDisplay();
         setFoodVendorsDiplay();
+        setAllDataFromDistrictGeneral();
+        setAllFromSchools();
 
     }, [props]);
 
@@ -442,6 +498,35 @@ const DPATAssessmentSheet = ({ props }) => {
         setElectricityProvidersData(tempElectricity);
 
 
+    }
+
+    const setAllDataFromDistrictGeneral = () => {
+        // console.log("hotline number: ", districtGeneral);
+        // Hotline number details
+        const hotline = [];
+        let score = 0;
+
+        if (districtGeneral?.length > 0) {
+            const hotlineNumber = getAttributeValue("Public Hotline", districtGeneral[0]);
+            hotline.push({
+                hotline: hotlineNumber != "N/A" ? "YES" : "NO",
+                number: hotlineNumber,
+                publication: "YES"
+            });
+
+            if (hotlineNumber != "N/A") {
+                score = 1;
+            }
+        }
+
+
+        setDistrictHotlineNumberData({ data: hotline, score: score })
+
+    }
+
+    const setAllFromSchools = () => {
+        console.log("hotline number: ", props?.schools);
+        // Henry to count and populate the data here
     }
 
     const setBuildingInspectoratesData = () => {
@@ -1107,56 +1192,56 @@ const DPATAssessmentSheet = ({ props }) => {
 
                 {/* Entity Tender Committee (ETC) Meeting End*/}
 
-                <hr />
+                {/* <hr /> */}
+                <div style={{ height: '4px', backgroundColor: '#000', width: '100%', margin: '20px 0' }} />
 
                 <h3 style={{ textAlign: "center", padding: "10px" }}>
                     Annex 2: SECTION B – SERVICE DELIVERY INDICATORS
                 </h3>
+                {/* SDI- General Assembly Decisions Start*/}
+                {decisionServiceData && <GeneralAssemblyDecision
+                    data={decisionServiceData}
+                    year={year}
+                    columns={serviceDecisionColumns}
+                    decisionDeliveryData={decisionDeliveryData}
+                    serviceDeliveryDecisionColumns={serviceDeliveryDecisionColumns}
+                />}
+                {/* SDI- General Assembly Decisions End */}
 
-                {/* Henry and Samu to give the score and of bellow tables */}
-                <div>
-                    <Text strong>THEMATIC AREA: </Text> <Text>
-                        MANAGEMENT & COORDINATION – IMPLEMENTATION OF SERVICE DELIVERY DECISIONS (5)
-                    </Text>
-                </div>
-
-                {/* Entity Tender Committee (ETC) Meeting */}
-                <GeneralAssemblyDecisions year={year}
-                    decisionServiceData={decisionServiceData}
-                    decisionDeliveryData={decisionDeliveryData} />
+                <hr />
 
 
                 <GeneralAssemblyManagementActions year={year}
                     decisions={decisionsData}
                     managementActionServiceDeliveryData={managementActionServiceDeliveryData} />
-
+                <hr />
                 {/* 1.3 Assembly Support to Substructures Evidence of utilization of ceded revenue */}
                 <GASupport year={year}
                     cededRevenueUtilisationData={cededRevenueUtilisationData}
                     subStructureActivityData={subStructureActivityData}
                     cededRevenueUtilisationScore={cededRevenueUtilisationScore} />
 
-
+                <hr />
 
                 {/* Water Service Provider List 
                   Henry to consume the data from the report and get second table(Data is already pulled here)
                   */}
                 <WaterServices year={year}
                     waterProvidersData={waterProvidersData} />
-
+                <hr />
 
                 {/* Electricity Service Provider List  
                    Henry to consume the data from the report and get second table(Data is already pulled here)
                   */}
                 <ElectricityServices year={year}
                     electricityProvidersData={electricityProvidersData} />
-
+                <hr />
                 {/* Sanitation Service Provider List
                    Henry to consume the data from the report and get second table(Data is already pulled here)
                   */}
                 <SanitationServices year={year}
                     sanitationProvidersData={sanitationProvidersData} />
-
+                <hr />
 
                 {/* Evidence of establishment of Planning & Building Inspectorate Unit
                    Henry to consume the data from the report and get second table(Data is already pulled here)
@@ -1164,11 +1249,11 @@ const DPATAssessmentSheet = ({ props }) => {
                 {/* {JSON.stringify(buildingInspectorate)} */}
                 <MaintenanceInfrastructure year={year}
                     buildingInspectorateData={buildingInspectorateData} />
-
+                <hr />
                 {/* Henry to follow the instruction in the function to get the data */}
                 <ClientServiceCharter year={year}
                     permitRequestData={permitRequestData} />
-
+                <hr />
                 {/* Henry to follow the instruction in the function to get the data */}
 
                 <Title level={3} style={{ marginTop: "30px" }}>Evidence of Street Naming Database</Title>
@@ -1184,12 +1269,14 @@ const DPATAssessmentSheet = ({ props }) => {
                     pagination={false} bordered />}
 
 
-                <Title level={3} style={{ marginTop: "30px" }}>Evidence of Dedicated Functional Hotline for Vulnerable Groups</Title>
-                {districtGeneralData && <Table
-                    columns={districtHotlineNumberColumn}
-                    dataSource={districtGeneralData}
-                    pagination={false} bordered />}
+                {/* Dedicated Hotline Number for the District Start */}
 
+
+                {districtHotlineNumberData && <DistrictHotlineNumber
+                    data={districtHotlineNumberData}
+                    year={year}
+                    columns={districtHotlineNumberColumn} />}
+                {/* Dedicated Hotline Number for the District End */}
 
 
                 {/* Evidence of Nutrition-Oriented Activities in the Assembly
@@ -1198,6 +1285,18 @@ const DPATAssessmentSheet = ({ props }) => {
 
                 {/* 5.1 Availability of Sanitation Service Providers
                     Sow to use service provider data and diplay table and then score
+                */}
+
+                {/* 5.4 Availability of Institutional Toilet facilities and Water in Public Schools
+                    Henry to use the count from school data for it
+                */}
+
+                {/* 5.5 Climate Change Interventions
+                    Sow to add the data to use the count from the AAP data for it
+                */}
+
+                {/* 6.1 Availability of District LED activities in the AAP
+                    Sow to add the data to use the count from the AAP data for it
                 */}
 
                 <Title level={3} style={{ marginTop: "30px" }}>List of dumping /final disposal site</Title>

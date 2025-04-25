@@ -23,7 +23,7 @@ function SanitationServices({
             <Content>
                 From the DCD receive information on the utilisation of the IGF collected for the year:<br /><br />
                 <ol>
-                    <li>If at least 20% of the IGF was spent on sanitation improvement services in the District and there is evidence of implementation, score 2;</li>
+                    <li type="i">If at least 20% of the IGF was spent on sanitation improvement services in the District and there is evidence of implementation, score 2;</li>
                 </ol>
 
                 <b><u>Eligible Expenditures are below:</u></b>

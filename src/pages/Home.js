@@ -23,12 +23,12 @@ const completed = {
 
 const meetingsData = {
   name: "Meetings",
-  color: "rgb(3, 61, 24)", // Dark Green
+  color: "rgb(29, 82, 136)", // Dark Green
 };
 
 const generalmeetingsData = {
   name: "General Meetings",
-  color: "rgb(29, 82, 136)", // Blue
+  color: "#f40b51", // Blue
 };
 
 const projects = {
@@ -230,7 +230,7 @@ function Home() {
       const projectsResult = await axios.get(
         `/analytics.json?dimension=dx:cHp5d6g8Z1K&orgUnit=${districtId}&filter=pe:2024-01-01;2024-12-31`
       );
-      console.log("District Projects Response:", projectsResult.data);
+      // console.log("District Projects Response:", projectsResult.data);
       const projectsRows = projectsResult.data.rows || [];
       const projectsCount = projectsRows.length > 0 ? parseFloat(projectsRows[0][1]) || 0 : 0;
       setProjectsTotal(projectsCount);
@@ -238,7 +238,7 @@ function Home() {
       const programsResult = await axios.get(
         `/analytics.json?dimension=dx:WR0IO6mvdmw&orgUnit=${districtId}&filter=pe:2024-01-01;2024-12-31`
       );
-      console.log("District Programs Response:", programsResult.data);
+      // console.log("District Programs Response:", programsResult.data);
       const programsRows = programsResult.data.rows || [];
       const programsCount = programsRows.length > 0 ? parseFloat(programsRows[0][1]) || 0 : 0;
       setProgramsTotal(programsCount);
@@ -358,7 +358,7 @@ function Home() {
 			<div className="row gutters">
               <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                 <MeetingRegionalReport
-                  title="Meetings Yearly Report"
+                  title="Yearly Meeting Report"
                   meetingsData={meetingsData}
                   generalmeetingsData={generalmeetingsData}
                 />

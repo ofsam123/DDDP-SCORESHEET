@@ -224,14 +224,14 @@ export default function App() {
             {error && <p className="error-message">{error}</p>}
             <input
               type="text"
-              placeholder="User Name"
+              placeholder="DDDP Username"
               name="userName"
               value={state.userName}
               onChange={handleChange}
             />
             <input
               type="email"
-              placeholder="Email"
+              placeholder="DDDP Email"
               name="email"
               value={state.email}
               onChange={handleChange}
@@ -245,7 +245,7 @@ export default function App() {
           <div className="overlay">
             <div className="overlay-panel overlay-left">
               <h1 style={{color:"white"}}>Welcome Back!</h1>
-              <p>Enter your personal details to Sign In</p>
+              <p>Enter your DDDP Account details to Sign In</p>
               <button
                 className="ghost"
                 id="signIn"
@@ -256,7 +256,7 @@ export default function App() {
             </div>
             <div className="overlay-panel overlay-right">
               <h1 style={{color:"white"}}>Welcome Back!</h1>
-              <p>Enter your personal details to Sign In</p>
+              <p>Enter your DDDP Account details to Sign In</p>
               <button
                 className="ghost"
                 id="signUp"

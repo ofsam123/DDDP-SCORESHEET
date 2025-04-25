@@ -31,7 +31,7 @@ function GeneralAssemblyDecisions({
             <Content>
                 From the DCD, receive signed Minutes of Meetings of the three mandatory Meetings of the General Assembly:<br /><br />
                 <ol>
-                    <li>If The General Assembly took at least 50% decisions on improving service delivery in any sector of the District, score 1;</li>
+                    <li type="i">If The General Assembly took at least 50% decisions on improving service delivery in any sector of the District, score 1;</li>
                 </ol>
                 Examples of services: Water, Electric power, Health, Education, Transportation, Roads, Sanitation, Recreational services and Security.
                 <br /><br /><i>(Local Governance Act, 2016 (Act 936) Section 18)3</i>

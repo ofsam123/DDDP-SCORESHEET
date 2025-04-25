@@ -23,9 +23,9 @@ function ElectricityServices({
             <Content>
                 From the DCD, receive information on collaboration between the Assembly and Electricity Company of Ghana (ECG)/ VRA/ NEDCO on Service Delivery in the District;<br /><br />
                 <ol>
-                    <li>If there is evidence of collaboration/ facilitation between the Assembly and ECG/ VRA/ NEDCO in the District, score 1;</li>
-                    <li>If at least 80% of applications for Service has been processed score 1;</li>
-                    <li>If at least 70%of the application processed for service has been provided to applicants/ Communities as a result of the collaboration/ facilitation score additional 1;</li>
+                    <li type="i">If there is evidence of collaboration/ facilitation between the Assembly and ECG/ VRA/ NEDCO in the District, score 1;</li>
+                    <li type="i" className="py-1">If at least 80% of applications for Service has been processed score 1;</li>
+                    <li type="i">If at least 70%of the application processed for service has been provided to applicants/ Communities as a result of the collaboration/ facilitation score additional 1;</li>
                 </ol>
 
                 <br /><br /><i>Local Governance Act, 2016 (Act 936) Section 12 (Sub Sections 4 b, d & e, Sub-Section 5, Sub-Section 7)

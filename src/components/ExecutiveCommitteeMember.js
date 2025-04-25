@@ -29,7 +29,7 @@ function ExecutiveCommitteeMember({ data, year, columns }) {
             </Title>
 
             <Title level={4} style={{ marginTop: "20px" }}>Executive Committee meetings held in <strong>{year}</strong> are as follows</Title>
-            {data && <Table columns={columns} dataSource={data?.data} pagination={true} bordered />}
+            {data && <Table columns={columns} dataSource={data?.data} pagination={false} bordered />}
 
         </>
     );

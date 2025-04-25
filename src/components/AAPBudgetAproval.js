@@ -33,7 +33,7 @@ function AAPBudgetAproval({ data, year, columns }) {
             </Title>
 
             <Title level={4} style={{ marginTop: "20px" }}>Evidence of Approval of Annual Action Plan and Budget:</Title>
-            {data && <Table columns={columns} dataSource={data?.data} pagination={true} bordered />}
+            {data && <Table columns={columns} dataSource={data?.data} pagination={false} bordered />}
 
         </>
     );

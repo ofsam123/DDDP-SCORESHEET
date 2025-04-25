@@ -22,7 +22,7 @@ function ClientServiceCharter({
             <Content>
                 From the DCD receive a copy of the Client Service Charter of the Assembly:<br /><br />
                 <ol>
-                    <li>If the Assembly has a Client Service Charter evidenced by a resolution of the General Assembly approving the Charter, have been displayed on the Assembly premises or website; score 1;</li>
+                    <li type="i">If the Assembly has a Client Service Charter evidenced by a resolution of the General Assembly approving the Charter, have been displayed on the Assembly premises or website; score 1;</li>
                 </ol>
 
             </Content>

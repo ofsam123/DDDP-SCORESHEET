@@ -33,9 +33,9 @@ function GASupport({
                 <div className="mb-3">From the DCD, receive reports on the activities of all established sub-structures of
                     the Assembly and Assembly’s DACF allocation to Sub-structures:</div>
                 <ol>
-                    <li>If all the sub-structures utilized at least 30% of their ceded Revenue to support
+                    <li type="i">If all the sub-structures utilized at least 30% of their ceded Revenue to support
                         activities that benefit the Community, score 1, else score 0 </li>
-                    <li>If the Assembly has spent at least 90% of the up-to 2% DACF release to its
+                    <li type="i" className="py-1">If the Assembly has spent at least 90% of the up-to 2% DACF release to its
                         Sub-Structures, to support the substructures, score 1, else score 0.</li>
                 </ol>
                 <div style={{ fontStyle: 'italic' }}>

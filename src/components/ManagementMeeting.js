@@ -28,7 +28,7 @@ function ManagementMeeting({ data, year, columns }) {
             </Title>
 
             <Title level={4} style={{ marginTop: "20px" }}>Evidence of Quarterly Management Meetings</Title>
-            {data && <Table columns={columns} dataSource={data?.data} pagination={true} bordered />}
+            {data && <Table columns={columns} dataSource={data?.data} pagination={false} bordered />}
 
         </>
     );

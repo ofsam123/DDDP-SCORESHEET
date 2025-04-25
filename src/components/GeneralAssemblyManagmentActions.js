@@ -27,7 +27,7 @@ function GeneralAssemblyManagementActions({
             <Content>
                 <div className="mb-3">From the DCD, receive signed minutes of meetings of the Management of the Assembly:</div>
                 <ol>
-                    <li>If Management has implemented at least 50% of the
+                    <li type="i">If Management has implemented at least 50% of the
                         service delivery improvement decisions (1.1i) of The General Assembly,
                         evidenced by reports and relevant supporting documents, score 2.
                     </li>

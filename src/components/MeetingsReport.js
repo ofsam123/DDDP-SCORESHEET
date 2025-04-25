@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Chart from "react-apexcharts";
 import axios from "../api/axios";
 
-function MeetingRegionalReport({ title, meetingsData, generalmeetingsData }) {
+function MeetingRegionalReport({ title, meetingsData, generalmeetingsData, selectedYear }) {
   const [regions, setRegions] = useState([]);
   const [analyticsData, setAnalyticsData] = useState({ meetings: [], generalMeetings: [] });
   const [isLoading, setIsLoading] = useState(true);
@@ -12,6 +12,9 @@ function MeetingRegionalReport({ title, meetingsData, generalmeetingsData }) {
     async function fetchData() {
       setIsLoading(true);
       try {
+        // Use selectedYear or default to "2024"
+        const year = selectedYear || "2024";
+
         // Fetch regions
         const regionsResponse = await axios.get("/organisationUnits?level=2&paging=false");
         console.log("Regions Response:", regionsResponse.data);
@@ -22,7 +25,7 @@ function MeetingRegionalReport({ title, meetingsData, generalmeetingsData }) {
 
         // Fetch analytics data for Meetings and General Meetings
         const analyticsResponse = await axios.get(
-          "/analytics.json?dimension=dx:aeKyGvo5OIp;BEUJdCeTGIE&dimension=ou:LEVEL-2&filter=pe:2024-01-01;2024-12-30"
+          `/analytics.json?dimension=dx:aeKyGvo5OIp;BEUJdCeTGIE&dimension=ou:LEVEL-2&filter=pe:${year}-01-01;${year}-12-31`
         );
         console.log("Meetings Analytics Response:", analyticsResponse.data);
         const rows = analyticsResponse.data.rows || [];
@@ -63,7 +66,7 @@ function MeetingRegionalReport({ title, meetingsData, generalmeetingsData }) {
     }
 
     fetchData();
-  }, []);
+  }, [selectedYear]); // Depend on selectedYear
 
   return (
     <div className="card">

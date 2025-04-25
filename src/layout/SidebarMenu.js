@@ -23,7 +23,13 @@ function SideBarMenu(){
 							<li>
 								<Link to="/dpat-score-sheet">
 									<i className="icon-home2"></i>
-									<span className="menu-text">DPAT Score Sheet</span>
+									<span className="menu-text">Regional Analysis</span>
+								</Link>
+							</li>
+							<li>
+								<Link to="/dpat-score-sheet">
+									<i className="icon-home2"></i>
+									<span className="menu-text">District Analysis</span>
 								</Link>
 							</li>
 							
@@ -48,7 +54,7 @@ function SideBarMenu(){
 							<li>
 								<Link to="/trial">
 									<i className="icon-broken_image"></i>
-									<span className="menu-text">Indicators</span>
+									<span className="menu-text">Meetings</span>
 								</Link>
 							</li>
 							

@@ -2,7 +2,7 @@ import { createContext, useEffect, useReducer } from "react";
 import Reducer from "./Reducer";
 
 const INITIAL_STATE = {
-  user: JSON.parse(localStorage.getItem("dacf_user")) || null,
+  user: JSON.parse(localStorage.getItem("dddp_user")) || null,
   isFetching: false,
   error: false,
 };
@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(Reducer, INITIAL_STATE);
 
   useEffect(() => {
-    localStorage.setItem("dacf_user", JSON.stringify(state.user));
+    localStorage.setItem("dddp_user", JSON.stringify(state.user));
   }, [state.user]);
 
   return (

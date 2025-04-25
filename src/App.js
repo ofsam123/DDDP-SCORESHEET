@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import DPATSheet from './pages/DPATSheet';
 import DPATAssessment from './pages/DPATAssessment';
+import RequireAuth from './components/RequireAuth';
 
 function App() {
   return (
@@ -14,19 +15,12 @@ function App() {
             <Route path='/login' element={<Login />} />
 
             {/* private routes */}
-            {/* <Route element={<RequireAuth />} > */}
+            <Route element={<RequireAuth />} >
                 <Route path='/' element={<Home />}/>
                  <Route path='/dpat-score-sheet' element={<DPATSheet />}/>
                  <Route path='/dpat-assessment-sheet' element={<DPATAssessment />}/>
-                {/*<Route path='/ussd-dashboard' element={<USSDDashboard />} />
-                <Route path='/ivr-dashboard' element={<IVRDashboard />} />
-                <Route path='/users' element={<Users />} />
-                <Route path='/district-report' element={<DistrictReport />}/>
-                <Route path='/region-report' element={<RegionReoprt />}/>
-                <Route path='/analysis' element={<Analysis />}/>
-                <Route path='/real' element={<Real />}/>
-                <Route path='/trial' element={<Trial />}/> */}
-            {/* </Route> */}
+            </Route>
+            {/* private routes */}
             
             <Route path='*' element={<FourOhFour />}/>
           </Routes>

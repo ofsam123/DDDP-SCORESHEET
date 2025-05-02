@@ -27,7 +27,7 @@ function Home() {
   };
 
   const generalmeetingsData = {
-    name: "General Meetings",
+    name: "Decicions",
     color: "#f40b51", // Blue
   };
 
@@ -87,7 +87,8 @@ function Home() {
       }));
 
       const analyticsResponse = await axios.get(
-        `/analytics.json?dimension=dx:aeKyGvo5OIp;BEUJdCeTGIE&dimension=ou:LEVEL-2&filter=pe:${year}-01-01;${year}-12-31`
+        // '/analytics.json?dimension=dx:aeKyGvo5OIp;kaxkMvOIXwW&dimension=ou:LEVEL-2&filter=pe:2024-01-01;2024-12-31'
+         `/analytics.json?dimension=dx:aeKyGvo5OIp;kaxkMvOIXwW&dimension=ou:LEVEL-2&filter=pe:${year}-01-01;${year}-12-31`
       );
       console.log("Meetings Analytics Response:", analyticsResponse.data);
       const rows = analyticsResponse.data.rows || [];
@@ -101,7 +102,7 @@ function Home() {
           const count = parseFloat(value) || 0;
           if (dataElement === "aeKyGvo5OIp") {
             meetings[regionIndex] = count;
-          } else if (dataElement === "BEUJdCeTGIE") {
+          } else if (dataElement === "kaxkMvOIXwW") {
             generalMeetings[regionIndex] = count;
           }
         } else {

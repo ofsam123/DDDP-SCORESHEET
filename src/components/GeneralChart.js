@@ -23,15 +23,26 @@ function GeneralChart({ title, data, labels, type, width, height, isLoading, err
                 "rgb(29, 82, 136)", // General Meetings (matches generalmeetingsData)
                 "rgb(255, 165, 0)", // Executive Meetings
                 "rgb(136, 136, 136)", // Statutory Meetings
-                "rgb(44, 94, 211)", // Sub Structure Meetings
+                "rgb(22, 35, 65)", // Sub Structure Meetings
               ],
               dataLabels: {
                 enabled: true,
                 formatter: (val) => `${val.toFixed(2)}%`,
+                style: {
+                  color: 'white',
+                },
               },
               tooltip: {
                 y: {
                   formatter: (val) => `${val.toFixed(2)}% of total meetings`,
+                },
+                custom: ({ series, seriesIndex, dataPointIndex, w }) => {
+                  const value = w.config.series[seriesIndex];
+                  return `
+                    <div style="padding: 10px; background: #333; color: white; border-radius: 5px;">
+                      ${value.toFixed(2)}% of total meetings
+                    </div>
+                  `;
                 },
               },
               legend: {

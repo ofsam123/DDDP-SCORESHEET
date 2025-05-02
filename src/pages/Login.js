@@ -78,7 +78,7 @@ export default function App() {
     }
   };
 
-  const containerClass = `container ${type === "signUp" ? "right-panel-active" : ""}`;
+  const containerClass = `container ${type === "signIn" ? "right-panel-active" : ""}`;
 
   return (
     <div className="App">
@@ -143,14 +143,14 @@ export default function App() {
             </div>
             <div className="overlay-panel overlay-left">
               <h1 style={{color:"white"}}>Welcome!</h1>
-              <p>Enter your DDDP Account zzdetails to Sign In</p>
-              <button
+              <p>Enter your DDDP Account details to Sign In</p>
+              {/* <button
                 className="ghost"
                 id="signIn"
                 onClick={() => handleOnClick("signIn")}
               >
                 Right View
-              </button>
+              </button> */}
             </div>
            
           </div>

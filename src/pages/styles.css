@@ -192,7 +192,15 @@ button.ghost {
   align-items: center;
   z-index: 1000;
 }
+.custom-chart .apexcharts-tooltip {
+  color: white !important;
+  background: #333 !important; /* Optional: Dark background for contrast */
+}
 
+.custom-chart .apexcharts-tooltip-title {
+  color: white !important;
+  background: #333 !important; /* Optional: Dark background for title */
+}
 .popup-content {
   background: #fff;
   padding: 20px;

@@ -32,6 +32,14 @@ function mintueNinvitaionChart({ title, data, labels, type, width, height, isLoa
                 y: {
                   formatter: (val) => `${val.toFixed(2)}% of total meetings`,
                 },
+                custom: ({ series, seriesIndex, dataPointIndex, w }) => {
+                  const value = w.config.series[seriesIndex];
+                  return `
+                    <div style="padding: 10px; background: #333; color: white; border-radius: 5px;">
+                      ${value.toFixed(2)}% of total meetings
+                    </div>
+                  `;
+                },
               },
               legend: {
                 position: "bottom",

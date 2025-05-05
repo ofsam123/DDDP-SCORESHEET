@@ -34,6 +34,7 @@ function DPATAssessment() {
     const [districtMembers, setDistrictMembers] = useState([]);
     const [districtGeneral, setDistrictGeneral] = useState([]);
     const [pwd, setPWD] = useState([]);
+    const [audit, setAudit] = useState([]);
     const [schools, setSchools] = useState([]);
     const [dumpingSite, setDumpingSite] = useState([]);
     const [foodVendors, setFoodVendors] = useState([]);
@@ -304,6 +305,25 @@ function DPATAssessment() {
             .catch(err => console.log(err))
     }
 
+    function getAudits(startDate, endDate, districtId) {
+        axios
+            .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=Z3qMezPtpEb&startDate=${startDate}&endDate=${endDate}`)
+            .then(result => {
+                if(result.data.instances.length > 0){
+                    
+                    axios
+                    .get(`/tracker/events?program=Z3qMezPtpEb&orgUnit=${districtId}&startDate=${startDate}&endDate=${endDate}`)
+                    .then(resp => {
+                        setAudit({data: result.data.instances, reports: resp.data.instances })
+                    })
+                    .catch(err => console.log(err))
+                }
+
+
+            })
+            .catch(err => console.log(err))
+    }
+
     function getSchoolRegistered(startDate, endDate, districtId) {
         axios
             .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=g27TeeehRQC`)
@@ -425,6 +445,7 @@ function DPATAssessment() {
                                         getDumpingSite(startDate, endDate, val.value);
                                         getFoodVendors(startDate, endDate, val.value);
                                         getSchoolRegistered(startDate, endDate, val.value);
+                                        getAudits(startDate, endDate, val.value);
                                     }}
                                     options={districts}
                                     isSearchable
@@ -453,7 +474,8 @@ function DPATAssessment() {
                                              pwd: pwd,
                                              dumpingSite: dumpingSite,
                                              foodVendors: foodVendors,
-                                             schools: schools
+                                             schools: schools,
+                                             audits: audit
                                              }}
                                         />}
 

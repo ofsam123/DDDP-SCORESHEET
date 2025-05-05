@@ -1,16 +1,48 @@
 import { Layout, Space, Table, Typography } from "antd";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "../api/axios";
+import { calculatePercentage } from "../utils/utils";
 
-function AAPImplementation({ year, aapImplementation }) {
+function AAPImplementation({ year, district }) {
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
+    const [aapImplementation, setAapImplementation] = useState([]);
+    const [score, setScore] = useState(0);
+    useEffect(()=>{
+        getIndicatorsData();
+    }, [year, district]);
 
     const aapImplementationColumns = [
-        { title: "No. of activities in approved 2021 Annual Action Plan", dataIndex: "aapApproved", key: "aapApproved" },
+        { title: `No. of activities in approved ${year} Annual Action Plan`, dataIndex: "aapApproved", key: "aapApproved" },
         { title: "No. of activities in approved Annual Action Plan implemented", dataIndex: "aapImplented", key: "aapImplented" },
         { title: "% of implementation of activities in approved Annual Action Plan", dataIndex: "percentage", key: "percentage" }
     ];
+
+    const getIndicatorsData = ()=>{
+        axios.get(`/analytics.json?dimension=dx:fqixUP5VIxv;fqixUP5VIxv&dimension=ou:LEVEL-3;${district}&filter=pe:${year}-01-01;${year}-12-31`)
+        .then(res=>{
+            // console.log("AAP Implemented Diallo: ",res.data?.rows);
+            const data = res.data?.rows;
+            
+            if(data?.length > 0){
+                const percentage = calculatePercentage(data[1][2], data[0][2]);
+
+                setAapImplementation([{
+                    aapApproved: data[0][2] || 0,
+                    aapImplented:data[1][2] || 0,
+                    percentage: percentage
+                }]);
+
+                if(percentage >= 90){
+                    setScore(2);
+                }
+
+            }
+
+            
+        }).catch(err=>console.log(err));
+    }
 
     return (
         <>
@@ -32,7 +64,7 @@ function AAPImplementation({ year, aapImplementation }) {
             </Title>
 
             <Title level={5} style={{ marginTop: "20px" }}>
-                PI 1.0-1.1 Actual Score: <strong>Score</strong>
+                PI 1.0-1.1 Actual Score: <strong>{score}</strong>
             </Title>
 
             {<Table

@@ -21,7 +21,7 @@ function SubStructureCommiteeMeeting({ data, columns, year, members, memberColum
                 <ol>
                     <li type="i">
                         If each of the 5 Statutory Subcommittees held at least one meeting prior to each of the three meetings of the
-                        EC/A in 2021 and minutes are recorded and signed by both the secretary and the chairperson of subcommittees
+                        EC/A in <strong>{year}</strong> and minutes are recorded and signed by both the secretary and the chairperson of subcommittees
                     </li>
                     
                 </ol>

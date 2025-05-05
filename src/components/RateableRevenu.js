@@ -1,10 +1,71 @@
 import { Layout, Space, Table, Typography } from "antd";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "../api/axios";
 
-function RateableRevenu({ year, billing, issuance, followup }) {
+const dataElements = [
+    {
+        dataElement: 'Availability of Computerized Billing System',
+        id: 'Z1lezhVv9Br'
+    },
+    {
+        dataElement: 'Software Name',
+        id: 'Tf7TRBG6uCZ'
+    }
+];
+
+function RateableRevenu({ year, billing, issuance, followup, district }) {
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
+
+    const [software, setSoftware] = useState([]);
+    const [scoreI, setScoreI] = useState(0);
+    const [scoreII, setScoreII] = useState(0);
+    const [scoreIII, setScoreIII] = useState(0);
+
+    useEffect(() => {
+        getBillingDetails();
+    }, []);
+
+    const getBillingDetails = () => {
+
+        axios
+            .get(`/tracker/events?program=RwWtjFaorvN&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
+            .then(resp => {
+                const bills = resp.data.instances;
+                const softwareDetails = {
+                    name:"",
+                    existance:""
+                }
+
+                bills.forEach(b => {
+                    // console.log(b.dataValues);
+                    b.dataValues.forEach(sub=>{
+                        if(sub.dataElement === "Tf7TRBG6uCZ"){
+                            console.log(sub.value)
+                            setSoftware([{billing: "YES", name: sub.value, functional:"YES"}]);
+                            setScoreI(1)
+                        }
+                    })
+                })
+
+                // Check if each `dataElement` exists in the response
+                const result = dataElements.map(el => {
+                    const match = bills.find(r => r.dataElement === el.id);
+                    return {
+                        ...el,
+                        exists: !!match,           // true if found
+                        value: match?.value ?? ''  // or null, or default
+                    };
+                });
+
+                // console.log(result);
+
+                console.log("bela: ", resp.data)
+
+            })
+            .catch(err => console.log(err))
+    }
 
     const computerizedBillingSystemColumns = [
         { title: "Availability of Computerized Billing System (YES/NO)", dataIndex: "billing", key: "billing" },
@@ -58,13 +119,13 @@ function RateableRevenu({ year, billing, issuance, followup }) {
             </Title>
 
             <Title level={5} style={{ marginTop: "20px" }}>
-                PI 3.0-3.2i Actual Score: <strong>Score</strong>
+                PI 3.0-3.2i Actual Score: <strong>{scoreI}</strong>
             </Title>
             <Title level={5} style={{ marginTop: "20px" }}>
-                PI 3.0-3.2ii Actual Score: <strong>Score</strong>
+                PI 3.0-3.2ii Actual Score: <strong>{scoreII}</strong>
             </Title>
             <Title level={5} style={{ marginTop: "20px" }}>
-                PI 3.0-3.2iii Actual Score: <strong>Score</strong>
+                PI 3.0-3.2iii Actual Score: <strong>{scoreIII}</strong>
             </Title>
 
             <Title level={5} style={{ marginTop: "20px" }}>
@@ -72,7 +133,7 @@ function RateableRevenu({ year, billing, issuance, followup }) {
             </Title>
             {<Table
                 columns={computerizedBillingSystemColumns}
-                dataSource={billing || []}
+                dataSource={software || []}
                 pagination={false} bordered />}
 
             <Title level={5} style={{ marginTop: "20px" }}>

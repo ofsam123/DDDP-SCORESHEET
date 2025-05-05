@@ -5,6 +5,8 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import DPATSheet from './pages/DPATSheet';
 import DPATAssessment from './pages/DPATAssessment';
+import DPATRegionSats from './components/RegionalAnalytics'
+import DPATdistrictSats from './components/DistricAnalytics'
 import RequireAuth from './components/RequireAuth';
 
 function App() {
@@ -19,6 +21,8 @@ function App() {
                 <Route path='/' element={<Home />}/>
                  <Route path='/dpat-score-sheet' element={<DPATSheet />}/>
                  <Route path='/dpat-assessment-sheet' element={<DPATAssessment />}/>
+                 <Route path='/dpat-regional-analytics' element={<DPATRegionSats />}/>
+                 <Route path='/dpat-district-analytics' element={<DPATdistrictSats />}/>
             </Route>
             {/* private routes */}
             

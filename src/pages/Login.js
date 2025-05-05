@@ -45,7 +45,7 @@ export default function App() {
         const userList = resp.data.users;
     
         if (userList.length === 0) {
-          setError("Incorrect username or email");
+          setError("Username and or Email not found in DDDP");
           return;
         }
     
@@ -108,7 +108,7 @@ export default function App() {
              
             </div>
             
-            {error && <p className="error-message">{error}</p>}
+            {error && <p className="error-message"><strong>{error}</strong></p>}
             <input
               type="text"
               placeholder="DDDP Username"

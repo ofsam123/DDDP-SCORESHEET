@@ -21,14 +21,14 @@ function SideBarMenu(){
 								</Link>
 							</li>
 							<li>
-								<Link to="/dpat-score-sheet">
-									<i className="icon-home2"></i>
+								<Link to="/dpat-regional-analytics">
+									<i className="icon-area-graph"></i>
 									<span className="menu-text">Regional Analysis</span>
 								</Link>
 							</li>
 							<li>
-								<Link to="/dpat-score-sheet">
-									<i className="icon-home2"></i>
+								<Link to="/dpat-district-analytics">
+									<i className="icon-pie-chart"></i>
 									<span className="menu-text">District Analysis</span>
 								</Link>
 							</li>

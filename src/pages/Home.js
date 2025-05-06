@@ -202,7 +202,7 @@ function Home() {
         }
       });
 
-      const totalMeetings = counts.aeKyGvo5OIp || 1;
+      const totalMeetings = counts.BEUJdCeTGIE + counts.M86dDnKObvx + counts.cz086QtLaoW + counts.wGeWq6JhDQA || 1;
       const percentages = [
         (counts.BEUJdCeTGIE / totalMeetings) * 100,
         (counts.M86dDnKObvx / totalMeetings) * 100,
@@ -611,7 +611,7 @@ function Home() {
             <div className="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12">
               <GeneralChart
                 title="Proportion of Meeting Types"
-                data={meetingChartData.length > 0 ? meetingChartData : [0, 0, 0, 0]}
+                data={meetingChartLabels.length > 0 ? meetingChartData : [0, 0, 0, 0]}
                 labels={meetingChartLabels}
                 type="pie"
                 width={450}

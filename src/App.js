@@ -8,6 +8,8 @@ import DPATAssessment from './pages/DPATAssessment';
 import DPATRegionSats from './components/RegionalAnalytics'
 import DPATdistrictSats from './components/DistricAnalytics'
 import RequireAuth from './components/RequireAuth';
+import AAP from './components/AAP';
+import ProjectAndProgram from './components/ProjectAndProgram';
 
 function App() {
   return (
@@ -23,6 +25,8 @@ function App() {
                  <Route path='/dpat-assessment-sheet' element={<DPATAssessment />}/>
                  <Route path='/dpat-regional-analytics' element={<DPATRegionSats />}/>
                  <Route path='/dpat-district-analytics' element={<DPATdistrictSats />}/>
+                 <Route path='/aap-analytics' element={<AAP />}/>
+                 <Route path='/project-and-program-analytics' element={<ProjectAndProgram />}/>
             </Route>
             {/* private routes */}
             

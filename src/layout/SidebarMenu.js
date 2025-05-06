@@ -34,25 +34,25 @@ function SideBarMenu(){
 							</li>
 							
 							<li>
-							<Link to="/region-report">
+							<Link to="/aap-analytics">
 									<i className="icon-view_module"></i>
 									<span className="menu-text">Annual Action Plan</span>
 								</Link>
 							</li>
 							<li>
-								<Link to="/district-report">
+								<Link to="/project-and-program-analytics">
 									<i className="icon-view_stream"></i>
 									<span className="menu-text">Projects & Program</span>
 								</Link>
 							</li>
-							<li>
+							{/* <li>
 								<Link to="/real">
 									<i className="icon-check_circle"></i>
 									<span className="menu-text">Development Dimension</span>
 								</Link>
-							</li>
+							</li> */}
 							<li>
-								<Link to="/trial">
+								<Link to="/meetings">
 									<i className="icon-broken_image"></i>
 									<span className="menu-text">Meetings</span>
 								</Link>

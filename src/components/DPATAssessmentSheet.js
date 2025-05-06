@@ -419,7 +419,6 @@ const DPATAssessmentSheet = ({ props }) => {
                 attr.displayName === "DPAT | Meeting Type" && attr.value === meetingType
             )
         );
-
     }
 
     function formatDataGeneral(data, property, value) {

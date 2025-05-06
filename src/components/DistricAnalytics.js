@@ -184,7 +184,7 @@ function DistrictAnalytics() {
         }
       });
 
-      const totalMeetings = counts.aeKyGvo5OIp || 1;
+      const totalMeetings = counts.BEUJdCeTGIE + counts.M86dDnKObvx + counts.cz086QtLaoW + counts.wGeWq6JhDQA  || 1;
       const percentages = [
         (counts.BEUJdCeTGIE / totalMeetings) * 100,
         (counts.M86dDnKObvx / totalMeetings) * 100,

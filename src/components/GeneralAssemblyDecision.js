@@ -48,8 +48,11 @@ function GeneralAssemblyDecision({ data, year, columns, decisionDeliveryData, se
 
                     pageData.forEach(({ total, serviceDecision, percentage }) => {
                         totalDecision += Number(total);
+                        totalDecision = parseFloat(totalDecision.toFixed(2));
                         totalDelivered += Number(serviceDecision);
+                        totalDelivered = parseFloat(totalDelivered.toFixed(2));
                         totalPercent += Number(percentage);
+                        totalPercent = parseFloat(totalPercent.toFixed(2));
                     });
 
                     setGaDecisionScore(totalPercent);

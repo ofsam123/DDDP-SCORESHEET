@@ -36,6 +36,8 @@ import AgricultureSupport from "./AgricultureSupport";
 import EducationServiceSupport from "./EducationServiceSupport";
 import SPCEntityTenderCommittee from "./SCPEntityTenderCommittee";
 import InternalAuditUnitFunctionality from "./InternalAuditUnitFunctionality";
+import ClientServiceFunctionality from "./ClientServiceFunctionality";
+import AAPPublication from "./AAPPublication";
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
@@ -304,7 +306,7 @@ const DPATAssessmentSheet = ({ props }) => {
     const [streetNaming, setStreetNaming] = useState(props?.streets.streetNaming);
     const [districtGeneral, setDistrictGeneral] = useState(props?.districtGeneral.data);
     const [districtGeneralReport, setDistrictGeneralReport] = useState(props?.districtGeneral.reports);
-    const [districtGeneralData, setDistrictGeneralData] = useState(null);
+    const [substructureExpendatureData, setSubstructureExpendatureData] = useState(null);
     const [districtHotlineNumberData, setDistrictHotlineNumberData] = useState([]);
     const [pwd, setPwd] = useState(props?.pwd.data);
     const [dumpingSite, setDumpingSite] = useState(props?.dumpingSite.data);
@@ -343,6 +345,7 @@ const DPATAssessmentSheet = ({ props }) => {
     const [subCommitteCompositionData, setSubCommitteCompositionData] = useState(null);
     const [decisionServiceData, setDecisionServiceData] = useState(null);
     const [decisionDeliveryData, setDecisionDeliveryData] = useState(null);
+    const [decisionDeliveryListData, setDecisionDeliveryListData] = useState(null);
     const [managementActionServiceDeliveryData, setManagementActionServiceDeliveryData] = useState(null);
     const [memberSocialData, setMemberSocialData] = useState(null);
     const [memberPlanningData, setMemberPlanningData] = useState(null);
@@ -407,6 +410,7 @@ const DPATAssessmentSheet = ({ props }) => {
         setAuditCommitteeDataDisplay();
         setSPCMeetingData();
         setInternalAuditCommitteeDataDisplay();
+        subStructureExpenduture();
 
         // console.log("Software: ", props.districtGeneral.reports);
 
@@ -461,6 +465,7 @@ const DPATAssessmentSheet = ({ props }) => {
         let decisionOnServiceDeliveryNo = 0;
         const tempDecisions = [];
         const tempDecisionList = [];
+        const serviceDeliveries = [];
 
         formatData(meetings, "GA").forEach((meeting, index) => {
             const minuteFileNumber = getAttributeValue("Minute File Number", meeting);
@@ -482,6 +487,15 @@ const DPATAssessmentSheet = ({ props }) => {
             temp.push(meetingDataState);
 
             const serviceDeliveryDecion = getDecisionsByMeeting(meetingDecisions, minuteFileNumber);
+            console.log("Gando: ",serviceDeliveryDecion);
+            serviceDeliveryDecion.forEach(s=>{
+                serviceDeliveries.push({
+                    decision: getAttributeValue("Decision", s),
+                    action: ""
+                });
+            });
+           
+            
             const serviceDeliveryNo = serviceDeliveryDecion ? serviceDeliveryDecion.length : 0;
             const decisionList = serviceDeliveryDecion
                 ?.map((val, index) => `${index + 1}. ${getAttributeValue("Decision", val)}`)
@@ -495,7 +509,7 @@ const DPATAssessmentSheet = ({ props }) => {
                 gam: gam, // Meeting type
                 total: decNo, // Total Decision 
                 serviceDecision: serviceDeliveryNo, // Meeting Date
-                percentage: calculatePercentage(decNo, serviceDeliveryNo), // Interval (Days)
+                percentage: calculatePercentage(decNo, serviceDeliveryNo)
             };
 
             decisionOnServiceDeliveryNo += parseInt(serviceDeliveryNo);
@@ -504,11 +518,11 @@ const DPATAssessmentSheet = ({ props }) => {
             tempDecisionList.push({ gam: gam, service: decisionList })
 
         });
-
-
+ 
         setGaMeetingData({ meetings: temp, fulfillment: checkGaMeetingFulfillment(temp), numberOfDecision: decisionNo });
         setDecisionServiceData(tempDecisions);
         setDecisionDeliveryData(tempDecisionList);
+        setDecisionDeliveryListData(serviceDeliveries);
         setManagementActionServiceDeliveryData([{ no: decisionOnServiceDeliveryNo, service: 0, percentage: 0 }])
 
     };
@@ -613,8 +627,6 @@ const DPATAssessmentSheet = ({ props }) => {
 
                 temp.push(buildingInspectorateDateSet);
             });
-
-        console.log("Building ", temp)
 
         setBuildingInspectorateData(temp);
 
@@ -759,6 +771,10 @@ const DPATAssessmentSheet = ({ props }) => {
     }
 
     function checkECANDGAMeetingFulfillment(meetings) {
+
+        if(meetings.length === 0){
+            return 'Not Fulfilled';
+        }
 
         for (const mt of meetings) {
 
@@ -1096,16 +1112,43 @@ const DPATAssessmentSheet = ({ props }) => {
         meetings.forEach(mt => {
             const meetDecisions = temp.find(t => t.reference = getAttributeValue("Minute File Number", mt));
 
-            console.log("Decisions - meeting: ", meetDecisions)
-
             finalTemp.push(meetDecisions);
         });
 
 
-        console.log("Decisions linked to meeting: ", finalTemp)
-
         setDecisionsData(finalTemp);
     };
+
+    const subStructureExpenduture = ()=>{
+        // console.log("Diaraye: ", props?.districtGeneral.reports)
+        const reports = props?.districtGeneral.reports;
+        const temp = [];
+        reports?.forEach(re=>{
+            if(re.programStage === 'B0knjAzOqD4'){
+                // console.log("Sow: ", re?.dataValues)
+                temp.push({
+                    quarter: "",
+                    amountReleased: re?.dataValues[0]?.value,
+                    twoPercentReleased:re?.dataValues[3]?.value,
+                    spentOnSubstructure: re?.dataValues[1]?.value,
+                    percentageSpentSubstructure: re?.dataValues[2]?.value,
+                });
+            }
+        });
+
+        let score = 1;
+
+        temp.forEach((t, idx)=>{
+            t.quarter = `Quarter  ${idx+1}`
+
+            if(t.percentageSpentSubstructure < 90){
+                score = 0;
+            }
+        });
+
+        setSubstructureExpendatureData({data: temp, score});
+
+    }
 
     const setSubtructureEstablishmentsData = () => {
         const temp = [];
@@ -1171,6 +1214,8 @@ const DPATAssessmentSheet = ({ props }) => {
         setCededRevenueUtilisationData(finalRevenueDetails);
         setCededRevenueUtilisationScore(calculatePercentage(collectedTotal, cededTotal));
     };
+
+
 
     const setSubtructureActivities = () => {
         const temp = [];
@@ -1435,6 +1480,22 @@ const DPATAssessmentSheet = ({ props }) => {
                     meetingColumns={internalAuditMeetingColumns}
                 />}
 
+                <hr/>
+
+                <ClientServiceFunctionality
+                    year={year}
+                    district={district?.value}
+                />
+
+                <hr/>
+
+                <AAPPublication
+                    year={year}
+                    district={district?.value}
+                />
+
+                <hr/>
+
 
                 {/* Entity Tender Committee (ETC) Meeting End*/}
 
@@ -1458,14 +1519,17 @@ const DPATAssessmentSheet = ({ props }) => {
 
 
                 <GeneralAssemblyManagementActions year={year}
-                    decisions={decisionsData}
+                    decisions={decisionDeliveryListData}
                     managementActionServiceDeliveryData={managementActionServiceDeliveryData} />
                 <hr />
+
                 {/* 1.3 Assembly Support to Substructures Evidence of utilization of ceded revenue */}
                 <GASupport year={year}
                     cededRevenueUtilisationData={cededRevenueUtilisationData}
                     subStructureActivityData={subStructureActivityData}
-                    cededRevenueUtilisationScore={cededRevenueUtilisationScore} />
+                    cededRevenueUtilisationScore={cededRevenueUtilisationScore}
+                    substructureExpendature={substructureExpendatureData}
+                    />
 
                 <hr />
 

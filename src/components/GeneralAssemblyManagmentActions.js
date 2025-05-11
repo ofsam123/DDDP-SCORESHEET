@@ -16,13 +16,13 @@ function GeneralAssemblyManagementActions({
     ];
 
     const decisionColumns = [
-        { title: "Service delivery improvement issues", dataIndex: "gam", key: "gam" },
-        { title: "Actions taken", dataIndex: "decision", key: "decision" }
+        { title: "Service delivery improvement issues", dataIndex: "decision", key: "decision" },
+        { title: "Actions taken", dataIndex: "action", key: "action" }
     ];
 
     return (
         <>
-            <Title level={3} style={{ marginTop: "30px" }}>1.2 Management Actions taken on Assembly decisions</Title>
+            <Title level={3} style={{ marginTop: "30px" }}>SDI 1.0 - 1.2 Management Actions taken on Assembly decisions</Title>
             <Title level={4} style={{ marginTop: "30px" }}>Assessment Guide/ Requirement</Title>
             <Content>
                 <div className="mb-3">From the DCD, receive signed minutes of meetings of the Management of the Assembly:</div>
@@ -36,8 +36,16 @@ function GeneralAssemblyManagementActions({
                     Local Governance Act, 2016 (Act 936) Section 18
                 </div>
             </Content>
-            <Title level={4} style={{ marginTop: "30px" }}>Maximum Score</Title>
-            <Content>2</Content>
+        
+            <Title level={5} style={{ marginTop: "20px" }}>
+                Maximum Score <strong>2</strong>
+            </Title>
+
+            <Title level={5} style={{ marginTop: "20px" }}>
+                SDI 1.0-1.2 Actual Score: 
+                {managementActionServiceDeliveryData && 
+                <strong>{managementActionServiceDeliveryData[0]?.percentage >= 50 ? 2 : 0}</strong>}
+            </Title>
 
             <Title level={5} style={{ marginTop: "30px" }}>I. Evidence of management actions on service delivery decisions</Title>
             {managementActionServiceDeliveryData && <Table
@@ -49,15 +57,9 @@ function GeneralAssemblyManagementActions({
 
             <Title level={5} style={{ marginTop: "30px" }}>Conclusion</Title>
             <Content>
-                100% of the total no. of decisions on improving service delivery were implemented in {year}.
+            {managementActionServiceDeliveryData && managementActionServiceDeliveryData[0]?.percentage} % of the total no. of decisions on improving service delivery were implemented in {year}.
             </Content>
-            <Title level={5} style={{ marginTop: "30px" }}>Source:</Title>
-            <Content>
-                <ol>
-                    <li>EMA/MAM/VOL.5 (GENERAL ASSEMBLY MEETING)</li>
-                    <li>Minutes of GAM (see folio 06: folio 07: folio 10)</li>
-                </ol>
-            </Content>
+            
         </>
     );
 }

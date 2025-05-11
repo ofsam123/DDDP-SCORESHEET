@@ -17,7 +17,7 @@ function SideBarMenu(){
 							<li>
 								<Link to="/dpat-assessment-sheet">
 									<i className="icon-phonelink"></i>
-									<span className="menu-text">DPAT Assessment Sheet</span>
+									<span className="menu-text">DPAT Assessment</span>
 								</Link>
 							</li>
 							<li>
@@ -51,12 +51,12 @@ function SideBarMenu(){
 									<span className="menu-text">Development Dimension</span>
 								</Link>
 							</li> */}
-							<li>
+							{/* <li>
 								<Link to="/meetings">
 									<i className="icon-broken_image"></i>
 									<span className="menu-text">Meetings</span>
 								</Link>
-							</li>
+							</li> */}
 							
 						</ul>
 					</div>

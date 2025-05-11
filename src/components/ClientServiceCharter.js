@@ -17,7 +17,7 @@ function ClientServiceCharter({
 
     return (
         <>
-            <Title level={3} style={{ marginTop: "30px" }}>2.5 Availability of Client Service Charter</Title>
+            <Title level={3} style={{ marginTop: "30px" }}>SDI 2.0 - 2.5 Availability of Client Service Charter</Title>
             <Title level={4} style={{ marginTop: "30px" }}>Assessment Guide/ Requirement</Title>
             <Content>
                 From the DCD receive a copy of the Client Service Charter of the Assembly:<br /><br />
@@ -27,8 +27,10 @@ function ClientServiceCharter({
 
             </Content>
 
-            <Title level={4} style={{ marginTop: "30px" }}>Maximum Score</Title>
-            <Content>1</Content>
+            <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>1</strong></Title>
+            <Title level={5} style={{ marginTop: "20px" }}>
+                SDI 2.0-2.5 Actual Score: <strong>{!true ? '1' : '0'}</strong>
+            </Title>
 
             <Title level={4} style={{ marginTop: "30px" }}>Findings / Observations & Conclusion</Title>
             <Content>
@@ -37,7 +39,7 @@ function ClientServiceCharter({
             </Content>
 
             {/* <Title level={5} style={{ marginTop: "30px" }}>I. Evidence of O&M Plan in existence</Title> */}
-            <Space><Text strong>Actual Score: </Text> <Text>{!true ? '1' : '0'}</Text></Space>
+            {/* <Space><Text strong>Actual Score: </Text> <Text>{!true ? '1' : '0'}</Text></Space> */}
             {<Table
                     columns={permitRequestColumn}
                     dataSource={permitRequestData || []}
@@ -48,13 +50,7 @@ function ClientServiceCharter({
             The GA approved the Client Service Charter by a resolution at its meeting held on 30/06/2020 and displayed on the Assembly premises and website.
             </Content>
 
-            <Title level={5} style={{ marginTop: "30px" }}>Source:</Title>
-            <Content>
-                <ol>
-                    <li>EMA/CSC/V.1 (Hard copy of EMA Client Service Charter).</li>
-                    <li>www.ejma.gov.gh</li>
-                </ol>
-            </Content>
+
         </>
     );
 }

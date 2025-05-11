@@ -184,7 +184,7 @@ function RegionalAnalytics() {
         }
       });
 
-      const totalMeetings = counts.BEUJdCeTGIE + counts.M86dDnKObvx + counts.cz086QtLaoW + counts.wGeWq6JhDQA   || 1;
+      const totalMeetings = counts.BEUJdCeTGIE + counts.M86dDnKObvx + counts.cz086QtLaoW + counts.wGeWq6JhDQA || 1;
       const percentages = [
         (counts.BEUJdCeTGIE / totalMeetings) * 100,
         (counts.M86dDnKObvx / totalMeetings) * 100,
@@ -244,44 +244,49 @@ function RegionalAnalytics() {
     setIsLoading(true);
     try {
       const year = selectedYear.value;
+      // Fetch AAP Total
       const aapResp = await axios.get(
-        `/analytics.json?dimension=dx:L2oTOp0EA1A&orgUnit=${orgUnit}&filter=pe:${year}-01-01;${year}-12-31`
+        `/analytics.json?dimension=dx:L2oTOp0EA1A&dimension=ou:${orgUnit}&filter=pe:${year}-01-01;${year}-12-31`
       );
       console.log("AAP Analytics Response:", aapResp.data);
       const aapRows = aapResp.data.rows || [];
-      const aapCount = aapRows.length > 0 ? parseFloat(aapRows[0][1]) || 0 : 0;
+      const aapCount = aapRows.length > 0 ? parseFloat(aapRows[0][2]) || 0 : 0;
       setAapTotal(aapCount);
 
+      // Fetch Projects Total
       const projectsResp = await axios.get(
-        `/analytics.json?dimension=dx:cHp5d6g8Z1K&orgUnit=${orgUnit}&filter=pe:${year}-01-01;${year}-12-31`
+        `/analytics.json?dimension=dx:cHp5d6g8Z1K&dimension=ou:${orgUnit}&filter=pe:${year}-01-01;${year}-12-31`
       );
       console.log("Projects Analytics Response:", projectsResp.data);
       const projectsRows = projectsResp.data.rows || [];
-      const projectsCount = projectsRows.length > 0 ? parseFloat(projectsRows[0][1]) || 0 : 0;
+      const projectsCount = projectsRows.length > 0 ? parseFloat(projectsRows[0][2]) || 0 : 0;
       setProjectsTotal(projectsCount);
 
+      // Fetch Programs Total
       const programsResp = await axios.get(
-        `/analytics.json?dimension=dx:WR0IO6mvdmw&orgUnit=${orgUnit}&filter=pe:${year}-01-01;${year}-12-31`
+        `/analytics.json?dimension=dx:WR0IO6mvdmw&dimension=ou:${orgUnit}&filter=pe:${year}-01-01;${year}-12-31`
       );
       console.log("Programs Analytics Response:", programsResp.data);
       const programsRows = programsResp.data.rows || [];
-      const programsCount = programsRows.length > 0 ? parseFloat(programsRows[0][1]) || 0 : 0;
+      const programsCount = programsRows.length > 0 ? parseFloat(programsRows[0][2]) || 0 : 0;
       setProgramsTotal(programsCount);
 
+      // Fetch Meetings Total
       const meetingsResp = await axios.get(
-        `/analytics.json?dimension=dx:aeKyGvo5OIp&orgUnit=${orgUnit}&filter=pe:${year}-01-01;${year}-12-31`
+        `/analytics.json?dimension=dx:aeKyGvo5OIp&dimension=ou:${orgUnit}&filter=pe:${year}-01-01;${year}-12-31`
       );
       console.log("Meetings Analytics Response:", meetingsResp.data);
       const meetingsRows = meetingsResp.data.rows || [];
-      const meetingsCount = meetingsRows.length > 0 ? parseFloat(meetingsRows[0][1]) || 0 : 0;
+      const meetingsCount = meetingsRows.length > 0 ? parseFloat(meetingsRows[0][2]) || 0 : 0;
       setMeetingsTotal(meetingsCount);
 
+      // Fetch Departments Total
       const departmentsResp = await axios.get(
-        `/analytics.json?dimension=dx:wGeWq6JhDQA&orgUnit=${orgUnit}&filter=pe:${year}-01-01;${year}-12-31`
+        `/analytics.json?dimension=dx:wGeWq6JhDQA&dimension=ou:${orgUnit}&filter=pe:${year}-01-01;${year}-12-31`
       );
       console.log("Departments Analytics Response:", departmentsResp.data);
       const departmentsRows = departmentsResp.data.rows || [];
-      const departmentsCount = departmentsRows.length > 0 ? parseFloat(departmentsRows[0][1]) || 0 : 0;
+      const departmentsCount = departmentsRows.length > 0 ? parseFloat(departmentsRows[0][2]) || 0 : 0;
       setDepartmentsTotal(departmentsCount);
     } catch (err) {
       console.error("Error fetching totals:", err);

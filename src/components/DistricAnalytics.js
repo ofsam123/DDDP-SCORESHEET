@@ -47,14 +47,14 @@ function DistrictAnalytics() {
   const [minuteInvitationData, setMinuteInvitationData] = useState([]);
   const [minuteInvitationError, setMinuteInvitationError] = useState(null);
 
-  // MeetingRegionalReport state
-  const [meetingRegions, setMeetingRegions] = useState([]);
+  // MeetingDistrictReport state
+  const [meetingDistricts, setMeetingDistricts] = useState([]);
   const [meetingAnalyticsData, setMeetingAnalyticsData] = useState({ meetings: [], generalMeetings: [] });
   const [meetingReportLoading, setMeetingReportLoading] = useState(true);
   const [meetingReportError, setMeetingReportError] = useState(null);
 
-  // RegionalReport state
-  const [actionPlanRegions, setActionPlanRegions] = useState([]);
+  // DistrictReport state
+  const [actionPlanDistricts, setActionPlanDistricts] = useState([]);
   const [actionPlanAnalyticsData, setActionPlanAnalyticsData] = useState({ plans: [], completed: [] });
   const [actionPlanReportLoading, setActionPlanReportLoading] = useState(true);
   const [actionPlanReportError, setActionPlanReportError] = useState(null);
@@ -79,14 +79,14 @@ function DistrictAnalytics() {
     }
   }, [selectedYear, selectedDistrict]);
 
-  // MeetingRegionalReport data fetching
+  // MeetingDistrictReport data fetching
   async function fetchMeetingReportData() {
     setMeetingReportLoading(true);
     try {
       const year = selectedYear.value;
-      const regionsResponse = await axios.get("https://dddp.gov.gh/api/organisationUnits?level=2&paging=false");
-      console.log("Meeting Regions Response:", regionsResponse.data);
-      const regionList = regionsResponse.data.organisationUnits.map((unit) => ({
+      const districtsResponse = await axios.get("https://dddp.gov.gh/api/organisationUnits?level=3&paging=false");
+      console.log("Meeting Districts Response:", districtsResponse.data);
+      const districtList = districtsResponse.data.organisationUnits.map((unit) => ({
         id: unit.id,
         name: unit.displayName,
       }));
@@ -109,7 +109,7 @@ function DistrictAnalytics() {
           }
         }
       });
-      setMeetingRegions([selectedDistrict.label]);
+      setMeetingDistricts([selectedDistrict.label]);
       setMeetingAnalyticsData({ meetings, generalMeetings });
       setMeetingReportLoading(false);
     } catch (err) {
@@ -119,14 +119,14 @@ function DistrictAnalytics() {
     }
   }
 
-  // RegionalReport data fetching
+  // DistrictReport data fetching
   async function fetchActionPlanReportData() {
     setActionPlanReportLoading(true);
     try {
       const year = selectedYear.value;
-      const regionsResponse = await axios.get("https://dddp.gov.gh/api/organisationUnits?level=2&paging=false");
-      console.log("Action Plan Regions Response:", regionsResponse.data);
-      const regionList = regionsResponse.data.organisationUnits.map((unit) => ({
+      const districtsResponse = await axios.get("https://dddp.gov.gh/api/organisationUnits?level=3&paging=false");
+      console.log("Action Plan Districts Response:", districtsResponse.data);
+      const districtList = districtsResponse.data.organisationUnits.map((unit) => ({
         id: unit.id,
         name: unit.displayName,
       }));
@@ -149,7 +149,7 @@ function DistrictAnalytics() {
           }
         }
       });
-      setActionPlanRegions([selectedDistrict.label]);
+      setActionPlanDistricts([selectedDistrict.label]);
       setActionPlanAnalyticsData({ plans: plansData, completed: completedData });
       setActionPlanReportLoading(false);
     } catch (err) {
@@ -184,7 +184,7 @@ function DistrictAnalytics() {
         }
       });
 
-      const totalMeetings = counts.BEUJdCeTGIE + counts.M86dDnKObvx + counts.cz086QtLaoW + counts.wGeWq6JhDQA  || 1;
+      const totalMeetings = counts.BEUJdCeTGIE + counts.M86dDnKObvx + counts.cz086QtLaoW + counts.wGeWq6JhDQA || 1;
       const percentages = [
         (counts.BEUJdCeTGIE / totalMeetings) * 100,
         (counts.M86dDnKObvx / totalMeetings) * 100,
@@ -244,44 +244,49 @@ function DistrictAnalytics() {
     setIsLoading(true);
     try {
       const year = selectedYear.value;
+      // Fetch AAP Total
       const aapResp = await axios.get(
-        `/analytics.json?dimension=dx:L2oTOp0EA1A&orgUnit=${orgUnit}&filter=pe:${year}-01-01;${year}-12-31`
+        `/analytics.json?dimension=dx:L2oTOp0EA1A&dimension=ou:${orgUnit}&filter=pe:${year}-01-01;${year}-12-31`
       );
       console.log("AAP Analytics Response:", aapResp.data);
       const aapRows = aapResp.data.rows || [];
-      const aapCount = aapRows.length > 0 ? parseFloat(aapRows[0][1]) || 0 : 0;
+      const aapCount = aapRows.length > 0 ? parseFloat(aapRows[0][2]) || 0 : 0;
       setAapTotal(aapCount);
 
+      // Fetch Projects Total
       const projectsResp = await axios.get(
-        `/analytics.json?dimension=dx:cHp5d6g8Z1K&orgUnit=${orgUnit}&filter=pe:${year}-01-01;${year}-12-31`
+        `/analytics.json?dimension=dx:cHp5d6g8Z1K&dimension=ou:${orgUnit}&filter=pe:${year}-01-01;${year}-12-31`
       );
       console.log("Projects Analytics Response:", projectsResp.data);
       const projectsRows = projectsResp.data.rows || [];
-      const projectsCount = projectsRows.length > 0 ? parseFloat(projectsRows[0][1]) || 0 : 0;
+      const projectsCount = projectsRows.length > 0 ? parseFloat(projectsRows[0][2]) || 0 : 0;
       setProjectsTotal(projectsCount);
 
+      // Fetch Programs Total
       const programsResp = await axios.get(
-        `/analytics.json?dimension=dx:WR0IO6mvdmw&orgUnit=${orgUnit}&filter=pe:${year}-01-01;${year}-12-31`
+        `/analytics.json?dimension=dx:WR0IO6mvdmw&dimension=ou:${orgUnit}&filter=pe:${year}-01-01;${year}-12-31`
       );
       console.log("Programs Analytics Response:", programsResp.data);
       const programsRows = programsResp.data.rows || [];
-      const programsCount = programsRows.length > 0 ? parseFloat(programsRows[0][1]) || 0 : 0;
+      const programsCount = programsRows.length > 0 ? parseFloat(programsRows[0][2]) || 0 : 0;
       setProgramsTotal(programsCount);
 
+      // Fetch Meetings Total
       const meetingsResp = await axios.get(
-        `/analytics.json?dimension=dx:aeKyGvo5OIp&orgUnit=${orgUnit}&filter=pe:${year}-01-01;${year}-12-31`
+        `/analytics.json?dimension=dx:aeKyGvo5OIp&dimension=ou:${orgUnit}&filter=pe:${year}-01-01;${year}-12-31`
       );
       console.log("Meetings Analytics Response:", meetingsResp.data);
       const meetingsRows = meetingsResp.data.rows || [];
-      const meetingsCount = meetingsRows.length > 0 ? parseFloat(meetingsRows[0][1]) || 0 : 0;
+      const meetingsCount = meetingsRows.length > 0 ? parseFloat(projectsRows[0][2]) || 0 : 0;
       setMeetingsTotal(meetingsCount);
 
+      // Fetch Departments Total
       const departmentsResp = await axios.get(
-        `/analytics.json?dimension=dx:wGeWq6JhDQA&orgUnit=${orgUnit}&filter=pe:${year}-01-01;${year}-12-31`
+        `/analytics.json?dimension=dx:wGeWq6JhDQA&dimension=ou:${orgUnit}&filter=pe:${year}-01-01;${year}-12-31`
       );
       console.log("Departments Analytics Response:", departmentsResp.data);
       const departmentsRows = departmentsResp.data.rows || [];
-      const departmentsCount = departmentsRows.length > 0 ? parseFloat(departmentsRows[0][1]) || 0 : 0;
+      const departmentsCount = departmentsRows.length > 0 ? parseFloat(departmentsRows[0][2]) || 0 : 0;
       setDepartmentsTotal(departmentsCount);
     } catch (err) {
       console.error("Error fetching totals:", err);
@@ -319,7 +324,7 @@ function DistrictAnalytics() {
     }
 
     axios
-      .get("https://dddp.gov.gh/api/organisationUnits?level=2&paging=false")
+      .get("https://dddp.gov.gh/api/organisationUnits?level=3&paging=false")
       .then((result) => {
         console.log(result.data);
         let temp = [];
@@ -467,7 +472,7 @@ function DistrictAnalytics() {
                           formatter: (val) => (val > 0 ? val : ""),
                         },
                         xaxis: {
-                          categories: meetingRegions.length > 0 ? meetingRegions : ["No data available"],
+                          categories: meetingDistricts.length > 0 ? meetingDistricts : ["No data available"],
                           labels: {
                             rotate: -45,
                             style: {
@@ -532,7 +537,7 @@ function DistrictAnalytics() {
                           formatter: (val) => (val > 0 ? val : ""),
                         },
                         xaxis: {
-                          categories: actionPlanRegions.length > 0 ? actionPlanRegions : ["No data available"],
+                          categories: actionPlanDistricts.length > 0 ? actionPlanDistricts : ["No data available"],
                           labels: {
                             rotate: -45,
                             style: {

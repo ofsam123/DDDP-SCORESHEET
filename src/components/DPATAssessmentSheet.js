@@ -38,6 +38,10 @@ import SPCEntityTenderCommittee from "./SCPEntityTenderCommittee";
 import InternalAuditUnitFunctionality from "./InternalAuditUnitFunctionality";
 import ClientServiceFunctionality from "./ClientServiceFunctionality";
 import AAPPublication from "./AAPPublication";
+import axios from "../api/axios";
+import nl2br from "nl2br";
+import stringToHtml from "string-to-html";
+import toHtml from 'string-to-html'
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
@@ -192,9 +196,18 @@ const serviceDecisionColumns = [
     { title: "% of decisions on service delivery ", dataIndex: "percentage", key: "percentage" }
 ];
 
+const renderWithLineBreaks = (str) => {
+    return str.split(/<br\s*\/?>/i).map((line, index) => (
+      <div key={index}>{line}</div>
+    ));
+  };
+
 const serviceDeliveryDecisionColumns = [
     { title: "GAM", dataIndex: "gam", key: "gam" },
-    { title: "Service Delivery Decisions", dataIndex: "service", key: "service" }
+    {
+        title: "Service Delivery Decisions", dataIndex: "service", key: "service",
+        render: (cell, row) => renderWithLineBreaks(cell)
+    }
 ];
 
 const managementServiceDeliveryActionColumns = [
@@ -487,19 +500,18 @@ const DPATAssessmentSheet = ({ props }) => {
             temp.push(meetingDataState);
 
             const serviceDeliveryDecion = getDecisionsByMeeting(meetingDecisions, minuteFileNumber);
-            console.log("Gando: ",serviceDeliveryDecion);
-            serviceDeliveryDecion.forEach(s=>{
+            // console.log("Gando: ",serviceDeliveryDecion);
+            serviceDeliveryDecion.forEach(s => {
                 serviceDeliveries.push({
                     decision: getAttributeValue("Decision", s),
-                    action: ""
+                    action: getActionTakentByDecision(s.trackedEntity)
                 });
             });
-           
-            
+
             const serviceDeliveryNo = serviceDeliveryDecion ? serviceDeliveryDecion.length : 0;
             const decisionList = serviceDeliveryDecion
                 ?.map((val, index) => `${index + 1}. ${getAttributeValue("Decision", val)}`)
-                .join('\n');
+                .join('<br/>');
 
             const gam = `${getMeetingRank(index, "EC")}  General Assembly Meeting`;
 
@@ -518,15 +530,48 @@ const DPATAssessmentSheet = ({ props }) => {
             tempDecisionList.push({ gam: gam, service: decisionList })
 
         });
- 
+
+
+
         setGaMeetingData({ meetings: temp, fulfillment: checkGaMeetingFulfillment(temp), numberOfDecision: decisionNo });
         setDecisionServiceData(tempDecisions);
         setDecisionDeliveryData(tempDecisionList);
         setDecisionDeliveryListData(serviceDeliveries);
-        setManagementActionServiceDeliveryData([{ no: decisionOnServiceDeliveryNo, service: 0, percentage: 0 }])
+        getIndicatorsData(decisionOnServiceDeliveryNo);
+
 
     };
+    const getIndicatorsData = (decisionOnServiceDeliveryNo) => {
+        axios.get(`/analytics.json?dimension=dx:y6pHogjYlez&dimension=ou:LEVEL-3;${district}&filter=pe:${year}-01-01;${year}-12-31`)
+            .then(res => {
 
+                const data = res.data?.rows;
+
+                if (data?.length > 0) {
+                    const percentage = calculatePercentage(decisionOnServiceDeliveryNo, data[0][2]);
+                    const p = percentage;
+                    setManagementActionServiceDeliveryData([{ no: decisionOnServiceDeliveryNo, service: data[0][2], percentage: p }])
+                } else {
+                    setManagementActionServiceDeliveryData([{ no: decisionOnServiceDeliveryNo, service: 0, percentage: 0 }])
+                }
+
+            }).catch(err => console.log(err));
+    }
+
+    const getActionTakentByDecision = (trackedEntity) => {
+        const decisionReports = props.decisions.reports;
+        
+        let actions = '';
+        
+        decisionReports?.forEach(d => {
+          if (trackedEntity === d.trackedEntity) {
+            actions += d.dataValues[2]?.value || '';
+          }
+        });
+      
+        return actions.trim().length <= 1 ? '' : actions;
+      };
+      
     const calculatePercentage = (total, value) => {
         const totalNum = parseFloat(total);
         const valueNum = parseFloat(value);
@@ -535,7 +580,7 @@ const DPATAssessmentSheet = ({ props }) => {
             return 0;
         }
 
-        return (valueNum / totalNum) * 100;
+        return ((valueNum / totalNum) * 100).toFixed(2);
     };
 
 
@@ -772,7 +817,7 @@ const DPATAssessmentSheet = ({ props }) => {
 
     function checkECANDGAMeetingFulfillment(meetings) {
 
-        if(meetings.length === 0){
+        if (meetings.length === 0) {
             return 'Not Fulfilled';
         }
 
@@ -896,10 +941,10 @@ const DPATAssessmentSheet = ({ props }) => {
                 meetingDate: getAttributeValue("DPAT | Meeting Date", meeting),
                 invitationDate: getAttributeValue("DPAT | Meeting Date", meeting),
                 invitationLetterRef: getAttributeValue("Invitation letter Ref. Number", meeting),
-                muniteRef : munitesRef
+                muniteRef: munitesRef
             };
 
-            if(!munitesRef){
+            if (!munitesRef) {
                 fulfillment = "Not Fulfilled";
             }
 
@@ -915,10 +960,10 @@ const DPATAssessmentSheet = ({ props }) => {
 
         const auditTemp = [];
 
-        audits.forEach((audit, index)=>{
+        audits.forEach((audit, index) => {
             auditTemp.push({
                 key: index,
-                no: index+1,
+                no: index + 1,
                 audit: getAttributeValue("Name", audit),
                 recommendion: getAttributeValue("Audit Recommendation", audit)
             });
@@ -1119,17 +1164,17 @@ const DPATAssessmentSheet = ({ props }) => {
         setDecisionsData(finalTemp);
     };
 
-    const subStructureExpenduture = ()=>{
+    const subStructureExpenduture = () => {
         // console.log("Diaraye: ", props?.districtGeneral.reports)
         const reports = props?.districtGeneral.reports;
         const temp = [];
-        reports?.forEach(re=>{
-            if(re.programStage === 'B0knjAzOqD4'){
+        reports?.forEach(re => {
+            if (re.programStage === 'B0knjAzOqD4') {
                 // console.log("Sow: ", re?.dataValues)
                 temp.push({
                     quarter: "",
                     amountReleased: re?.dataValues[0]?.value,
-                    twoPercentReleased:re?.dataValues[3]?.value,
+                    twoPercentReleased: re?.dataValues[3]?.value,
                     spentOnSubstructure: re?.dataValues[1]?.value,
                     percentageSpentSubstructure: re?.dataValues[2]?.value,
                 });
@@ -1138,15 +1183,15 @@ const DPATAssessmentSheet = ({ props }) => {
 
         let score = 1;
 
-        temp.forEach((t, idx)=>{
-            t.quarter = `Quarter  ${idx+1}`
+        temp.forEach((t, idx) => {
+            t.quarter = `Quarter  ${idx + 1}`
 
-            if(t.percentageSpentSubstructure < 90){
+            if (t.percentageSpentSubstructure < 90) {
                 score = 0;
             }
         });
 
-        setSubstructureExpendatureData({data: temp, score});
+        setSubstructureExpendatureData({ data: temp, score });
 
     }
 
@@ -1459,7 +1504,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     columns={spcMeetingColumns}
                 />}
                 {/* Special Committee Meeting (SPC) Meeting End*/}
-                <hr/>
+                <hr />
 
                 {/* Entity Tender Committee (ETC) Meeting Start*/}
                 {/* Sow to make sure there's one meeting each quater */}
@@ -1470,7 +1515,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     columns={ETCMeetingColumns}
                 />}
 
-                <hr/>
+                <hr />
 
                 {internalAuditData && <InternalAuditUnitFunctionality
                     data={internalAuditData}
@@ -1480,21 +1525,21 @@ const DPATAssessmentSheet = ({ props }) => {
                     meetingColumns={internalAuditMeetingColumns}
                 />}
 
-                <hr/>
+                <hr />
 
                 <ClientServiceFunctionality
                     year={year}
                     district={district?.value}
                 />
 
-                <hr/>
+                <hr />
 
                 <AAPPublication
                     year={year}
                     district={district?.value}
                 />
 
-                <hr/>
+                <hr />
 
 
                 {/* Entity Tender Committee (ETC) Meeting End*/}
@@ -1518,9 +1563,12 @@ const DPATAssessmentSheet = ({ props }) => {
                 <hr />
 
 
-                <GeneralAssemblyManagementActions year={year}
+                <GeneralAssemblyManagementActions
+                    year={year}
                     decisions={decisionDeliveryListData}
-                    managementActionServiceDeliveryData={managementActionServiceDeliveryData} />
+                    managementActionServiceDeliveryData={managementActionServiceDeliveryData}
+                    district={district?.value}
+                />
                 <hr />
 
                 {/* 1.3 Assembly Support to Substructures Evidence of utilization of ceded revenue */}
@@ -1529,7 +1577,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     subStructureActivityData={subStructureActivityData}
                     cededRevenueUtilisationScore={cededRevenueUtilisationScore}
                     substructureExpendature={substructureExpendatureData}
-                    />
+                />
 
                 <hr />
 
@@ -1713,7 +1761,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     district={district?.value}
                 />
                 <hr />
-                
+
 
 
                 {/* Print Button */}

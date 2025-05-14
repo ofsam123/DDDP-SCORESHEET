@@ -15,7 +15,7 @@ function GeneralAssemblyDecision({ data, year, columns, decisionDeliveryData, se
                     MANAGEMENT & COORDINATION – IMPLEMENTATION OF SERVICE DELIVERY DECISIONS (5)
                 </Text>
             </div>
-            <Title level={3}>SDI 1.0 - 1.1 General Assembly Decisionsy</Title>
+            <Title level={3}>SDI 1.0 - 1.1 General Assembly Decisions</Title>
             <Title level={4} style={{ marginTop: "10px" }}>Assessment Guide/ Requirement</Title>
             <Content>
                 From the DCD, receive signed Minutes of Meetings of the three mandatory Meetings of the General Assembly:<br /><br />
@@ -41,7 +41,7 @@ function GeneralAssemblyDecision({ data, year, columns, decisionDeliveryData, se
             </Title>
 
             <Title level={4} style={{ marginTop: "20px" }}>Evidence of Quarterly Management Meetings</Title>
-            {/* {data && <Table columns={columns} dataSource={data?.data} pagination={false} bordered />} */}
+            
             {data && <Table columns={columns} dataSource={data} pagination={false} bordered
                 summary={pageData => {
                     let totalDecision = 0, totalDelivered = 0, totalPercent = 0;

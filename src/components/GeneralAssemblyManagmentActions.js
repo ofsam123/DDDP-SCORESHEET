@@ -1,9 +1,11 @@
 import { Layout, Table, Typography } from "antd";
-import React from "react";
+import React, { useEffect } from "react";
+import axios from "../api/axios";
 
 function GeneralAssemblyManagementActions({
     year, decisions,
-    managementActionServiceDeliveryData
+    managementActionServiceDeliveryData,
+    district
 }) {
 
     const { Header, Content } = Layout;
@@ -19,6 +21,9 @@ function GeneralAssemblyManagementActions({
         { title: "Service delivery improvement issues", dataIndex: "decision", key: "decision" },
         { title: "Actions taken", dataIndex: "action", key: "action" }
     ];
+
+
+    
 
     return (
         <>

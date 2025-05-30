@@ -33,11 +33,14 @@ function DPATAssessment() {
     const [districtDepartments, setDistrictDepartments] = useState([]);
     const [districtMembers, setDistrictMembers] = useState([]);
     const [districtGeneral, setDistrictGeneral] = useState([]);
-    const [pwd, setPWD] = useState([]);
     const [audit, setAudit] = useState([]);
     const [schools, setSchools] = useState([]);
-    const [dumpingSite, setDumpingSite] = useState([]);
     const [foodVendors, setFoodVendors] = useState([]);
+    const [transportors, setTransportors] = useState([]);
+    const [inspectorateUnit, setInspectorateUnit] = useState([]);
+    const [igf, setIGF] = useState([]);
+    const [publications, setPublications] = useState([]);
+    const [documents, setDocuments] = useState([]);
     const [serviceProviders, setServiceProviders] = useState([]);
     const [inspectorates, setInspectorates] = useState([]);
     const [permiRequest, setPermiRequest] = useState([]);
@@ -286,24 +289,6 @@ function DPATAssessment() {
             .catch(err => console.log(err))
     }
 
-    function getPWDs(startDate, endDate, districtId) {
-        axios
-            .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=OiDekszWx2p`)
-            .then(result => {
-                if (result.data.instances.length > 0) {
-
-                    axios
-                        .get(`/tracker/events?program=OiDekszWx2p&orgUnit=${districtId}&startDate=${startDate}&endDate=${endDate}`)
-                        .then(resp => {
-                            setPWD({ data: result.data.instances, reports: resp.data.instances })
-                        })
-                        .catch(err => console.log(err))
-                }
-
-
-            })
-            .catch(err => console.log(err))
-    }
 
     function getAudits(startDate, endDate, districtId) {
         axios
@@ -343,24 +328,7 @@ function DPATAssessment() {
             .catch(err => console.log(err))
     }
 
-    function getDumpingSite(startDate, endDate, districtId) {
-        axios
-            .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=Txcfc03kUCi`)
-            .then(result => {
-                if (result.data.instances.length > 0) {
-
-                    axios
-                        .get(`/tracker/events?program=Txcfc03kUCi&orgUnit=${districtId}&startDate=${startDate}&endDate=${endDate}`)
-                        .then(resp => {
-                            setDumpingSite({ data: result.data.instances, reports: resp.data.instances })
-                        })
-                        .catch(err => console.log(err))
-                }
-
-
-            })
-            .catch(err => console.log(err))
-    }
+    
 
     function getFoodVendors(startDate, endDate, districtId) {
         axios
@@ -379,6 +347,90 @@ function DPATAssessment() {
 
             })
             .catch(err => console.log(err))
+    }
+
+    function getTransportors(startDate, endDate, districtId) {
+        axios
+            .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=R5MX47LvztN`)
+            .then(result => {
+                if (result.data.instances.length > 0) {
+
+                    axios
+                        .get(`/tracker/events?program=R5MX47LvztN&orgUnit=${districtId}&startDate=${startDate}&endDate=${endDate}`)
+                        .then(resp => {
+                            setTransportors({ data: result.data.instances, reports: resp.data.instances })
+                        })
+                        .catch(err => console.log(err))
+                }
+
+
+            })
+            .catch(err => console.log(err))
+    }
+
+    function getInspectorateUnits(startDate, endDate, districtId) {
+        axios
+            .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=pYvmkB4s6Nq`)
+            .then(result => {
+                if (result.data.instances.length > 0) {
+
+                    axios
+                        .get(`/tracker/events?program=pYvmkB4s6Nq&orgUnit=${districtId}&startDate=${startDate}&endDate=${endDate}`)
+                        .then(resp => {
+                            setInspectorateUnit({ data: result.data.instances, reports: resp.data.instances })
+                        })
+                        .catch(err => console.log(err))
+                }
+
+
+            })
+            .catch(err => console.log(err))
+    }
+
+    function getIGFDetails(startDate, endDate, districtId) {
+        axios
+            .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=dYNmYGtArrK&startDate=${startDate}&endDate=${endDate}`)
+            .then(result => {
+                setIGF({ data: result.data.instances, reports: [] })
+            })
+            .catch(err => console.log(err))
+    }
+
+    function getDocumentHub(startDate, endDate, districtId) {
+        axios
+            .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=SERtHvYVHRT&startDate=${startDate}&endDate=${endDate}`)
+            .then(result => {
+                if (result.data.instances.length > 0) {
+
+                    axios
+                        .get(`/tracker/events?program=SERtHvYVHRT&orgUnit=${districtId}&startDate=${startDate}&endDate=${endDate}`)
+                        .then(resp => {
+                            setDocuments({ data: result.data.instances, reports: resp.data.instances });
+                        })
+                        .catch(err => console.log(err))
+                }
+
+
+            })
+            .catch(err => console.log(err))
+    }
+
+    function getPublications(startDate, endDate, districtId) {
+        axios
+            .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=X5kGqVpbGoN`)
+            .then(result => {
+
+                if (result.data.instances.length > 0) {
+
+                    axios
+                        .get(`/tracker/events?program=X5kGqVpbGoN&orgUnit=${districtId}`)
+                        .then(resp => {
+                            setPublications({ data: result.data.instances, reports: resp.data.instances });
+                        })
+                        .catch(err => console.log(err))
+                }
+            })
+            .catch(err => console.log("decisions error ", err))
     }
 
 
@@ -442,11 +494,14 @@ function DPATAssessment() {
                                         getStreetNaming(startDate, endDate, val.value);
                                         getAnnualActionPlan(startDate, endDate, val.value);
                                         getDistrictGeneral(startDate, endDate, val.value);
-                                        getPWDs(startDate, endDate, val.value);
-                                        getDumpingSite(startDate, endDate, val.value);
                                         getFoodVendors(startDate, endDate, val.value);
                                         getSchoolRegistered(startDate, endDate, val.value);
                                         getAudits(startDate, endDate, val.value);
+                                        getTransportors(startDate, endDate, val.value);
+                                        getInspectorateUnits(startDate, endDate, val.value);
+                                        getIGFDetails(startDate, endDate, val.value);
+                                        getDocumentHub(startDate, endDate, val.value);
+                                        getPublications(startDate, endDate, val.value);
                                     }}
                                     options={districts}
                                     isSearchable
@@ -455,6 +510,7 @@ function DPATAssessment() {
                             </div>}
 
                         </div>
+                        {/* {rhc && <div>{JSON.stringify(rhc)}</div>} */}
 
                         {gaMeeting && selectedYear && selectedDistrict && (
                             <DPATAssessmentSheet
@@ -474,11 +530,14 @@ function DPATAssessment() {
                                     streets: streetNaming,
                                     plans: annualActionPlan,
                                     districtGeneral: districtGeneral,
-                                    pwd: pwd,
-                                    dumpingSite: dumpingSite,
                                     foodVendors: foodVendors,
                                     schools: schools,
-                                    audits: audit
+                                    audits: audit,
+                                    transportors: transportors,
+                                    inspectorateUnits: inspectorateUnit,
+                                    ifg: igf,
+                                    documents: documents,
+                                    publications: publications
                                 }}
                             />
                         )}

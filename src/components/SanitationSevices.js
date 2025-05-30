@@ -1,5 +1,5 @@
 import { Layout, Space, Table, Typography } from "antd";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 function SanitationServices({
     year, sanitationProvidersData,
@@ -8,12 +8,25 @@ function SanitationServices({
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
+    const [score, setScore] = useState(0);
+    const [percentage, setPercentage] = useState(
+        sanitationProvidersData.length > 0 ? sanitationProvidersData[0].percentage : 0
+      );
+      
+
+    useEffect(()=>{
+        if(sanitationProvidersData.length > 0){
+            if(sanitationProvidersData[0].percentage >= 20 ){
+                setScore(2);
+            }
+        }
+        
+    }, [sanitationProvidersData, year])
 
     const serviceProvidersColumn = [
-        { title: "No", dataIndex: "no", key: "no" },
-        { title: "Service Provider", dataIndex: "provider", key: "provider" },
-        { title: "Contract Duration", dataIndex: "contract", key: "contract" },
-        { title: "Start Date", dataIndex: "date", key: "date" }
+        { title: "Total IGF collected for the 2021 (A)", dataIndex: "ifgCollected", key: "ifgCollected" },
+        { title: "Total IGF spent on sanitation improvement services (B)", dataIndex: "igfSpentOnSanitation", key: "igfSpentOnSanitation" },
+        { title: "% of IGF spent on sanitation improvementservices (C)", dataIndex: "percentage", key: "percentage" }
     ];
 
     return (
@@ -39,19 +52,24 @@ function SanitationServices({
             </Content>
 
             <Title level={5} style={{ marginTop: "30px" }}>Maximum Score <strong>2</strong></Title>
+            {/* {JSON.stringify(sanitationProvidersData)} */}
 
             <Title level={5} style={{ marginTop: "20px" }}>
-                SDI 1.0-2.2i Actual Score: <strong></strong>
+                SDI 1.0-2.2i Actual Score: <strong>{score}</strong>
             </Title>
-
             <Title level={5} style={{ marginTop: "30px" }}>I. Evidence of IGF expenditure on sanitation improvement services</Title>
             {sanitationProvidersData && <Table
                 columns={serviceProvidersColumn}
                 dataSource={sanitationProvidersData}
                 pagination={false} bordered />}
 
-            <Content>
+            <Content >
                 Calculated as: % of IGF i=on Sanitation = (B/A) x 100
+            </Content>
+            <Title level={5} style={{ marginTop: "10px" }}>Conclusion:</Title>
+            <Content>
+            Percentage of total expenditure on sanitation services on total IGF collected
+            is  {percentage} %. And there is evidence of implementation
             </Content>
 
             

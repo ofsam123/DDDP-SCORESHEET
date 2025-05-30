@@ -6,7 +6,17 @@ const { Title, Text } = Typography;
 
 function DistrictHotlineNumber({ data, year, columns }) {
 
-    const [gaDecisionScore, setGaDecisionScore] = useState(0);
+    const [dataSet, setDataSet] = useState([]);
+    const [score, setScore] = useState(0);
+
+    useEffect(()=>{
+        initiateData();
+    },[year, data])
+
+    const initiateData = ()=>{
+        setDataSet(data?.data)
+        setScore(data?.score)
+    }
 
     return (
         <>
@@ -32,20 +42,20 @@ function DistrictHotlineNumber({ data, year, columns }) {
             <Title level={5} style={{ marginTop: "20px" }}>Maximum Score <strong>1</strong>
             </Title>
 
-            <Title level={5} style={{ marginTop: "20px" }}>SDI 1.0-1.1 Actual Score: <strong>{data?.score}</strong>
+            <Title level={5} style={{ marginTop: "20px" }}>SDI 4.0-4.3 Actual Score: <strong>{score}</strong>
             </Title>
 
             <Title level={4} style={{ marginTop: "20px" }}>Evidence of Dedicated Functional Hotline for Vulnerable Groups</Title>
             {/* {data && <Table columns={columns} dataSource={data?.data} pagination={false} bordered />} */}
-            {data &&
+            {dataSet &&
                 <Table
                     columns={columns}
-                    dataSource={data?.data}
+                    dataSource={dataSet}
                     pagination={false} bordered />}
             
             <Title level={5} style={{ marginTop: "20px" }}>Conclusion</Title>
             <Content>
-                {data?.score === 1 ? 'There is a dedicated hot line in the District for vulnerable groups' :
+                {score === 1 ? 'There is a dedicated hot line in the District for vulnerable groups' :
                  'There is no dedicated hot line in the District for vulnerable groups'}            
             </Content>
 

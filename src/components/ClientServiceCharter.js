@@ -1,18 +1,29 @@
 import { Layout, Space, Table, Typography } from "antd";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 function ClientServiceCharter({
-    year, permitRequestData,
+    year, ClientServiceCharter,
 
 }) {
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
+    const [score, setScore] = useState(0);
+
+    useEffect(()=>{
+
+        if(ClientServiceCharter.length > 0){
+            const cl = ClientServiceCharter[0];
+            if(cl.availability === "YES" && cl.approvalDate && cl.docReference){
+                setScore(1);
+            }
+        }
+    }, [ClientServiceCharter])
 
     const permitRequestColumn = [
-        { title: "No. of Building Permit Requests Received (A)", dataIndex: "permitReceived", key: "permitReceived" },
-        { title: "No. of Building Permit Requests Processed & Issued (B)", dataIndex: "permitProcessed", key: "permitProcessed" },
-        { title: "No. of approved permits traced to Local Plans (C)", dataIndex: "permitTraced", key: "permitTraced" }
+        { title: "Client Service Charter Availability (YES/NO)", dataIndex: "availability", key: "availability" },
+        { title: "Date Approved", dataIndex: "approvalDate", key: "approvalDate" },
+        { title: "Evidence of Approval (Minutes of Meeting / Resolution)", dataIndex: "docReference", key: "docReference" }
     ];
 
     return (
@@ -29,7 +40,7 @@ function ClientServiceCharter({
 
             <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>1</strong></Title>
             <Title level={5} style={{ marginTop: "20px" }}>
-                SDI 2.0-2.5 Actual Score: <strong>{!true ? '1' : '0'}</strong>
+                SDI 2.0-2.5 Actual Score: <strong>{score}</strong>
             </Title>
 
             <Title level={4} style={{ marginTop: "30px" }}>Findings / Observations & Conclusion</Title>
@@ -38,17 +49,10 @@ function ClientServiceCharter({
                 <p>The minutes of the GA meeting for the approval of the Client Service Charter, signed by the PM and MCD, was reviewed as follows:</p>
             </Content>
 
-            {/* <Title level={5} style={{ marginTop: "30px" }}>I. Evidence of O&M Plan in existence</Title> */}
-            {/* <Space><Text strong>Actual Score: </Text> <Text>{!true ? '1' : '0'}</Text></Space> */}
             {<Table
                     columns={permitRequestColumn}
-                    dataSource={permitRequestData || []}
+                    dataSource={ClientServiceCharter || []}
                     pagination={false} bordered />}
-
-            <Title level={5} style={{ marginTop: "30px" }}>Conclusion</Title>
-            <Content>
-            The GA approved the Client Service Charter by a resolution at its meeting held on 30/06/2020 and displayed on the Assembly premises and website.
-            </Content>
 
 
         </>

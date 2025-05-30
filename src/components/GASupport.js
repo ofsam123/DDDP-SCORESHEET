@@ -1,5 +1,5 @@
 import { Layout, Space, Table, Typography } from "antd";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 function GASupport({
     year,
@@ -12,6 +12,9 @@ function GASupport({
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
 
+    const [score, setScore] = useState(0);
+    const [conclusion, setConclusion] = useState("");
+
     const cededAmountUtilizationColumns = [
         { title: "Name of substructure", dataIndex: "name", key: "name" },
         { title: "Amount of Ceded Revenue Received (GHS) - A", dataIndex: "collected", key: "collected" },
@@ -23,7 +26,8 @@ function GASupport({
         { title: "No", dataIndex: "no", key: "no" },
         { title: "Activities ", dataIndex: "activities", key: "collected" },
         { title: "Substructure", dataIndex: "name", key: "name" },
-        { title: "Amount Utilized", dataIndex: "amount", key: "amount" }
+        { title: "Funding Source", dataIndex: "source", key: "source" },
+        { title: "Amount Utilized", dataIndex: "amount", key: "amount" },
     ];
 
     const subExpendatureColumns = [
@@ -33,6 +37,44 @@ function GASupport({
         { title: "Total Amount spent on substructures", dataIndex: "spentOnSubstructure", key: "spentOnSubstructure" },
         { title: "% spent on substructures", dataIndex: "percentageSpentSubstructure", key: "percentageSpentSubstructure" }
     ];
+
+    useEffect(()=>{
+        const subs = substructureExpendature?.data?.length > 0 ? substructureExpendature?.data[0] : 0;
+        
+        const amountNinety = calculateNinetyPercentOfAmount(subs?.twoPercentReleased);
+        const amountSpendOnSub = calculateSubExpendature();
+
+         if(amountSpendOnSub >= amountNinety){
+            setScore(1);
+         }
+
+         setConclusion(`Amount spent on substructure is ${amountSpendOnSub} and 90% of the 2% released is ${amountNinety}`)
+
+    },[substructureExpendature, subStructureActivityData]);
+
+    const calculateSubExpendature = ()=>{
+        let amountSpent = 0;
+
+       subStructureActivityData?.forEach(sub=>{
+        if (sub.source === 'DACF') {
+            const amt = sub.amount;
+            amountSpent += parseFloat(amt);
+        }
+
+       });
+
+       return amountSpent;
+    }
+
+    const calculateNinetyPercentOfAmount = (amount) => {
+        const totalAmount = parseFloat(amount);
+
+        if (isNaN(totalAmount)) {
+            return 0;
+        }
+
+        return ((totalAmount * 90) / 100).toFixed(2);
+    };
 
     return (
         <>
@@ -58,9 +100,12 @@ function GASupport({
                 SDI 1.0-1.3i Actual Score: <strong>{cededRevenueUtilisationScore >= 30 ? '1' : '0'}</strong>
             </Title>
             <Title level={5} style={{ marginTop: "20px" }}>
-                SDI 1.0-1.3ii Actual Score: 
-                <strong>{substructureExpendature?.score}</strong>
+                SDI 1.0-1.3ii Actual Score: <strong>{score}</strong>
             </Title>
+
+            <p level={5} style={{ marginTop: "10px" }}>
+                {conclusion}
+            </p>
 
             <Title level={4} style={{ marginTop: "30px" }}>Findings / Observations & Conclusion</Title>
             <Content>
@@ -72,11 +117,7 @@ function GASupport({
                 columns={cededAmountUtilizationColumns}
                 dataSource={cededRevenueUtilisationData}
                 pagination={false} bordered />}
-            {/* <Space><Text>% Utilized on community support = B/A*100</Text></Space> */}
-
-            {/* 1.3 Assembly Support to Substructures Selected Activities that Benefit the Community 
-                  Henry to at it and format it the way it is displayed on the sheet and give the score
-                  */}
+            
             <Title level={5} style={{ marginTop: "30px" }}>II. Selected Activities that Benefit the Community</Title>
             {subStructureActivityData && <Table
                 columns={subStructureActivityColumns}

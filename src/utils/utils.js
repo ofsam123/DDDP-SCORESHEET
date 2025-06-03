@@ -48,4 +48,28 @@ export  function formatDataGeneral(data, property, value) {
       )
   );
 }
+
+export function getDataRank (index){
+
+      switch (index) {
+          case 0: return "1st";
+          case 1: return "2nd";
+          case 2: return "3rd";
+          case 3: return "4th";
+          default: return "Other";
+      } 
+
+}
+
+export function getQuarterDate (index, year){
+
+  switch (index) {
+      case 0: return `15/04/${year}`;
+      case 1: return `15/07/${year}`;
+      case 2: return `15/10/${year}`;
+      case 3: return `15/01/${year+1}`;
+      default: return "Other";
+  } 
+
+}
   

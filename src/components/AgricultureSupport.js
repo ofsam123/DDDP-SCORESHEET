@@ -2,19 +2,6 @@ import { Layout, Space, Table, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import axios from "../api/axios";
 
-const indicators = [
-    {
-        indicator: 'Number of Agric Extension and Support Officers',
-        id: 'byiRzpSNt8Q',
-        value: 0
-    },
-    {
-        indicator: 'No. of public health facilities supported by  the district Assembly',
-        id: 'AgoA6c5wqcV',
-        value: 0
-    }
-];
-
 function AgricultureSupport({ year, district }) {
 
     const { Header, Content } = Layout;
@@ -24,7 +11,7 @@ function AgricultureSupport({ year, district }) {
     const [score, setScore] = useState(0);
 
     useEffect(() => {
-        getIndicators();
+        getData();
     }, []);
 
     const agricultureSupportColumns = [
@@ -33,62 +20,37 @@ function AgricultureSupport({ year, district }) {
         { title: "Data on mapping of AEAs to operational areas", dataIndex: "mapping", key: "mapping" }
     ];
 
-    const getIndicators = () => {
-        axios.get(
-            `/analytics.json?dimension=dx:byiRzpSNt8Q&dimension=ou:LEVEL-3;${district}&filter=pe:${year}-01-01;${year}-12-31`)
-            .then(res => {
-                const data = res.data?.rows;
-                // console.log("Health: ",data)
+    
+    function getData() {
+            axios
+                .get(`/tracker/trackedEntities?orgUnit=${district}&program=zordSafiO6O&startDate=${year}-01-01&endDate=${year}-12-31`)
+                .then(result => {
+                    if (result.data.instances.length > 0) {
+    
+                        axios
+                            .get(`/tracker/events?program=zordSafiO6O&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
+                            .then(resp => {
+                                const agricultures = result.data.instances;
+                                
+                                
+                                setAgricultureSupport([{
+                                    noOfAEAs: agricultures.length,
+                                    noOfoperational: agricultures.length,
+                                    mapping: "1:1"
+                                }]);
 
-                if (data?.length > 0) {
-
-                    // Update indicator values based on result
-                    const updatedIndicators = indicators.map(ind => {
-                        const match = data.find(r => r[0] === ind.id);
-                        return {
-                            ...ind,
-                            value: match ? parseFloat(match[2]) : 0
-                        };
-                    });
-
-                    // console.log("Health: ",updatedIndicators);
-
-                    // Map from indicator name to table field
-                    const indicatorToFieldMap = {
-                        'Number of Agric Extension and Support Officers': 'noOfAEAs'
-                    };
-
-                    // Build the row object
-                    const row = {};
-
-                    updatedIndicators.forEach(ind => {
-                        const key = indicatorToFieldMap[ind.indicator];
-                        if (key) {
-                            row[key] = ind.value;
-                        }
-                    });
-
-                    // console.log("Health row ", row);
-
-                    setAgricultureSupport([{
-                        noOfAEAs: row.noOfAEAs,
-                        noOfoperational: 0,
-                        mapping: '?:?'
-                    }]);
-
-
-                    if (row.noOfAEAs > 0) {
-                        setScore(1)
+                                if(agricultures.length > 0){
+                                    setScore(1)
+                                }
+    
+                            })
+                            .catch(err => console.log(err))
                     }
-
-                }
-
-
-            }).catch(err => console.log(err));
-    }
-
-
-
+    
+    
+                })
+                .catch(err => console.log(err))
+        }
 
 
     return (

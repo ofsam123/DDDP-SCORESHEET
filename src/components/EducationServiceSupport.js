@@ -1,206 +1,190 @@
 import { Layout, Space, Table, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import axios from "../api/axios";
+import { calculatePercentage, formatDataGeneral, getAttributeValue } from "../utils/utils";
 
-const indicators = [
-  {
-      indicator: 'No. of Public Basic Schools in the District',
-      id: 'Ue9tu0manQ1',
-      value: 0
-  },
-  {
-      indicator: 'No. of Public Junior High Schools in the District',
-      id: 'kKE7K9CouWK',
-      value: 0
-  },
-  {
-      indicator: 'No. of Public Senior High Schools in the District',
-      id: 'A6OyLGjSZ0n',
-      value: 0
-  },
-
-  {
-    indicator: 'No. of Public Basic Schools supported by the District Assembly',
-    id: 'jU6XzQqBTm1',
-    value: 0
-},
-{
-    indicator: 'No. of Public Junior High Schools supported by the District Assembly',
-    id: 'M2RCgQWP1Tq',
-    value: 0
-},
-{
-    indicator: 'No. of Public Senior High Schools supported by the District Assembly',
-    id: 'Ncev2XYlyqy',
-    value: 0
-},
-];
 
 function EducationServiceSupport({ year, district }) {
 
-    const { Header, Content } = Layout;
-    const { Title, Text } = Typography;
+  const { Header, Content } = Layout;
+  const { Title, Text } = Typography;
 
-    const [educations, setEducations] = useState([]);
-    const [score, setScore] = useState(0);
+  const [schools, setSchools] = useState([]);
 
-    useEffect(()=>{
-      getIndicators();
-    }, []);
+  const [educationSupport, setEducationSupport] = useState([]);
+  const [score, setScore] = useState(0);
+  const [percentage, setPercentage] = useState(0);
 
-     const getIndicators = () => {
-            axios.get(
-                `/analytics.json?dimension=dx:Ue9tu0manQ1;kKE7K9CouWK;A6OyLGjSZ0n;jU6XzQqBTm1&dimension=ou:LEVEL-3;${district}&filter=pe:${year}-01-01;${year}-12-31`)
-                .then(res => {
-                    const data = res.data?.rows;
-                    // console.log("Educations: ",data)
-    
-                    if (data?.length > 0) {
-                        // const percentage = calculatePercentage(data[1][2], data[0][2]);
-                        // Update indicator values based on result
-                        const updatedIndicators = indicators.map(ind => {
-                            const match = data.find(r => r[0] === ind.id);
-                            return {
-                                ...ind,
-                                value: match ? parseFloat(match[2]) : 0
-                            };
-                        });
-    
-                        console.log("Educations: ",updatedIndicators);
-    
-                        // Map from indicator name to table field
-                        const indicatorToFieldMap = {
-                            'No. of projects with contingency provision': 'contingencyProvision',
-                            'No. of projects with contingency used': 'contingencyUse',
-                            'No. of projects with contingency used with written justification': 'contingencyJustification',
-                            'No. of projects with contingency duly approved and used': 'contingencyApproved'
-                        };
-    
-                        // Build the row object
-                        const row = {};
-    
-                        updatedIndicators.forEach(ind => {
-                            const key = indicatorToFieldMap[ind.indicator];
-                            if (key) {
-                                row[key] = ind.value;
-                            }
-                        });
-    
-                        // setContingengy([row])
-    
-                        
-                        // if(row.contingencyProvision > 0 && row.contingencyUse > 0){
-                        //     setScoreII(1)
-                        // }
-    
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const schoolsColumns = [
+    {
+      title: 'No',
+      dataIndex: 'no',
+      key: 'no',
+    },
+    {
+      title: 'School Name',
+      dataIndex: 'school',
+      key: 'school',
+    },
+    {
+      title: 'Community',
+      dataIndex: 'community',
+      key: 'community',
+    },
+    {
+      title: 'Establishment Date',
+      dataIndex: 'date',
+      key: 'date',
+    },
+    {
+      title: 'Support(s)',
+      dataIndex: 'support',
+      key: 'support',
+    },
+  ];
+
+  const schoolsSupportColumns = [
+    {
+      title: 'No of Schools',
+      dataIndex: 'no',
+      key: 'no',
+    },
+    {
+      title: 'No of Schools Supported',
+      dataIndex: 'shoolSupported',
+      key: 'shoolSupported',
+    },
+    {
+      title: 'Percentage of Schools Supported',
+      dataIndex: 'percentage',
+      key: 'Percentage of Public Schools Supported',
+    }
+  ]
+
+
+  function getData() {
+    axios
+      .get(`/tracker/trackedEntities?orgUnit=${district}&program=g27TeeehRQC&startDate=${year}-01-01&endDate=${year}-12-31`)
+      .then(result => {
+        if (result.data.instances.length > 0) {
+
+          axios
+            .get(`/tracker/events?program=g27TeeehRQC&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
+            .then(resp => {
+              const schools = result.data.instances;
+              const reports = resp.data.instances;
+              const temp = [];
+
+              const publicSchools = formatDataGeneral(schools, "Type", "Public") || [];
+
+              publicSchools.forEach((school, idx) => {
+
+                const currentReport = reports.find(rep => rep.trackedEntity === school.trackedEntity);
+                let support = "";
+
+                if (currentReport) {
+                  currentReport.dataValues.forEach(rep => {
+                    if (rep.dataElement === "xAySRtnwzQa") {
+                      support = rep.value;
                     }
-    
-    
-                }).catch(err => console.log(err));
+                  });
+                }
+
+                const tempDataSet = {
+                  no: idx + 1,
+                  school: getAttributeValue("Name of School", school),
+                  community: getAttributeValue("Community", school),
+                  date: getAttributeValue("Established Date", school),
+                  support
+                };
+
+                temp.push(tempDataSet);
+
+              });
+
+              setSchools(temp);
+
+              let schoolSupported = 0;
+
+              temp.forEach(school => {
+                if (school.support !== "") {
+                  schoolSupported++;
+                }
+              });
+
+              const percentage = calculatePercentage(schoolSupported, temp.length);
+
+              setPercentage(percentage.toFixed(2));
+
+              setEducationSupport([{
+                no: temp.length,
+                shoolSupported: schoolSupported,
+                percentage: percentage.toFixed(2)
+              }]);
+
+            })
+            .catch(err => console.log(err))
         }
 
-    const columns = [
-       
-            {
-              title: 'Category',
-              dataIndex: 'category',
-              key: 'category',
-            },
-            {
-              title: 'KG & Primary',
-              dataIndex: 'kgPrimary',
-              key: 'kgPrimary',
-            },
-            {
-              title: 'JHS',
-              dataIndex: 'jhs',
-              key: 'jhs',
-            },
-            {
-              title: 'KG/Prim./JHS',
-              dataIndex: 'kgPrimJhs',
-              key: 'kgPrimJhs',
-            },
-            {
-              title: 'Total',
-              dataIndex: 'total',
-              key: 'total',
-            },
-      ];
-      
-      const data = [
-        {
-          key: '1',
-          category: 'No. of public schools',
-          kgPrimary: 16,
-          jhs: 10,
-          kgPrimJhs: 14,
-          total: 40,
-        },
-        {
-          key: '2',
-          category: 'No. of public schools supported by DA',
-          kgPrimary: 9,
-          jhs: 2,
-          kgPrimJhs: 4,
-          total: 15,
-        },
-        {
-          key: '3',
-          category: '% of public schools supported',
-          kgPrimary: '',
-          jhs: '',
-          kgPrimJhs: '',
-          total: '37.5%',
-        },
-        {
-          key: '4',
-          category: 'Nature of support',
-          kgPrimary: '',
-          jhs: '',
-          kgPrimJhs: '',
-          total: 'Supplementary reading books, provision of borehole with hand pump, desks, re-roofing of classroom blocks, support for Mock Exams',
-        },
-      ];
+
+      })
+      .catch(err => console.log(err))
+  }
+
+  return (
+    <>
+      <Title level={3} style={{ marginTop: "20px" }}>PI 5.0 - 5.1 Support to Education Services</Title>
+      <Title level={4} style={{ marginTop: "20px" }}>Assessment Guide/ Requirement</Title>
+      <Content>
+        From the DCD and District Director of Education receive information on
+        the list of public schools in the District and challenges faced by the schools:<br /><br />
+        <ol>
+          <li type="i">
+            If the Assembly has supported at least 15% of the Public Schools within the district to address
+            their challenges (furniture, teaching and learning materials (TLMs), etc.), score 2
+          </li>
 
 
-    return (
-        <>
-            <Title level={3} style={{ marginTop: "20px" }}>PI 5.0 - 5.1 Support to Education Services</Title>
-            <Title level={4} style={{ marginTop: "20px" }}>Assessment Guide/ Requirement</Title>
-            <Content>
-            From the DCD and District Director of Education receive information on 
-            the list of public schools in the District and challenges faced by the schools:<br /><br />
-                <ol>
-                    <li type="i">
-                    If the Assembly has supported at least 15% of the Public Schools within the district to address 
-                    their challenges (furniture, teaching and learning materials (TLMs), etc.), score 2
-                    </li>
-            
+        </ol>
 
-                </ol>
+      </Content>
 
-            </Content>
+      <Title level={5} style={{ marginTop: "20px" }}>
+        Maximum Score <strong>2</strong>
+      </Title>
 
-            <Title level={5} style={{ marginTop: "20px" }}>
-                Maximum Score <strong>2</strong>
-            </Title>
-
-            <Title level={5} style={{ marginTop: "20px" }}>
-                PI 5.0-5.1 Actual Score: <strong>Score</strong>
-            </Title>
+      <Title level={5} style={{ marginTop: "20px" }}>
+        PI 5.0-5.1 Actual Score: <strong>Score</strong>
+      </Title>
 
 
-            <Title level={5} style={{ marginTop: "20px" }}>
-             Evidence of financial irregularities
-            </Title>
-            {<Table
-                columns={columns}
-                dataSource={data || []}
-                pagination={false} bordered />}
+      <Title level={5} style={{ marginTop: "20px" }}>
+        Evidence of DA support to Public Schools
+      </Title>
+      {<Table
+        columns={schoolsSupportColumns}
+        dataSource={educationSupport}
+        pagination={false} bordered />}
 
-        </>
-    );
+      <Title level={5} style={{ marginTop: "20px" }}>
+        List of Public Schools
+      </Title>
+      {<Table
+        columns={schoolsColumns}
+        dataSource={schools}
+        pagination={false} bordered />}
+
+      <Title level={5} style={{ marginTop: "30px" }}>Conclusion:</Title>
+      <Content>
+        The Assembly has supported {percentage}% of Public schools to address their challenges in {year}
+      </Content>
+
+    </>
+  );
 }
 
 export default EducationServiceSupport;

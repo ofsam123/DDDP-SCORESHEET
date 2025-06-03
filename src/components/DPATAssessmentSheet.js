@@ -53,6 +53,9 @@ import FoodVendors from "./FoodVendors";
 import PublicSchoolFacility from "./PublicSchoolFacility";
 import ClimateChangeIntervention from "./ClimateChangeIntervention";
 import DistrictLEDActivityPlan from "./DistrictLEDActivityPlan";
+import BusinessAndJobPromotion from "./BusinessAndJobPromotion";
+import AgroProcessingFacilitySupport from "./AgroProcessingFacilitySupport";
+import BusinessCommunityEngagement from "./BusinessCommunityEngagement";
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
@@ -225,7 +228,6 @@ const DPATAssessmentSheet = ({ props }) => {
     const [meetings, setMeetings] = useState(props?.meetings.meetings);
     const [members, setMembers] = useState(props?.members.members);
     const [subStructureActivity, setSubStructureActivity] = useState(props?.subActivity.activities);
-    const [serviceProviders, setServiceProviders] = useState(props?.serviceProviders.providers);
     const [subStructuresMeetingData, setSubStructuresMeetingData] = useState([]);
     const [buildingInspectorate, setBuildingInspectorate] = useState(props?.inspectorates.inspectorates);
     const [clientServiceChaterData, setClientServiceChaterData] = useState([]);
@@ -238,17 +240,11 @@ const DPATAssessmentSheet = ({ props }) => {
     const [buildingInspectorateData, setBuildingInspectorateData] = useState(null);
     const [sanitationProvidersData, setSanitationProvidersData] = useState([]);
     const [memberFinanceData, setMemberFinanceData] = useState(null);
-    const [followUps, setFollowUps] = useState(null);
     const [guards, setGuards] = useState(null);
     const [transportorsData, setTransportorsData] = useState([]);
     const [nutritionServcieData, setNutritionServcieData] = useState([]);
     const [inspectorateUnitData, setInspectorateUnitData] = useState(null);
-    const [capacityBuilding, setCapacityBuilding] = useState(null);
-    const [timeLineSubmission, setTimeLineSubmission] = useState(null);
-    const [trainingEvaluation, setTrainingEvaluation] = useState(null);
-    const [billing, setBilling] = useState(null);
-    const [issuance, setIssuance] = useState(null);
-    const [billingFollowup, setBillingFollowup] = useState(null);
+    
     const [subStructureActivityData, setSubStructureActivityData] = useState(null);
     const [ecaCompositionData, setEcaCompositionData] = useState(null);
     const [subCommitteCompositionData, setSubCommitteCompositionData] = useState(null);
@@ -601,37 +597,6 @@ const DPATAssessmentSheet = ({ props }) => {
 
     }
 
-
-    const countApplicationsForEachDomain = (data) => {
-        const reports = props?.serviceProviders.reports;
-        let noOfApplications = 0;
-        let noOfApplicationsProcessed = 0;
-        let noOfApplicationsProvided = 0;
-
-        reports?.forEach(rep => {
-            const currentReport = data.find(ser => ser.trackedEntity === rep.trackedEntity);
-
-            if (currentReport) {
-                const reps = rep.dataValues;
-                reps.forEach(curRep => {
-                    if (curRep.dataElement === "vue6siD7aka") {
-                        noOfApplications += parseInt(curRep.value);
-                    }
-
-                    if (curRep.dataElement === "rn9j4w7pW9D") {
-                        noOfApplicationsProcessed += parseInt(curRep.value);
-                    }
-
-                    if (curRep.dataElement === "N0YnoMAm445") {
-                        noOfApplicationsProvided += parseInt(curRep.value);
-                    }
-                })
-
-            }
-        });
-
-        return [noOfApplications, noOfApplicationsProcessed, noOfApplicationsProvided];
-    }
 
     const setAllDataFromDistrictGeneral = () => {
 
@@ -1666,9 +1631,8 @@ const DPATAssessmentSheet = ({ props }) => {
                         year={year}
                         district={district?.value} />
                     <hr />
-                    
-                    {/* Sanitation Service Provider List
-                  */}
+
+                    {/* Sanitation Services */}
                     <SanitationServices year={year}
                         sanitationProvidersData={sanitationProvidersData} />
                     <hr />
@@ -1794,6 +1758,27 @@ const DPATAssessmentSheet = ({ props }) => {
                     />
                     <hr />
 
+                     {/*  Promotion of new businesses and of new jobs */}
+                     <BusinessAndJobPromotion
+                        year={year}
+                        district={district?.value}
+                    />
+                    <hr />
+
+                     {/*  Facilitate and support small-scale agro-processing and manufacturing industries */}
+                     <AgroProcessingFacilitySupport
+                        year={year}
+                        district={district?.value}
+                    />
+                    <hr />
+
+                    {/*  Engagement with the Business Community */}
+                    <BusinessCommunityEngagement
+                        year={year}
+                        district={district?.value}
+                    />
+                    <hr />
+
                     <div style={{ height: '4px', backgroundColor: '#000', width: '100%', margin: '20px 0' }} />
 
                     <h3 style={{ textAlign: "center", padding: "10px" }}>
@@ -1818,7 +1803,7 @@ const DPATAssessmentSheet = ({ props }) => {
 
                     <FollowUpDeduction
                         year={year}
-                        followUp={followUps}
+                        district={district?.value}
                     />
                     <hr />
 
@@ -1830,14 +1815,13 @@ const DPATAssessmentSheet = ({ props }) => {
 
                     <CapacityBuildingImplementation
                         year={year}
-                        capacityBuilding={capacityBuilding}
-                        timeLineSubmission={timeLineSubmission}
+                        district={district?.value}
                     />
                     <hr />
 
                     <PostTrainingEvaluation
                         year={year}
-                        trainingEvaluation={trainingEvaluation}
+                        district={district?.value}
                     />
                     <hr />
 
@@ -1850,9 +1834,6 @@ const DPATAssessmentSheet = ({ props }) => {
                     <RateableRevenu
                         year={year}
                         district={district?.value}
-                        billing={billing}
-                        issuance={issuance}
-                        followup={billingFollowup}
                     />
                     <hr />
 

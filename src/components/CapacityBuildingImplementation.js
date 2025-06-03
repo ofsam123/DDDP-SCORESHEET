@@ -1,10 +1,19 @@
 import { Layout, Space, Table, Typography } from "antd";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "../api/axios";
+import { calculatePercentage, formatDataGeneral, getDataRank, getQuarterDate } from "../utils/utils";
+import moment from "moment/moment";
 
-function CapacityBuildingImplementation({ year, capacityBuilding, timeLineSubmission }) {
+function CapacityBuildingImplementation({ year, district }) {
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
+
+    const [data, setData] = useState([]);
+    const [report, setReport] = useState([]);
+    const [scorei, setScorei] = useState(0);
+    const [scoreii, setScoreii] = useState(0);
+    const [percentage, setPercentage] = useState(0);
 
     const CapacityBuildingImplementationColumns = [
         { title: "Availability of TNA & Capacity Building Plan", dataIndex: "tnaAvaillability", key: "tnaAvaillability" },
@@ -16,8 +25,123 @@ function CapacityBuildingImplementation({ year, capacityBuilding, timeLineSubmis
         { title: "Report", dataIndex: "report", key: "report" },
         { title: "Deadline for submission", dataIndex: "deadline", key: "deadline" },
         { title: "Submission Dates to OHLGS", dataIndex: "date", key: "date" },
-        { title: "Total Number of Participants", dataIndex: "total", key: "total" }
+        { title: "Total of Female Participants", dataIndex: "totalF", key: "totalF" },
+        { title: "Total of Male Participants", dataIndex: "totalM", key: "totalM" }
     ];
+
+    useEffect(()=>{
+        getData();
+        getCapacityBuilding();
+    },[year, district])
+
+    function getData() {
+        axios
+            .get(`/tracker/trackedEntities?orgUnit=${district}&program=ArLnAxhykoz&startDate=${year}-01-01&endDate=${year}-12-31`)
+            .then(result => {
+                if (result.data.instances.length > 0) {
+
+                    axios
+                        .get(`/tracker/events?program=ArLnAxhykoz&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
+                        .then(resp => {
+                            const aap = result.data.instances;
+                            const reports = resp.data.instances;
+                            const capacityBuildingPlans = formatDataGeneral(aap, "Activity Type", "Training & Capacity Building") || [];
+                            let capacityBuildingPlanImplemented = 0;
+
+                            capacityBuildingPlans.forEach(plan => {
+                                const currentReport = reports.find(rep => rep.trackedEntity === plan.trackedEntity);
+
+                                if (currentReport) {
+
+                                    currentReport.dataValues.forEach(rep => {
+                                        if (rep.dataElement === "SZcHb5mvjJx" && rep.value === "Completed") {
+                                            capacityBuildingPlanImplemented++;
+                                        }
+                                    })
+                                }
+                            });
+
+                            const temp = {
+                                numberOfActivity: capacityBuildingPlans.length,
+                                numberOfActivityImpl: capacityBuildingPlanImplemented,
+                                tnaAvaillability: capacityBuildingPlans.length > 0 ? "YES" : "NO"
+                            }
+
+                            setData([temp]);
+
+                            const percentage = calculatePercentage(capacityBuildingPlanImplemented, capacityBuildingPlans.length);
+                            setPercentage(percentage);
+
+                            if (percentage >= 80) {
+                                setScorei(1);
+                            }
+
+
+                        })
+                        .catch(err => console.log(err))
+                }
+
+
+            })
+            .catch(err => console.log(err))
+    }
+
+
+    function getCapacityBuilding() {
+        axios
+            .get(`/tracker/trackedEntities?orgUnit=${district}&program=rpqTh4RQMSq&startDate=${year}-01-01&endDate=${year}-12-31`)
+            .then(result => {
+                if (result.data.instances.length > 0) {
+
+                    axios
+                        .get(`/tracker/events?program=rpqTh4RQMSq&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
+                        .then(resp => {
+                            const capacityBuildings = result.data.instances;
+                            const reports = resp.data.instances;
+                            const temp = [];
+
+                            capacityBuildings.forEach((cap, idx) => {
+                                const currentReport = reports.find(rep => rep.trackedEntity === cap.trackedEntity);
+
+                                let femaleParticipant = 0;
+                                let maleParticipant = 0;
+                                if (currentReport) {
+                                    
+                                    currentReport.dataValues.forEach(rep => {
+                                        if (rep.dataElement === "cZPy5ukNcow") {
+                                            femaleParticipant = rep.value;
+                                        }else if(rep.dataElement === "web76YpF4uK") {
+                                           maleParticipant = rep.value; 
+                                        }
+                                    });
+                                }
+
+                                const tempDataSet = {
+                                    report: `${getDataRank(idx)} Quarter`,
+                                    deadline: getQuarterDate(idx, year),
+                                    date: moment(currentReport?.completedAt).format("YYYY-DD-MM"),
+                                    totalF: femaleParticipant,
+                                    totalM: maleParticipant
+                                }
+
+                                temp.push(tempDataSet);
+                            });
+
+
+                            if (temp.length >= 4) {
+                                setScoreii(1);
+                            }
+
+                            setReport(temp);
+
+                        })
+                        .catch(err => console.log(err))
+                }
+
+
+            })
+            .catch(err => console.log(err))
+    }
 
     return (
         <>
@@ -42,10 +166,10 @@ function CapacityBuildingImplementation({ year, capacityBuilding, timeLineSubmis
             </Title>
 
             <Title level={5} style={{ marginTop: "20px" }}>
-                PI 2.0-2.1i Actual Score: <strong>Score</strong>
+                PI 2.0-2.1i Actual Score: <strong>{scorei}</strong>
             </Title>
             <Title level={5} style={{ marginTop: "20px" }}>
-                PI 2.0-2.1ii Actual Score: <strong>Score</strong>
+                PI 2.0-2.1ii Actual Score: <strong>{scoreii}</strong>
             </Title>
 
             <Title level={5} style={{ marginTop: "20px" }}>
@@ -54,7 +178,7 @@ function CapacityBuildingImplementation({ year, capacityBuilding, timeLineSubmis
             </Title>
             {<Table
                 columns={CapacityBuildingImplementationColumns}
-                dataSource={capacityBuilding || []}
+                dataSource={data}
                 pagination={false} bordered />}
 
             <Title level={5} style={{ marginTop: "20px" }}>
@@ -62,14 +186,13 @@ function CapacityBuildingImplementation({ year, capacityBuilding, timeLineSubmis
             </Title>
             {<Table
                 columns={timeLineSubmissionColumns}
-                dataSource={timeLineSubmission || []}
+                dataSource={report}
                 pagination={false} bordered />}
 
-
-
-
-
-
+            <Title level={5} style={{ marginTop: "10px" }}>Conclusion:</Title>
+            <Content>
+            {percentage.toFixed(2)} % of programmes in the Training Plan have been implemented and {report.length} quarterly reports were submitted to OHLGS within 15 days after the end of the quarter. 
+            </Content>
         </>
     );
 }

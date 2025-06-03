@@ -1,7 +1,7 @@
 import { Layout, Space, Table, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import axios from "../api/axios";
-import { calculatePercentage } from "../utils/utils";
+import { calculatePercentage, formatDataGeneral, getAttributeValue } from "../utils/utils";
 
 const indicators = [
     {
@@ -61,6 +61,7 @@ function ContractManagementAndAdmins({ year, district }) {
     useEffect(() => {
         getIndicatorsData();
         getContingencyIndicatorsData();
+        // getData();
     }, [year, district]);
 
     const contractManagementAndAdminsColumns = [
@@ -84,6 +85,8 @@ function ContractManagementAndAdmins({ year, district }) {
             `/analytics.json?dimension=dx:qZSULWbMR2R;Hf5p1kc2JeR;yQEv4PwpL3t;s6gfdfWo5Nq&dimension=ou:LEVEL-3;${district}&filter=pe:${year}-01-01;${year}-12-31`)
             .then(res => {
                 const data = res.data?.rows;
+
+                // console.log("Djiba projects:", data);
 
                 if (data?.length > 0) {
                     
@@ -132,6 +135,79 @@ function ContractManagementAndAdmins({ year, district }) {
 
             }).catch(err => console.log(err));
     }
+
+    //  function getData() {
+    //         axios
+    //             .get(`/tracker/trackedEntities?orgUnit=${district}&program=g3wMUKEMmH3&startDate=${year}-01-01&endDate=${year}-12-31`)
+    //             .then(result => {
+    //                 if (result.data.instances.length > 0) {
+    
+    //                     axios
+    //                         .get(`/tracker/events?program=g3wMUKEMmH3&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
+    //                         .then(resp => {
+    //                             const projectsAndProgrammes = result.data.instances;
+    //                             const reports = resp.data.instances;
+    //                             const temp = [];
+    //                             const reportTemp = [];
+    
+    //                             const projects = formatDataGeneral(projectsAndProgrammes, "Project & Programme Type", "Project") || [];
+                                
+    
+    //                             projects.forEach((forum, idx) => {
+    //                                 const tempDataSet = {
+    //                                     date: getAttributeValue("Date", forum),
+    //                                     venue: getAttributeValue("Meeting Venue", forum),
+    //                                     issues: getAttributeValue("Description", forum),
+    //                                     female: getAttributeValue("DPAT |  No. of direct beneficiaries (female)", forum),
+    //                                     male: getAttributeValue("DPAT |  No. of direct beneficiaries (male)", forum)
+    //                                 };
+    
+    //                                 temp.push(tempDataSet);
+    
+    //                                 const currentReport = reports.find(rep => rep.trackedEntity === forum.trackedEntity);
+    //                                 let actions = "";
+    
+    //                                 if (currentReport) {
+    
+    //                                     currentReport.dataValues.forEach(rep => {
+    
+    //                                         if (rep.dataElement === "fRf6Lla04gE") {
+    //                                             actions = rep.value;
+    //                                         }
+    //                                     });
+    
+    //                                     const reportDataSet = {
+    //                                         no: idx + 1,
+    //                                         decision: getAttributeValue("Decision", forum),
+    //                                         actions
+    //                                     };
+    //                                     reportTemp.push(reportDataSet);
+    //                                 }
+    
+    //                             });
+    
+    
+    //                             // setData(temp);
+    //                             // setReport(reportTemp)
+    
+    
+    //                             // if (temp.length >= 2) {
+    //                             //     setScorei(1);
+    //                             // }
+    
+    //                             // if (reportTemp.length > 0) {
+    //                             //     setScoreii(1);
+    //                             // }
+    
+    
+    //                         })
+    //                         .catch(err => console.log(err))
+    //                 }
+    
+    
+    //             })
+    //             .catch(err => console.log(err))
+    //     }
 
     const getContingencyIndicatorsData = () => {
         axios.get(

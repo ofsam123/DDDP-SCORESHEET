@@ -185,7 +185,7 @@ const serviceDecisionColumns = [
 ];
 
 const renderWithLineBreaks = (str) => {
-    return str.split(/<br\s*\/?>/i).map((line, index) => (
+    return str?.split(/<br\s*\/?>/i).map((line, index) => (
         <div key={index}>{line}</div>
     ));
 };
@@ -231,7 +231,6 @@ const DPATAssessmentSheet = ({ props }) => {
     const [subStructuresMeetingData, setSubStructuresMeetingData] = useState([]);
     const [buildingInspectorate, setBuildingInspectorate] = useState(props?.inspectorates.inspectorates);
     const [clientServiceChaterData, setClientServiceChaterData] = useState([]);
-    const [actityAndProject, setActityAndProject] = useState(null);
     const [districtGeneral, setDistrictGeneral] = useState(props?.districtGeneral.data);
     const [substructureExpendatureData, setSubstructureExpendatureData] = useState(null);
     const [districtHotlineNumberData, setDistrictHotlineNumberData] = useState([]);
@@ -299,11 +298,8 @@ const DPATAssessmentSheet = ({ props }) => {
         setSubCommitteesCompositionData();
         setSubtructureActivities();
         setBuildingInspectoratesData();
-        setPermitRequestDataDisplay();
         setStreetNamingDataDisplay();
-        setDistrictGeneralDataDisplay();
         setAllDataFromDistrictGeneral();
-        setAllFromSchools();
         setAuditCommitteeDataDisplay();
         setSPCMeetingData();
         setInternalAuditCommitteeDataDisplay();
@@ -621,10 +617,6 @@ const DPATAssessmentSheet = ({ props }) => {
 
     }
 
-    const setAllFromSchools = () => {
-        console.log("hotline number: ", props?.schools);
-        // Henry to count and populate the data here
-    }
 
     const setBuildingInspectoratesData = () => {
         const temp = [];
@@ -699,8 +691,6 @@ const DPATAssessmentSheet = ({ props }) => {
             foodTemp.push(tempDataSet);
         });
 
-        // console.log("djiba: ", publicationOfNS)
-
         const temp = {
             aapTotal: aap?.length,
             aapNutrition: nutritionOrientedIntervention?.length,
@@ -709,7 +699,6 @@ const DPATAssessmentSheet = ({ props }) => {
 
         setNutritionServcieData({ aap: [temp], vendors: foodTemp });
     }
-
 
     const setInspectorateUnitDataDisplay = () => {
         const temp = [];
@@ -768,23 +757,6 @@ const DPATAssessmentSheet = ({ props }) => {
         setSubStructuresMeetingData({ data: temp, fulfillment: "Not Fulfiled" });
     };
 
-
-    const setPermitRequestDataDisplay = () => {
-        const temp = [];
-        console.log("permits: ", props.permitRequest);
-        /* 
-        Henry to do the counting based on the requirement from the score sheet table
-        Name from Sheet: 3.2 Planning and Development Permit Processing & Issuance
-        The variables to use:
-         permitRequest and permitRequestReport / props.permitRequest
-
-         state for the result:permitRequestData
-        */
-
-    }
-
-
-
     const setStreetNamingDataDisplay = () => {
 
         const streets = props.streets.streets;
@@ -830,23 +802,6 @@ const DPATAssessmentSheet = ({ props }) => {
 
 
     }
-
-    const setDistrictGeneralDataDisplay = () => {
-        const temp = [];
-        // console.log("street: ", props.districtGeneral);
-        /* 
-        Sow to do the counting based on the requirement from the score sheet table
-        Name from Sheet:4.3 Availability of Dedicated Hotline for the Vulnerable
-        The variables to use:
-         districtGeneral / props.districtGeneral
-
-         state for the result:
-            districtGeneralData
-            
-        */
-
-    }
-
 
 
     function checkGaMeetingFulfillment(gaMeetings) {
@@ -1200,7 +1155,6 @@ const DPATAssessmentSheet = ({ props }) => {
     };
 
     const subStructureExpenduture = () => {
-        // console.log("Diaraye: ", props?.districtGeneral.reports)
         const reports = props?.districtGeneral.reports;
         const temp = [];
         reports?.forEach(re => {
@@ -1294,8 +1248,6 @@ const DPATAssessmentSheet = ({ props }) => {
         setCededRevenueUtilisationData(finalRevenueDetails);
         setCededRevenueUtilisationScore(calculatePercentage(collectedTotal, cededTotal));
     };
-
-
 
     const setSubtructureActivities = () => {
         const temp = [];
@@ -1791,8 +1743,10 @@ const DPATAssessmentSheet = ({ props }) => {
                     />
                     <hr />
 
-                    <MonitoringProjectAndActivity year={year}
-                        actityAndProject={actityAndProject} />
+                    <MonitoringProjectAndActivity
+                     year={year}
+                     district={district?.value}
+                     />
                     <hr />
 
                     <ContractManagementAndAdmins

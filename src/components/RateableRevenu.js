@@ -3,17 +3,6 @@ import React, { useEffect, useState } from "react";
 import axios from "../api/axios";
 import { formatDataGeneral, getAttributeValue } from "../utils/utils";
 
-const dataElements = [
-    {
-        dataElement: 'Availability of Computerized Billing System',
-        id: 'Z1lezhVv9Br'
-    },
-    {
-        dataElement: 'Software Name',
-        id: 'Tf7TRBG6uCZ'
-    }
-];
-
 function RateableRevenu({ year, district }) {
 
     const { Header, Content } = Layout;
@@ -41,7 +30,6 @@ function RateableRevenu({ year, district }) {
                 bills.forEach(b => {
                     b.dataValues.forEach(sub => {
                         if (sub.dataElement === "Tf7TRBG6uCZ") {
-                            console.log(sub.value)
                             setSoftware([{ billing: "YES", name: sub.value, functional: "YES" }]);
                             setScoreI(1)
                         }

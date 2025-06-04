@@ -1,16 +1,166 @@
 import { Layout, Space, Table, Typography } from "antd";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "../api/axios";
+import { calculatePercentage, formatDataGeneral, getAttributeValue } from "../utils/utils";
 
-function MonitoringProjectAndActivity({ year, actityAndProject }) {
+function MonitoringProjectAndActivity({ year, district }) {
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
+    const [data, setData] = useState([]);
+    const [monitoring, setMonitoring] = useState([]);
+    const [scorei, setScorei] = useState(0);
+    const [scoreii, setScoreii] = useState(0);
+    const [percentage, setPercentage] = useState(0);
 
     const activityColumns = [
-        { title: "Total Budgetary Allocation for planned M&E activities", dataIndex: "aapApproved", key: "aapApproved" },
-        { title: "Amount released for planned M&E activities", dataIndex: "aapImplented", key: "aapImplented" },
-        { title: "% Budgetary Allocation released for planned M&E activities", dataIndex: "percentage", key: "percentage" }
+        {
+            title: "Total Budgetary Allocation for planned M&E activities",
+            dataIndex: "aapApproved",
+            key: "aapApproved"
+        },
+        {
+            title: "Amount released for planned M&E activities",
+            dataIndex: "aapImplented",
+            key: "aapImplented"
+        },
+        {
+            title: "% Budgetary Allocation released for planned M&E activities",
+            dataIndex: "percentage",
+            key: "percentage"
+        }
     ];
+
+    const monitoringColumns = [
+        {
+            title: "Date of Monitoring",
+            dataIndex: "date",
+            key: "date"
+        },
+        {
+            title: "Projects monitored",
+            dataIndex: "monitored",
+            key: "monitored"
+        },
+        {
+            title: "Stakeholders involved",
+            dataIndex: "involved",
+            key: "involved"
+        },
+        {
+            title: "Report Available (YES/NO)",
+            dataIndex: "reportAvailability",
+            key: "reportAvailability"
+        }
+    ];
+
+    useEffect(() => {
+        getData();
+        getInspectorateMonitoring();
+    }, [year, district]);
+
+    function getData() {
+        axios
+            .get(`/tracker/trackedEntities?orgUnit=${district}&program=YHVtzXj8iIC&startDate=${year}-01-01&endDate=${year}-12-31`)
+            .then(result => {
+                if (result.data.instances.length > 0) {
+
+                    axios
+                        .get(`/tracker/events?program=YHVtzXj8iIC&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
+                        .then(resp => {
+                            const budgets = result.data.instances;
+                            const reports = resp.data.instances;
+                            let amountReleased = 0;
+                            let allocatedAmount = 0;
+
+                            const monitoringBudgets = formatDataGeneral(budgets, "Budget Category", "M&E Activities") || [];
+
+                            monitoringBudgets.forEach((budget) => {
+                                const currentReport = reports.find(rep => rep.trackedEntity === budget.trackedEntity);
+                                allocatedAmount = getAttributeValue("Allocated Budget", budget);
+                                if (currentReport) {
+                                    currentReport.dataValues.forEach(rep => {
+
+                                        if (rep.dataElement === "MPLHBtSdEyn") {
+                                            amountReleased = rep.value;
+                                        }
+                                    });
+                                }
+
+                            });
+
+                            const percentage = calculatePercentage(amountReleased, allocatedAmount);
+                            setPercentage(percentage.toFixed(2));
+
+                            const temp = {
+                                aapApproved: allocatedAmount,
+                                aapImplented: amountReleased,
+                                percentage
+                            }
+
+                            setData([temp]);
+                            if (percentage >= 80) {
+                                setScorei(1);
+                            }
+
+                        })
+                        .catch(err => console.log(err))
+                }
+
+
+            })
+            .catch(err => console.log(err))
+    }
+
+    function getInspectorateMonitoring() {
+        axios
+            .get(`/tracker/trackedEntities?orgUnit=${district}&program=p1ccS2ROn0Q&startDate=${year}-01-01&endDate=${year}-12-31`)
+            .then(result => {
+                if (result.data.instances.length > 0) {
+
+                    axios
+                        .get(`/tracker/events?program=p1ccS2ROn0Q&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
+                        .then(resp => {
+                            const monitorings = result.data.instances;
+                            const reports = resp.data.instances;
+                            const temp = [];
+
+                            // const monitoringProjects = formatDataGeneral(budgets, "Budget Category", "M&E Activities") || [];
+
+                            monitorings.forEach((project) => {
+                                const currentReport = reports.find(rep => rep.trackedEntity === project.trackedEntity);
+                                let reportAvailability = "NO";
+                                if (currentReport) {
+                                    if (currentReport.dataValues.length > 0) {
+                                        reportAvailability = "YES";
+                                    }
+                                }
+
+                                const tempDataSet = {
+                                    date: getAttributeValue("Date", project),
+                                    monitored: getAttributeValue("Inspection Details", project),
+                                    involved: getAttributeValue("DPAT | Stakeholders Involved", project),
+                                    reportAvailability
+                                };
+
+                                temp.push(tempDataSet);
+
+                            });
+
+                            setMonitoring(temp);
+
+                            if (temp.length > 1) {
+                                setScoreii(1);
+                            }
+
+                        })
+                        .catch(err => console.log(err))
+                }
+
+
+            })
+            .catch(err => console.log(err))
+    }
 
     return (
         <>
@@ -35,20 +185,35 @@ function MonitoringProjectAndActivity({ year, actityAndProject }) {
             </Title>
 
             <Title level={5} style={{ marginTop: "20px" }}>
-                PI 1.0-1.2i Actual Score: <strong>Score</strong>
+                PI 1.0-1.2i Actual Score: <strong>{scorei}</strong>
             </Title>
             <Title level={5} style={{ marginTop: "20px" }}>
-                PI 1.0-1.2ii Actual Score: <strong>Score</strong>
+                PI 1.0-1.2ii Actual Score: <strong>{scoreii}</strong>
             </Title>
-
+            <Title level={4} style={{ marginTop: "20px" }}>
+                I- Evidence of clear budgetary release for M&E activities
+            </Title>
             {<Table
                 columns={activityColumns}
-                dataSource={actityAndProject || []}
+                dataSource={data}
+                pagination={false} bordered />}
+
+            <Title level={4} style={{ marginTop: "20px" }}>
+                II- Evidence of multi-stakeholder participation in monitoring
+            </Title>
+            {<Table
+                columns={monitoringColumns}
+                dataSource={monitoring}
                 pagination={false} bordered />}
 
             <Title level={5} style={{ marginTop: "30px" }}>Conclusion</Title>
             <Content>
-                The district has implemented 100% of Planned Projects and Programmes in the {year} AAP
+                {percentage} % of Budgetary allocation released for the implementation of
+                planned monitoring activities. {monitoring.length > 0 ? <>
+                And Quarterly reports exist for participation by multi stakeholders in
+                Monitoring and Evaluation activities in {year}
+                    </> : <span>There is no Quarterly report available</span>}
+
             </Content>
 
         </>

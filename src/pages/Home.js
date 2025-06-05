@@ -45,7 +45,10 @@ function Home() {
   const [meetingChartData, setMeetingChartData] = useState([]);
   const [meetingChartError, setMeetingChartError] = useState(null);
   const [minuteInvitationData, setMinuteInvitationData] = useState([]);
+  const [InvitationData, setInvitationData] = useState([]);
   const [minuteInvitationError, setMinuteInvitationError] = useState(null);
+  
+  const [InvitationError, setInvitationError] = useState(null);
 
   // MeetingRegionalReport state
   const [meetingRegions, setMeetingRegions] = useState([]);
@@ -70,6 +73,7 @@ function Home() {
     fetchTotals();
     fetchMeetingChartData();
     fetchMinuteInvitationData();
+    fetchInvitationData();
     fetchMeetingReportData();
     fetchActionPlanReportData(); // Fetch RegionalReport data
   }, [selectedYear]);
@@ -240,12 +244,16 @@ function Home() {
           console.warn(`Unknown data element: ${dataElement}`);
         }
       });
+      // D67mYmLvMSi
 
       const total = counts.yhzMdqZp0Qh + counts.RsgxfezgTyr || 1;
       const percentages = [
         (counts.yhzMdqZp0Qh / total) * 100,
         (counts.RsgxfezgTyr / total) * 100,
+        // (counts.RsgxfezgTyr / total) * 100,
       ].map(val => Number(val.toFixed(2)));
+
+      
 
       console.log("Total Invitations + Minutes:", total);
       console.log("Processed Minute Invitation Percentages:", percentages);
@@ -257,6 +265,50 @@ function Home() {
       setIsLoading(false);
     }
   }
+
+  async function fetchInvitationData() {
+    try {
+      const year = selectedYear.value;
+      const response = await axios.get(
+        `/analytics.json?dimension=dx:yhzMdqZp0Qh;D67mYmLvMSi&dimension=ou:LEVEL-2;sQ7uY7OfGh9&filter=pe:${year}-01-01;${year}-12-31`
+      );
+      console.log("Minute Invitation Chart Analytics Response:", response.data);
+      const rows = response.data.rows || [];
+
+      const counts = {
+        yhzMdqZp0Qh: 0,
+        D67mYmLvMSi: 0,
+      };
+
+      rows.forEach(([dataElement, orgUnit, value]) => {
+        if (counts.hasOwnProperty(dataElement)) {
+          counts[dataElement] += parseFloat(value) || 0;
+        } else {
+          console.warn(`Unknown data element: ${dataElement}`);
+        }
+      });
+      // D67mYmLvMSi
+
+      const total = counts.yhzMdqZp0Qh + counts.D67mYmLvMSi || 1;
+      const percentages = [
+        (counts.yhzMdqZp0Qh / total) * 100,
+        (counts.D67mYmLvMSi / total) * 100,
+        // (counts.RsgxfezgTyr / total) * 100,
+      ].map(val => Number(val.toFixed(2)));
+
+      
+
+      console.log("Total Invitations + Non Invitation:", total);
+      console.log("Processed  Invitation Percentages:", percentages);
+      setInvitationData(percentages);
+    } catch (err) {
+      console.error("Error fetching minute invitation data:", err);
+      setInvitationError("Failed to load invitation and minutes chart data.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
 
   async function fetchTotals(orgUnit = "rHkDRHKXIdP") {
     setIsLoading(true);
@@ -399,8 +451,8 @@ function Home() {
     "Sub Structure Meetings",
   ];
 
-  const minuteInvitationLabels = ["Invitations", "Minutes"];
-
+  const InvitationLabels = ["Invitations", "Non Invitation"];
+  const minuteLabels = ["Minutes", "Non Mintes"];
   return (
     <div className="page-wrapper">
       <SideBarWrapper />
@@ -622,9 +674,21 @@ function Home() {
             </div>
             <div className="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12">
               <MintueNinvitaionChart
-                title="Proportion of Invitations and Minutes"
+                title="Proportion of Invitations and Non Invitation"
+                data={InvitationData.length > 0 ? InvitationData : [0, 0]}
+                labels={InvitationLabels}
+                type="donut"
+                width={450}
+                height={450}
+                isLoading={isLoading}
+                error={InvitationError}
+              />
+            </div>
+            <div className="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12">
+              <MintueNinvitaionChart
+                title="Proportion of Minutes and Non Minutes"
                 data={minuteInvitationData.length > 0 ? minuteInvitationData : [0, 0]}
-                labels={minuteInvitationLabels}
+                labels={minuteLabels}
                 type="donut"
                 width={450}
                 height={450}

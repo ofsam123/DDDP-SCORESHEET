@@ -1,31 +1,24 @@
 import { Layout, Space, Table, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import axios from "../api/axios";
+import { formatDataGeneral, getAttributeValue } from "../utils/utils";
 
-const dataElements = [
-    {
-        dataElement: 'Availability of Computerized Billing System',
-        id: 'Z1lezhVv9Br'
-    },
-    {
-        dataElement: 'Software Name',
-        id: 'Tf7TRBG6uCZ'
-    }
-];
-
-function RateableRevenu({ year, billing, issuance, followup, district }) {
+function RateableRevenu({ year, district }) {
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
 
     const [software, setSoftware] = useState([]);
+    const [issuance, setIssuance] = useState([]);
+    const [followup, setFollowup] = useState([]);
     const [scoreI, setScoreI] = useState(0);
     const [scoreII, setScoreII] = useState(0);
     const [scoreIII, setScoreIII] = useState(0);
 
     useEffect(() => {
         getBillingDetails();
-    }, []);
+        getBillingData()
+    }, [year, district]);
 
     const getBillingDetails = () => {
 
@@ -33,53 +26,168 @@ function RateableRevenu({ year, billing, issuance, followup, district }) {
             .get(`/tracker/events?program=RwWtjFaorvN&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
             .then(resp => {
                 const bills = resp.data.instances;
-                const softwareDetails = {
-                    name:"",
-                    existance:""
-                }
 
                 bills.forEach(b => {
-                    // console.log(b.dataValues);
-                    b.dataValues.forEach(sub=>{
-                        if(sub.dataElement === "Tf7TRBG6uCZ"){
-                            console.log(sub.value)
-                            setSoftware([{billing: "YES", name: sub.value, functional:"YES"}]);
+                    b.dataValues.forEach(sub => {
+                        if (sub.dataElement === "Tf7TRBG6uCZ") {
+                            setSoftware([{ billing: "YES", name: sub.value, functional: "YES" }]);
                             setScoreI(1)
                         }
                     })
                 })
 
-                // Check if each `dataElement` exists in the response
-                const result = dataElements.map(el => {
-                    const match = bills.find(r => r.dataElement === el.id);
-                    return {
-                        ...el,
-                        exists: !!match,           // true if found
-                        value: match?.value ?? ''  // or null, or default
-                    };
-                });
 
-                // console.log(result);
+            })
+            .catch(err => console.log(err))
+    }
 
-                console.log("bela: ", resp.data)
+    function getBillingData() {
+        axios
+            .get(`/tracker/trackedEntities?orgUnit=${district}&program=qSwpPQwR6Ku&startDate=${year}-01-01&endDate=${year}-12-31`)
+            .then(result => {
+                if (result.data.instances.length > 0) {
+
+                    axios
+                        .get(`/tracker/events?program=qSwpPQwR6Ku&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
+                        .then(resp => {
+                            const billings = result.data.instances;
+                            const reports = resp.data.instances;
+
+                            const propertyBillings = formatDataGeneral(billings, "DPAT | Billing Type", "Property Rate") || [];
+                            const businessBillings = formatDataGeneral(billings, "DPAT | Billing Type", "Business Operating Permit") || [];
+
+                            const propertyBill = propertyBillings.length;
+                            let propertyBillIssued = 0;
+                            const businessBill = businessBillings.length;
+                            let businessBillIssued = 0;
+
+
+                            propertyBillings.forEach(bill => {
+
+                                const isIssued = getAttributeValue("Has it been issued?", bill);
+                                const isDistributed = getAttributeValue("Bill Status", bill);
+
+                                if (isIssued === "true" && isDistributed === "true") {
+                                    propertyBillIssued++;
+                                }
+                            });
+
+                            businessBillings.forEach(bill => {
+                                const isIssued = getAttributeValue("Has it been issued?", bill);
+                                const isDistributed = getAttributeValue("Bill Status", bill);
+
+                                if (isIssued === "true" && isDistributed === "true") {
+                                    businessBillIssued++;
+                                }
+                            });
+
+                            const reportTemp = [];
+                            reports.forEach((report, idx) => {
+                                let actionType = "";
+                                let actionDate = "";
+                                let paymentDate = "";
+                                const no = idx + 1;
+                                report.dataValues.forEach(val => {
+                                    if (val.dataElement === "bGzwdd1VsfI") {
+                                        actionType = val.value;
+                                    } else if (val.dataElement === "MmojpWRb4vB") {
+                                        actionDate = val.value;
+                                    } else if (val.dataElement === "lQ1VluGCriP") {
+                                        paymentDate = val.value;
+                                    }
+                                });
+
+                                if (report.dataValues.length > 0) {
+                                    reportTemp.push({ actionType, actionDate, paymentDate, no });
+                                }
+
+
+
+                            });
+
+                            const temp = [
+                                {
+                                    propertyBill,
+                                    propertyBillIssued,
+                                    businessBill,
+                                    businessBillIssued,
+                                    propertyBillDateSubmission: propertyBillings.length > 0 ? getAttributeValue("Date", propertyBillings[0]) : "",
+                                    businessBillDateSubmission: businessBillings.length > 0 ? getAttributeValue("Date", businessBillings[0]) : ""
+                                }
+                            ];
+
+
+
+
+                            if ((propertyBill === propertyBillIssued) && (businessBill === businessBillIssued) && (propertyBill !== 0) && (businessBill !== 0)) {
+                                setScoreII(2);
+                            }
+
+                            if (reportTemp.length > 0) {
+                                setScoreIII(2);
+                            }
+
+                            setIssuance(temp);
+                            setFollowup(reportTemp);
+
+                        })
+                        .catch(err => console.log(err))
+                }
+
 
             })
             .catch(err => console.log(err))
     }
 
     const computerizedBillingSystemColumns = [
-        { title: "Availability of Computerized Billing System (YES/NO)", dataIndex: "billing", key: "billing" },
-        { title: "Name of Software/System", dataIndex: "name", key: "name" },
-        { title: "Functional (YES/NO)", dataIndex: "functional", key: "functional" }
+        {
+            title: "Availability of Computerized Billing System (YES/NO)",
+            dataIndex: "billing",
+            key: "billing"
+        },
+        {
+            title: "Name of Software/System",
+            dataIndex: "name",
+            key: "name"
+        },
+        {
+            title: "Functional (YES/NO)",
+            dataIndex: "functional",
+            key: "functional"
+        }
     ];
 
     const billingIssuanceColumns = [
-        { title: "Number of Properties on Roll", dataIndex: "property", key: "property" },
-        { title: "Number of Bills Issued", dataIndex: "billNumber", key: "billNumber" },
-        { title: "Date Submitted to Property Owner", dataIndex: "date", key: "date" },
-        { title: "Number of Businesses on Roll", dataIndex: "noOfBussness", key: "noOfBussness" },
-        { title: "Number of Bills Issued", dataIndex: "billIssued", key: "billIssued" },
-        { title: "Date Submitted to Business Owner", dataIndex: "submissionDate", key: "submissionDate" }
+        {
+            title: "Number of Properties on Roll",
+            dataIndex: "propertyBill",
+            key: "propertyBill"
+        },
+        {
+            title: "Number of Bills Issued",
+            dataIndex: "propertyBillIssued",
+            key: "propertyBillIssued"
+        },
+        {
+            title: "Date Submitted to Property Owner",
+            dataIndex: "propertyBillDateSubmission",
+            key: "propertyBillDateSubmission"
+        },
+        {
+            title: "Number of Businesses on Roll",
+            dataIndex: "businessBill",
+            key: "businessBill"
+        },
+        {
+            title: "Number of Bills Issued",
+            dataIndex: "businessBillIssued",
+            key: "businessBillIssued"
+        },
+        {
+            title: "Date Submitted to Business Owner",
+            dataIndex: "businessBillDateSubmission",
+            key: "businessBillDateSubmission"
+        }
     ];
 
     const followUpColumns = [
@@ -129,27 +237,27 @@ function RateableRevenu({ year, billing, issuance, followup, district }) {
             </Title>
 
             <Title level={5} style={{ marginTop: "20px" }}>
-                Evidence of Computerized Billing System & Utilisation
+                I- Evidence of Computerized Billing System & Utilisation
             </Title>
             {<Table
                 columns={computerizedBillingSystemColumns}
-                dataSource={software || []}
+                dataSource={software}
                 pagination={false} bordered />}
 
             <Title level={5} style={{ marginTop: "20px" }}>
-                Evidence of Issuance of Bills
+                II- Evidence of Issuance of Bills
             </Title>
             {<Table
                 columns={billingIssuanceColumns}
-                dataSource={issuance || []}
+                dataSource={issuance}
                 pagination={false} bordered />}
 
             <Title level={5} style={{ marginTop: "20px" }}>
-                Evidence of follow-up action by Assembly on defaulters/ nonpayers
+                III- Evidence of follow-up action by Assembly on defaulters/ nonpayers
             </Title>
             {<Table
                 columns={followUpColumns}
-                dataSource={followup || []}
+                dataSource={followup}
                 pagination={false} bordered />}
 
         </>

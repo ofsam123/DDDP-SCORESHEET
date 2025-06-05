@@ -27,7 +27,6 @@ function ClientServiceFunctionality({ year, district }) {
 
     useEffect(() => {
         getClientServiceData();
-        console.log("Jallo: ");
     },[year, district]);
 
     const getAttributeValue = (key, val) => {
@@ -41,8 +40,6 @@ function ClientServiceFunctionality({ year, district }) {
         const clientServiceReport = [];
 
         let fulfillment = "Not Fulfilled";
-
-        console.log("services: ", reports);
 
         if (data?.length > 0) {
 
@@ -83,15 +80,13 @@ function ClientServiceFunctionality({ year, district }) {
         axios
             .get(`/tracker/trackedEntities?orgUnit=${district}&program=GciA0HJcRzN`)
             .then(result => {
-                // console.log("Client Service tracker", result.data.instances)
-                // setClientServiceDataDisplay(result.data.instances);
+             
                 if (result.data.instances.length > 0) {
 
                     axios
                         .get(`/tracker/events?program=GciA0HJcRzN&orgUnit=${district}`)
                         .then(resp => {
-                            // console.log("Client Service report", resp.data.instances)
-                            // setMeetingDecision({ decisions: result.data.instances, reports: resp.data.instances })
+                            
                             setClientServiceDataDisplay(result.data.instances, resp.data.instances);
                         })
                         .catch(err => console.log(err))

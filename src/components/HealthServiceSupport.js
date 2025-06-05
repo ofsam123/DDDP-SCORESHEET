@@ -1,95 +1,140 @@
 import { Layout, Space, Table, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import axios from "../api/axios";
-import { calculatePercentage } from "../utils/utils";
+import { calculatePercentage, formatDataGeneral, getAttributeValue } from "../utils/utils";
 
-const indicators = [
-    {
-        indicator: 'No. of public health facilities in the district',
-        id: 'yBAZbm4MmfC',
-        value: 0
-    },
-    {
-        indicator: 'No. of public health facilities supported by  the district Assembly',
-        id: 'AgoA6c5wqcV',
-        value: 0
-    }
-];
 
 function HealthServiceSupport({ year, district }) {
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
     const [healthFacilities, setHealthFacilities] = useState([]);
+    const [healthFacilitySupport, setHealthFacilitySupport] = useState([]);
+    const [percentage, setPercentage] = useState(0);
     const [score, setScore] = useState(0);
-    
-        useEffect(()=>{
-          getIndicators();
-        }, []);
 
-    const healthSupportColumns = [
-        { title: "No. of Health Centres (A)", dataIndex: "noOfHealthCenter", key: "noOfHealthCenter" },
-        { title: "No. of Health Centres supported by DA (B)", dataIndex: "noOfHealthCenterSupported", key: "noOfHealthCenterSupported" },
-        { title: "% of health centres supported B/A * 100", dataIndex: "percentage", key: "percentage" },
-        { title: "Nature of support", dataIndex: "support", key: "support" }
+    useEffect(() => {
+        getData();
+    }, []);
+
+    const healthColumns = [
+        {
+            title: 'No',
+            dataIndex: 'no',
+            key: 'no',
+        },
+        {
+            title: 'Facility Name',
+            dataIndex: 'facility',
+            key: 'facility',
+        },
+        {
+            title: 'Location',
+            dataIndex: 'location',
+            key: 'location',
+        },
+        {
+            title: 'Establishment Date',
+            dataIndex: 'date',
+            key: 'date',
+        },
+        {
+            title: 'Support(s)',
+            dataIndex: 'support',
+            key: 'support',
+        },
     ];
 
-    const getIndicators = () => {
-                axios.get(
-                    `/analytics.json?dimension=dx:yBAZbm4MmfC;AgoA6c5wqcV&dimension=ou:LEVEL-3;${district}&filter=pe:${year}-01-01;${year}-12-31`)
-                    .then(res => {
-                        const data = res.data?.rows;
-                        // console.log("Health: ",data)
-        
-                        if (data?.length > 0) {
-                            
-                            // Update indicator values based on result
-                            const updatedIndicators = indicators.map(ind => {
-                                const match = data.find(r => r[0] === ind.id);
-                                return {
-                                    ...ind,
-                                    value: match ? parseFloat(match[2]) : 0
+    const healthSupportColumns = [
+        {
+            title: "No. of Health Centres (A)",
+            dataIndex: "noOfHealthCenter",
+            key: "noOfHealthCenter"
+        },
+        {
+            title: "No. of Health Centres supported by DA (B)",
+            dataIndex: "noOfHealthCenterSupported",
+            key: "noOfHealthCenterSupported"
+        },
+        {
+            title: "% of health centres supported B/A * 100",
+            dataIndex: "percentage",
+            key: "percentage"
+        }
+    ];
+
+    function getData() {
+        axios
+            .get(`/tracker/trackedEntities?orgUnit=${district}&program=cKOJDISfpX2&startDate=${year}-01-01&endDate=${year}-12-31`)
+            .then(result => {
+                if (result.data.instances.length > 0) {
+
+                    axios
+                        .get(`/tracker/events?program=cKOJDISfpX2&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
+                        .then(resp => {
+                            const hospitals = result.data.instances;
+                            const reports = resp.data.instances;
+                            const temp = [];
+
+                            const publicHospitals = formatDataGeneral(hospitals, "Ownership Type", "Public") || [];
+
+                            publicHospitals.forEach((facility, idx) => {
+
+                                const currentReport = reports.find(rep => rep.trackedEntity === facility.trackedEntity);
+                                let support = "";
+
+                                if (currentReport) {
+                                    currentReport.dataValues.forEach(rep => {
+                                        if (rep.dataElement === "xAySRtnwzQa") {
+                                            support = rep.value;
+                                        }
+                                    });
+                                }
+
+                                const tempDataSet = {
+                                    no: idx + 1,
+                                    facility: getAttributeValue("Name", facility),
+                                    location: getAttributeValue("Location", facility),
+                                    date: getAttributeValue("Construction End Date", facility),
+                                    support
                                 };
+
+                                temp.push(tempDataSet);
+
                             });
-        
-                            // console.log("Health: ",updatedIndicators);
-        
-                            // Map from indicator name to table field
-                            const indicatorToFieldMap = {
-                                'No. of public health facilities in the district': 'noOfHealthCenter',
-                                'No. of public health facilities supported by  the district Assembly': 'noOfHealthCenterSupported'
-                            };
-        
-                            // Build the row object
-                            const row = {};
-        
-                            updatedIndicators.forEach(ind => {
-                                const key = indicatorToFieldMap[ind.indicator];
-                                if (key) {
-                                    row[key] = ind.value;
+
+                            setHealthFacilities(temp);
+
+                            let schoolSupported = 0;
+
+                            temp.forEach(facility => {
+                                if (facility.support !== "") {
+                                    schoolSupported++;
                                 }
                             });
 
-                            // console.log("Health row ", row);
-                            const percentage = calculatePercentage(row.noOfHealthCenterSupported, row.noOfHealthCenter);
-        
-                            setHealthFacilities([{
-                                noOfHealthCenter: row.noOfHealthCenter,
-                                noOfHealthCenterSupported: row.noOfHealthCenterSupported,
-                                percentage: percentage,
-                                support: "Supports"
-                            }]);
-        
-                            
+                            const percentage = calculatePercentage(schoolSupported, temp.length);
+
+                            setPercentage(percentage.toFixed(2));
+
                             if(percentage >= 15){
-                                setScore(2)
+                                setScore(2);
                             }
-        
-                        }
-        
-        
-                    }).catch(err => console.log(err));
-            }
+
+                            setHealthFacilitySupport([{
+                                noOfHealthCenter: temp.length,
+                                noOfHealthCenterSupported: schoolSupported,
+                                percentage: percentage.toFixed(2)
+                            }]);
+
+                        })
+                        .catch(err => console.log(err))
+                }
+
+
+            })
+            .catch(err => console.log(err))
+    }
 
 
     return (
@@ -97,15 +142,15 @@ function HealthServiceSupport({ year, district }) {
             <Title level={3} style={{ marginTop: "20px" }}>PI 5.0 - 5.2 Support to Health Services</Title>
             <Title level={4} style={{ marginTop: "20px" }}>Assessment Guide/ Requirement</Title>
             <Content>
-            From the DCD and District Director of Health receive information on the list of public 
-            health facilities in the District and challenges faced by the centres:<br /><br />
+                From the DCD and District Director of Health receive information on the list of public
+                health facilities in the District and challenges faced by the centres:<br /><br />
                 <ol>
                     <li type="i">
-                    If the sum total of Cash irregularities is less than 1% of the total
-                     expenditure of the Assembly for <strong>{year}</strong>, score 1;
+                        If the sum total of Cash irregularities is less than 1% of the total
+                        expenditure of the Assembly for <strong>{year}</strong>, score 1;
                     </li>
                     <li type="i">
-                    If the Assembly has supported at least 15% of the public health centres to address their challenges, score 2
+                        If the Assembly has supported at least 15% of the public health centres to address their challenges, score 2
                     </li>
 
                 </ol>
@@ -122,12 +167,25 @@ function HealthServiceSupport({ year, district }) {
 
 
             <Title level={5} style={{ marginTop: "20px" }}>
-            Assembly Support to Public Health Facilities
+                Assembly Support to Public Health Facilities
+            </Title>
+            {<Table
+                columns={healthColumns}
+                dataSource={healthFacilities || []}
+                pagination={false} bordered />}
+
+            <Title level={5} style={{ marginTop: "20px" }}>
+                List of Public Health Facilities
             </Title>
             {<Table
                 columns={healthSupportColumns}
-                dataSource={healthFacilities || []}
+                dataSource={healthFacilitySupport}
                 pagination={false} bordered />}
+
+            <Title level={5} style={{ marginTop: "30px" }}>Conclusion:</Title>
+            <Content>
+                The Assembly has supported {percentage}% of Public Health Facilities to address their challenges in {year}
+            </Content>
 
         </>
     );

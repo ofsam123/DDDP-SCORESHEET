@@ -227,13 +227,13 @@ function Home() {
     try {
       const year = selectedYear.value;
       const response = await axios.get(
-        `/analytics.json?dimension=dx:yhzMdqZp0Qh;RsgxfezgTyr&dimension=ou:LEVEL-2;sQ7uY7OfGh9&filter=pe:${year}-01-01;${year}-12-31`
+        `/analytics.json?dimension=dx:RC8Fu7TLb7l;RsgxfezgTyr&dimension=ou:LEVEL-2;sQ7uY7OfGh9&filter=pe:${year}-01-01;${year}-12-31`
       );
       console.log("Minute Invitation Chart Analytics Response:", response.data);
       const rows = response.data.rows || [];
 
       const counts = {
-        yhzMdqZp0Qh: 0,
+        RC8Fu7TLb7l: 0,
         RsgxfezgTyr: 0,
       };
 
@@ -246,9 +246,9 @@ function Home() {
       });
       // D67mYmLvMSi
 
-      const total = counts.yhzMdqZp0Qh + counts.RsgxfezgTyr || 1;
+      const total = counts.RC8Fu7TLb7l + counts.RsgxfezgTyr || 1;
       const percentages = [
-        (counts.yhzMdqZp0Qh / total) * 100,
+        (counts.RC8Fu7TLb7l / total) * 100,
         (counts.RsgxfezgTyr / total) * 100,
         // (counts.RsgxfezgTyr / total) * 100,
       ].map(val => Number(val.toFixed(2)));
@@ -660,7 +660,7 @@ function Home() {
             </div>
           </div>
           <div className="row gutters">
-            <div className="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div className="col-xl-6 col-lg-8 col-md-8 col-sm-12 col-8">
               <GeneralChart
                 title="Proportion of Meeting Types"
                 data={meetingChartLabels.length > 0 ? meetingChartData : [0, 0, 0, 0]}

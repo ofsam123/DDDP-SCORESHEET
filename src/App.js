@@ -10,6 +10,7 @@ import DPATdistrictSats from './components/DistricAnalytics'
 import RequireAuth from './components/RequireAuth';
 import AAP from './components/AAP';
 import ProjectAndProgram from './components/ProjectAndProgram';
+import APRReport from './components/APR_Report';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
                  <Route path='/dpat-district-analytics' element={<DPATdistrictSats />}/>
                  <Route path='/aap-analytics' element={<AAP />}/>
                  <Route path='/project-and-program-analytics' element={<ProjectAndProgram />}/>
+                 <Route path='/APR-report' element={<APRReport />}/>
             </Route>
             {/* private routes */}
             

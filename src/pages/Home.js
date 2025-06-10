@@ -660,7 +660,7 @@ function Home() {
             </div>
           </div>
           <div className="row gutters">
-            <div className="col-xl-6 col-lg-8 col-md-8 col-sm-12 col-8">
+            <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
               <GeneralChart
                 title="Proportion of Meeting Types"
                 data={meetingChartLabels.length > 0 ? meetingChartData : [0, 0, 0, 0]}

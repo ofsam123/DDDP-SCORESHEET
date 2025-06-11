@@ -1,16 +1,24 @@
-import Chart from "react-apexcharts";
+
 import Navbar from "../layout/Navbar";
 import { useEffect, useState } from "react";
 import axios from "../api/axios";
 import SideBarWrapper from "../components/SideBarWrapper";
-import CardBox from "../components/CardBox";
-import GeneralChart from "../components/GeneralChart";
-import MintueNinvitaionChart from "../components/minutesNinvitationLetterCart";
 import Select from "react-select";
-import { EyeOutlined, ProjectOutlined, AppstoreOutlined, TeamOutlined, ApartmentOutlined } from "@ant-design/icons";
+import Table1_1 from "../components/APR_ReportTablesComponents/Table_1.1"; 
+import Table1_2 from "../components/APR_ReportTablesComponents/Table_1.2"; 
+import Table2_1 from "../components/APR_ReportTablesComponents/Table_2.1";
+ import Table2_2 from "../components/APR_ReportTablesComponents/Table_2.2";
+ import Table2_3 from "../components/APR_ReportTablesComponents/Table_2.3";
+ import Table2_4 from "../components/APR_ReportTablesComponents/Table_2.4";
+ import Table2_5 from "../components/APR_ReportTablesComponents/Table_2.5";
+ import Table2_6 from "../components/APR_ReportTablesComponents/Table_2.6";
+ import Table2_7 from "../components/APR_ReportTablesComponents/Table_2.7";
+ import Table2_8 from "../components/APR_ReportTablesComponents/Table_2.8";
+ import Table2_9 from "../components/APR_ReportTablesComponents/Table_2.9";
+ import Table2_10 from "../components/APR_ReportTablesComponents/Table_2.10";
 
 function AprReport() {
-  // Home component state
+  // Component state
   const [instances, setInstances] = useState("");
   const [districts, setDistricts] = useState(null);
   const [selectedDistrict, setSelectedDistrict] = useState(null);
@@ -67,6 +75,7 @@ function AprReport() {
 
   // List of Tables options
   const tableOptions = [
+    { value: "all_tables", label: "All Tables" },
     { value: "table_1.1", label: "Table 1.1 – Proportion of the AAP and the MTDP Implemented" },
     { value: "table_1.2", label: "Table 1.2 – Details on Annual Action Plan Implemented under the Development Dimensions" },
     { value: "table_2.1", label: "Table 2.1 – Project Register" },
@@ -81,55 +90,8 @@ function AprReport() {
     { value: "table_2.10", label: "Table 2.10 – Update on PM&E Conducted" },
   ];
 
-  // Table 1.1 data (placeholder values)
+  // Table data (only for unimplemented tables)
   const tableData = {
-    "table_1.1": [
-      {
-        indicator: "Proportion of annual action plans implemented",
-        baseline2021: "",
-        target2022: "",
-        actual2022: "",
-        target2023: "",
-      },
-      {
-        indicator: "A. Percentage completed",
-        baseline2021: "",
-        target2022: "",
-        actual2022: "",
-        target2023: "",
-      },
-      {
-        indicator: "B. Percentage of on-going interventions",
-        baseline2021: "",
-        target2022: "",
-        actual2022: "",
-        target2023: "",
-      },
-      {
-        indicator: "C. Percentage of interventions abandoned",
-        baseline2021: "",
-        target2022: "",
-        actual2022: "",
-        target2023: "",
-      },
-      {
-        indicator: "D. Percentage of interventions yet to start",
-        baseline2021: "",
-        target2022: "",
-        actual2022: "",
-        target2023: "",
-      },
-      {
-        indicator: "Proportion of the overall medium-term development plan implemented",
-        baseline2021: "",
-        target2022: "",
-        actual2022: "",
-        target2023: "",
-      },
-    ],
-    "table_1.2": [{ indicator: "Placeholder", details: "Details to be added" }],
-    "table_2.1": [{ indicator: "Placeholder", details: "Details to be added" }],
-    "table_2.2": [{ indicator: "Placeholder", details: "Details to be added" }],
     "table_2.3": [{ indicator: "Placeholder", details: "Details to be added" }],
     "table_2.4": [{ indicator: "Placeholder", details: "Details to be added" }],
     "table_2.5": [{ indicator: "Placeholder", details: "Details to be added" }],
@@ -139,22 +101,6 @@ function AprReport() {
     "table_2.9": [{ indicator: "Placeholder", details: "Details to be added" }],
     "table_2.10": [{ indicator: "Placeholder", details: "Details to be added" }],
   };
-
-  // Placeholder data for pictorial evidence (replace with actual image URLs and captions)
-  const pictorialEvidence = [
-    {
-      url: "https://via.placeholder.com/300x200?text=Project+1",
-      caption: "Construction of Community Center - 2022",
-    },
-    {
-      url: "https://via.placeholder.com/300x200?text=Project+2",
-      caption: "Road Improvement Project - Phase 1",
-    },
-    {
-      url: "https://via.placeholder.com/300x200?text=Project+3",
-      caption: "School Renovation - Completed 2022",
-    },
-  ];
 
   useEffect(() => {
     getData();
@@ -168,9 +114,6 @@ function AprReport() {
       );
       const resp = await axios.get(`/tracker/events?program=Ch38jUWJpUR&orgUnit=${districtId}`);
       formatData(result.data.instances, resp.data.instances);
-      // Optionally fetch pictorial evidence
-      // const imagesResponse = await axios.get(`/api/report/pictorial-evidence?orgUnit=${districtId}&year=${year}`);
-      // setPictorialEvidence(imagesResponse.data);
     } catch (err) {
       console.error("Error in pullTrackerInstance:", err);
     }
@@ -242,9 +185,11 @@ function AprReport() {
       "table_2.10": "2.6",
     };
     const correspondingTocValue = tableToTocMap[selectedOption.value];
-    // if (corresponding neocValue) {
-    //   setSelectedTocSection(tocOptions.find((option) => option.value === correspondingTocValue));
-    // }
+    if (correspondingTocValue) {
+      setSelectedTocSection(tocOptions.find((option) => option.value === correspondingTocValue));
+    } else {
+      setSelectedTocSection(null); // Clear TOC for "All Tables"
+    }
     console.log("Selected Table:", selectedOption);
   };
 
@@ -303,63 +248,35 @@ function AprReport() {
             </div>
           </div>
           <div className="row gutters">
-            {selectedTable && selectedTable.value === "table_1.1" && (
-              <div className="col-12">
-                <h3>{selectedTable.label}</h3>
-                <div className="card">
-                  <div className="card-header">{selectedTable.label}</div>
-                  <div className="card-body">
-                    <table className="table table-bordered">
-                      <thead>
-                        <tr>
-                          <th>Indicators</th>
-                          <th>Baseline 2021</th>
-                          <th>Target 2022</th>
-                          <th>Actual 2022</th>
-                          <th>Target 2023</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {tableData["table_1.1"].map((row, index) => (
-                          <tr key={index}>
-                            <td>{row.indicator}</td>
-                            <td>{row.baseline2021 || "N/A"}</td>
-                            <td>{row.target2022 || "N/A"}</td>
-                            <td>{row.actual2022 || "N/A"}</td>
-                            <td>{row.target2023 || "N/A"}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                    <p className="mt-2"><small>Source: MPCU-TNMA</small></p>
-                    <hr />
-                    <h5>Pictorial Evidence of Projects under Implementation</h5>
-                    {pictorialEvidence.length > 0 ? (
-                      <div className="row">
-                        {pictorialEvidence.map((image, index) => (
-                          <div className="col-md-4 col-sm-6 mb-3" key={index}>
-                            <div className="card">
-                              <img
-                                src={image.url}
-                                className="card-img-top"
-                                alt={image.caption}
-                                style={{ height: "200px", objectFit: "cover" }}
-                              />
-                              <div className="card-body">
-                                <p className="card-text">{image.caption}</p>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <p>No pictorial evidence available.</p>
-                    )}
-                  </div>
-                </div>
-              </div>
+            {selectedTable && selectedTable.value === "all_tables" && (
+              <>
+                <Table1_1 />
+                <Table1_2 />
+                <Table2_1 />
+                <Table2_2 />
+                <Table2_3 />
+                <Table2_4 />
+                <Table2_5 />
+                <Table2_6 />
+                <Table2_7 />
+                <Table2_8 />
+                <Table2_9 />
+                <Table2_10 />
+              </>
             )}
-            {selectedTable && selectedTable.value !== "table_1.1" && (
+            {selectedTable && selectedTable.value === "table_1.1" && <Table1_1 />}
+            {selectedTable && selectedTable.value === "table_1.2" && <Table1_2 />}
+            {selectedTable && selectedTable.value === "table_2.1" && <Table2_1 />}
+            {selectedTable && selectedTable.value === "table_2.2" && <Table2_2 />}
+            {selectedTable && selectedTable.value === "table_2.3" && <Table2_3 />}
+            {selectedTable && selectedTable.value === "table_2.4" && <Table2_4 />}
+            {selectedTable && selectedTable.value === "table_2.5" && <Table2_5 />}
+            {selectedTable && selectedTable.value === "table_2.6" && <Table2_6 />}
+            {selectedTable && selectedTable.value === "table_2.7" && <Table2_7 />}
+            {selectedTable && selectedTable.value === "table_2.8" && <Table2_8 />}
+            {selectedTable && selectedTable.value === "table_2.9" && <Table2_9 />}
+            {selectedTable && selectedTable.value === "table_2.10" && <Table2_10 />}
+            {selectedTable && !["all_tables", "table_1.1", "table_1.2", "table_2.1", "table_2.2", "table_2.3", "table_2.4", "table_2.5", "table_2.6","table_2.7", "table_2.8", "table_2.9", "table_2.10"].includes(selectedTable.value) && (
               <div className="col-12">
                 <h3>{selectedTable.label}</h3>
                 <div className="card">

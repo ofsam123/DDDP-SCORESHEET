@@ -348,6 +348,13 @@
 .icon-pie-chart:before {
 	content: "\e976";
 }
+.table-responsive {
+	overflow-x: auto;
+  }
+  .table-responsive {
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  }
 .icon-pin:before {
 	content: "\e977";
 }

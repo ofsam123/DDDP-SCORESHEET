@@ -16,6 +16,18 @@ function Home() {
     color: "rgb(29, 82, 136)",
   };
 
+  const invitationColors = [
+    "rgb(28, 82, 176)", //  (minutes)
+   
+    "rgb(155, 22, 86)", // invitation
+  ];
+
+  const muniteColors = [
+    "rgb(11, 116, 137)", //  (minutes)
+   
+    "rgb(134, 19, 117)", // invitation
+  ];
+
   const completed = {
     name: "Completed",
     color: "rgb(255,165,0)",
@@ -23,7 +35,7 @@ function Home() {
 
   const meetingsData = {
     name: "Meetings",
-    color: "rgb(29, 82, 136)", // Dark Green
+    color: "rgb(43, 82, 120)", // Dark Green
   };
 
   const generalmeetingsData = {
@@ -84,7 +96,7 @@ function Home() {
     try {
       const year = selectedYear.value;
       const regionsResponse = await axios.get("/organisationUnits?level=2&paging=false");
-      console.log("Meeting Regions Response:", regionsResponse.data);
+      // console.log("Meeting Regions Response:", regionsResponse.data);
       const regionList = regionsResponse.data.organisationUnits.map((unit) => ({
         id: unit.id,
         name: unit.displayName,
@@ -94,7 +106,7 @@ function Home() {
         // '/analytics.json?dimension=dx:aeKyGvo5OIp;kaxkMvOIXwW&dimension=ou:LEVEL-2&filter=pe:2024-01-01;2024-12-31'
          `/analytics.json?dimension=dx:aeKyGvo5OIp;kaxkMvOIXwW&dimension=ou:LEVEL-2&filter=pe:${year}-01-01;${year}-12-31`
       );
-      console.log("Meetings Analytics Response:", analyticsResponse.data);
+      // console.log("Meetings Analytics Response:", analyticsResponse.data);
       const rows = analyticsResponse.data.rows || [];
 
       const meetings = new Array(regionList.length).fill(0);
@@ -114,8 +126,8 @@ function Home() {
         }
       });
 
-      console.log("Processed Meetings Data:", meetings);
-      console.log("Processed General Meetings Data:", generalMeetings);
+      // console.log("Processed Meetings Data:", meetings);
+      // console.log("Processed General Meetings Data:", generalMeetings);
 
       setMeetingRegions(regionList.map((region) => region.name));
       setMeetingAnalyticsData({
@@ -136,7 +148,7 @@ function Home() {
     try {
       const year = selectedYear.value;
       const regionsResponse = await axios.get("/organisationUnits?level=2&paging=false");
-      console.log("Action Plan Regions Response:", regionsResponse.data);
+      // console.log("Action Plan Regions Response:", regionsResponse.data);
       const regionList = regionsResponse.data.organisationUnits.map((unit) => ({
         id: unit.id,
         name: unit.displayName,
@@ -145,7 +157,7 @@ function Home() {
       const analyticsResponse = await axios.get(
         `/analytics.json?dimension=dx:L2oTOp0EA1A;csukj9I0QMB&dimension=ou:LEVEL-2&filter=pe:${year}-01-01;${year}-12-31`
       );
-      console.log("Action Plan Analytics Response:", analyticsResponse.data);
+      // console.log("Action Plan Analytics Response:", analyticsResponse.data);
       const rows = analyticsResponse.data.rows || [];
 
       const plansData = new Array(regionList.length).fill(0);
@@ -165,8 +177,8 @@ function Home() {
         }
       });
 
-      console.log("Processed Plans Data:", plansData);
-      console.log("Processed Completed Data:", completedData);
+      // console.log("Processed Plans Data:", plansData);
+      // console.log("Processed Completed Data:", completedData);
 
       setActionPlanRegions(regionList.map((region) => region.name));
       setActionPlanAnalyticsData({
@@ -187,7 +199,7 @@ function Home() {
       const response = await axios.get(
         `/analytics.json?dimension=dx:aeKyGvo5OIp;BEUJdCeTGIE;M86dDnKObvx;cz086QtLaoW;wGeWq6JhDQA&dimension=ou:LEVEL-2;sQ7uY7OfGh9&filter=pe:${year}-01-01;${year}-12-31`
       );
-      console.log("Meeting Chart Analytics Response:", response.data);
+      // console.log("Meeting Chart Analytics Response:", response.data);
       const rows = response.data.rows || [];
 
       const counts = {
@@ -214,8 +226,8 @@ function Home() {
         (counts.wGeWq6JhDQA / totalMeetings) * 100,
       ].map(val => Number(val.toFixed(2)));
 
-      console.log("Total Meetings:", totalMeetings);
-      console.log("Processed Meeting Chart Percentages:", percentages);
+      // console.log("Total Meetings:", totalMeetings);
+      // console.log("Processed Meeting Chart Percentages:", percentages);
       setMeetingChartData(percentages);
     } catch (err) {
       console.error("Error fetching meeting chart data:", err);
@@ -229,7 +241,7 @@ function Home() {
       const response = await axios.get(
         `/analytics.json?dimension=dx:RC8Fu7TLb7l;RsgxfezgTyr&dimension=ou:LEVEL-2;sQ7uY7OfGh9&filter=pe:${year}-01-01;${year}-12-31`
       );
-      console.log("Minute Invitation Chart Analytics Response:", response.data);
+      // console.log("Minute Invitation Chart Analytics Response:", response.data);
       const rows = response.data.rows || [];
 
       const counts = {
@@ -244,7 +256,7 @@ function Home() {
           console.warn(`Unknown data element: ${dataElement}`);
         }
       });
-      // D67mYmLvMSi
+      
 
       const total = counts.RC8Fu7TLb7l + counts.RsgxfezgTyr || 1;
       const percentages = [
@@ -255,8 +267,8 @@ function Home() {
 
       
 
-      console.log("Total Invitations + Minutes:", total);
-      console.log("Processed Minute Invitation Percentages:", percentages);
+      // console.log("Total Invitations + Minutes:", total);
+      // console.log("Processed Minute Invitation Percentages:", percentages);
       setMinuteInvitationData(percentages);
     } catch (err) {
       console.error("Error fetching minute invitation data:", err);
@@ -270,14 +282,14 @@ function Home() {
     try {
       const year = selectedYear.value;
       const response = await axios.get(
-        `/analytics.json?dimension=dx:yhzMdqZp0Qh;D67mYmLvMSi&dimension=ou:LEVEL-2;sQ7uY7OfGh9&filter=pe:${year}-01-01;${year}-12-31`
+        `/analytics.json?dimension=dx:yhzMdqZp0Qh;aeKyGvo5OIp&dimension=ou:LEVEL-2;sQ7uY7OfGh9&filter=pe:${year}-01-01;${year}-12-31`
       );
-      console.log("Minute Invitation Chart Analytics Response:", response.data);
+      // console.log("Minute Invitation Chart Analytics Response:", response.data);
       const rows = response.data.rows || [];
 
       const counts = {
         yhzMdqZp0Qh: 0,
-        D67mYmLvMSi: 0,
+        aeKyGvo5OIp: 0,
       };
 
       rows.forEach(([dataElement, orgUnit, value]) => {
@@ -287,19 +299,19 @@ function Home() {
           console.warn(`Unknown data element: ${dataElement}`);
         }
       });
-      // D67mYmLvMSi
+      
 
-      const total = counts.yhzMdqZp0Qh + counts.D67mYmLvMSi || 1;
+      const total = counts.aeKyGvo5OIp || 0;
       const percentages = [
         (counts.yhzMdqZp0Qh / total) * 100,
-        (counts.D67mYmLvMSi / total) * 100,
+        (counts.aeKyGvo5OIp / total) * 100,
         // (counts.RsgxfezgTyr / total) * 100,
       ].map(val => Number(val.toFixed(2)));
 
       
 
-      console.log("Total Invitations + Non Invitation:", total);
-      console.log("Processed  Invitation Percentages:", percentages);
+      // console.log("Total Invitations + Non Invitation:", total);
+      // console.log("Processed  Invitation Percentages:", percentages);
       setInvitationData(percentages);
     } catch (err) {
       console.error("Error fetching minute invitation data:", err);
@@ -317,7 +329,7 @@ function Home() {
       const aapResp = await axios.get(
         `/analytics.json?dimension=dx:L2oTOp0EA1A&orgUnit=${orgUnit}&filter=pe:${year}-01-01;${year}-12-31`
       );
-      console.log("AAP Analytics Response:", aapResp.data);
+      // console.log("AAP Analytics Response:", aapResp.data);
       const aapRows = aapResp.data.rows || [];
       const aapCount = aapRows.length > 0 ? parseFloat(aapRows[0][1]) || 0 : 0;
       setAapTotal(aapCount);
@@ -325,7 +337,7 @@ function Home() {
       const projectsResp = await axios.get(
         `/analytics.json?dimension=dx:cHp5d6g8Z1K&orgUnit=${orgUnit}&filter=pe:${year}-01-01;${year}-12-31`
       );
-      console.log("Projects Analytics Response:", projectsResp.data);
+      // console.log("Projects Analytics Response:", projectsResp.data);
       const projectsRows = projectsResp.data.rows || [];
       const projectsCount = projectsRows.length > 0 ? parseFloat(projectsRows[0][1]) || 0 : 0;
       setProjectsTotal(projectsCount);
@@ -333,7 +345,7 @@ function Home() {
       const programsResp = await axios.get(
         `/analytics.json?dimension=dx:WR0IO6mvdmw&orgUnit=${orgUnit}&filter=pe:${year}-01-01;${year}-12-31`
       );
-      console.log("Programs Analytics Response:", programsResp.data);
+      // console.log("Programs Analytics Response:", programsResp.data);
       const programsRows = programsResp.data.rows || [];
       const programsCount = programsRows.length > 0 ? parseFloat(programsRows[0][1]) || 0 : 0;
       setProgramsTotal(programsCount);
@@ -341,7 +353,7 @@ function Home() {
       const meetingsResp = await axios.get(
         `/analytics.json?dimension=dx:aeKyGvo5OIp&orgUnit=${orgUnit}&filter=pe:${year}-01-01;${year}-12-31`
       );
-      console.log("Meetings Analytics Response:", meetingsResp.data);
+      // console.log("Meetings Analytics Response:", meetingsResp.data);
       const meetingsRows = meetingsResp.data.rows || [];
       const meetingsCount = meetingsRows.length > 0 ? parseFloat(meetingsRows[0][1]) || 0 : 0;
       setMeetingsTotal(meetingsCount);
@@ -349,7 +361,7 @@ function Home() {
       const departmentsResp = await axios.get(
         `/analytics.json?dimension=dx:wGeWq6JhDQA&orgUnit=${orgUnit}&filter=pe:${year}-01-01;${year}-12-31`
       );
-      console.log("Departments Analytics Response:", departmentsResp.data);
+      // console.log("Departments Analytics Response:", departmentsResp.data);
       const departmentsRows = departmentsResp.data.rows || [];
       const departmentsCount = departmentsRows.length > 0 ? parseFloat(departmentsRows[0][1]) || 0 : 0;
       setDepartmentsTotal(departmentsCount);
@@ -360,61 +372,61 @@ function Home() {
     }
   }
 
-  async function pullTrackerInstance(url, districtId) {
-    try {
-      const year = selectedYear.value;
-      const aapResult = await axios.get(
-        `/analytics.json?dimension=dx:L2oTOp0EA1A&orgUnit=${districtId}&filter=pe:${year}-01-01;${year}-12-31`
-      );
-      console.log("District AAP Response:", aapResult.data);
-      const aapRows = aapResult.data.rows || [];
-      const aapCount = aapRows.length > 0 ? parseFloat(aapRows[0][1]) || 0 : 0;
-      setAapTotal(aapCount);
+  // async function pullTrackerInstance(url, districtId) {
+  //   try {
+  //     const year = selectedYear.value;
+  //     const aapResult = await axios.get(
+  //       `/analytics.json?dimension=dx:L2oTOp0EA1A&orgUnit=${districtId}&filter=pe:${year}-01-01;${year}-12-31`
+  //     );
+  //     // console.log("District AAP Response:", aapResult.data);
+  //     const aapRows = aapResult.data.rows || [];
+  //     const aapCount = aapRows.length > 0 ? parseFloat(aapRows[0][1]) || 0 : 0;
+  //     setAapTotal(aapCount);
 
-      const projectsResult = await axios.get(
-        `/analytics.json?dimension=dx:cHp5d6g8Z1K&orgUnit=${districtId}&filter=pe:${year}-01-01;${year}-12-31`
-      );
-      const projectsRows = projectsResult.data.rows || [];
-      const projectsCount = projectsRows.length > 0 ? parseFloat(projectsRows[0][1]) || 0 : 0;
-      setProjectsTotal(projectsCount);
+  //     const projectsResult = await axios.get(
+  //       `/analytics.json?dimension=dx:cHp5d6g8Z1K&orgUnit=${districtId}&filter=pe:${year}-01-01;${year}-12-31`
+  //     );
+  //     const projectsRows = projectsResult.data.rows || [];
+  //     const projectsCount = projectsRows.length > 0 ? parseFloat(projectsRows[0][1]) || 0 : 0;
+  //     setProjectsTotal(projectsCount);
 
-      const programsResult = await axios.get(
-        `/analytics.json?dimension=dx:WR0IO6mvdmw&orgUnit=${districtId}&filter=pe:${year}-01-01;${year}-12-31`
-      );
-      const programsRows = programsResult.data.rows || [];
-      const programsCount = programsRows.length > 0 ? parseFloat(programsRows[0][1]) || 0 : 0;
-      setProgramsTotal(programsCount);
+  //     const programsResult = await axios.get(
+  //       `/analytics.json?dimension=dx:WR0IO6mvdmw&orgUnit=${districtId}&filter=pe:${year}-01-01;${year}-12-31`
+  //     );
+  //     const programsRows = programsResult.data.rows || [];
+  //     const programsCount = programsRows.length > 0 ? parseFloat(programsRows[0][1]) || 0 : 0;
+  //     setProgramsTotal(programsCount);
 
-      const meetingsResult = await axios.get(
-        `/analytics.json?dimension=dx:aeKyGvo5OIp&orgUnit=${districtId}&filter=pe:${year}-01-01;${year}-12-31`
-      );
-      console.log("District Meetings Response:", meetingsResult.data);
-      const meetingsRows = meetingsResult.data.rows || [];
-      const meetingsCount = meetingsRows.length > 0 ? parseFloat(meetingsRows[0][1]) || 0 : 0;
-      setMeetingsTotal(meetingsCount);
+  //     const meetingsResult = await axios.get(
+  //       `/analytics.json?dimension=dx:aeKyGvo5OIp&orgUnit=${districtId}&filter=pe:${year}-01-01;${year}-12-31`
+  //     );
+  //     console.log("District Meetings Response:", meetingsResult.data);
+  //     const meetingsRows = meetingsResult.data.rows || [];
+  //     const meetingsCount = meetingsRows.length > 0 ? parseFloat(meetingsRows[0][1]) || 0 : 0;
+  //     setMeetingsTotal(meetingsCount);
 
-      const departmentsResult = await axios.get(
-        `/analytics.json?dimension=dx:wGeWq6JhDQA&orgUnit=${districtId}&filter=pe:${year}-01-01;${year}-12-31`
-      );
-      console.log("District Departments Response:", departmentsResult.data);
-      const departmentsRows = departmentsResult.data.rows || [];
-      const departmentsCount = departmentsRows.length > 0 ? parseFloat(departmentsRows[0][1]) || 0 : 0;
-      setDepartmentsTotal(departmentsCount);
+  //     const departmentsResult = await axios.get(
+  //       `/analytics.json?dimension=dx:wGeWq6JhDQA&orgUnit=${districtId}&filter=pe:${year}-01-01;${year}-12-31`
+  //     );
+  //     console.log("District Departments Response:", departmentsResult.data);
+  //     const departmentsRows = departmentsResult.data.rows || [];
+  //     const departmentsCount = departmentsRows.length > 0 ? parseFloat(departmentsRows[0][1]) || 0 : 0;
+  //     setDepartmentsTotal(departmentsCount);
 
-      const result = await axios.get(
-        `/tracker/trackedEntities?orgUnit=${districtId}&program=Ch38jUWJpUR&startDate=${year}-01-01&endDate=${year}-12-31&paging=false`
-      );
-      const resp = await axios.get(`/tracker/events?program=Ch38jUWJpUR&orgUnit=${districtId}`);
-      formatData(result.data.instances, resp.data.instances);
-    } catch (err) {
-      console.error("Error in pullTrackerInstance:", err);
-    }
-  }
+  //     const result = await axios.get(
+  //       `/tracker/trackedEntities?orgUnit=${districtId}&program=Ch38jUWJpUR&startDate=${year}-01-01&endDate=${year}-12-31&paging=false`
+  //     );
+  //     const resp = await axios.get(`/tracker/events?program=Ch38jUWJpUR&orgUnit=${districtId}`);
+  //     formatData(result.data.instances, resp.data.instances);
+  //   } catch (err) {
+  //     console.error("Error in pullTrackerInstance:", err);
+  //   }
+  // }
 
   function getData(url) {
     const storedDistricts = localStorage.getItem("districts");
     if (storedDistricts) {
-      console.log("Loading districts from localStorage...");
+      // console.log("Loading districts from localStorage...");
       setDistricts(JSON.parse(storedDistricts));
       return;
     }
@@ -422,7 +434,7 @@ function Home() {
     axios
       .get(url)
       .then((result) => {
-        console.log(result.data);
+        // console.log(result.data);
         let temp = [];
         result.data.organisationUnits.forEach((district) => {
           const currentDistrict = { value: district.id, label: district.displayName };
@@ -660,38 +672,40 @@ function Home() {
             </div>
           </div>
           <div className="row gutters">
-            <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div className="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
               <GeneralChart
                 title="Proportion of Meeting Types"
                 data={meetingChartLabels.length > 0 ? meetingChartData : [0, 0, 0, 0]}
                 labels={meetingChartLabels}
                 type="pie"
-                width={450}
-                height={450}
+                width={350}
+                height={350}
                 isLoading={isLoading}
                 error={meetingChartError}
               />
             </div>
-            <div className="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div className="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
               <MintueNinvitaionChart
                 title="Proportion of Invitations and Non Invitation"
                 data={InvitationData.length > 0 ? InvitationData : [0, 0]}
                 labels={InvitationLabels}
+                colors={invitationColors}
                 type="donut"
-                width={450}
-                height={450}
+                width={350}
+                height={350}
                 isLoading={isLoading}
                 error={InvitationError}
               />
             </div>
-            <div className="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div className="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
               <MintueNinvitaionChart
                 title="Proportion of Minutes and Non Minutes"
                 data={minuteInvitationData.length > 0 ? minuteInvitationData : [0, 0]}
                 labels={minuteLabels}
                 type="donut"
-                width={450}
-                height={450}
+                colors={muniteColors}
+                width={350}
+                height={350}
                 isLoading={isLoading}
                 error={minuteInvitationError}
               />

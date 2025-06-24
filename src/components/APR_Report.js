@@ -201,7 +201,7 @@ function AprReport() {
         <div className="page-header">
           <ol className="breadcrumb">
             <li className="breadcrumb-item">Home</li>
-            <li className="breadcrumb-item active">APR Report</li>
+            <li className="breadcrumb-item active">Annual Progress Report (APR)</li>
           </ol>
         </div>
         <div className="main-container">

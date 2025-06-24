@@ -1,6 +1,6 @@
 import Chart from "react-apexcharts";
 
-function mintueNinvitaionChart({ title, data, labels, type, width, height, isLoading, error, colors }) {
+function InvitaionChart({ title, data, labels, type, width, height, isLoading, error, colors }) {
   return (
     <div className="card">
       <div className="card-header">
@@ -26,13 +26,14 @@ function mintueNinvitaionChart({ title, data, labels, type, width, height, isLoa
               },
               tooltip: {
                 y: {
-                  formatter: (val) => `${val.toFixed(2)}% of total minutes`,
+                  formatter: (val) => `${val.toFixed(2)}% of total invitation`,
                 },
                 custom: ({ series, seriesIndex, dataPointIndex, w }) => {
                   const value = w.config.series[seriesIndex];
                   return `
                     <div style="padding: 10px; background: #333; color: white; border-radius: 5px;">
                       ${value.toFixed(2)}% 
+                      
                     </div>
                   `;
                 },
@@ -61,4 +62,4 @@ function mintueNinvitaionChart({ title, data, labels, type, width, height, isLoa
   );
 }
 
-export default mintueNinvitaionChart;
+export default InvitaionChart;

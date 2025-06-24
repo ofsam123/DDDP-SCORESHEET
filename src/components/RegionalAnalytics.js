@@ -8,7 +8,7 @@ import GeneralChart from "../components/GeneralChart";
 import MintueNinvitaionChart from "../components/minutesNinvitationLetterCart";
 import Select from "react-select";
 import { EyeOutlined, ProjectOutlined, AppstoreOutlined, TeamOutlined, ApartmentOutlined } from "@ant-design/icons";
-
+import InvitaionChart from "../components/invitationCart";
 function RegionalAnalytics() {
   // Data objects for charts
   const plans = {
@@ -30,6 +30,17 @@ function RegionalAnalytics() {
     name: "Decisions",
     color: "#f40b51", // Blue
   };
+  const invitationColors = [
+    "rgb(28, 82, 176)", //  (minutes)
+   
+    "rgb(155, 22, 86)", // invitation
+  ];
+
+  const muniteColors = [
+    "rgb(11, 116, 137)", //  (minutes)
+   
+    "rgb(134, 19, 117)", // invitation
+  ];
 
   // Home component state
   const [instances, setInstances] = useState("");
@@ -58,6 +69,9 @@ function RegionalAnalytics() {
   const [actionPlanAnalyticsData, setActionPlanAnalyticsData] = useState({ plans: [], completed: [] });
   const [actionPlanReportLoading, setActionPlanReportLoading] = useState(true);
   const [actionPlanReportError, setActionPlanReportError] = useState(null);
+  const [InvitationData, setInvitationData] = useState([]);
+  
+  const [InvitationError, setInvitationError] = useState(null);
 
   // Year options for dropdown
   const yearOptions = Array.from({ length: 6 }, (_, i) => {
@@ -76,8 +90,49 @@ function RegionalAnalytics() {
       fetchMinuteInvitationData();
       fetchMeetingReportData();
       fetchActionPlanReportData();
+      fetchInvitationData();
     }
   }, [selectedYear, selectedRegion]);
+
+   async function fetchInvitationData() {
+        try {
+          const year = selectedYear.value;
+          const response = await axios.get(
+            `/analytics.json?dimension=dx:yhzMdqZp0Qh;aeKyGvo5OIp&dimension=ou:${selectedRegion.value}&filter=pe:${year}-01-01;${year}-12-31`
+          );
+          // console.log("Minute Invitation Chart Analytics Response:", response.data);
+          const rows = response.data.rows || [];
+    
+          const counts = {
+            yhzMdqZp0Qh: 0,
+            aeKyGvo5OIp
+    : 0,
+          };
+    
+          rows.forEach(([dataElement, orgUnit, value]) => {
+            if (counts.hasOwnProperty(dataElement)) {
+              counts[dataElement] += parseFloat(value) || 0;
+            } else {
+              console.warn(`Unknown data element: ${dataElement}`);
+            }
+          });
+          
+    
+          const total = counts.yhzMdqZp0Qh + counts.aeKyGvo5OIp || 1;
+          const percentages = [
+            (counts.yhzMdqZp0Qh / total) * 100,
+            (counts.aeKyGvo5OIp / total) * 100,
+            // (counts.RsgxfezgTyr / total) * 100,
+          ].map(val => Number(val.toFixed(2)));
+          setInvitationData(percentages);
+        } catch (err) {
+          console.error("Error fetching minute invitation data:", err);
+          setInvitationError("Failed to load invitation and minutes chart data.");
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    
 
   // MeetingRegionalReport data fetching
   async function fetchMeetingReportData() {
@@ -205,13 +260,13 @@ function RegionalAnalytics() {
     try {
       const year = selectedYear.value;
       const response = await axios.get(
-        `/analytics.json?dimension=dx:yhzMdqZp0Qh;RsgxfezgTyr&dimension=ou:${selectedRegion.value}&filter=pe:${year}-01-01;${year}-12-31`
+        `/analytics.json?dimension=dx:RC8Fu7TLb7l;RsgxfezgTyr&dimension=ou:${selectedRegion.value}&filter=pe:${year}-01-01;${year}-12-31`
       );
       console.log("Minute Invitation Chart Analytics Response:", response.data);
       const rows = response.data.rows || [];
 
       const counts = {
-        yhzMdqZp0Qh: 0,
+        RC8Fu7TLb7l: 0,
         RsgxfezgTyr: 0,
       };
 
@@ -223,9 +278,9 @@ function RegionalAnalytics() {
         }
       });
 
-      const total = counts.yhzMdqZp0Qh + counts.RsgxfezgTyr || 1;
+      const total = counts.RC8Fu7TLb7l + counts.RsgxfezgTyr || 1;
       const percentages = [
-        (counts.yhzMdqZp0Qh / total) * 100,
+        (counts.RC8Fu7TLb7l / total) * 100,
         (counts.RsgxfezgTyr / total) * 100,
       ].map(val => Number(val.toFixed(2)));
 
@@ -361,6 +416,8 @@ function RegionalAnalytics() {
 
   const minuteInvitationLabels = ["Invitations", "Minutes"];
 
+  const InvitationLabels = ["Invitations", "Non Invitation"];
+  const minuteLabels = ["Minutes", "Non Mintes"];
   return (
     <div className="page-wrapper">
       <SideBarWrapper />
@@ -566,30 +623,45 @@ function RegionalAnalytics() {
             </div>
           </div>
           <div className="row gutters">
-            <div className="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div className="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
               <GeneralChart
                 title="Proportion of Meeting Types"
                 data={meetingChartData.length > 0 ? meetingChartData : [0, 0, 0, 0]}
                 labels={meetingChartLabels}
                 type="pie"
-                width={450}
-                height={450}
+                width={350}
+                height={350}
                 isLoading={isLoading}
                 error={meetingChartError}
               />
             </div>
-            <div className="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12">
-              <MintueNinvitaionChart
-                title="Proportion of Invitations and Minutes"
-                data={minuteInvitationData.length > 0 ? minuteInvitationData : [0, 0]}
-                labels={minuteInvitationLabels}
+            <div className="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+              <InvitaionChart
+                title="Proportion of Invitations and Non Invitation"
+                data={InvitationData.length > 0 ? InvitationData : [0, 0]}
+                labels={InvitationLabels}
+                colors={invitationColors}
                 type="donut"
-                width={450}
-                height={450}
+                width={350}
+                height={350}
+                isLoading={isLoading}
+                error={InvitationError}
+              /> 
+            </div>
+            <div className="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+              <MintueNinvitaionChart
+                title="Proportion of Minutes and Non Minutes"
+                data={minuteInvitationData.length > 0 ? minuteInvitationData : [0, 0]}
+                labels={minuteLabels}
+                type="donut"
+                colors={muniteColors}
+                width={350}
+                height={350}
                 isLoading={isLoading}
                 error={minuteInvitationError}
               />
             </div>
+            
           </div>
         </div>
       </div>

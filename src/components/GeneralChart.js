@@ -40,7 +40,7 @@ function GeneralChart({ title, data, labels, type, width, height, isLoading, err
                   const value = w.config.series[seriesIndex];
                   return `
                     <div style="padding: 10px; background: #333; color: white; border-radius: 5px;">
-                      ${value.toFixed(2)}% of total meetings
+                      ${value.toFixed(2)}% 
                     </div>
                   `;
                 },

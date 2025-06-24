@@ -6,6 +6,7 @@ import SideBarWrapper from "../components/SideBarWrapper";
 import CardBox from "../components/CardBox";
 import GeneralChart from "../components/GeneralChart";
 import MintueNinvitaionChart from "../components/minutesNinvitationLetterCart";
+import InvitaionChart from "../components/invitationCart";
 import Select from "react-select";
 import { EyeOutlined, ProjectOutlined, AppstoreOutlined, TeamOutlined, ApartmentOutlined } from "@ant-design/icons";
 
@@ -264,11 +265,6 @@ function Home() {
         (counts.RsgxfezgTyr / total) * 100,
         // (counts.RsgxfezgTyr / total) * 100,
       ].map(val => Number(val.toFixed(2)));
-
-      
-
-      // console.log("Total Invitations + Minutes:", total);
-      // console.log("Processed Minute Invitation Percentages:", percentages);
       setMinuteInvitationData(percentages);
     } catch (err) {
       console.error("Error fetching minute invitation data:", err);
@@ -277,6 +273,7 @@ function Home() {
       setIsLoading(false);
     }
   }
+
 
   async function fetchInvitationData() {
     try {
@@ -289,7 +286,8 @@ function Home() {
 
       const counts = {
         yhzMdqZp0Qh: 0,
-        aeKyGvo5OIp: 0,
+        aeKyGvo5OIp
+: 0,
       };
 
       rows.forEach(([dataElement, orgUnit, value]) => {
@@ -301,17 +299,12 @@ function Home() {
       });
       
 
-      const total = counts.aeKyGvo5OIp || 0;
+      const total = counts.yhzMdqZp0Qh + counts.aeKyGvo5OIp || 1;
       const percentages = [
         (counts.yhzMdqZp0Qh / total) * 100,
         (counts.aeKyGvo5OIp / total) * 100,
         // (counts.RsgxfezgTyr / total) * 100,
       ].map(val => Number(val.toFixed(2)));
-
-      
-
-      // console.log("Total Invitations + Non Invitation:", total);
-      // console.log("Processed  Invitation Percentages:", percentages);
       setInvitationData(percentages);
     } catch (err) {
       console.error("Error fetching minute invitation data:", err);
@@ -320,6 +313,49 @@ function Home() {
       setIsLoading(false);
     }
   }
+
+  // async function fetchInvitationData() {
+  //   try {
+  //     const year = selectedYear.value;
+  //     const response = await axios.get(
+  //       `/analytics.json?dimension=dx:yhzMdqZp0Qh;D67mYmLvMSi&dimension=ou:LEVEL-2;sQ7uY7OfGh9&filter=pe:${year}-01-01;${year}-12-31`
+  //     );
+  //     // console.log("Minute Invitation Chart Analytics Response:", response.data);
+  //     const rows = response.data.rows || [];
+
+  //     const counts = {
+  //       yhzMdqZp0Qh: 0,
+  //       D67mYmLvMSi: 0,
+  //     };
+
+  //     rows.forEach(([dataElement, orgUnit, value]) => {
+  //       if (counts.hasOwnProperty(dataElement)) {
+  //         counts[dataElement] += parseFloat(value) || 0;
+  //       } else {
+  //         console.warn(`Unknown data element: ${dataElement}`);
+  //       }
+  //     });
+      
+
+  //     const total = counts.D67mYmLvMSi || 1;
+  //     const percentages = [
+  //       (counts.yhzMdqZp0Qh / total) * 100,
+  //       (counts.D67mYmLvMSi / total) * 100,
+  //       // (counts.RsgxfezgTyr / total) * 100,
+  //     ].map(val => Number(val.toFixed(2)));
+
+      
+
+  //     // console.log("Total Invitations + Non Invitation:", total);
+  //     // console.log("Processed  Invitation Percentages:", percentages);
+  //     setInvitationData(percentages);
+  //   } catch (err) {
+  //     console.error("Error fetching minute invitation data:", err);
+  //     setInvitationError("Failed to load invitation and minutes chart data.");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // }
 
 
   async function fetchTotals(orgUnit = "rHkDRHKXIdP") {
@@ -685,7 +721,7 @@ function Home() {
               />
             </div>
             <div className="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
-              <MintueNinvitaionChart
+              <InvitaionChart
                 title="Proportion of Invitations and Non Invitation"
                 data={InvitationData.length > 0 ? InvitationData : [0, 0]}
                 labels={InvitationLabels}

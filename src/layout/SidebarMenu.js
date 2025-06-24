@@ -46,12 +46,12 @@ function SideBarMenu(){
 								</Link>
 							</li>
 
-							<li>
+							{/* <li>
 								<Link to="/APR-report">
 									<i className="icon-view_stream"></i>
 									<span className="menu-text">APR Report</span>
 								</Link>
-							</li>
+							</li> */}
 							{/* <li>
 								<Link to="/real">
 									<i className="icon-check_circle"></i>

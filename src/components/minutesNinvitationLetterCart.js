@@ -1,6 +1,6 @@
 import Chart from "react-apexcharts";
 
-function mintueNinvitaionChart({ title, data, labels, type, width, height, isLoading, error }) {
+function mintueNinvitaionChart({ title, data, labels, type, width, height, isLoading, error, colors }) {
   return (
     <div className="card">
       <div className="card-header">
@@ -19,11 +19,7 @@ function mintueNinvitaionChart({ title, data, labels, type, width, height, isLoa
             series={data}
             options={{
               labels: labels,
-              colors: [
-                "rgb(29, 120, 136)", //  (minutes)
-               
-                "rgb(43, 2, 118)", // invitation
-              ],
+              colors: colors,
               dataLabels: {
                 enabled: true,
                 formatter: (val) => `${val.toFixed(2)}%`,

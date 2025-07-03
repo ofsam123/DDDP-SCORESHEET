@@ -290,7 +290,7 @@ function AprReport() {
             {!selectedTable && selectedTocSection && (
               <div className="col-12">
                 <h3>{selectedTocSection.label}</h3>
-                <p>Content for this section is not yet implemented. Select a table or provide additional data.</p>
+                <p>Content for this section is not yet implemented. Select a table or provide additional data. APR</p>
               </div>
             )}
           </div>

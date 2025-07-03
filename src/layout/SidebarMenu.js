@@ -52,18 +52,7 @@ function SideBarMenu(){
 									<span className="menu-text">APR Report</span>
 								</Link>
 							</li>
-							<li>
-								<Link to="/real">
-									<i className="icon-check_circle"></i>
-									<span className="menu-text">Development Dimension</span>
-								</Link>
-							</li>
-							<li>
-								<Link to="/meetings">
-									<i className="icon-broken_image"></i>
-									<span className="menu-text">Meetings</span>
-								</Link>
-							</li>
+							
 							
 						</ul>
 					</div>

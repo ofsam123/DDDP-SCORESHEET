@@ -251,9 +251,9 @@ function AprReport() {
             {selectedTable && selectedTable.value === "all_tables" && (
               <>
                 <Table1_1 />
-                <Table1_2 />
-                <Table2_1 />
-                <Table2_2 />
+                <Table1_2 year={selectedYear?.value} district={selectedDistrict?.value}/>
+                <Table2_1 year={selectedYear?.value} district={selectedDistrict?.value} />
+                <Table2_2 year={selectedYear?.value} district={selectedDistrict?.value}/>
                 <Table2_3 />
                 <Table2_4 />
                 <Table2_5 />

@@ -61,6 +61,73 @@ export function getDataRank (index){
 
 }
 
+export function filterTrackedEntitiesByCreatedAt(entities, start, end) {
+  const startDate = new Date(start);
+  const endDate = new Date(end);
+
+  return entities.filter(entity => {
+    const created = new Date(entity.createdAt);
+    return created >= startDate && created <= endDate;
+  });
+}
+
+export function getPlanExecutionStats(formatedPlans, reports) {
+  const counts = {};
+
+  // Step 1: Count total and completed per `dd`
+  formatedPlans.forEach(plan => {
+    const dd = plan.dd;
+
+    if (!counts[dd]) {
+      counts[dd] = { total: 0, completed: 0 };
+    }
+
+    counts[dd].total += 1;
+
+    const currentReport = reports.find(rep => rep.trackedEntity === plan.trackedEntity);
+
+    if (currentReport) {
+      const isCompleted = currentReport.dataValues.some(rep =>
+        rep.dataElement === "SZcHb5mvjJx" && rep.value === "Completed"
+      );
+
+      if (isCompleted) {
+        counts[dd].completed += 1;
+      }
+    }
+  });
+
+  // Step 2: Convert to array with numbering
+  const resultArray = Object.entries(counts).map(([dimension, values], index) => ({
+    no: index + 1,
+    dimension,
+    planned: values.total,
+    executed: values.completed
+  }));
+
+  // Step 3: Calculate total planned and executed
+  const totalPlanned = resultArray.reduce((sum, item) => sum + item.planned, 0);
+  const totalExecuted = resultArray.reduce((sum, item) => sum + item.executed, 0);
+
+  // Step 4: Add the final summary row
+  resultArray.push({
+    dimension: "Total",
+    planned: totalPlanned,
+    executed: totalExecuted
+  });
+
+  return resultArray;
+}
+
+
+export function countByDd(data) {
+  return data.reduce((acc, item) => {
+    const key = item.dd;
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
+}
+
 export function getQuarterDate (index, year){
 
   switch (index) {

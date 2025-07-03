@@ -1,3 +1,4 @@
+
 import Navbar from "../layout/Navbar";
 import { useEffect, useState } from "react";
 import axios from "../api/axios";
@@ -6,15 +7,15 @@ import Select from "react-select";
 import Table1_1 from "../components/APR_ReportTablesComponents/Table_1.1"; 
 import Table1_2 from "../components/APR_ReportTablesComponents/Table_1.2"; 
 import Table2_1 from "../components/APR_ReportTablesComponents/Table_2.1";
-import Table2_2 from "../components/APR_ReportTablesComponents/Table_2.2";
-import Table2_3 from "../components/APR_ReportTablesComponents/Table_2.3";
-import Table2_4 from "../components/APR_ReportTablesComponents/Table_2.4";
-import Table2_5 from "../components/APR_ReportTablesComponents/Table_2.5";
-import Table2_6 from "../components/APR_ReportTablesComponents/Table_2.6";
-import Table2_7 from "../components/APR_ReportTablesComponents/Table_2.7";
-import Table2_8 from "../components/APR_ReportTablesComponents/Table_2.8";
-import Table2_9 from "../components/APR_ReportTablesComponents/Table_2.9";
-import Table2_10 from "../components/APR_ReportTablesComponents/Table_2.10";
+ import Table2_2 from "../components/APR_ReportTablesComponents/Table_2.2";
+ import Table2_3 from "../components/APR_ReportTablesComponents/Table_2.3";
+ import Table2_4 from "../components/APR_ReportTablesComponents/Table_2.4";
+ import Table2_5 from "../components/APR_ReportTablesComponents/Table_2.5";
+ import Table2_6 from "../components/APR_ReportTablesComponents/Table_2.6";
+ import Table2_7 from "../components/APR_ReportTablesComponents/Table_2.7";
+ import Table2_8 from "../components/APR_ReportTablesComponents/Table_2.8";
+ import Table2_9 from "../components/APR_ReportTablesComponents/Table_2.9";
+ import Table2_10 from "../components/APR_ReportTablesComponents/Table_2.10";
 
 function AprReport() {
   // Component state
@@ -23,8 +24,7 @@ function AprReport() {
   const [selectedDistrict, setSelectedDistrict] = useState(null);
   const [selectedYear, setSelectedYear] = useState({ value: "2024", label: "2024" });
   const [selectedTocSection, setSelectedTocSection] = useState(null);
-  // Set "All Tables" as the default selected table
-  const [selectedTable, setSelectedTable] = useState({ value: "all_tables", label: "All Tables" });
+  const [selectedTable, setSelectedTable] = useState(null);
 
   // Year options for dropdown
   const yearOptions = Array.from({ length: 6 }, (_, i) => {

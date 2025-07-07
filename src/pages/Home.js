@@ -500,7 +500,7 @@ function Home() {
   ];
 
   const InvitationLabels = ["Invitations", "Non Invitation"];
-  const minuteLabels = ["Minutes", "Non Mintes"];
+  const minuteLabels = ["Minutes", "Non Minutes"];
   return (
     <div className="page-wrapper">
       <SideBarWrapper />

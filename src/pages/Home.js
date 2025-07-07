@@ -571,7 +571,7 @@ function Home() {
             </div>
             <div className="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
               <CardBox
-                name="Sub Statutory"
+                name="Sub Structure"
                 counter={isLoading ? "Loading..." : departmentsTotal}
                 icon="icon-server"
               />

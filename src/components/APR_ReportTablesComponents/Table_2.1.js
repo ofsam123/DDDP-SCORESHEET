@@ -141,9 +141,6 @@ const Table2_1 = ({ year, district }) => {
           <p className="mt-2">
             <small>Source: MPCU</small>
           </p>
-          <p className="mt-3">
-            <small>Note: This is dummy data for demonstration purposes.</small>
-          </p>
         </div>
       </div>
     </div>

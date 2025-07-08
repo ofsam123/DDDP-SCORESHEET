@@ -51,7 +51,7 @@ function AAP() {
   // Data objects for charts
   const plans = {
     name: "Plans",
-    color: "rgb(29, 106, 136)",
+    color: "rgb(2, 54, 75)",
   };
 
   const completed = {
@@ -344,7 +344,7 @@ function AAP() {
                           stacked: false,
                           toolbar: { show: false },
                         },
-                        colors: ["#1E90FF"],
+                        colors: ["#01376b"],
                         plotOptions: {
                           bar: {
                             horizontal: false,
@@ -411,7 +411,7 @@ function AAP() {
                           stacked: false,
                           toolbar: { show: false },
                         },
-                        colors: ["#1E90FF"],
+                        colors: ["#01376b"],
                         plotOptions: {
                           bar: {
                             horizontal: false,

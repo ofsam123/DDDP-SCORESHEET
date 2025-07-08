@@ -500,7 +500,7 @@ function Home() {
   ];
 
   const InvitationLabels = ["Invitations", "Non Invitation"];
-  const minuteLabels = ["Minutes", "Non Mintes"];
+  const minuteLabels = ["Minutes", "Non Minutes"];
   return (
     <div className="page-wrapper">
       <SideBarWrapper />
@@ -571,7 +571,7 @@ function Home() {
             </div>
             <div className="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
               <CardBox
-                name="Sub Statutory"
+                name="Sub Structure"
                 counter={isLoading ? "Loading..." : departmentsTotal}
                 icon="icon-server"
               />

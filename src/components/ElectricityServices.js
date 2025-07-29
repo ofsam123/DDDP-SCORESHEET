@@ -14,12 +14,10 @@ function ElectricityServices({
 
     const [scorei, setScoreI] = useState(0);
     const [scoreii, setScoreII] = useState(0);
-    const [scoreiii, setScoreIII] = useState(0);
     const [waterProvidersData, setWaterProvidersData] = useState([]);
     const [waterImprovement, setWaterImpovement] = useState([]);
     const [firstPercentage, setFirstPercentage] = useState(0.00)
-    const [secondPercentage, setSecondPercentage] = useState(0.00);
-
+    
     const serviceProvidersColumn = [
         { title: "No", dataIndex: "no", key: "no" },
         { title: "Service Provider", dataIndex: "provider", key: "provider" },
@@ -78,22 +76,19 @@ function ElectricityServices({
                             }]);
 
                             const percentageII = calculatePercentage(waterCounters[1], waterCounters[0]);
-                            const percentageIII = calculatePercentage(waterCounters[2], waterCounters[1]);
 
                             setFirstPercentage(percentageII.toFixed(2));
-                            setSecondPercentage(percentageIII.toFixed(2));
+                           
 
                             if (temp.length > 0) {
                                 setScoreI(1);
                             }
 
                             if (percentageII >= 80) {
-                                setScoreII(1);
+                                setScoreII(2);
                             }
 
-                            if (percentageIII >= 70) {
-                                setScoreIII(1);
-                            }
+                            
                         })
                         .catch(err => console.log(err))
                 }
@@ -111,8 +106,7 @@ function ElectricityServices({
                 From the DCD, receive information on collaboration between the Assembly and Electricity Company of Ghana (ECG)/ VRA/ NEDCO on Service Delivery in the District;<br /><br />
                 <ol>
                     <li type="i">If there is evidence of collaboration/ facilitation between the Assembly and ECG/ VRA/ NEDCO in the District, score 1;</li>
-                    <li type="i" className="py-1">If at least 80% of applications for Service has been processed score 1;</li>
-                    <li type="i">If at least 70%of the application processed for service has been provided to applicants/ Communities as a result of the collaboration/ facilitation score additional 1;</li>
+                    <li type="i" className="py-1">If at least 80% of applications for Service has been processed score 2;</li>
                 </ol>
 
                 <br />
@@ -125,9 +119,6 @@ function ElectricityServices({
             </Title>
             <Title level={5} style={{ marginTop: "20px" }}>
                 SDI 1.0-2.2ii Actual Score: <strong>{scoreii}</strong>
-            </Title>
-            <Title level={5} style={{ marginTop: "20px" }}>
-                SDI 1.0-2.2iii Actual Score: <strong>{scoreiii}</strong>
             </Title>
 
 
@@ -148,10 +139,9 @@ function ElectricityServices({
             <ol>
                     <li type="i">Evidence of collaboration/ facilitation between the Assembly and
                     CWSA in the district {waterProvidersData.length > 0 ? 'exist' : 'does not exist'} </li>
-                    <li className="py-1" type="i">{firstPercentage} % of applications for Water Services in 2021 have been
+                    <li className="py-1" type="i">{firstPercentage} % of applications for Water Services in {year} have been
                     processed as a result of the collaboration and facilitation.</li>
-                    <li type="i">{secondPercentage} % of the processed applications for Water Services in 2021
-                    have been provided with the service</li>
+                    
             </ol>
             </Content>
 

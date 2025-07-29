@@ -367,12 +367,13 @@ function DistrictAnalytics() {
   function getData() {
     const storedDistricts = localStorage.getItem("districts");
     if (storedDistricts) {
-      console.log("Loading districts from localStorage...");
+      // console.log("Loading districts from localStorage...");
       const parsedDistricts = JSON.parse(storedDistricts);
       setDistricts(parsedDistricts);
       if (parsedDistricts.length > 0 && !selectedDistrict) {
-        setSelectedDistrict(parsedDistricts[0]);
-        pullTrackerInstance(parsedDistricts[0].value);
+        setSelectedDistrict({value: parsedDistricts[0].value.id, label: parsedDistricts[0].label});
+        setSelectedDistrict();
+        pullTrackerInstance(parsedDistricts[0].value.id);
       }
       return;
     }
@@ -380,7 +381,7 @@ function DistrictAnalytics() {
     axios
       .get("https://dddp.gov.gh/api/organisationUnits?level=3&paging=false")
       .then((result) => {
-        console.log(result.data);
+        // console.log(result.data);
         let temp = [];
         result.data.organisationUnits.forEach((district) => {
           const currentDistrict = { value: district.id, label: district.displayName };
@@ -391,7 +392,7 @@ function DistrictAnalytics() {
         setDistricts(temp);
         if (temp.length > 0 && !selectedDistrict) {
           setSelectedDistrict(temp[0]);
-          pullTrackerInstance(temp[0].value);
+          pullTrackerInstance(temp[0].value.id);
         }
       })
       .catch((err) => console.log(err));
@@ -442,7 +443,8 @@ function DistrictAnalytics() {
               <div className="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
                 <Select
                   onChange={(val) => {
-                    setSelectedDistrict(val);
+                    // setSelectedDistrict(val);
+                    setSelectedDistrict({ value: val.value.id, label: val.label });
                     pullTrackerInstance(val.value);
                   }}
                   options={districts}

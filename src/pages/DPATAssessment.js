@@ -11,6 +11,7 @@ import Select from "react-select";
 import SideBarWrapper from "../components/SideBarWrapper";
 import DPATScoreSheet from "../components/DPATScoreSheet";
 import DPATAssessmentSheet from "../components/DPATAssessmentSheet";
+import { Button } from "antd";
 
 const years = [
     { label: 2015, value: 2015 },
@@ -50,6 +51,7 @@ function DPATAssessment() {
     const [subStructuresActivity, setSubStructuresActivity] = useState([]);
     const [selectedYear, setSelectedYear] = useState(null);
     const [selectedDistrict, setSelectedDistrict] = useState(null);
+    const [selectedRegion, setSelectedRegion] = useState(null)
 
     useEffect(() => {
         // Check if districts exist in localStorage
@@ -62,7 +64,7 @@ function DPATAssessment() {
     }, []);
 
     useEffect(() => {
-        console.log("Reload data Sow");
+        // console.log("Reload data Sow");
     }, [selectedYear, selectedDistrict]);
 
     function pullTrackerInstance(startDate, endDate, districtId) {
@@ -328,7 +330,7 @@ function DPATAssessment() {
             .catch(err => console.log(err))
     }
 
-    
+
 
     function getFoodVendors(startDate, endDate, districtId) {
         axios
@@ -469,39 +471,40 @@ function DPATAssessment() {
                                     placeholder='Select Year'
                                 />
                             </div>
-                            {districts && <div className="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12">
+                            {districts && <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                                 <Select
                                     onChange={(val) => {
                                         // setSelectedYear(null)
-                                        setSelectedDistrict(val);
+                                        setSelectedDistrict({ value: val.value.id, label: val.label });
+                                        setSelectedRegion(val.value.region);
 
                                         const startDate = `${selectedYear.value}-01-01`;
                                         const endDate = `${selectedYear.value}-12-31`;
 
-                                        pullTrackerInstance(startDate, endDate, val.value);
+                                        pullTrackerInstance(startDate, endDate, val.value.id);
 
-                                        pullDecisionTrackerInstance(startDate, endDate, val.value);
+                                        pullDecisionTrackerInstance(startDate, endDate, val.value.id);
 
-                                        pullSubStructureEstablishment(startDate, endDate, val.value);
+                                        pullSubStructureEstablishment(startDate, endDate, val.value.id);
 
-                                        getDistrictAssemblyDepartment(startDate, endDate, val.value);
+                                        getDistrictAssemblyDepartment(startDate, endDate, val.value.id);
 
-                                        getMembersByDistrict(startDate, endDate, val.value);
-                                        getSubStructuresActivity(startDate, endDate, val.value);
-                                        getServiceProviderList(startDate, endDate, val.value);
-                                        getInspectorateList(startDate, endDate, val.value);
-                                        getPermitRequest(startDate, endDate, val.value);
-                                        getStreetNaming(startDate, endDate, val.value);
-                                        getAnnualActionPlan(startDate, endDate, val.value);
-                                        getDistrictGeneral(startDate, endDate, val.value);
-                                        getFoodVendors(startDate, endDate, val.value);
-                                        getSchoolRegistered(startDate, endDate, val.value);
-                                        getAudits(startDate, endDate, val.value);
-                                        getTransportors(startDate, endDate, val.value);
-                                        getInspectorateUnits(startDate, endDate, val.value);
-                                        getIGFDetails(startDate, endDate, val.value);
-                                        getDocumentHub(startDate, endDate, val.value);
-                                        getPublications(startDate, endDate, val.value);
+                                        getMembersByDistrict(startDate, endDate, val.value.id);
+                                        getSubStructuresActivity(startDate, endDate, val.value.id);
+                                        getServiceProviderList(startDate, endDate, val.value.id);
+                                        getInspectorateList(startDate, endDate, val.value.id);
+                                        getPermitRequest(startDate, endDate, val.value.id);
+                                        getStreetNaming(startDate, endDate, val.value.id);
+                                        getAnnualActionPlan(startDate, endDate, val.value.id);
+                                        getDistrictGeneral(startDate, endDate, val.value.id);
+                                        getFoodVendors(startDate, endDate, val.value.id);
+                                        getSchoolRegistered(startDate, endDate, val.value.id);
+                                        getAudits(startDate, endDate, val.value.id);
+                                        getTransportors(startDate, endDate, val.value.id);
+                                        getInspectorateUnits(startDate, endDate, val.value.id);
+                                        getIGFDetails(startDate, endDate, val.value.id);
+                                        getDocumentHub(startDate, endDate, val.value.id);
+                                        getPublications(startDate, endDate, val.value.id);
                                     }}
                                     options={districts}
                                     isSearchable
@@ -509,9 +512,27 @@ function DPATAssessment() {
                                 />
                             </div>}
 
+                            
+                            <div className="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-12">
+                            <Button
+                                type="primary"
+                                onClick={() => {
+                                 window.location.reload();  
+                                }}
+                                style={{
+                                    backgroundColor: "#1890ff",
+                                    borderColor: "#1890ff",
+                                
+                                }}
+                            >
+                                <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>
+                                    Refresh
+                                </span>
+                            </Button>
                         </div>
-                        {/* {rhc && <div>{JSON.stringify(rhc)}</div>} */}
 
+                        </div>
+                       
                         {gaMeeting && selectedYear && selectedDistrict && (
                             <DPATAssessmentSheet
                                 key={`${selectedDistrict.value}-${selectedYear.value}`} // forces re-render on change
@@ -522,6 +543,7 @@ function DPATAssessment() {
                                     departments: districtDepartments,
                                     year: selectedYear?.value,
                                     district: selectedDistrict,
+                                    region: selectedRegion,
                                     members: districtMembers,
                                     subActivity: subStructuresActivity,
                                     serviceProviders: serviceProviders,

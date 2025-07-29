@@ -13,7 +13,7 @@ function SubStructureMeeting({ data, columns, establishment, establishmentColumn
 
     return (
         <>
-            <Title level={3}>CI 1.0 General Assembly Meetings - 1.3 Meetings of the Substructures </Title>
+            <Title level={3}>CI 1.0 General Assembly Meetings and Approvals - 1.3 Meetings of the Substructures </Title>
             <Title level={4} style={{ marginTop: "10px" }}>Assessment Guide/ Requirement</Title>
             <Content>
                 From the District Coordinating Director, receive information on the activities orOperations of

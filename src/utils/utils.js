@@ -139,4 +139,21 @@ export function getQuarterDate (index, year){
   } 
 
 }
+
+export function getFileLinkIfExist(reports, attribute, trackedEntity) {
+  const currentReport = reports.find(rep => rep.trackedEntity === trackedEntity);
+
+  if (currentReport) {
+    const eventId = currentReport.event;
+    for (const rep of currentReport.dataValues) {
+      
+      if (rep.dataElement === attribute) {
+        return eventId;
+      }
+    }
+  }
+
+  return "";
+}
+
   

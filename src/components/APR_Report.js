@@ -122,12 +122,13 @@ function AprReport() {
   function getData() {
     const storedDistricts = localStorage.getItem("districts");
     if (storedDistricts) {
-      console.log("Loading districts from localStorage...");
+      // console.log("Loading districts from localStorage...");
       const parsedDistricts = JSON.parse(storedDistricts);
       setDistricts(parsedDistricts);
       if (parsedDistricts.length > 0 && !selectedDistrict) {
+        // console.log("parse data: ", parsedDistricts)
         setSelectedDistrict(parsedDistricts[0]);
-        pullTrackerInstance(parsedDistricts[0].value);
+        pullTrackerInstance(parsedDistricts[0].value.id);
       }
       return;
     }
@@ -144,8 +145,9 @@ function AprReport() {
         localStorage.setItem("districts", JSON.stringify(temp));
         setDistricts(temp);
         if (temp.length > 0 && !selectedDistrict) {
+          // console.log("districts: ", temp);
           setSelectedDistrict(temp[0]);
-          pullTrackerInstance(temp[0].value);
+          pullTrackerInstance(temp[0].value.id);
         }
       })
       .catch((err) => console.log(err));
@@ -218,8 +220,9 @@ function AprReport() {
               <div className="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12">
                 <Select
                   onChange={(val) => {
-                    setSelectedDistrict(val);
-                    pullTrackerInstance(val.value);
+                    // setSelectedDistrict(val);
+                    setSelectedDistrict({ value: val.value.id, label: val.label });
+                    pullTrackerInstance(val.value.id);
                   }}
                   options={districts}
                   value={selectedDistrict}
@@ -254,8 +257,8 @@ function AprReport() {
                 <Table1_2 year={selectedYear?.value} district={selectedDistrict?.value}/>
                 <Table2_1 year={selectedYear?.value} district={selectedDistrict?.value} />
                 <Table2_2 year={selectedYear?.value} district={selectedDistrict?.value}/>
-                <Table2_3 />
-                <Table2_4 />
+                <Table2_3 year={selectedYear?.value} district={selectedDistrict?.value} />
+                <Table2_4 year={selectedYear?.value} district={selectedDistrict?.value}/>
                 <Table2_5 />
                 <Table2_6 />
                 <Table2_7 />

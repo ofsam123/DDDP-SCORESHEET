@@ -56,6 +56,7 @@ import DistrictLEDActivityPlan from "./DistrictLEDActivityPlan";
 import BusinessAndJobPromotion from "./BusinessAndJobPromotion";
 import AgroProcessingFacilitySupport from "./AgroProcessingFacilitySupport";
 import BusinessCommunityEngagement from "./BusinessCommunityEngagement";
+import { getFileLinkIfExist } from "../utils/utils";
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
@@ -69,7 +70,7 @@ const generalAssemblyColumns = [
     { title: "Invitation Letter Reference", dataIndex: "invitationLetterReference", key: "invitationLetterReference" },
     { title: "Signatory of Invitation Letter", dataIndex: "signatoryInvitationLetter", key: "signatoryInvitationLetter" },
     { title: "Signatories to minutes of meeting", dataIndex: "signatoriesMinutes", key: "signatoriesMinutes" },
-
+    { title: "Minutes Link", dataIndex: "docs", key: "docs" }
 ];
 
 const ECAMeetingColumns = [
@@ -79,13 +80,15 @@ const ECAMeetingColumns = [
     { title: "General Assembly Meeting Date", dataIndex: "gaMeetingDate", key: "gaMeetingDate" },
     { title: "EC/A Meeting Date", dataIndex: "ecaMeetingDate", key: "ecaMeetingDate" },
     { title: "Availability of Duly Signed Minutes of Meeting", dataIndex: "signatoriesMinutesStatus", key: "signatoriesMinutesStatus" },
+    { title: "Documents", dataIndex: "docs", key: "docs" }
 ];
 
 const PRCCMeetingColumns = [
     { title: "PRCC Meeting", dataIndex: "meeting", key: "meeting" },
     { title: "Invitation Date", dataIndex: "invitationDate", key: "invitationDate" },
     { title: "Invitation Letter Reference", dataIndex: "invitationLetterReference", key: "invitationLetterReference" },
-    { title: "Availability of Minutes of Meeting", dataIndex: "signatoriesMinutesStatus", key: "signatoriesMinutesStatus" }
+    { title: "Availability of Minutes of Meeting", dataIndex: "signatoriesMinutesStatus", key: "signatoriesMinutesStatus" },
+    { title: "Documents", dataIndex: "docs", key: "docs" }
 ];
 
 const spcMeetingColumns = [
@@ -113,13 +116,14 @@ const internalAuditMeetingColumns = [
     { title: "Meeting Date", dataIndex: "meetingDate", key: "meetingDate" },
     { title: "Invitation Date", dataIndex: "invitationDate", key: "invitationDate" },
     { title: "Invitation Letter Reference", dataIndex: "invitationLetterRef", key: "invitationLetterRef" },
-    { title: "Munites Reference", dataIndex: "muniteRef", key: "muniteRef" }
+    { title: "Munites Reference", dataIndex: "muniteRef", key: "muniteRef" },
+    { title: "Documents", dataIndex: "docs", key: "docs" }
 ];
 
 const managementMeetingColumns = [
     { title: "Quarter", dataIndex: "meeting", key: "meeting" },
     { title: "Meeting Date", dataIndex: "meetingDate", key: "meetingDate" },
-    { title: "departmeNumber of Departments in MMDA", dataIndex: "departments", key: "departments" },
+    { title: "Number of Departments in MMDA", dataIndex: "departments", key: "departments" },
     { title: "HODs in Attendance", dataIndex: "hodAttendance", key: "hodAttendance" },
     { title: "Number in Attendance", dataIndex: "attendance", key: "attendance" }
 ];
@@ -167,7 +171,6 @@ const revenueSharingColumns = [
     { title: "Amount Ceded by MMDA (GHS)", dataIndex: "ceded", key: "ceded" },
     { title: "% Ceded", dataIndex: "percentage", key: "percentage" },
 ];
-
 
 const subCommitteeCompositionColumns = [
     { title: "No", dataIndex: "no", key: "no" },
@@ -243,7 +246,7 @@ const DPATAssessmentSheet = ({ props }) => {
     const [transportorsData, setTransportorsData] = useState([]);
     const [nutritionServcieData, setNutritionServcieData] = useState([]);
     const [inspectorateUnitData, setInspectorateUnitData] = useState(null);
-    
+
     const [subStructureActivityData, setSubStructureActivityData] = useState(null);
     const [ecaCompositionData, setEcaCompositionData] = useState(null);
     const [subCommitteCompositionData, setSubCommitteCompositionData] = useState(null);
@@ -268,6 +271,7 @@ const DPATAssessmentSheet = ({ props }) => {
     const [decisionsData, setDecisionsData] = useState(null);
     const [year, setYear] = useState(props?.year);
     const [district, setDistrict] = useState(props.district);
+    const [region, setRegion] = useState(props?.region);
     const [cededRevenueUtilisationScore, setCededRevenueUtilisationScore] = useState(0);
 
 
@@ -361,9 +365,12 @@ const DPATAssessmentSheet = ({ props }) => {
         const tempDecisions = [];
         const tempDecisionList = [];
         const serviceDeliveries = [];
+        const reports = props.meetings.reports;
 
         formatData(meetings, "GA").forEach((meeting, index) => {
             const minuteFileNumber = getAttributeValue("Minute File Number", meeting);
+            const minuteLink = getFileLinkIfExist(reports, "LAe1t59jYNT", meeting.trackedEntity);
+
             const meetingDataState = {
                 key: index + 1, // Static key (can be dynamic)
                 meeting: getMeetingRank(index, "GA"), // Meeting type
@@ -374,6 +381,19 @@ const DPATAssessmentSheet = ({ props }) => {
                 signatoryInvitationLetter: getAttributeValue("Who Signed the Invitation letter", meeting) === "PM" ?
                     "Presiding Member" : "Convener", // Signatory of Invitation Letter
                 signatoriesMinutes: minuteFileNumber, // Placeholder for Signatories to minutes of meeting 
+                docs: minuteLink ? (
+                    <a
+                        className="px-2 text-primary fw-bold text-decoration-underline"
+                        href={`https://dddp.gov.gh/api/events/files?eventUid=${minuteLink}&dataElementUid=LAe1t59jYNT`} target="_blank"
+                        rel="noopener noreferrer"
+                        title="Click here to see the uploaded minutes"
+                    >
+                        View Minutes
+                    </a>
+                ) : (
+                    "Not Uploaded"
+                )
+
             };
 
             meetingDataState.interval = getDaysBetween(meetingDataState.invitationDate, meetingDataState.meetingDate);
@@ -383,6 +403,7 @@ const DPATAssessmentSheet = ({ props }) => {
 
             const serviceDeliveryDecion = getDecisionsByMeeting(meetingDecisions, minuteFileNumber);
             // console.log("Gando: ",serviceDeliveryDecion);
+
             serviceDeliveryDecion?.forEach(s => {
                 serviceDeliveries.push({
                     decision: getAttributeValue("Decision", s),
@@ -414,8 +435,18 @@ const DPATAssessmentSheet = ({ props }) => {
         });
 
 
+        const finalTemp = temp.sort((a, b) => new Date(a.meetingDate) - new Date(b.meetingDate));
 
-        setGaMeetingData({ meetings: temp, fulfillment: checkGaMeetingFulfillment(temp), numberOfDecision: decisionNo });
+        finalTemp.forEach((m, index) => {
+            m.meeting = getMeetingRank(index, "GA")
+        });
+
+        setGaMeetingData({
+            meetings: finalTemp,
+            fulfillment: checkGaMeetingFulfillment(temp),
+            numberOfDecision: decisionNo
+        });
+
         setDecisionServiceData(tempDecisions);
         setDecisionDeliveryData(tempDecisionList);
         setDecisionDeliveryListData(serviceDeliveries);
@@ -860,7 +891,7 @@ const DPATAssessmentSheet = ({ props }) => {
 
             const meetingDataState = {
                 key: index + 1, // Static key (can be dynamic)
-                meeting: getMeetingRank(index, "Management Meetings"), // Meeting type
+                meeting: "", // Meeting type
                 meetingDate: getAttributeValue("DPAT | Meeting Date", meeting), // Meeting Date
                 departments: 13, // Department Members
                 hodAttendance: hodAttendence,
@@ -872,9 +903,16 @@ const DPATAssessmentSheet = ({ props }) => {
             }
 
             temp.push(meetingDataState);
-        })
+        });
 
-        setManagementMeetingsData({ data: temp, fulfillment: fulfillment });
+        // sow
+        const finalTemp = temp.sort((a, b) => new Date(a.meetingDate) - new Date(b.meetingDate));
+
+        finalTemp.forEach((m, index) => {
+            m.meeting =  getMeetingRank(index, "Management Meetings");
+        });
+
+        setManagementMeetingsData({ data: finalTemp, fulfillment: fulfillment });
     };
 
     const setECAMeetingData = () => {
@@ -1051,9 +1089,7 @@ const DPATAssessmentSheet = ({ props }) => {
         });
 
 
-        // if(temp.length < 12){
-        //     fulfillment = "Not Fulfilled";
-        // }
+        // console.log("Djiba tenda meeting 1: ", temp);
 
 
         setEtcMeetingData({ data: temp, fulfillment: fulfillment });
@@ -1066,7 +1102,7 @@ const DPATAssessmentSheet = ({ props }) => {
 
             const meetingDataState = {
                 key: index + 1, // Static key (can be dynamic)
-                meeting: getMeetingRank(index, "Entity Tender Committee (ETC)"), // Meeting type
+                meeting: "", // Meeting type
                 invitationDate: getAttributeValue("Invitation letter Date", meeting), // Invitation Date
                 meetingDate: getAttributeValue("DPAT | Meeting Date", meeting),
                 invitationLetterReference: getAttributeValue("Invitation letter Ref. Number", meeting), // Invitation Letter Ref
@@ -1087,9 +1123,14 @@ const DPATAssessmentSheet = ({ props }) => {
             fulfillment = "Not Fulfilled";
         }
 
+        const finalTemp = temp.sort((a, b) => new Date(a.meetingDate) - new Date(b.meetingDate));
+
+        finalTemp.forEach((m, index) => {
+            m.meeting = getMeetingRank(index, "Entity Tender Committee (ETC)")
+        });
 
 
-        setSpcMeetingData({ data: temp, fulfillment: fulfillment });
+        setSpcMeetingData({ data: finalTemp, fulfillment: fulfillment });
     };
 
     const setMeetingBudgetData = () => {
@@ -1108,7 +1149,8 @@ const DPATAssessmentSheet = ({ props }) => {
                     meeting: type,
                     date: getAttributeValue("DPAT | Meeting Date", matchingMeeting),
                     documents: getAttributeValue("DPAT | Meeting Agenda", matchingMeeting),
-                    decisions: getAttributeValue("AAP Approval Date", matchingMeeting)
+                    decisions: getAttributeValue("AAP Approval Date", matchingMeeting),
+                    trackedEntity: matchingMeeting.trackedEntity
                 };
 
                 const meetingDate = new Date(meetingDataState.decisions);
@@ -1122,7 +1164,33 @@ const DPATAssessmentSheet = ({ props }) => {
             }
         });
 
-        setMeetingDataGroup({ data: temp, fulfillment: fulfillment });
+        let approvalMinutesLink = "";
+
+        temp.forEach(m => {
+            if (m.meeting === "GA" && m.decisions) {
+                const link = getFileLinkIfExist(props.meetings.reports, "LAe1t59jYNT", m.trackedEntity);
+
+                if(link){
+                    approvalMinutesLink = link;
+                }
+
+            }
+        });
+
+        const aapApprovalLink =  approvalMinutesLink  ? (
+            <a
+                className="px-2 text-primary fw-bold text-decoration-underline"
+                href={`https://dddp.gov.gh/api/events/files?eventUid=${approvalMinutesLink}&dataElementUid=LAe1t59jYNT`} target="_blank"
+                rel="noopener noreferrer"
+                title="Click here to see the Approval minutes"
+            >
+                View Minutes of AAP approval
+            </a>
+        ) : (
+            "There is no minutes uploaded for the Approval of AAP"
+        )
+
+        setMeetingDataGroup({ data: temp, fulfillment: fulfillment, aapApprovalLink });
     };
 
 
@@ -1402,24 +1470,22 @@ const DPATAssessmentSheet = ({ props }) => {
                             <Text strong>Name of MMDA: </Text> <Text className="ms-3">{district?.label}</Text>
                         </Col>
                         <Col span={8} className="gutter-row">
-                            <Text strong>Zone: </Text> <Text>Six (6)</Text>
+                            {/* {JSON.stringify(district)} */}
+                            <Text strong>Region: </Text> <Text>{region}</Text>
                         </Col>
                         <Col span={8} className="gutter-row">
-                            <Text strong>Date of Assessment: </Text> <Text>5th & 8th August, {year}</Text>
+                            <Text strong>Date of Assessment: </Text> <Text>{moment().format('MMMM Do YYYY, h:mm:ss A')}</Text>
                         </Col>
                     </Row>
                     <h3 style={{ textAlign: "center", padding: "10px" }}>
                         Annex 1: SECTION A - COMPLIANCE INDICATORS
                     </h3>
-                    {/* General Assembly Meetings and Decision Start */}
-                    {/* Sow
-                {JSON.stringify(props?.decisions?.decisions)} */}
+
+                    {/* {JSON.stringify(gaMeetingData)} */}
                     {gaMeetingData && <GAMeeting
                         data={gaMeetingData}
                         year={year}
                         columns={generalAssemblyColumns}
-                        decisions={decisionsData}
-                        decisionColumns={generalAssemblyDecisionColumns}
                     />}
                     {/* General Assembly Meetings and Decision End */}
                     <hr />
@@ -1572,14 +1638,14 @@ const DPATAssessmentSheet = ({ props }) => {
                     <hr />
 
                     {/* Water Services */}
-                    <WaterServices 
+                    <WaterServices
                         year={year}
                         district={district?.value}
-                        />
+                    />
                     <hr />
 
                     {/* Electricity Services */}
-                    <ElectricityServices 
+                    <ElectricityServices
                         year={year}
                         district={district?.value} />
                     <hr />
@@ -1710,15 +1776,15 @@ const DPATAssessmentSheet = ({ props }) => {
                     />
                     <hr />
 
-                     {/*  Promotion of new businesses and of new jobs */}
-                     <BusinessAndJobPromotion
+                    {/*  Promotion of new businesses and of new jobs */}
+                    <BusinessAndJobPromotion
                         year={year}
                         district={district?.value}
                     />
                     <hr />
 
-                     {/*  Facilitate and support small-scale agro-processing and manufacturing industries */}
-                     <AgroProcessingFacilitySupport
+                    {/*  Facilitate and support small-scale agro-processing and manufacturing industries */}
+                    <AgroProcessingFacilitySupport
                         year={year}
                         district={district?.value}
                     />
@@ -1744,9 +1810,9 @@ const DPATAssessmentSheet = ({ props }) => {
                     <hr />
 
                     <MonitoringProjectAndActivity
-                     year={year}
-                     district={district?.value}
-                     />
+                        year={year}
+                        district={district?.value}
+                    />
                     <hr />
 
                     <ContractManagementAndAdmins
@@ -1846,7 +1912,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         borderColor: "#1890ff",
                         height: "35px",
                         padding: "0 15px",
-                      }}
+                    }}
                 >
                     <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>Download Report</span>
                 </Button>

@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -10,45 +10,110 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import axios from "../../api/axios";
+import { filterTrackedEntitiesByCreatedAt, formatDataGeneral } from "../../utils/utils";
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const Table2_4 = () => {
-  // Disbursement update data as provided
-  const disbursementData = [
-    {
-      expenditureItem: "COMPENSATION",
-      baseline2021: "5,131,254.91",
-      target2022: "5,485,952.00",
-      actual2022: "5,435,057.13",
-      target2023: "5,984,823.00",
-    },
-    {
-      expenditureItem: "GOODS AND SERVICES",
-      baseline2021: "9,491,368.27",
-      target2022: "13,475,360.00",
-      actual2022: "13,962,273.65",
-      target2023: "15,087,967.00",
-    },
-    {
-      expenditureItem: "INVESTMENTS/ ASSETS",
-      baseline2021: "2,290,934.66",
-      target2022: "11,565,865.00",
-      actual2022: "5,645,814.35",
-      target2023: "13,359,785.00",
-    },
-    {
-      expenditureItem: "TOTAL",
-      baseline2021: "16,913,557.84",
-      target2022: "30,527,177.00",
-      actual2022: "25,320,798.32",
-      target2023: "34,432,575.00",
-    },
-  ];
-
-  // State for toggling chart visibility
+const Table2_4 = ({ year, district }) => {
+  const [tableData, setTableData] = useState([]);
   const [showChart, setShowChart] = useState(true);
+  const [total, setTotal] = useState(null);
+ 
+   useEffect(() => {
+     getData();
+   }, [year, district]);
+ 
+   const mapData = (data, report) => {
+ 
+     const names = [
+       "COMPENSATION", "GOODS AND SERVICES", "INVESTMENTS/ASSETS"
+     ];
+ 
+     const attributes = data[0]?.attributes;
+     const reports = report.find(rep => rep.trackedEntity === data[0]?.trackedEntity);
+ 
+     const result = names.map(name => {
+       const baselineItem = attributes.find(item =>
+         item?.displayName?.toLowerCase() === `${name.toLowerCase()} baseline`
+       );
+       const targetItem = attributes.find(item =>
+         item?.displayName?.toLowerCase() === `${name.toLowerCase()} target`
+       );
+ 
+       return {
+         name: name,
+         baseline: baselineItem ? Number(baselineItem.value).toLocaleString() : 0,
+         target: targetItem ? Number(targetItem.value).toLocaleString() : 0,
+         actual: 0
+       };
+     });
+ 
+     result.map(el => {
+ 
+       for (let r of reports.dataValues) {
+         if (el.name === 'COMPENSATION' && r.dataElement === "iF3bVYzJUE6") {
+           el.actual = Number(r.value).toLocaleString();
+           break;
+         } else if (el.name === 'GOODS AND SERVICES' && r.dataElement === "ZKwpRsX6DIE") {
+           el.actual = Number(r.value).toLocaleString();
+           break;
+         } else if (el.name === 'INVESTMENTS/ASSETS' && r.dataElement === "LKTrRHSCoEk") {
+           el.actual = Number(r.value).toLocaleString();
+           break;
+         }
+       }
+ 
+     });
+ 
+     return result;
+   }
+ 
+   function getData() {
+     axios
+       .get(`/tracker/trackedEntities?orgUnit=${district}&program=WHILilRZRhT&startDate=${year}-01-01&endDate=${year}-12-31`)
+       .then(result => {
+ 
+         if (result.data.instances.length > 0) {
+           const startDate = `${year}-01-01`;
+           const endDate = `${year}-12-31`;
+ 
+           axios
+             .get(`/tracker/events?program=WHILilRZRhT&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
+             .then(resp => {
+               const data = filterTrackedEntitiesByCreatedAt(result.data.instances, startDate, endDate);
+ 
+               const disbursements = formatDataGeneral(data, "Years", "2025") || [];
+ 
+               const reports = filterTrackedEntitiesByCreatedAt(resp.data.instances, startDate, endDate);
+
+              //  console.log("disbursement: ", disbursements)
+ 
+               const disbursementMapped = mapData(disbursements, reports);
+
+              
+               const cleanNumber = (val) => parseFloat((val || "0").toString().replace(/,/g, ''));
+
+               const totalRow = {
+                 name: 'Total',
+                 baseline: disbursementMapped.reduce((sum, el) => sum + cleanNumber(el.baseline), 0),
+                 target: disbursementMapped.reduce((sum, el) => sum + cleanNumber(el.target), 0),
+                 actual: disbursementMapped.reduce((sum, el) => sum + cleanNumber(el.actual), 0),
+               };
+
+               setTotal(totalRow);
+               setTableData(disbursementMapped);
+ 
+ 
+             })
+             .catch(err => console.log(err))
+         }
+ 
+       })
+       .catch(err => console.log(err))
+   }
+ 
 
   // Data for Figure 2.3: Revenue, Expenditure, and Surplus (2022)
   const chartData = {
@@ -139,30 +204,34 @@ const Table2_4 = () => {
     <div className="col-12">
       <h3>Table 2.4 – Update of Disbursement</h3>
       <div className="card">
-        <div className="card-header">Table 2.4 – Update of Disbursement</div>
+        <div className="card-header"></div>
         <div className="card-body">
           <div className="table-responsive">
             <table className="table table-bordered">
               <thead>
                 <tr>
                   <th>Expenditure Item</th>
-                  <th>Baseline 2021 (GHȼ)</th>
-                  <th>Target 2022 (GHȼ)</th>
-                  <th>Actual 2022 (GHȼ)</th>
-                  <th>Target 2023 (GHȼ)</th>
+                  <th>Baseline (GHȼ)</th>
+                  <th>Target (GHȼ)</th>
+                  <th>Actual (GHȼ)</th>
                 </tr>
               </thead>
-              <tbody>
-                {disbursementData.map((row, index) => (
+             {tableData && <tbody>
+                {tableData.map((row, index) => (
                   <tr key={index}>
-                    <td>{row.expenditureItem}</td>
-                    <td>{row.baseline2021}</td>
-                    <td>{row.target2022}</td>
-                    <td>{row.actual2022}</td>
-                    <td>{row.target2023}</td>
+                    <td>{row.name}</td>
+                    <td>{row.baseline}</td>
+                    <td>{row.target}</td>
+                    <td>{row.actual}</td>
                   </tr>
                 ))}
-              </tbody>
+                {total && <tr style={{ fontWeight: 'bold', backgroundColor: '#f0f0f0' }}>
+                  <td>{total.name}</td>
+                  <td>{total.baseline.toLocaleString()}</td>
+                  <td>{total.target.toLocaleString()}</td>
+                  <td>{total.actual.toLocaleString()}</td>
+                </tr>}
+              </tbody>}
             </table>
           </div>
           <p className="mt-2">

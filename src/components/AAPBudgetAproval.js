@@ -12,7 +12,7 @@ function AAPBudgetAproval({ data, year, columns }) {
 
     return (
         <>
-            <Title level={3}>CI 1.0 General Assembly Meetings - 1.2 Approval of Annual Action Plan and Budget </Title>
+            <Title level={3}>CI 1.0 General Assembly Meetings and Approvals - 1.2 Approval of Annual Action Plan and Budget </Title>
             <Title level={4} style={{ marginTop: "10px" }}>Assessment Guide/ Requirement</Title>
             <Content>
                 From the DCD obtain Minutes of Meeting of the General Assembly approving the <strong>{parseInt(year) + 1}</strong> Composite Budget and the Annual Action Plan: <br /><br />
@@ -32,6 +32,11 @@ function AAPBudgetAproval({ data, year, columns }) {
                 {data?.fulfillment}</strong>
             </Title>
 
+            {/* {JSON.stringify(data)} */}
+
+            <di>
+                <strong>{data?.aapApprovalLink}</strong>
+            </di>
             <Title level={4} style={{ marginTop: "20px" }}>Evidence of Approval of Annual Action Plan and Budget:</Title>
             {data && <Table columns={columns} dataSource={data?.data} pagination={false} bordered />}
 

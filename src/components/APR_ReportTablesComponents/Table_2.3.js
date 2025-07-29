@@ -16,89 +16,127 @@ import {
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
+
 const Table2_3 = ({ year, district }) => {
   // Revenue update data as provided
- const [tableData, setTableData] = useState([]);
-   
-     useEffect(() => {
-       getProjects();
-     }, [year, district]);
-   
-     function getProjects() {
-       axios
-         .get(`/tracker/trackedEntities?orgUnit=${district}&program=SY8TpfPgzr9&startDate=${year}-01-01&endDate=${year}-12-31`)
-         .then(result => {
-   
-           if (result.data.instances.length > 0) {
-             const startDate = `${year}-01-01`;
-             const endDate = `${year}-12-31`;
-   
-             axios
-               .get(`/tracker/events?program=SY8TpfPgzr9&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
-               .then(resp => {
-                 const data = filterTrackedEntitiesByCreatedAt(result.data.instances, startDate, endDate);
-                 const projects = formatDataGeneral(data, "Project & Programme Type", "Programme") || [];
-   
-                 const reports = filterTrackedEntitiesByCreatedAt(resp.data.instances, startDate, endDate);
-   
-                 console.log("djiba reports: ", {data, reports});
-                 const temps = [];
-   
-                 projects.forEach((project, idx) => {
-   
-                   const currentReport = reports.find(rep => rep.trackedEntity === project.trackedEntity);
-                   let expendature = 0.00;
-                   let percentage = 0;
-   
-                   if (currentReport) {
-   
-                     currentReport.dataValues.forEach(rep => {
-                       if (rep.dataElement === "jr8gk707kAw") {
-                         // console.log("expendature: ",rep.value)
-                         expendature = rep.value;
-                       }
-   
-                       if(rep.dataElement === "f1T48vHfJc1"){
-                         console.log("percentage: ",rep.value)
-                           percentage = rep.value;
-                       }
-                     });
-   
-                   }
-   
-                   const sumTotal = getAttributeValue("Contract Sum", project);
-   
-                   const dataSetTemp = {
-                     no: idx + 1,
-                     description: getAttributeValue("Description", project),
-                     dimension: getAttributeValue("Development Dimension", project),
-                     contractSum: sumTotal ,
-                     fundingSource: getAttributeValue("Primary Funding Source", project),
-                     dateStarted: getAttributeValue("Start Date", project),
-                     expectedCompletion: getAttributeValue("Expected Completion Date", project),
-                     expenditure: expendature,
-                     outstanding: parseFloat(sumTotal) - parseFloat(expendature),
-                     implementationStatus: percentage,
-                     beneficiariesMale: getAttributeValue("Total Male Beneficiary", project),
-                     beneficiariesFemale: getAttributeValue("Total Female Beneficiary", project),
-                     remarks: getAttributeValue("Remarks", project)
-                   };
-  
-                   temps.push(dataSetTemp);
-                 });
-   
-   
-                 setTableData(temps);
-   
-   
-               })
-               .catch(err => console.log(err))
-           }
-   
-   
-         })
-         .catch(err => console.log(err))
-     }
+  const [tableData, setTableData] = useState([]);
+  const [total, setTotal] = useState(null);
+
+  useEffect(() => {
+    getProjects();
+  }, [year, district]);
+
+  const mapRevenueData = (data, report) => {
+
+    const revenueNames = [
+      "IGF", "DACF", "MPs CF", "PWDs CF", "DACF-RFG",
+      "Decentralized Dept", "GOG Salaries", "MDF", "Stool Lands", "CIDA"
+    ];
+
+    const attributes = data[0]?.attributes;
+    const reports = report.find(rep => rep.trackedEntity === data[0]?.trackedEntity);
+
+    const result = revenueNames.map(revName => {
+      const baselineItem = attributes.find(item =>
+        item?.displayName?.toLowerCase() === `${revName.toLowerCase()} baseline`
+      );
+      const targetItem = attributes.find(item =>
+        item?.displayName?.toLowerCase() === `${revName.toLowerCase()} target`
+      );
+
+      return {
+        name: revName,
+        baseline: baselineItem ? Number(baselineItem.value).toLocaleString() : 0,
+        target: targetItem ? Number(targetItem.value).toLocaleString() : 0,
+        actual: 0
+      };
+    });
+
+    result.map(el => {
+
+      for (let r of reports.dataValues) {
+        if (el.name === 'IGF' && r.dataElement === "Wp7KcuZgrJa") {
+          el.actual = Number(r.value).toLocaleString();
+          break;
+        } else if (el.name === 'DACF' && r.dataElement === "rtZ2oyIrEZE") {
+          el.actual = Number(r.value).toLocaleString();
+          break;
+        } else if (el.name === 'MPs CF' && r.dataElement === "sPtuvxHoqBI") {
+          el.actual = Number(r.value).toLocaleString();
+          break;
+        } else if (el.name === 'PWDs CF' && r.dataElement === "iPJma6G8Pen") {
+          el.actual = Number(r.value).toLocaleString();
+          break;
+        } else if (el.name === 'DACF-RFG' && r.dataElement === "PnPth1bxPDM") {
+          el.actual = Number(r.value).toLocaleString();
+          break;
+        } else if (el.name === 'Decentralized Dept' && r.dataElement === "PO8QzvjK8VM") {
+          el.actual = Number(r.value).toLocaleString();
+          break;
+        } else if (el.name === 'GOG Salaries' && r.dataElement === "nHtXhtCsha8") {
+          el.actual = Number(r.value).toLocaleString();
+          break;
+        } else if (el.name === 'MDF' && r.dataElement === "IujXTMPpFux") {
+          el.actual = Number(r.value).toLocaleString();
+          break;
+        } else if (el.name === 'Stool Lands' && r.dataElement === "J8qgTRwB7wj") {
+          el.actual = Number(r.value).toLocaleString();
+          break;
+        } else if (el.name === 'CIDA' && r.dataElement === "WlVIx0WUbgt") {
+          el.actual = Number(r.value).toLocaleString();
+          break;
+        }
+      }
+
+    });
+
+    return result;
+  }
+
+  function getProjects() {
+    axios
+      .get(`/tracker/trackedEntities?orgUnit=${district}&program=SY8TpfPgzr9&startDate=${year}-01-01&endDate=${year}-12-31`)
+      .then(result => {
+
+        if (result.data.instances.length > 0) {
+          const startDate = `${year}-01-01`;
+          const endDate = `${year}-12-31`;
+
+          axios
+            .get(`/tracker/events?program=SY8TpfPgzr9&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
+            .then(resp => {
+              const data = filterTrackedEntitiesByCreatedAt(result.data.instances, startDate, endDate);
+
+
+              const revenues = formatDataGeneral(data, "Years", "2025") || [];
+
+              const reports = filterTrackedEntitiesByCreatedAt(resp.data.instances, startDate, endDate);
+
+              const revenuMapped = mapRevenueData(revenues, reports);
+
+              const cleanNumber = (val) => parseFloat((val || "0").toString().replace(/,/g, ''));
+
+              const totalRow = {
+                name: 'Total',
+                baseline: revenuMapped.reduce((sum, el) => sum + cleanNumber(el.baseline), 0),
+                target: revenuMapped.reduce((sum, el) => sum + cleanNumber(el.target), 0),
+                actual: revenuMapped.reduce((sum, el) => sum + cleanNumber(el.actual), 0),
+              };
+
+
+
+              setTotal(totalRow);
+              setTableData(revenuMapped);
+
+
+            })
+            .catch(err => console.log(err))
+        }
+
+
+      })
+      .catch(err => console.log(err))
+  }
 
   // State for toggling chart visibility
   // const [showChart, setShowChart] = useState(true);
@@ -210,23 +248,29 @@ const Table2_3 = ({ year, district }) => {
               <thead>
                 <tr>
                   <th>Revenue Item</th>
-                  <th>Baseline 2021 (GHȼ)</th>
-                  <th>Target 2022 (GHȼ)</th>
-                  <th>Actual 2022 (GHȼ)</th>
-                  <th>Target 2023 (GHȼ)</th>
+                  <th>Baseline (GHȼ)</th>
+                  <th>Target (GHȼ)</th>
+                  <th>Actual (GHȼ)</th>
+
                 </tr>
               </thead>
-              <tbody>
+              {/* {JSON.stringify(tableData)} */}
+              {tableData && <tbody>
                 {tableData.map((row, index) => (
                   <tr key={index}>
-                    <td>{row.revenueItem}</td>
-                    <td>{row.baseline2021}</td>
-                    <td>{row.target2022}</td>
-                    <td>{row.actual2022}</td>
-                    <td>{row.target2023}</td>
+                    <td>{row.name}</td>
+                    <td>{row.baseline}</td>
+                    <td>{row.target}</td>
+                    <td>{row.actual}</td>
                   </tr>
                 ))}
-              </tbody>
+                {total && <tr style={{ fontWeight: 'bold', backgroundColor: '#f0f0f0' }}>
+                  <td>{total.name}</td>
+                  <td>{total.baseline.toLocaleString()}</td>
+                  <td>{total.target.toLocaleString()}</td>
+                  <td>{total.actual.toLocaleString()}</td>
+                </tr>}
+              </tbody>}
             </table>
           </div>
           {/* <p className="mt-2">

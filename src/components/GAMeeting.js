@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Layout, Typography, Table, Button, Row, Space, Col } from "antd";
+import { Layout, Typography, Table } from "antd";
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
 
-function GAMeeting({ data, year, columns, decisions, decisionColumns }) {
+function GAMeeting({ data, year, columns }) {
 
-    
+
     return (
         <>
-            <Title level={3}>CI 1.0 General Assembly Meetings - 1.1 Meetings of the General Assembly </Title>
+            <Title level={3}>CI 1.0 General Assembly Meetings and Approvals - 1.1 Meetings of the General Assembly </Title>
             <Title level={4} style={{ marginTop: "10px" }}>Assessment Guide/ Requirement</Title>
+
+
             <Content>
                 From the District Coordinating Director (DCD) receive information on the General Assembly Meetings held in <strong>{year}</strong>:<br /><br />
                 <ol>
@@ -32,10 +34,19 @@ function GAMeeting({ data, year, columns, decisions, decisionColumns }) {
             </Title>
 
             <Title level={5} style={{ marginTop: "10px" }}>Number of Decisions: <strong>{data?.numberOfDecision}</strong> </Title>
-            <Title level={4} style={{ marginTop: "20px" }}>Illustration of Meetings held in the table below:</Title>
+            <Title level={4} style={{ marginTop: "20px" }}>Illustration of Meetings held in the table below:
+                {/* <a
+                    className="bnt-primary px-2"
+                    href="https://dddp.gov.gh/api/events/files?eventUid=N8bxY0x5M7A&dataElementUid=Vf1Fdd6ORkI"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >Download File</a> */}
+            </Title>
+
+            {/* {JSON.stringify(data?.meetings)} */}
             {data?.meetings && <Table columns={columns} dataSource={data?.meetings} pagination={false} bordered />}
 
-           
+
         </>
     );
 }

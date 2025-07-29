@@ -82,7 +82,7 @@ function Home() {
   });
 
   useEffect(() => {
-    getData("/organisationUnits?level=3&paging=false");
+    getData("/organisationUnits?level=3&paging=false&fields=id,displayName,parent[id,displayName]");
     fetchTotals();
     fetchMeetingChartData();
     fetchMinuteInvitationData();
@@ -473,7 +473,7 @@ function Home() {
         // console.log(result.data);
         let temp = [];
         result.data.organisationUnits.forEach((district) => {
-          const currentDistrict = { value: district.id, label: district.displayName };
+          const currentDistrict = { value: { id: district.id, region: district.parent.displayName}, label: district.displayName };
           temp.push(currentDistrict);
         });
 
@@ -571,7 +571,7 @@ function Home() {
             </div>
             <div className="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
               <CardBox
-                name="Sub Structure"
+                name="Sub Structure Commitees"
                 counter={isLoading ? "Loading..." : departmentsTotal}
                 icon="icon-server"
               />

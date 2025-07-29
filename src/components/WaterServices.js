@@ -12,11 +12,9 @@ function WaterServices({
     const { Title, Text } = Typography;
     const [scorei, setScoreI] = useState(0);
     const [scoreii, setScoreII] = useState(0);
-    const [scoreiii, setScoreIII] = useState(0);
     const [waterProvidersData, setWaterProvidersData] = useState([]);
     const [waterImprovement, setWaterImpovement] = useState([]);
     const [firstPercentage, setFirstPercentage] = useState(0.00)
-    const [secondPercentage, setSecondPercentage] = useState(0.00);
 
     const serviceProvidersColumn = [
         { title: "No", dataIndex: "no", key: "no" },
@@ -76,22 +74,18 @@ function WaterServices({
                             }]);
 
                             const percentageII = calculatePercentage(waterCounters[1], waterCounters[0]);
-                            const percentageIII = calculatePercentage(waterCounters[2], waterCounters[1]);
 
                             setFirstPercentage(percentageII.toFixed(2));
-                            setSecondPercentage(percentageIII.toFixed(2));
 
                             if (temp.length > 0) {
                                 setScoreI(1);
                             }
 
                             if (percentageII >= 80) {
-                                setScoreII(1);
+                                setScoreII(2);
                             }
 
-                            if (percentageIII >= 70) {
-                                setScoreIII(1);
-                            }
+                           
                         })
                         .catch(err => console.log(err))
                 }
@@ -110,8 +104,7 @@ function WaterServices({
                 From the DCD, receive information on Collaboration between the Assembly and Ghana Water Company Limited (GWCL) on Service Delivery in the District:<br /><br />
                 <ol>
                     <li type="i">If there is evidence of collaboration/ facilitation between the Assembly and GWCL/CWSA/Small Water System/ and the provision of water in the District, score 1;</li>
-                    <li className="py-1" type="i">If at least 80% of applications for service has been processed score 1;</li>
-                    <li type="i">If at least 70% of the applications processed for service has been provided to applicant/ communities as a result of the collaboration/ facilitation, score additional 1;</li>
+                    <li className="py-1" type="i">If at least 80% of applications for service has been processed score 2;</li>
                 </ol>
                 <br /><br /><i>Local Governance Act, 2016 ( Act 936) Section 12 (Sub Sections 4 b, d & e, Sub-Section 5, Sub-Section 7); Goal 6 of the Sustainable Development Goals, the 2030 Agenda)</i>
             </Content>
@@ -125,9 +118,7 @@ function WaterServices({
             <Title level={5} style={{ marginTop: "20px" }}>
                 SDI 1.0-2.1ii Actual Score: <strong>{scoreii}</strong>
             </Title>
-            <Title level={5} style={{ marginTop: "20px" }}>
-                SDI 1.0-2.1iii Actual Score: <strong>{scoreiii}</strong>
-            </Title>
+            
 
             <Title level={5} style={{ marginTop: "30px" }}>I. Evidence of existing collaboration/facilitation water service providers</Title>
             {waterProvidersData && <Table
@@ -148,8 +139,7 @@ function WaterServices({
                     CWSA in the district {waterProvidersData.length > 0 ? 'exist' : 'does not exist'} </li>
                     <li className="py-1" type="i">{firstPercentage} % of applications for Water Services in 2021 have been
                     processed as a result of the collaboration and facilitation.</li>
-                    <li type="i">{secondPercentage} % of the processed applications for Water Services in 2021
-                    have been provided with the service</li>
+                   
             </ol>
             </Content>
 

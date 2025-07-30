@@ -86,9 +86,18 @@ const Table2_7 = ({ year, district }) => {
     <div className="col-12">
       <h3>Table 2.7 – Details of beneficiary schools and corresponding enrolment figures</h3>
       <div className="card">
+
         <div className="card-header"></div>
+     
         <div className="card-body">
-          <div className="table-responsive">
+            <h5> Ghana School Feeding Programme</h5>
+The School Feeding programme is also operating effectively in the Municipality. Thirtyfour (34) schools in the municipality are benefiting from the programme. The total 
+enrolment for the programme currently stands at 12,401 made up of 6,318 boys and 
+6,005 girls. The programme has improved retention rate hence contributing to the SDG4. 
+It however has the challenge of delay payment of caterers which in effect has resulted in 
+non-cooking of meals. Table 2.7 shows details of beneficiary schools and corresponding 
+enrolment figures.
+          <div className="table-responsive"style={{marginTop: '20px'}}>
             <table className="table table-bordered">
               <thead style={{ backgroundColor: '#d4edda', fontWeight: 'bold', border: '1px solid #000' }}>
                 <tr>

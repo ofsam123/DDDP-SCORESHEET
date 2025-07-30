@@ -10,7 +10,7 @@
     "apexcharts": "^3.48.0",
     "axios": "^1.6.8",
     "bootstrap": "^5.3.6",
-    "chart.js": "^4.4.9",
+    "chart.js": "^4.5.0",
     "export-from-json": "^1.7.4",
     "moment": "^2.30.1",
     "nl2br": "^0.0.3",

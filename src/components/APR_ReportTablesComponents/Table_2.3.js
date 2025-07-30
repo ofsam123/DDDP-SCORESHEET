@@ -1,24 +1,13 @@
-
 import React, { useEffect, useState } from "react";
 import axios from "../../api/axios";
 import { filterTrackedEntitiesByCreatedAt, formatDataGeneral, getAttributeValue } from "../../utils/utils";
-
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
+import { Bar } from "react-chartjs-2";
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-
 const Table2_3 = ({ year, district }) => {
-  // Revenue update data as provided
   const [tableData, setTableData] = useState([]);
   const [total, setTotal] = useState(null);
 
@@ -27,7 +16,6 @@ const Table2_3 = ({ year, district }) => {
   }, [year, district]);
 
   const mapRevenueData = (data, report) => {
-
     const revenueNames = [
       "IGF", "DACF", "MPs CF", "PWDs CF", "DACF-RFG",
       "Decentralized Dept", "GOG Salaries", "MDF", "Stool Lands", "CIDA"
@@ -46,58 +34,55 @@ const Table2_3 = ({ year, district }) => {
 
       return {
         name: revName,
-        baseline: baselineItem ? Number(baselineItem.value).toLocaleString() : 0,
-        target: targetItem ? Number(targetItem.value).toLocaleString() : 0,
+        baseline: baselineItem ? Number(baselineItem.value) : 0,
+        target: targetItem ? Number(targetItem.value) : 0,
         actual: 0
       };
     });
 
-    result.map(el => {
-
+    result.forEach(el => {
       for (let r of reports.dataValues) {
         if (el.name === 'IGF' && r.dataElement === "Wp7KcuZgrJa") {
-          el.actual = Number(r.value).toLocaleString();
+          el.actual = Number(r.value);
           break;
         } else if (el.name === 'DACF' && r.dataElement === "rtZ2oyIrEZE") {
-          el.actual = Number(r.value).toLocaleString();
+          el.actual = Number(r.value);
           break;
         } else if (el.name === 'MPs CF' && r.dataElement === "sPtuvxHoqBI") {
-          el.actual = Number(r.value).toLocaleString();
+          el.actual = Number(r.value);
           break;
         } else if (el.name === 'PWDs CF' && r.dataElement === "iPJma6G8Pen") {
-          el.actual = Number(r.value).toLocaleString();
+          el.actual = Number(r.value);
           break;
         } else if (el.name === 'DACF-RFG' && r.dataElement === "PnPth1bxPDM") {
-          el.actual = Number(r.value).toLocaleString();
+          el.actual = Number(r.value);
           break;
         } else if (el.name === 'Decentralized Dept' && r.dataElement === "PO8QzvjK8VM") {
-          el.actual = Number(r.value).toLocaleString();
+          el.actual = Number(r.value);
           break;
         } else if (el.name === 'GOG Salaries' && r.dataElement === "nHtXhtCsha8") {
-          el.actual = Number(r.value).toLocaleString();
+          el.actual = Number(r.value);
           break;
         } else if (el.name === 'MDF' && r.dataElement === "IujXTMPpFux") {
-          el.actual = Number(r.value).toLocaleString();
+          el.actual = Number(r.value);
           break;
         } else if (el.name === 'Stool Lands' && r.dataElement === "J8qgTRwB7wj") {
-          el.actual = Number(r.value).toLocaleString();
+          el.actual = Number(r.value);
           break;
         } else if (el.name === 'CIDA' && r.dataElement === "WlVIx0WUbgt") {
-          el.actual = Number(r.value).toLocaleString();
+          el.actual = Number(r.value);
           break;
         }
       }
-
     });
 
     return result;
-  }
+  };
 
   function getProjects() {
     axios
       .get(`/tracker/trackedEntities?orgUnit=${district}&program=SY8TpfPgzr9&startDate=${year}-01-01&endDate=${year}-12-31`)
       .then(result => {
-
         if (result.data.instances.length > 0) {
           const startDate = `${year}-01-01`;
           const endDate = `${year}-12-31`;
@@ -106,12 +91,8 @@ const Table2_3 = ({ year, district }) => {
             .get(`/tracker/events?program=SY8TpfPgzr9&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
             .then(resp => {
               const data = filterTrackedEntitiesByCreatedAt(result.data.instances, startDate, endDate);
-
-
               const revenues = formatDataGeneral(data, "Years", "2025") || [];
-
               const reports = filterTrackedEntitiesByCreatedAt(resp.data.instances, startDate, endDate);
-
               const revenuMapped = mapRevenueData(revenues, reports);
 
               const cleanNumber = (val) => parseFloat((val || "0").toString().replace(/,/g, ''));
@@ -123,119 +104,56 @@ const Table2_3 = ({ year, district }) => {
                 actual: revenuMapped.reduce((sum, el) => sum + cleanNumber(el.actual), 0),
               };
 
-
-
               setTotal(totalRow);
               setTableData(revenuMapped);
-
-
             })
-            .catch(err => console.log(err))
+            .catch(err => console.log(err));
         }
-
-
       })
-      .catch(err => console.log(err))
+      .catch(err => console.log(err));
   }
 
-  // State for toggling chart visibility
-  // const [showChart, setShowChart] = useState(true);
+  const chartData = {
+    labels: tableData.map(item => item.name),
+    datasets: [
+      {
+        label: `Baseline ${year - 1} (GH¢)`,
+        data: tableData.map(item => item.baseline),
+        backgroundColor: "#1e8fff8e",
+        borderColor: "#1e8fff8e",
+        borderWidth: 1,
+      },
+      {
+        label: `Actual ${year} (GH¢)`,
+        data: tableData.map(item => item.actual),
+        backgroundColor: "#f4080886",
+        borderColor: "#ff000086",
+        borderWidth: 1,
+      },
+    ],
+  };
 
-  // // Prepare data for Chart.js
-  // const chartData = {
-  //   labels: revenueData.map((row) =>
-  //     row.revenueItem === "DECENTRALISED DEPT"
-  //       ? "DEC. DEPT"
-  //       : row.revenueItem.length > 10
-  //       ? row.revenueItem.substring(0, 8) + "..."
-  //       : row.revenueItem
-  //   ),
-  //   datasets: [
-  //     {
-  //       label: "Baseline 2021 (GHȼ)",
-  //       data: revenueData.map((row) => parseFloat(row.baseline2021.replace(/,/g, ""))),
-  //       backgroundColor: "rgba(54, 162, 235, 0.6)",
-  //       borderColor: "rgba(54, 162, 235, 1)",
-  //       borderWidth: 1,
-  //     },
-  //     {
-  //       label: "Target 2022 (GHȼ)",
-  //       data: revenueData.map((row) => parseFloat(row.target2022.replace(/,/g, ""))),
-  //       backgroundColor: "rgba(255, 99, 132, 0.6)",
-  //       borderColor: "rgba(255, 99, 132, 1)",
-  //       borderWidth: 1,
-  //     },
-  //     {
-  //       label: "Actual 2022 (GHȼ)",
-  //       data: revenueData.map((row) => parseFloat(row.actual2022.replace(/,/g, ""))),
-  //       backgroundColor: "rgba(75, 192, 192, 0.6)",
-  //       borderColor: "rgba(75, 192, 192, 1)",
-  //       borderWidth: 1,
-  //     },
-  //     {
-  //       label: "Target 2023 (GHȼ)",
-  //       data: revenueData.map((row) => parseFloat(row.target2023.replace(/,/g, ""))),
-  //       backgroundColor: "rgba(153, 102, 255, 0.6)",
-  //       borderColor: "rgba(153, 102, 255, 1)",
-  //       borderWidth: 1,
-  //     },
-  //   ],
-  // };
-
-  // // Chart options
-  // const chartOptions = {
-  //   responsive: true,
-  //   maintainAspectRatio: false,
-  //   plugins: {
-  //     legend: {
-  //       position: "top",
-  //     },
-  //     title: {
-  //       display: true,
-  //       text: "Revenue Updates (GHȼ)",
-  //     },
-  //     tooltip: {
-  //       callbacks: {
-  //         label: function (context) {
-  //           let label = context.dataset.label || "";
-  //           if (label) {
-  //             label += ": ";
-  //           }
-  //           if (context.parsed.y !== null) {
-  //             label += new Intl.NumberFormat("en-GH", {
-  //               style: "currency",
-  //               currency: "GHS",
-  //             }).format(context.parsed.y);
-  //           }
-  //           return label;
-  //         },
-  //       },
-  //     },
-  //   },
-  //   scales: {
-  //     x: {
-  //       title: {
-  //         display: true,
-  //         text: "Revenue Items",
-  //       },
-  //     },
-  //     y: {
-  //       title: {
-  //         display: true,
-  //         text: "Amount (GHȼ)",
-  //       },
-  //       ticks: {
-  //         callback: function (value) {
-  //           return new Intl.NumberFormat("en-GH", {
-  //             style: "currency",
-  //             currency: "GHS",
-  //             minimumFractionDigits: 0,
-  //           }).format(value);
-  //         },
-  //       },
-  //     },
-  //   },
-  // };
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top",
+      },
+      title: {
+        display: true,
+        text: `${year - 1} Baseline and ${year} Actual Revenue Receipts`,
+      },
+    },
+    scales: {
+      y: {
+        title: {
+          display: true,
+          text: "Revenue (GH¢)",
+        },
+        beginAtZero: true,
+      },
+    },
+  };
 
   return (
     <div className="col-12">
@@ -243,50 +161,76 @@ const Table2_3 = ({ year, district }) => {
       <div className="card">
         <div className="card-header"></div>
         <div className="card-body">
+          
           <div className="table-responsive">
-            <table className="table table-bordered">
-              <thead>
-                <tr>
-                  <th>Revenue Item</th>
-                  <th>Baseline (GHȼ)</th>
-                  <th>Target (GHȼ)</th>
-                  <th>Actual (GHȼ)</th>
 
-                </tr>
-              </thead>
-              {/* {JSON.stringify(tableData)} */}
-              {tableData && <tbody>
-                {tableData.map((row, index) => (
-                  <tr key={index}>
-                    <td>{row.name}</td>
-                    <td>{row.baseline}</td>
-                    <td>{row.target}</td>
-                    <td>{row.actual}</td>
-                  </tr>
-                ))}
-                {total && <tr style={{ fontWeight: 'bold', backgroundColor: '#f0f0f0' }}>
-                  <td>{total.name}</td>
-                  <td>{total.baseline.toLocaleString()}</td>
-                  <td>{total.target.toLocaleString()}</td>
-                  <td>{total.actual.toLocaleString()}</td>
-                </tr>}
-              </tbody>}
-            </table>
+            <h6>The funding sources of the Assembly, over the years have been the Central Government 
+transfers to MMDAs (GOG Grants), the District Assembly Common Fund (DACF), the 
+District Assembly Common Fund-Responsive Factor Grant (DACF-RFG), the Minerals 
+Development Fund, Donor Grants and the Assembly’s own Internally Generated Funds 
+(IGF). Others are the Member of Parliament’s Common Fund (MP’sCF). </h6>
+<h7>
+During the year under review, funds received included the Internally Generated Funds;
+District Assembly’s Common Fund; Persons with Disability Common Fund; Member of 
+Parliament’s Common Fund and the District Assemblies Common Fund-Responsive Factor 
+Grant. Table 2.3 shows the updates from the various sources and their targets.</h7>
+
+
+           <table
+  className="table table-bordered"
+  style={{
+    marginTop: 20,
+    border: '1px solid #000',
+    borderCollapse: 'collapse',
+    width: '100%',
+  }}
+>
+  <thead
+    style={{
+      backgroundColor: '#d4edda',
+      fontWeight: 'bold',
+    }}
+  >
+    <tr>
+      <th style={{ border: '1px solid #000' }}>Revenue Item</th>
+      <th style={{ border: '1px solid #000' }}>Baseline (GH¢)</th>
+      <th style={{ border: '1px solid #000' }}>Target (GH¢)</th>
+      <th style={{ border: '1px solid #000' }}>Actual (GH¢)</th>
+    </tr>
+  </thead>
+  {tableData && (
+    <tbody>
+      {tableData.map((row, index) => (
+        <tr key={index}>
+          <td style={{ border: '1px solid #000' }}>{row.name}</td>
+          <td style={{ border: '1px solid #000' }}>{row.baseline.toLocaleString()}</td>
+          <td style={{ border: '1px solid #000' }}>{row.target.toLocaleString()}</td>
+          <td style={{ border: '1px solid #000' }}>{row.actual.toLocaleString()}</td>
+        </tr>
+      ))}
+      {total && (
+        <tr style={{ fontWeight: 'bold', backgroundColor: '#f0f0f0' }}>
+          <td style={{ border: '1px solid #000' }}>{total.name}</td>
+          <td style={{ border: '1px solid #000' }}>{total.baseline.toLocaleString()}</td>
+          <td style={{ border: '1px solid #000' }}>{total.target.toLocaleString()}</td>
+          <td style={{ border: '1px solid #000' }}>{total.actual.toLocaleString()}</td>
+        </tr>
+      )}
+    </tbody>
+  )}
+</table>
+
           </div>
-          {/* <p className="mt-2">
+
+          <h6>
+            Figure 2.1 further shows the revenue trends of {year - 1} baseline and actual receipts for {year}. It can be realized that the major source of funding for implementation of projects during the period remained the IGF which includes receipts from mineral revenue.
+          </h6>
+          <div className="mt-10" style={{ height: "700px",}}>
+            <Bar data={chartData} options={chartOptions} />
+          </div>
+          <p className="mt-2">
             <small>Source: MPCU</small>
           </p>
-          <button
-            className="btn btn-primary mt-3"
-            onClick={() => setShowChart(!showChart)}
-          >
-            {showChart ? "Hide Chart" : "Show Bar Graph"}
-          </button>
-          {showChart && (
-            <div className="mt-4" style={{ height: "400px" }}>
-              <Bar data={chartData} options={chartOptions} />
-            </div>
-          )} */}
         </div>
       </div>
     </div>

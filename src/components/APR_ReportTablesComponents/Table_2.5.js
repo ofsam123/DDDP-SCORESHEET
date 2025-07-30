@@ -111,9 +111,26 @@ const Table2_5 = () => {
       <div className="card">
         <div className="card-header">Table 2.5 – Core Indicators and Municipal Specific Indicators</div>
         <div className="card-body">
+          <h5>Update on Indicators and Targets </h5>
+The assessment of progress of implementation of the 2022 Annual Action Plan and the 
+MTDP of the Assembly are based on the analysis of indicator achievements as well as the 
+progress made in implementing programmes and projects outlined in the plan. 
+There are both national (core) and municipal specific set indicators including Integrated 
+Social Services, which are tracked to measure the performance during monitoring and 
+evaluation exercises. Table 2.5 presents the details of the indicator levels for the year 
+under review.
+In summary, most of the indicators performed well in the period under review. A detailed analysis of the performance under 
+various sectors has been presented below based on the development dimensions.
           <div className="table-responsive">
             <table className="table table-bordered">
-              <thead style={{ backgroundColor: "#000000", color: "white" }}>
+              <thead style={{
+    
+    border: '1px solid #000',
+    borderCollapse: 'collapse',
+    width: '100%',
+    marginTop: '20px',
+     backgroundColor: '#d4edda',
+  }}>
                 <tr>
                   <th style={{ textAlign: "center" }}>No.</th>
                   <th style={{ textAlign: "left" }}>Indicators (categorized by development dimension of Agenda for Jobs)</th>

@@ -97,9 +97,24 @@ const Table2_6 = ({ year, district }) => {
       <div className="card">
         <div className="card-header"></div>
         <div className="card-body">
+
+          <h5>Update on Critical Development and Poverty Issues</h5>
+
+            <h7>
+In the attempt to reduce poverty and promote development, Government has introduced 
+a number of interventions in the Country. Among these interventions that are operational 
+in the Tarkwa Nsuaem Municipal Assembly are: the National Health Insurance Scheme, 
+Ghana School Feeding Programme, Capitation Grant, Livelihood Empowerment Against 
+Poverty (LEAP) Programme, National Youth Employment Programme, One District One 
+Factory Programme, Planting for Food and Jobs, Free SHS Programme, National 
+Entrepreneurship and Innovation Plan (NEIP), Implementation of Infrastructure for 
+Poverty Eradication Programme (IPEP) and the Nations Builders Corps (NABCO) 
+Programme. Table 2.6 presents a matrix showing the summary of key critical poverty 
+development issues, the Allocations, Actual Receipt and the Number of beneficiaries.
+Details of the various interventions have been given below.</h7>
           <div className="table-responsive">
-            <table className="table table-bordered">
-              <thead style={{ backgroundColor: '#d4edda', fontWeight: 'bold', border: '1px solid #000' }}>
+            <table className="table table-bordered"  style={{marginTop: '20px'}}>
+              <thead style={{ backgroundColor: '#d4edda', fontWeight: 'bold', border: '1px solid #000',  }}>
                 <tr>
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Critical Development and Poverty Issues</th>
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Allocation GH₵</th>

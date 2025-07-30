@@ -174,15 +174,65 @@ const Table1_2 = ({ year, district }) => {
     },
   };
 
+  // Dynamic paragraph based on tableData
+  const dynamicParagraph = () => {
+    if (tableData.length === 0) return null;
+
+    const dimensionsData = tableData.filter((row) => row.dimension !== "Total");
+    const totalRow = tableData.find((row) => row.dimension === "Total");
+    const totalPlanned = totalRow ? totalRow.planned : 0;
+    const totalExecuted = totalRow ? totalRow.executed : 0;
+
+    // Group data by dimension and sum planned/executed
+    const dimensionStats = dimensionsData.reduce((acc, row) => {
+      if (!acc[row.dimension]) {
+        acc[row.dimension] = { planned: 0, executed: 0 };
+      }
+      acc[row.dimension].planned += row.planned;
+      acc[row.dimension].executed += row.executed;
+      return acc;
+    }, {});
+
+    // Sort by planned activities to find the dimension with the highest planned
+    const highestPlanned = Object.entries(dimensionStats).reduce((max, current) =>
+      current[1].planned > max[1].planned ? current : max, ["", { planned: 0 }])[0];
+
+    return (
+      <p className="mt-3">
+        From the above table, it can be noted that the Municipality placed premium on all the six development dimensions under the Agenda for Jobs II policy framework. It earmarked and implemented various interventions for a holistic development towards the achievement of the set goal. Development therefore was widely spread across the various sectors, and none skewed.
+        <br />
+        {Object.entries(dimensionStats).map(([dimension, stats]) => (
+          <span key={dimension}>
+            Out of the {stats.planned} planned activities under {dimension}, {stats.executed} were executed.
+            {dimension === Object.keys(dimensionStats).pop() ? "" : <br />}
+          </span>
+        ))}
+        This puts the total number of activities implemented at {totalExecuted} out of {totalPlanned} planned.
+      </p>
+    );
+  };
+
   return (
     <div className="col-12">
       <h3>Table 1.2 – Details on Annual Action Plan Implemented under the Development Dimensions</h3>
       <div className="card">
-        <div className="card-header">
-        </div>
+        <div className="card-header"></div>
         <div className="card-body">
+          Table 1.2 presents the breakdown of activities implemented under the various 
+development dimensions. Comparatively, it can be realized that there are more projects 
+and programmes in the {year} Annual Action Plan as compared to the base year mainly 
+ONGOING 6-UNIT CLASSROOM BLOCK AT BOGREKROM ONGOING COMMUNITY CENTRE AT CYANIDE ONGOING CLASSROOM BLOCK AT MAHAMO
+6 | P a g e
+due to the rolled over projects from previous years and the inclusion of integrated social 
+services related activities in the Plan
+
           <div className="table-responsive">
-            <table className="table table-bordered">
+            <table className="table table-bordered"style={{
+    border: '1px solid #000',
+    borderCollapse: 'collapse',
+    width: '100%',
+    marginTop:"20px"
+  }}>
               <thead>
                 <tr style={{ backgroundColor: '#d4edda', fontWeight: 'bold', border: '1px solid #000' }}>
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>S/N</th>
@@ -201,7 +251,7 @@ const Table1_2 = ({ year, district }) => {
                   tableData.map((row, index) => (
                     <tr key={index} style={
                       row.dimension === "Total"
-                        ? { fontWeight: 'bold'}
+                        ? { fontWeight: 'bold' }
                         : {}
                     }>
                       <td style={{ border: '1px solid #000', fontWeight: 'bold' }}>{row.no}</td>
@@ -223,14 +273,10 @@ const Table1_2 = ({ year, district }) => {
           <p className="mt-2">
             <small>Source: MPCU</small>
           </p>
-          <p className="mt-3">
-            From the above table, it can be noted that the Municipality placed premium on all the six development dimensions under the Agenda for Jobs II policy framework. It earmarked and implemented various interventions for a holistic development towards the achievement of the set goal. Development therefore was widely spread across the various sectors, and none skewed.
-            <br /><br />
-            Out of the 30 planned activities under Economic Development, all 30 were executed. Social Development had the highest number of planned activities during the year with 45 activities executed out of the total 48 activities. Under Environment, Infrastructure & Human Settlement dimension, all 30 planned activities were executed. Governance, Corruption & Public Accountability dimension also saw 22 activities executed out of 22 planned activities. Equally, all planned activities under Emergency Planning & Preparedness, as well as Implementation, Co-ordination, Monitoring and Evaluation dimensions were also executed. This puts the total number of activities implemented at 134 out of 137 planned.
-          </p>
+          {dynamicParagraph()}
           <hr />
           <h5>Performance Comparison by Development Dimension ({new Date().getFullYear() - 2}-{new Date().getFullYear()})</h5>
-          <div className="mt-4">
+          <div className="mt-10" style={{ height: "700px", margin: "0 auto" }}>
             {Object.keys(chartData).length > 0 ? (
               <Bar data={chartData} options={barChartOptions} />
             ) : (
@@ -239,7 +285,10 @@ const Table1_2 = ({ year, district }) => {
           </div>
           <hr />
           <h5>Projects Implemented vs Non-Implemented ({year})</h5>
-          <div className="mt-4" style={{ maxWidth: "400px", margin: "0 auto" }}>
+          <div
+            className="flex justify-center items-center"
+            style={{ height: "60vh", marginLeft: 250 }}
+          >
             {Object.keys(pieChartData).length > 0 ? (
               <Pie data={pieChartData} options={pieChartOptions} />
             ) : (

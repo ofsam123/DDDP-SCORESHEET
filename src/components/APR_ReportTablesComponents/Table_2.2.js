@@ -86,7 +86,22 @@ const Table2_2 = ({ year, district }) => {
         })
         .catch(err => console.log(err))
     }
-  
+    // Pictorial evidence data
+  const pictorialEvidence = [
+    {
+      url: "https://cdn1.img.sputniknews.africa/img/07e7/07/02/1060284138_451:0:3134:2012_1920x0_80_0_0_43d738a714a35edc0190c43cbaa47b86.jpg",
+      caption: "Construction of Community Center - 2022",
+    },
+    {
+      url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRegQFFElp18bejV_lABjBxFymQizmSFnbmBQ&s",
+      caption: "Road Improvement Project - Phase 1",
+    },
+    {
+      url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ84AeJyjvmIiYJZaK5Nz3lTPHUFSJVKyuybw&s",
+      caption: "School Renovation - Completed 2022",
+    },
+  ];
+
 
   return (
     <div className="col-12">
@@ -146,8 +161,12 @@ const Table2_2 = ({ year, district }) => {
                   </tr>
                 ))}
               </tbody>
+
+             
             </table>
           </div>
+
+          
           <p className="mt-2">
             <small>Source: MPCU</small>
           </p>

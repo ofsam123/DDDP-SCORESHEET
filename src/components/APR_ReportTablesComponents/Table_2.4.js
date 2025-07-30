@@ -1,11 +1,11 @@
-
 import React, { useEffect, useState } from "react";
-import { Bar } from "react-chartjs-2";
+import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
-  BarElement,
+  LineElement,
+  PointElement,
   Title,
   Tooltip,
   Legend,
@@ -14,136 +14,126 @@ import axios from "../../api/axios";
 import { filterTrackedEntitiesByCreatedAt, formatDataGeneral } from "../../utils/utils";
 
 // Register Chart.js components
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, Title, Tooltip, Legend);
+
+// Function to assign colors based on category
+const getColor = (name) => {
+  switch (name) {
+    case "COMPENSATION":
+      return "rgba(0, 0, 255, 0.6)"; // Blue
+    case "GOODS AND SERVICES":
+      return "rgba(255, 165, 0, 0.6)"; // Orange
+    case "INVESTMENTS/ASSETS":
+      return "rgba(128, 128, 128, 0.6)"; // Gray
+    default:
+      return "rgba(0, 0, 0, 0.6)"; // Black as fallback
+  }
+};
 
 const Table2_4 = ({ year, district }) => {
   const [tableData, setTableData] = useState([]);
   const [showChart, setShowChart] = useState(true);
   const [total, setTotal] = useState(null);
- 
-   useEffect(() => {
-     getData();
-   }, [year, district]);
- 
-   const mapData = (data, report) => {
- 
-     const names = [
-       "COMPENSATION", "GOODS AND SERVICES", "INVESTMENTS/ASSETS"
-     ];
- 
-     const attributes = data[0]?.attributes;
-     const reports = report.find(rep => rep.trackedEntity === data[0]?.trackedEntity);
- 
-     const result = names.map(name => {
-       const baselineItem = attributes.find(item =>
-         item?.displayName?.toLowerCase() === `${name.toLowerCase()} baseline`
-       );
-       const targetItem = attributes.find(item =>
-         item?.displayName?.toLowerCase() === `${name.toLowerCase()} target`
-       );
- 
-       return {
-         name: name,
-         baseline: baselineItem ? Number(baselineItem.value).toLocaleString() : 0,
-         target: targetItem ? Number(targetItem.value).toLocaleString() : 0,
-         actual: 0
-       };
-     });
- 
-     result.map(el => {
- 
-       for (let r of reports.dataValues) {
-         if (el.name === 'COMPENSATION' && r.dataElement === "iF3bVYzJUE6") {
-           el.actual = Number(r.value).toLocaleString();
-           break;
-         } else if (el.name === 'GOODS AND SERVICES' && r.dataElement === "ZKwpRsX6DIE") {
-           el.actual = Number(r.value).toLocaleString();
-           break;
-         } else if (el.name === 'INVESTMENTS/ASSETS' && r.dataElement === "LKTrRHSCoEk") {
-           el.actual = Number(r.value).toLocaleString();
-           break;
-         }
-       }
- 
-     });
- 
-     return result;
-   }
- 
-   function getData() {
-     axios
-       .get(`/tracker/trackedEntities?orgUnit=${district}&program=WHILilRZRhT&startDate=${year}-01-01&endDate=${year}-12-31`)
-       .then(result => {
- 
-         if (result.data.instances.length > 0) {
-           const startDate = `${year}-01-01`;
-           const endDate = `${year}-12-31`;
- 
-           axios
-             .get(`/tracker/events?program=WHILilRZRhT&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
-             .then(resp => {
-               const data = filterTrackedEntitiesByCreatedAt(result.data.instances, startDate, endDate);
- 
-               const disbursements = formatDataGeneral(data, "Years", "2025") || [];
- 
-               const reports = filterTrackedEntitiesByCreatedAt(resp.data.instances, startDate, endDate);
 
-              //  console.log("disbursement: ", disbursements)
- 
-               const disbursementMapped = mapData(disbursements, reports);
+  useEffect(() => {
+    getData();
+  }, [year, district]);
 
-              
-               const cleanNumber = (val) => parseFloat((val || "0").toString().replace(/,/g, ''));
+  const mapData = (data, report) => {
+    const names = [
+      "COMPENSATION", "GOODS AND SERVICES", "INVESTMENTS/ASSETS"
+    ];
 
-               const totalRow = {
-                 name: 'Total',
-                 baseline: disbursementMapped.reduce((sum, el) => sum + cleanNumber(el.baseline), 0),
-                 target: disbursementMapped.reduce((sum, el) => sum + cleanNumber(el.target), 0),
-                 actual: disbursementMapped.reduce((sum, el) => sum + cleanNumber(el.actual), 0),
-               };
+    const attributes = data[0]?.attributes;
+    const reports = report.find(rep => rep.trackedEntity === data[0]?.trackedEntity);
 
-               setTotal(totalRow);
-               setTableData(disbursementMapped);
- 
- 
-             })
-             .catch(err => console.log(err))
-         }
- 
-       })
-       .catch(err => console.log(err))
-   }
- 
+    const result = names.map(name => {
+      const baselineItem = attributes.find(item =>
+        item?.displayName?.toLowerCase() === `${name.toLowerCase()} baseline`
+      );
+      const targetItem = attributes.find(item =>
+        item?.displayName?.toLowerCase() === `${name.toLowerCase()} target`
+      );
 
-  // Data for Figure 2.3: Revenue, Expenditure, and Surplus (2022)
-  const chartData = {
-    labels: ["2022"],
-    datasets: [
-      {
-        label: "Revenue (2022) (GHȼ)",
-        data: [26533161.85], // From Table 2.3 TOTAL, Actual 2022
-        backgroundColor: "rgba(255, 215, 0, 0.6)", // Yellow (approximating image color)
-        borderColor: "rgba(255, 215, 0, 1)",
-        borderWidth: 1,
-      },
-      {
-        label: "Expenditure (2022) (GHȼ)",
-        data: [25320798.32], // From Table 2.4 TOTAL, Actual 2022
-        backgroundColor: "rgba(255, 99, 132, 0.6)", // Red (approximating image color)
-        borderColor: "rgba(255, 99, 132, 1)",
-        borderWidth: 1,
-      },
-      {
-        label: "Surplus (GHȼ)",
-        data: [1212363.53], // Revenue - Expenditure
-        backgroundColor: "rgba(0, 128, 0, 0.6)", // Green (approximating image color)
-        borderColor: "rgba(0, 128, 0, 1)",
-        borderWidth: 1,
-      },
-    ],
+      return {
+        name: name,
+        baseline: baselineItem ? Number(baselineItem.value) : 0,
+        target: targetItem ? Number(targetItem.value) : 0,
+        actual: 0
+      };
+    });
+
+    result.forEach(el => {
+      for (let r of reports.dataValues) {
+        if (el.name === 'COMPENSATION' && r.dataElement === "iF3bVYzJUE6") {
+          el.actual = Number(r.value);
+          break;
+        } else if (el.name === 'GOODS AND SERVICES' && r.dataElement === "ZKwpRsX6DIE") {
+          el.actual = Number(r.value);
+          break;
+        } else if (el.name === 'INVESTMENTS/ASSETS' && r.dataElement === "LKTrRHSCoEk") {
+          el.actual = Number(r.value);
+          break;
+        }
+      }
+    });
+
+    return result;
   };
 
-  // Chart options
+  function getData() {
+    axios
+      .get(`/tracker/trackedEntities?orgUnit=${district}&program=WHILilRZRhT&startDate=${year}-01-01&endDate=${year}-12-31`)
+      .then(result => {
+        if (result.data.instances.length > 0) {
+          const startDate = `${year}-01-01`;
+          const endDate = `${year}-12-31`;
+
+          axios
+            .get(`/tracker/events?program=WHILilRZRhT&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
+            .then(resp => {
+              const data = filterTrackedEntitiesByCreatedAt(result.data.instances, startDate, endDate);
+              const disbursements = formatDataGeneral(data, "Years", "2025") || [];
+              const reports = filterTrackedEntitiesByCreatedAt(resp.data.instances, startDate, endDate);
+              const disbursementMapped = mapData(disbursements, reports);
+
+              const cleanNumber = (val) => parseFloat((val || "0").toString().replace(/,/g, ''));
+
+              const totalRow = {
+                name: 'Total',
+                baseline: disbursementMapped.reduce((sum, el) => sum + cleanNumber(el.baseline), 0),
+                target: disbursementMapped.reduce((sum, el) => sum + cleanNumber(el.target), 0),
+                actual: disbursementMapped.reduce((sum, el) => sum + cleanNumber(el.actual), 0),
+              };
+
+              setTotal(totalRow);
+              setTableData(disbursementMapped);
+            })
+            .catch(err => console.log(err));
+        }
+      })
+      .catch(err => console.log(err));
+  }
+
+  // Dynamic chart data based on tableData and year
+  const chartData = {
+    labels: ["Baseline 2021", `Target ${year}`, `Actual ${year}`, `Target ${parseInt(year) + 1}`],
+    datasets: tableData.map(item => ({
+      label: item.name,
+      data: [
+        item.baseline, // Baseline 2021
+        item.target,   // Target for the selected year
+        item.actual,   // Actual for the selected year
+        item.target * 1.1, // Approximate Target for next year (dynamic scaling, adjust as needed)
+      ],
+      backgroundColor: getColor(item.name),
+      borderColor: getColor(item.name),
+      borderWidth: 2,
+      fill: false,
+      tension: 0.1,
+    })),
+  };
+
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -153,38 +143,16 @@ const Table2_4 = ({ year, district }) => {
       },
       title: {
         display: true,
-        text: "Figure 2.3 – Total Receipt against Total Expenditure",
-      },
-      tooltip: {
-        callbacks: {
-          label: function (context) {
-            let label = context.dataset.label || "";
-            if (label) {
-              label += ": ";
-            }
-            if (context.parsed.y !== null) {
-              label += new Intl.NumberFormat("en-GH", {
-                style: "currency",
-                currency: "GHS",
-              }).format(context.parsed.y);
-            }
-            return label;
-          },
-        },
+        text: `Figure 2.4 – Expenditure Analysis (${year})`,
       },
     },
     scales: {
-      x: {
-        title: {
-          display: true,
-          text: "Year",
-        },
-      },
       y: {
         title: {
           display: true,
-          text: "Amount (GHȼ)",
+          text: "Expenditure in GH¢",
         },
+        beginAtZero: true,
         ticks: {
           callback: function (value) {
             return new Intl.NumberFormat("en-GH", {
@@ -194,8 +162,12 @@ const Table2_4 = ({ year, district }) => {
             }).format(value);
           },
         },
-        suggestedMin: 0, // Start from 0 to match image
-        suggestedMax: 30000000, // End around 30M to match image
+      },
+      x: {
+        title: {
+          display: true,
+          text: "Year",
+        },
       },
     },
   };
@@ -206,48 +178,70 @@ const Table2_4 = ({ year, district }) => {
       <div className="card">
         <div className="card-header"></div>
         <div className="card-body">
+          <h5>2.2.3 Update on Disbursements</h5>
+            <h7>
+During the year under review, funds received were disbursed under the components of 
+Compensation, Goods and Services and Non–Financial Assets. Table 2.4 presents the 
+disbursement for the years.</h7>
           <div className="table-responsive">
-            <table className="table table-bordered">
-              <thead>
-                <tr>
-                  <th>Expenditure Item</th>
-                  <th>Baseline (GHȼ)</th>
-                  <th>Target (GHȼ)</th>
-                  <th>Actual (GHȼ)</th>
-                </tr>
-              </thead>
-             {tableData && <tbody>
-                {tableData.map((row, index) => (
-                  <tr key={index}>
-                    <td>{row.name}</td>
-                    <td>{row.baseline}</td>
-                    <td>{row.target}</td>
-                    <td>{row.actual}</td>
-                  </tr>
-                ))}
-                {total && <tr style={{ fontWeight: 'bold', backgroundColor: '#f0f0f0' }}>
-                  <td>{total.name}</td>
-                  <td>{total.baseline.toLocaleString()}</td>
-                  <td>{total.target.toLocaleString()}</td>
-                  <td>{total.actual.toLocaleString()}</td>
-                </tr>}
-              </tbody>}
-            </table>
+          <table
+  className="table table-bordered"
+  style={{
+    
+    border: '1px solid #000',
+    borderCollapse: 'collapse',
+    width: '100%',
+    marginTop: '20px'
+  }}
+>
+  <thead   style={{
+      backgroundColor: '#d4edda',
+      fontWeight: 'bold',
+    }}>
+    <tr>
+      <th style={{ border: '1px solid #000' }}>Expenditure Item</th>
+      <th style={{ border: '1px solid #000' }}>Baseline (GH¢)</th>
+      <th style={{ border: '1px solid #000' }}>Target (GH¢)</th>
+      <th style={{ border: '1px solid #000' }}>Actual (GH¢)</th>
+    </tr>
+  </thead>
+  {tableData && (
+    <tbody>
+      {tableData.map((row, index) => (
+        <tr key={index}>
+          <td style={{ border: '1px solid #000' }}>{row.name}</td>
+          <td style={{ border: '1px solid #000' }}>{row.baseline.toLocaleString()}</td>
+          <td style={{ border: '1px solid #000' }}>{row.target.toLocaleString()}</td>
+          <td style={{ border: '1px solid #000' }}>{row.actual.toLocaleString()}</td>
+        </tr>
+      ))}
+      {total && (
+        <tr style={{ fontWeight: 'bold', backgroundColor: '#f0f0f0' }}>
+          <td style={{ border: '1px solid #000' }}>{total.name}</td>
+          <td style={{ border: '1px solid #000' }}>{total.baseline.toLocaleString()}</td>
+          <td style={{ border: '1px solid #000' }}>{total.target.toLocaleString()}</td>
+          <td style={{ border: '1px solid #000' }}>{total.actual.toLocaleString()}</td>
+        </tr>
+      )}
+    </tbody>
+  )}
+</table>
+
           </div>
           <p className="mt-2">
             <small>Source: MPCU</small>
           </p>
-          <h4 className="mt-4">Figure 2.3 – Total Receipt against Total Expenditure</h4>
-          <p>Figure 2.3 compares total receipts against total disbursement during the year under review.</p>
+          <h4 className="mt-4">Figure 2.4 – Expenditure Analysis</h4>
+          <p>Figure 2.4 further shows the expenditure trends of 2021 baseline and targets, actuals, and next year targets for {year}. It can be realized that the major expenditure during the period remained {tableData.reduce((maxItem, current) => current.actual > maxItem.actual ? current : maxItem, { actual: 0 }).name}.</p>
           <button
             className="btn btn-primary mt-3"
             onClick={() => setShowChart(!showChart)}
           >
-            {showChart ? "Hide Figure 2.3" : "Show Figure 2.3"}
+            {showChart ? "Hide Figure 2.4" : "Show Figure 2.4"}
           </button>
           {showChart && (
-            <div className="mt-4" style={{ height: "300px" }}>
-              <Bar data={chartData} options={chartOptions} />
+            <div className="mt-4" style={{ height: "400px" }}>
+              <Line data={chartData} options={chartOptions} />
             </div>
           )}
         </div>

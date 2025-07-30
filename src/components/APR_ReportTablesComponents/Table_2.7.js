@@ -1,97 +1,117 @@
 
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "../../api/axios";
+import { filterTrackedEntitiesByCreatedAt, formatDataGeneral, getAttributeValue } from "../../utils/utils";
 
-const Table2_7 = () => {
-  // School data as provided
-  const schoolData = [
-    {
-      no: "1",
-      school: "Abompuniso M/A Primary",
-      caterer: "Elizabeth Amanamah",
-      boys: "261",
-      girls: "236",
-      total: "497",
-    },
-    {
-      no: "2",
-      school: "Agona Wassa Meth. Primary",
-      caterer: "Regina Kuchana",
-      boys: "251",
-      girls: "239",
-      total: "490",
-    },
-    {
-      no: "3",
-      school: "Pataho M/A Primary",
-      caterer: "Beatrice Howard",
-      boys: "161",
-      girls: "120",
-      total: "281",
-    },
-    {
-      no: "4",
-      school: "Bonsa M/A Basic Primary",
-      caterer: "Mavis Kwamekyi",
-      boys: "157",
-      girls: "142",
-      total: "299",
-    },
-    {
-      no: "5",
-      school: "Amantin M/A Primary",
-      caterer: "Kubara Shaibu",
-      boys: "157",
-      girls: "142",
-      total: "351",
-    },
-    {
-      no: "6",
-      school: "Benso Essamang M/A Primary",
-      caterer: "Ernestina Quaicoo",
-      boys: "61",
-      girls: "48",
-      total: "109",
-    },
-    {
-      no: "7",
-      school: "Memahomo M/A Primary",
-      caterer: "Ruth Amanamah",
-      boys: "229",
-      girls: "223",
-      total: "452",
-    },
-  ];
+const Table2_7 = ({ year, district }) => {
+  const [tableData, setTableData] = useState([]);
+  const [showChart, setShowChart] = useState(true);
+  const [total, setTotal] = useState(null);
+
+  useEffect(() => {
+    getData();
+  }, [year, district]);
+
+  function getData() {
+    axios
+      .get(`/tracker/trackedEntities?orgUnit=${district}&program=g27TeeehRQC&startDate=${year}-01-01&endDate=${year}-12-31`)
+      .then(result => {
+
+        if (result.data.instances.length > 0) {
+          const startDate = `${year}-01-01`;
+          const endDate = `${year}-12-31`;
+
+          axios
+            .get(`/tracker/events?program=g27TeeehRQC&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
+            .then(resp => {
+
+              // const reports = filterTrackedEntitiesByCreatedAt(resp.data.instances, startDate, endDate);
+
+              const data = formatDataGeneral(result.data.instances, "Type", "Public") || [];
+              const reports = resp.data.instances;
+              const enrolmentReports = reports.filter(rep => rep.programStage === "aZJXKk3l5Jv");
+
+              // console.log("Djiba key schools: ", { data, enrolmentReports })
+
+              const temps = [];
+
+              data.forEach((item, idx) => {
+
+                const currentReport = enrolmentReports.find(rep => rep.trackedEntity === item.trackedEntity);
+                let boysEnrolment = 0;
+                let girlsEnrolment = 0;
+                let caterer = "";
+                
+                if (currentReport) {
+
+                  currentReport.dataValues.forEach(rep => {
+                    if (rep.dataElement === "jMGqg7AZ4FP") {
+                      boysEnrolment = parseFloat(rep.value);
+                    } else if (rep.dataElement === "CL5bvBCWxa5") {
+                      girlsEnrolment = parseFloat(rep.value);
+                    } else if (rep.dataElement === "D2lKlScVJJG") {
+                      caterer = rep.value;
+                    }
+                  });
+
+                }
+
+                const dataSetTemp = {
+                  no: idx + 1,
+                  school: getAttributeValue("Name of School", item),
+                  caterer,
+                  boysEnrolment,
+                  girlsEnrolment
+                };
+
+                temps.push(dataSetTemp);
+              });
+
+              // console.log("Djiba schools: ", temps)
+
+              setTableData(temps);
+
+
+            })
+            .catch(err => console.log(err))
+        }
+
+      })
+      .catch(err => console.log(err))
+  }
+
+
 
   return (
     <div className="col-12">
       <h3>Table 2.7 – Details of beneficiary schools and corresponding enrolment figures</h3>
       <div className="card">
-        <div className="card-header">Table 2.7 – Details of beneficiary schools and corresponding enrolment figures</div>
+        <div className="card-header"></div>
         <div className="card-body">
           <div className="table-responsive">
             <table className="table table-bordered">
-              <thead style={{ }}>
+              <thead style={{ backgroundColor: '#d4edda', fontWeight: 'bold', border: '1px solid #000' }}>
                 <tr>
-                  <th style={{ textAlign: "center" }}>No.</th>
-                  <th style={{ textAlign: "left" }}>School</th>
-                  <th style={{ textAlign: "left" }}>Name of Caterer</th>
-                  <th style={{ textAlign: "center" }}>Enrolment Boys</th>
-                  <th style={{ textAlign: "center" }}>Enrolment Girls</th>
-                  <th style={{ textAlign: "center" }}>Total Enrolment Figure</th>
+                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>No.</th>
+                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>School</th>
+                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Name of Caterer</th>
+                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Enrolment Boys</th>
+                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Enrolment Girls</th>
+                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Total Enrolment Figure</th>
                 </tr>
               </thead>
-              <tbody>
-                {schoolData.map((row, index) => (
+              {tableData && <tbody>
+                {tableData.map((row, index) => (
                   <tr key={index}>
-                    <td style={{ textAlign: "center" }}>{row.no}</td>
-                    <td style={{ textAlign: "left" }}>{row.school}</td>
-                    <td style={{ textAlign: "left" }}>{row.caterer}</td>
-                    <td style={{ textAlign: "center" }}>{row.boys}</td>
-                    <td style={{ textAlign: "center" }}>{row.girls}</td>
-                    <td style={{ textAlign: "center" }}>{row.total}</td>
+                    <td style={{ border: '1px solid #000' }}>{row.no}</td>
+                    <td style={{ border: '1px solid #000' }}>{row.school}</td>
+                    <td style={{ border: '1px solid #000' }}>{row.caterer}</td>
+                    <td style={{ border: '1px solid #000' }}>{row.boysEnrolment}</td>
+                    <td style={{ border: '1px solid #000' }}>{row.girlsEnrolment}</td>
+                    <td style={{ border: '1px solid #000' }}>{parseInt(row.boysEnrolment) + parseInt(row.girlsEnrolment) }</td>
                   </tr>
                 ))}
-              </tbody>
+              </tbody>}
             </table>
           </div>
           <p className="mt-2">

@@ -260,8 +260,8 @@ function AprReport() {
                 <Table2_3 year={selectedYear?.value} district={selectedDistrict?.value} />
                 <Table2_4 year={selectedYear?.value} district={selectedDistrict?.value}/>
                 <Table2_5 />
-                <Table2_6 />
-                <Table2_7 />
+                <Table2_6 year={selectedYear?.value} district={selectedDistrict?.value}/>
+                <Table2_7 year={selectedYear?.value} district={selectedDistrict?.value} />
                 <Table2_8 />
                 <Table2_9 />
                 <Table2_10 />

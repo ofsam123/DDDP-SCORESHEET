@@ -47,7 +47,7 @@ function PublicSchoolFacility({
                         .get(`/tracker/events?program=g27TeeehRQC&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
                         .then(resp => {
 
-                            const schools = formatDataGeneral(result.data.instances, "Type", "Public") || [];;
+                            const schools = formatDataGeneral(result.data.instances, "Type", "Public") || [];
                             const reports = resp.data.instances;
                             let schoolTotal = schools?.length;
                             let totalFacility = 0;

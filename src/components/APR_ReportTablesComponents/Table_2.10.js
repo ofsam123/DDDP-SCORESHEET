@@ -1,62 +1,98 @@
 
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "../../api/axios";
+import { formatDataGeneral, getAttributeValue } from "../../utils/utils";
 
-const Table2_10 = () => {
-  // Dummy data for PM&E activities
-  const pmeData = [
-    {
-      name: "Participatory Monitoring Tool A",
-      policy: "Tarkwa-Nsuaem Education Program 2022-2025",
-      consultant: "John Doe & Team",
-      methodology: "Focus Group Discussions and Surveys",
-      findings: "High engagement from local communities; some delays in implementation due to logistical issues.",
-      recommendations: "Improve logistical planning and increase community training sessions.",
-    },
-    {
-      name: "Evaluation Framework B",
-      policy: "Health Infrastructure Project 2023",
-      consultant: "Jane Smith & Associates",
-      methodology: "Interviews and Data Analysis",
-      findings: "Satisfactory progress in facility construction; funding gaps identified.",
-      recommendations: "Secure additional funding and accelerate construction timelines.",
-    },
-    {
-      name: "Community Feedback Tool C",
-      policy: "Rural Development Initiative 2022",
-      consultant: "Michael Brown",
-      methodology: "Community Workshops",
-      findings: "Positive feedback on agricultural support; need for better water access.",
-      recommendations: "Prioritize water infrastructure development.",
-    },
-  ];
+const Table2_10 = ({ year, district }) => {
+  const [tableData, setTableData] = useState([]);
+  const [showChart, setShowChart] = useState(true);
+  const [total, setTotal] = useState(null);
+
+  useEffect(() => {
+    getData();
+  }, [year, district]);
+
+  function getData() {
+    axios
+      .get(`/tracker/trackedEntities?orgUnit=${district}&program=UfMl96n7nnX&startDate=${year}-01-01&endDate=${year}-12-31`)
+      .then(result => {
+
+        if (result.data.instances.length > 0) {
+          const startDate = `${year}-01-01`;
+          const endDate = `${year}-12-31`;
+
+          axios
+            .get(`/tracker/events?program=UfMl96n7nnX&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
+            .then(resp => {
+
+              // const reports = filterTrackedEntitiesByCreatedAt(resp.data.instances, startDate, endDate);
+
+              // console.log("Djiba key evaluation: ", result.data.instances)
+
+              const data = formatDataGeneral(result.data.instances, "Evaluation Type", "Participatory Monitoring Evaluation") || [];
+              const reports = resp.data.instances;
+
+
+              const temps = [];
+
+              data.forEach((item, idx) => {
+
+                const findings = `${getAttributeValue("Findings PME", item)}`;
+
+                const dataSetTemp = {
+                  no: idx + 1,
+                  name: getAttributeValue("Evaluation Name", item),
+                  policy: getAttributeValue("Policy/Programme/ project involved", item),
+                  consultant: getAttributeValue("Consultant or resource persons involved", item),
+                  methodology: getAttributeValue("Methodology used", item),
+                  findings,
+                  recommendations: getAttributeValue("Recommendations", item)
+                };
+
+                temps.push(dataSetTemp);
+              });
+
+              // console.log("Djiba schools: ", temps)
+
+              setTableData(temps);
+
+
+            })
+            .catch(err => console.log(err))
+        }
+
+      })
+      .catch(err => console.log(err))
+  }
+
 
   return (
     <div className="col-12">
       <h3>Table 2.10 – Update on PM&E Conducted</h3>
       <div className="card">
-        <div className="card-header">Table 2.10 – Update on PM&E Conducted</div>
+        <div className="card-header"></div>
         <div className="card-body">
           <div className="table-responsive">
             <table className="table table-bordered">
-              <thead style={{ }}>
+              <thead style={{ backgroundColor: '#d4edda', fontWeight: 'bold', border: '1px solid #000' }}>
                 <tr>
-                  <th style={{ textAlign: "left" }}>Name of the PM&E Tool</th>
-                  <th style={{ textAlign: "left" }}>Policy/Programme/Project Involved</th>
-                  <th style={{ textAlign: "left" }}>Consultant or Resource Persons Involved</th>
-                  <th style={{ textAlign: "left" }}>Methodology Used</th>
-                  <th style={{ textAlign: "left" }}>Findings</th>
-                  <th style={{ textAlign: "left" }}>Recommendations</th>
+                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Name of the PM&E Tool</th>
+                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Policy/Programme/Project Involved</th>
+                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Consultant or Resource Persons Involved</th>
+                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Methodology Used</th>
+                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Findings</th>
+                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Recommendations</th>
                 </tr>
               </thead>
               <tbody>
-                {pmeData.map((row, index) => (
+                {tableData.map((row, index) => (
                   <tr key={index}>
-                    <td style={{ textAlign: "left", whiteSpace: "pre-wrap" }}>{row.name}</td>
-                    <td style={{ textAlign: "left", whiteSpace: "pre-wrap" }}>{row.policy}</td>
-                    <td style={{ textAlign: "left", whiteSpace: "pre-wrap" }}>{row.consultant}</td>
-                    <td style={{ textAlign: "left", whiteSpace: "pre-wrap" }}>{row.methodology}</td>
-                    <td style={{ textAlign: "left", whiteSpace: "pre-wrap" }}>{row.findings}</td>
-                    <td style={{ textAlign: "left", whiteSpace: "pre-wrap" }}>{row.recommendations}</td>
+                    <td style={{ border: '1px solid #000' }}>{row.name}</td>
+                    <td style={{ border: '1px solid #000' }}>{row.policy}</td>
+                    <td style={{ border: '1px solid #000' }}>{row.consultant}</td>
+                    <td style={{ border: '1px solid #000' }}>{row.methodology}</td>
+                    <td style={{ border: '1px solid #000' }}><p>{row.findings}</p></td>
+                    <td style={{ border: '1px solid #000' }}>{row.recommendations}</td>
                   </tr>
                 ))}
               </tbody>

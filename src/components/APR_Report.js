@@ -263,8 +263,8 @@ function AprReport() {
                 <Table2_6 year={selectedYear?.value} district={selectedDistrict?.value}/>
                 <Table2_7 year={selectedYear?.value} district={selectedDistrict?.value} />
                 <Table2_8 />
-                <Table2_9 />
-                <Table2_10 />
+                <Table2_9 year={selectedYear?.value} district={selectedDistrict?.value} />
+                <Table2_10 year={selectedYear?.value} district={selectedDistrict?.value}/>
               </>
             )}
             {selectedTable && selectedTable.value === "table_1.1" && <Table1_1 />}

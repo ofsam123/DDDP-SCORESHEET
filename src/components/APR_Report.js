@@ -15,6 +15,7 @@ import Table2_7 from "../components/APR_ReportTablesComponents/Table_2.7";
 import Table2_8 from "../components/APR_ReportTablesComponents/Table_2.8";
 import Table2_9 from "../components/APR_ReportTablesComponents/Table_2.9";
 import Table2_10 from "../components/APR_ReportTablesComponents/Table_2.10";
+import Apendix_2 from "../components/APR_ReportTablesComponents/Apendix2"
 
 function AprReport() {
   // Component state
@@ -88,6 +89,7 @@ function AprReport() {
     { value: "table_2.8", label: "Table 2.8 – Details of all activities implemented by the BAC for the year 2022" },
     { value: "table_2.9", label: "Table 2.9 – Update on Evaluations Conducted" },
     { value: "table_2.10", label: "Table 2.10 – Update on PM&E Conducted" },
+    { value: "apendix_2", label: "Apendix2  –Composit Annual Action for the Year" },
   ];
 
   // Table data (only for unimplemented tables)
@@ -100,6 +102,7 @@ function AprReport() {
     "table_2.8": [{ indicator: "Placeholder", details: "Details to be added" }],
     "table_2.9": [{ indicator: "Placeholder", details: "Details to be added" }],
     "table_2.10": [{ indicator: "Placeholder", details: "Details to be added" }],
+    "apendix_2": [{ indicator: "Placeholder", details: "Details to be added" }],
   };
 
   useEffect(() => {
@@ -185,6 +188,7 @@ function AprReport() {
       "table_2.8": "2.4.6",
       "table_2.9": "2.5",
       "table_2.10": "2.6",
+      "apendix_2": "a.2",
     };
     const correspondingTocValue = tableToTocMap[selectedOption.value];
     if (correspondingTocValue) {
@@ -265,6 +269,9 @@ function AprReport() {
                 <Table2_8 />
                 <Table2_9 year={selectedYear?.value} district={selectedDistrict?.value} />
                 <Table2_10 year={selectedYear?.value} district={selectedDistrict?.value}/>
+                <Apendix_2 year={selectedYear?.value} district={selectedDistrict?.value}/>
+                
+
               </>
             )}
             {selectedTable && selectedTable.value === "table_1.1" && <Table1_1 />}
@@ -279,7 +286,8 @@ function AprReport() {
             {selectedTable && selectedTable.value === "table_2.8" && <Table2_8 />}
             {selectedTable && selectedTable.value === "table_2.9" && <Table2_9 />}
             {selectedTable && selectedTable.value === "table_2.10" && <Table2_10 />}
-            {selectedTable && !["all_tables", "table_1.1", "table_1.2", "table_2.1", "table_2.2", "table_2.3", "table_2.4", "table_2.5", "table_2.6","table_2.7", "table_2.8", "table_2.9", "table_2.10"].includes(selectedTable.value) && (
+            {selectedTable && selectedTable.value === "apendix_2" && <Apendix_2 />}
+            {selectedTable && !["all_tables", "table_1.1", "table_1.2", "table_2.1", "table_2.2", "table_2.3", "table_2.4", "table_2.5", "table_2.6","table_2.7", "table_2.8", "table_2.9", "table_2.10", "apendix_2"].includes(selectedTable.value) && (
               <div className="col-12">
                 <h3>{selectedTable.label}</h3>
                 <div className="card">

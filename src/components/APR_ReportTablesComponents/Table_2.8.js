@@ -1,114 +1,93 @@
 
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "../../api/axios";
 
-const Table2_8 = () => {
-  // Activity data as provided
-  const activityData = [
-    {
-      no: "1",
-      activity: "Support clients to register business with RGD",
-      targetGroup: "SME’s",
-      venue: "RGD office Tarkoradi",
-      participants: "4",
-      fundingSource: "GEA/Clients",
-      remarks: "Successfully implemented",
-    },
-    {
-      no: "2",
-      activity: "Support clients to access FDA & GSA certificate",
-      targetGroup: "SME’s",
-      venue: "FDA office",
-      participants: "4",
-      fundingSource: "GEA/Clients",
-      remarks: "Ongoing",
-    },
-    {
-      no: "3",
-      activity: "CAPBuss Recovery",
-      targetGroup: "Beneficiaries",
-      venue: "Municipal wide",
-      participants: "1",
-      fundingSource: "GEA",
-      remarks: "Ongoing",
-    },
-    {
-      no: "4",
-      activity: "Client Monitoring and counselling visitation",
-      targetGroup: "GEA Clients",
-      venue: "Municipal wide",
-      participants: "4",
-      fundingSource: "GEA/Client/MA",
-      remarks: "Successfully implemented",
-    },
-    {
-      no: "5",
-      activity: "Consultative meetings/MSE Subcommittee meeting",
-      targetGroup: "Subcommittee members",
-      venue: "Assembly Conference Room",
-      participants: "30",
-      fundingSource: "MA",
-      remarks: "Successfully implemented",
-    },
-    {
-      no: "6",
-      activity: "Clients Visitation",
-      targetGroup: "Associations in Tarkwa",
-      venue: "Municipal wide",
-      participants: "4",
-      fundingSource: "GEA/MA",
-      remarks: "Successfully implemented",
-    },
-    {
-      no: "7",
-      activity: "Organize internship training",
-      targetGroup: "SMEs, Artisans",
-      venue: "Municipal wide",
-      participants: "5",
-      fundingSource: "REP/GEA",
-      remarks: "Not implemented",
-    },
-    {
-      no: "8",
-      activity: "Provision of business counselling to 50 clients",
-      targetGroup: "GEA Clients",
-      venue: "Municipal wide",
-      participants: "1",
-      fundingSource: "REP/GEA",
-      remarks: "Not implemented",
-    },
-  ];
+const Table2_8 = ({ year = "2025", district = "EmVZbr0kApz" }) => {
+  const [activityData, setActivityData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchActivityData();
+  }, [year, district]);
+
+  async function fetchActivityData() {
+    try {
+      const response = await axios.get(
+        `/tracker/trackedEntities?program=AcOikCwZH2x&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31&paging=false&fields=trackedEntity,attributes[displayName,value]`
+      );
+
+      const trackedEntities = response.data.instances || [];
+      const temps = [];
+
+      trackedEntities.forEach((entity, idx) => {
+        const mappedData = {
+          no: (idx + 1).toString(),
+          activity: getAttributeValue(entity, "Name") || `Activity ${idx + 1}`,
+          targetGroup: getAttributeValue(entity, "Target Group") || "Unknown",
+          venue: getAttributeValue(entity, "Venue") || "Unknown",
+          participants: getAttributeValue(entity, "Target Beneficiaries") || "0",
+          fundingSource: getAttributeValue(entity, "Primary Funding Source") || "Unknown",
+          remarks: "N/A", // Not available; default to N/A
+        };
+
+        temps.push(mappedData);
+      });
+
+      setActivityData(temps);
+      setIsLoading(false);
+    } catch (err) {
+      console.error("Error fetching activity data:", err);
+      setActivityData([]);
+      setIsLoading(false);
+    }
+  }
+
+  // Helper function to get attribute value from trackedEntity
+  const getAttributeValue = (entity, attributeDisplayName) => {
+    return entity.attributes.find(attr => attr.displayName === attributeDisplayName)?.value || null;
+  };
 
   return (
     <div className="col-12">
-      <h3>Table 2.8 – Details of all activities implemented by the BAC for the year 2022</h3>
+      <h3>Table 2.8 – Details of all activities implemented by the BAC for the year {year}</h3>
       <div className="card">
-        <div className="card-header">Table 2.8 – Details of all activities implemented by the BAC for the year 2022</div>
+        <div className="card-header"></div>
         <div className="card-body">
           <div className="table-responsive">
             <table className="table table-bordered">
-              <thead style={{ }}>
+              <thead style={{ backgroundColor: '#d4edda', fontWeight: 'bold', border: '1px solid #000' }}>
                 <tr>
-                  <th style={{ textAlign: "center" }}>No.</th>
-                  <th style={{ textAlign: "left" }}>Activity</th>
-                  <th style={{ textAlign: "left" }}>Target Group</th>
-                  <th style={{ textAlign: "left" }}>Venue</th>
-                  <th style={{ textAlign: "center" }}>No. of Participants</th>
-                  <th style={{ textAlign: "left" }}>Funding Source</th>
-                  <th style={{ textAlign: "left" }}>Remarks</th>
+                  <th style={{ border: '1px solid #000', textAlign: 'center' }}>No.</th>
+                  <th style={{ border: '1px solid #000', textAlign: 'left' }}>Activity</th>
+                  <th style={{ border: '1px solid #000', textAlign: 'left' }}>Target Group</th>
+                  <th style={{ border: '1px solid #000', textAlign: 'left' }}>Venue</th>
+                  <th style={{ border: '1px solid #000', textAlign: 'center' }}>No. of Participants</th>
+                  <th style={{ border: '1px solid #000', textAlign: 'left' }}>Funding Source</th>
+                  <th style={{ border: '1px solid #000', textAlign: 'left' }}>Remarks</th>
                 </tr>
               </thead>
               <tbody>
-                {activityData.map((row, index) => (
-                  <tr key={index}>
-                    <td style={{ textAlign: "center" }}>{row.no}</td>
-                    <td style={{ textAlign: "left" }}>{row.activity}</td>
-                    <td style={{ textAlign: "left" }}>{row.targetGroup}</td>
-                    <td style={{ textAlign: "left" }}>{row.venue}</td>
-                    <td style={{ textAlign: "center" }}>{row.participants}</td>
-                    <td style={{ textAlign: "left" }}>{row.fundingSource}</td>
-                    <td style={{ textAlign: "left" }}>{row.remarks}</td>
+                {isLoading ? (
+                  <tr>
+                    <td colSpan="7" style={{ border: '1px solid #000', textAlign: 'center' }}>Loading data...</td>
                   </tr>
-                ))}
+                ) : activityData.length > 0 ? (
+                  activityData.map((row, index) => (
+                    <tr key={index}>
+                      <td style={{ border: '1px solid #000', textAlign: 'center' }}>{row.no}</td>
+                      <td style={{ border: '1px solid #000', textAlign: 'left' }}>{row.activity}</td>
+                      <td style={{ border: '1px solid #000', textAlign: 'left' }}>{row.targetGroup}</td>
+                      <td style={{ border: '1px solid #000', textAlign: 'left' }}>{row.venue}</td>
+                      <td style={{ border: '1px solid #000', textAlign: 'center' }}>{row.participants}</td>
+                      <td style={{ border: '1px solid #000', textAlign: 'left' }}>{row.fundingSource}</td>
+                      <td style={{ border: '1px solid #000', textAlign: 'left' }}>{row.remarks}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="7" style={{ border: '1px solid #000', textAlign: 'center' }}>No data available</td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

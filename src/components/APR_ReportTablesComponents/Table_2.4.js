@@ -179,53 +179,53 @@ const Table2_4 = ({ year, district }) => {
         <div className="card-header"></div>
         <div className="card-body">
           <h5>2.2.3 Update on Disbursements</h5>
-            <h7>
-During the year under review, funds received were disbursed under the components of 
-Compensation, Goods and Services and Non–Financial Assets. Table 2.4 presents the 
-disbursement for the years.</h7>
+          <h7>
+            During the year under review, funds received were disbursed under the components of
+            Compensation, Goods and Services and Non–Financial Assets. Table 2.4 presents the
+            disbursement for the years.</h7>
           <div className="table-responsive">
-          <table
-  className="table table-bordered"
-  style={{
-    
-    border: '1px solid #000',
-    borderCollapse: 'collapse',
-    width: '100%',
-    marginTop: '20px'
-  }}
->
-  <thead   style={{
-      backgroundColor: '#d4edda',
-      fontWeight: 'bold',
-    }}>
-    <tr>
-      <th style={{ border: '1px solid #000' }}>Expenditure Item</th>
-      <th style={{ border: '1px solid #000' }}>Baseline (GH¢)</th>
-      <th style={{ border: '1px solid #000' }}>Target (GH¢)</th>
-      <th style={{ border: '1px solid #000' }}>Actual (GH¢)</th>
-    </tr>
-  </thead>
-  {tableData && (
-    <tbody>
-      {tableData.map((row, index) => (
-        <tr key={index}>
-          <td style={{ border: '1px solid #000' }}>{row.name}</td>
-          <td style={{ border: '1px solid #000' }}>{row.baseline.toLocaleString()}</td>
-          <td style={{ border: '1px solid #000' }}>{row.target.toLocaleString()}</td>
-          <td style={{ border: '1px solid #000' }}>{row.actual.toLocaleString()}</td>
-        </tr>
-      ))}
-      {total && (
-        <tr style={{ fontWeight: 'bold', backgroundColor: '#f0f0f0' }}>
-          <td style={{ border: '1px solid #000' }}>{total.name}</td>
-          <td style={{ border: '1px solid #000' }}>{total.baseline.toLocaleString()}</td>
-          <td style={{ border: '1px solid #000' }}>{total.target.toLocaleString()}</td>
-          <td style={{ border: '1px solid #000' }}>{total.actual.toLocaleString()}</td>
-        </tr>
-      )}
-    </tbody>
-  )}
-</table>
+            <table
+              className="table table-bordered"
+              style={{
+
+                border: '1px solid #000',
+                borderCollapse: 'collapse',
+                width: '100%',
+                marginTop: '20px'
+              }}
+            >
+              <thead style={{
+                backgroundColor: '#d4edda',
+                fontWeight: 'bold',
+              }}>
+                <tr>
+                  <th style={{ border: '1px solid #000' }}>Expenditure Item</th>
+                  <th style={{ border: '1px solid #000' }}>Baseline (GH¢)</th>
+                  <th style={{ border: '1px solid #000' }}>Target (GH¢)</th>
+                  <th style={{ border: '1px solid #000' }}>Actual (GH¢)</th>
+                </tr>
+              </thead>
+              {tableData && (
+                <tbody>
+                  {tableData.map((row, index) => (
+                    <tr key={index}>
+                      <td style={{ border: '1px solid #000' }}>{row.name}</td>
+                      <td style={{ border: '1px solid #000' }}>{row.baseline.toLocaleString()}</td>
+                      <td style={{ border: '1px solid #000' }}>{row.target.toLocaleString()}</td>
+                      <td style={{ border: '1px solid #000' }}>{row.actual.toLocaleString()}</td>
+                    </tr>
+                  ))}
+                  {total && (
+                    <tr style={{ fontWeight: 'bold', backgroundColor: '#f0f0f0' }}>
+                      <td style={{ border: '1px solid #000' }}>{total.name}</td>
+                      <td style={{ border: '1px solid #000' }}>{total.baseline.toLocaleString()}</td>
+                      <td style={{ border: '1px solid #000' }}>{total.target.toLocaleString()}</td>
+                      <td style={{ border: '1px solid #000' }}>{total.actual.toLocaleString()}</td>
+                    </tr>
+                  )}
+                </tbody>
+              )}
+            </table>
 
           </div>
           <p className="mt-2">

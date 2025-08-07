@@ -218,21 +218,21 @@ const Table1_2 = ({ year, district }) => {
       <div className="card">
         <div className="card-header"></div>
         <div className="card-body">
-          Table 1.2 presents the breakdown of activities implemented under the various 
-development dimensions. Comparatively, it can be realized that there are more projects 
-and programmes in the {year} Annual Action Plan as compared to the base year mainly 
-ONGOING 6-UNIT CLASSROOM BLOCK AT BOGREKROM ONGOING COMMUNITY CENTRE AT CYANIDE ONGOING CLASSROOM BLOCK AT MAHAMO
-6 | P a g e
-due to the rolled over projects from previous years and the inclusion of integrated social 
-services related activities in the Plan
+          Table 1.2 presents the breakdown of activities implemented under the various
+          development dimensions. Comparatively, it can be realized that there are more projects
+          and programmes in the {year} Annual Action Plan as compared to the base year mainly
+          ONGOING 6-UNIT CLASSROOM BLOCK AT BOGREKROM ONGOING COMMUNITY CENTRE AT CYANIDE ONGOING CLASSROOM BLOCK AT MAHAMO
+          6 | P a g e
+          due to the rolled over projects from previous years and the inclusion of integrated social
+          services related activities in the Plan
 
           <div className="table-responsive">
-            <table className="table table-bordered"style={{
-    border: '1px solid #000',
-    borderCollapse: 'collapse',
-    width: '100%',
-    marginTop:"20px"
-  }}>
+            <table className="table table-bordered" style={{
+              border: '1px solid #000',
+              borderCollapse: 'collapse',
+              width: '100%',
+              marginTop: "20px"
+            }}>
               <thead>
                 <tr style={{ backgroundColor: '#d4edda', fontWeight: 'bold', border: '1px solid #000' }}>
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>S/N</th>

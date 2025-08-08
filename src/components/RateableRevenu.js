@@ -18,7 +18,7 @@ function RateableRevenu({ year, district }) {
     useEffect(() => {
         getBillingDetails();
         getBillingData()
-    }, [year, district]);
+    }, [year, district, ]);
 
     const getBillingDetails = () => {
 

@@ -17,7 +17,7 @@ function BusinessCommunityEngagement({
 
     useEffect(() => {
         getData();
-    }, [year, district]);
+    }, [year, district, ]);
 
     function getData() {
         axios

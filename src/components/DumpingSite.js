@@ -18,7 +18,7 @@ function DumpingSite({
 
     useEffect(() => {
         getDumpingSite();
-    }, [year, district]);
+    }, [year, district, ]);
 
 
 

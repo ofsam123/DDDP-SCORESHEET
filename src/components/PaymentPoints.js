@@ -29,7 +29,7 @@ function PaymentPoints({ year, district }) {
 
     useEffect(() => {
         getIndicatorsData();
-    }, [year, district]);
+    }, [year, district, ]);
 
     const paymentPointsColumns = [
         { title: "Number of established revenue points", dataIndex: "revenuReport", key: "revenuReport" },

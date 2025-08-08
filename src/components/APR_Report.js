@@ -49,7 +49,7 @@ function AprReport() {
   const [selectedTocSection, setSelectedTocSection] = useState(null);
 
   // Set "All Tables" as the default selected table
-  const [selectedTable, setSelectedTable] = useState({ value: "all_tables", label: "All Tables" });
+  const [, set] = useState({ value: "all_tables", label: "All Tables" });
 
   // Year options for dropdown
   const yearOptions = Array.from({ length: 6 }, (_, i) => {
@@ -146,7 +146,7 @@ function AprReport() {
 
   // Handler for Table selection
   const handleTableSelection = (selectedOption) => {
-    setSelectedTable(selectedOption);
+    set(selectedOption);
     // console.log("Selected Table:", selectedOption);
   };
 
@@ -189,14 +189,14 @@ function AprReport() {
               <Select
                 onChange={handleTableSelection}
                 options={tableOptions}
-                value={selectedTable}
+                value={}
                 isSearchable
                 placeholder="Select Table"
               />
             </div>
           </div>
           <div className="row gutters">
-            {selectedTable && selectedTable.value === "all_tables" && (
+            { && .value === "all_tables" && (
               <>
                 <Table1_1 />
                 <Table1_2 year={selectedYear?.value} district={selectedDistrict?.value} />
@@ -220,36 +220,36 @@ function AprReport() {
                 <Table2_8 />
                 <Table2_9 year={selectedYear?.value} district={selectedDistrict?.value} />
                 <Table2_10 year={selectedYear?.value} district={selectedDistrict?.value} />
-                <Table2_10 year={selectedYear?.value} district={selectedDistrict?.value}/>
+                {/* <Table2_10 year={selectedYear?.value} district={selectedDistrict?.value}/> */}
                 <Apendix_2 year={selectedYear?.value} district={selectedDistrict?.value}/>
 
 
               </>
             )}
-            {selectedTable && selectedTable.value === "table_1.1" && <Table1_1 />}
-            {selectedTable && selectedTable.value === "table_1.2" && <Table1_2 />}
-            {selectedTable && selectedTable.value === "table_2.1" && <Table2_1 />}
-            {selectedTable && selectedTable.value === "table_2.2" && <Table2_2 />}
-            {selectedTable && selectedTable.value === "table_2.3" && <Table2_3 />}
-            {selectedTable && selectedTable.value === "table_2.4" && <Table2_4 />}
-            {selectedTable && selectedTable.value === "table_2.5" && <Table2_5 />}
-            {selectedTable && selectedTable.value === "table_2.6" && <Table2_6 />}
-            {selectedTable && selectedTable.value === "table_2.7" && <Table2_7 />}
-            {selectedTable && selectedTable.value === "table_2.8" && <Table2_8 />}
-            {selectedTable && selectedTable.value === "table_2.9" && <Table2_9 />}
-            {selectedTable && selectedTable.value === "table_2.10" && <Table2_10 />}
-            {selectedTable && !["all_tables", "table_1.1", "table_1.2", "table_2.1", "table_2.2", "table_2.3", "table_2.4", "table_2.5", "table_2.6", "table_2.7", "table_2.8", "table_2.9", "table_2.10"].includes(selectedTable.value) && (
+            { && .value === "table_1.1" && <Table1_1 />}
+            { && .value === "table_1.2" && <Table1_2 />}
+            { && .value === "table_2.1" && <Table2_1 />}
+            { && .value === "table_2.2" && <Table2_2 />}
+            { && .value === "table_2.3" && <Table2_3 />}
+            { && .value === "table_2.4" && <Table2_4 />}
+            { && .value === "table_2.5" && <Table2_5 />}
+            { && .value === "table_2.6" && <Table2_6 />}
+            { && .value === "table_2.7" && <Table2_7 />}
+            { && .value === "table_2.8" && <Table2_8 />}
+            { && .value === "table_2.9" && <Table2_9 />}
+            { && .value === "table_2.10" && <Table2_10 />}
+            { && !["all_tables", "table_1.1", "table_1.2", "table_2.1", "table_2.2", "table_2.3", "table_2.4", "table_2.5", "table_2.6", "table_2.7", "table_2.8", "table_2.9", "table_2.10"].includes(.value) && (
               <div className="col-12">
-                <h3>{selectedTable.label}</h3>
+                <h3>{.label}</h3>
                 <div className="card">
-                  <div className="card-header">{selectedTable.label}</div>
+                  <div className="card-header">{.label}</div>
                   <div className="card-body">
                     <p>Content for this table is not yet implemented. Please provide data to display.</p>
                   </div>
                 </div>
               </div>
             )}
-            {!selectedTable && selectedTocSection && (
+            {! && selectedTocSection && (
               <div className="col-12">
                 <h3>{selectedTocSection.label}</h3>
                 <p>Content for this section is not yet implemented. Select a table or provide additional data. APR</p>

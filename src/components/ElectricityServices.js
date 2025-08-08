@@ -33,7 +33,7 @@ function ElectricityServices({
 
     useEffect(() => {
         getServiceProviders();
-    }, [year, district]);
+    }, [year, district, ]);
 
 
     function getServiceProviders() {

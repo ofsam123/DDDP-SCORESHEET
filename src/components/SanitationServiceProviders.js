@@ -22,7 +22,7 @@ function SanitationServiceProviders({
 
     useEffect(() => {
         getServiceProviders();
-    }, [year, district]);
+    }, [year, district, ]);
 
 
     function formatDataGeneral(data, property, value) {

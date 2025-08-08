@@ -44,6 +44,8 @@ export default function App() {
         filter=disabled:eq:false&fields=username,displayName,email,phoneNumber,disabled,userGroups[id,name]&paging=false`)
       .then(resp => {
         const userList = resp.data.users;
+
+        // console.log("user list: ", userList);
     
         if (userList.length === 0) {
           setError("Username and or Email not found in DDDP");
@@ -57,7 +59,8 @@ export default function App() {
             username: user.username,
             phone: user.phoneNumber,
             disabled: user.disabled,
-            email: user.email
+            email: user.email,
+            userGroup: user?.userGroups
           }
         };
     

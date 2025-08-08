@@ -1,7 +1,9 @@
 import Navbar from "../layout/Navbar";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "../api/axios";
+import { useReactToPrint } from 'react-to-print';
 import SideBarWrapper from "../components/SideBarWrapper";
+import { FilePdfOutlined } from "@ant-design/icons";
 import Select from "react-select";
 import Table1_1 from "../components/APR_ReportTablesComponents/Table_1.1"; 
 import Table1_2 from "../components/APR_ReportTablesComponents/Table_1.2"; 
@@ -16,6 +18,8 @@ import Table2_8 from "../components/APR_ReportTablesComponents/Table_2.8";
 import Table2_9 from "../components/APR_ReportTablesComponents/Table_2.9";
 import Table2_10 from "../components/APR_ReportTablesComponents/Table_2.10";
 import Apendix_2 from "../components/APR_ReportTablesComponents/Apendix2"
+import Appendix1 from "./APR_ReportTablesComponents/Apendix1";
+import { Button } from "antd";
 
 
   // List of Tables options
@@ -47,6 +51,7 @@ function AprReport() {
   const [selectedDistrict, setSelectedDistrict] = useState(null);
   const [selectedYear, setSelectedYear] = useState({ value: "2024", label: "2024" });
   const [selectedTocSection, setSelectedTocSection] = useState(null);
+  const contentToPrint = useRef(null);
 
   // Set "All Tables" as the default selected table
   const [selectedTable, setSelectedTable] = useState({ value: "all_tables", label: "All Tables" });
@@ -68,6 +73,14 @@ function AprReport() {
       getDistrictWideConstant(selectedDistrict.value, selectedYear.value)
     }
   }, [selectedDistrict, selectedYear]);
+
+   const handlePrint = useReactToPrint({
+          content: () => contentToPrint.current,
+          documentTitle: `${selectedDistrict?.label}_APR_Report_${selectedYear.value}`,
+          onBeforePrint: () => console.log("before printing..."),
+          onAfterPrint: () => console.log("after printing..."),
+          removeAfterPrint: true,
+      });
 
   function pullConstantData() {
 
@@ -197,7 +210,7 @@ function AprReport() {
           </div>
           <div className="row gutters">
             {selectedTable && selectedTable.value === "all_tables" && (
-              <>
+              <em ref={contentToPrint}>
                 <Table1_1 />
                 <Table1_2 year={selectedYear?.value} district={selectedDistrict?.value} />
                 <Table2_1 year={selectedYear?.value} district={selectedDistrict?.value} />
@@ -221,11 +234,33 @@ function AprReport() {
                 <Table2_9 year={selectedYear?.value} district={selectedDistrict?.value} />
                 <Table2_10 year={selectedYear?.value} district={selectedDistrict?.value} />
                 <Table2_10 year={selectedYear?.value} district={selectedDistrict?.value}/>
+                <Appendix1 year={selectedYear?.value} district={selectedDistrict?.value}/>
                 <Apendix_2 year={selectedYear?.value} district={selectedDistrict?.value}/>
-
-
-              </>
+                
+              </em>
             )}
+            <div style={{ textAlign: "right" }}>
+                            <Button
+                                type="primary"
+                                icon={<FilePdfOutlined style={{ fontSize: "20px", color: "white", fontWeight: "bold" }} />}
+                                onClick={() => {
+                                    if (contentToPrint.current) {
+                                        handlePrint();
+                                    } else {
+                                        console.log("Content is not available for printing.");
+                                    }
+                                }}
+                                style={{
+                                    marginTop: "10px",
+                                    backgroundColor: "#1890ff",
+                                    borderColor: "#1890ff",
+                                    height: "35px",
+                                    padding: "0 15px",
+                                }}
+                            >
+                                <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>Download Report</span>
+                            </Button>
+                        </div>
             {selectedTable && selectedTable.value === "table_1.1" && <Table1_1 />}
             {selectedTable && selectedTable.value === "table_1.2" && <Table1_2 />}
             {selectedTable && selectedTable.value === "table_2.1" && <Table2_1 />}

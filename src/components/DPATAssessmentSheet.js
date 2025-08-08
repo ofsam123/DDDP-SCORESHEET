@@ -284,9 +284,6 @@ const DPATAssessmentSheet = ({ props }) => {
     });
 
 
-
-
-
     useEffect(() => {
         setMeetingData();
         setDecisionData();

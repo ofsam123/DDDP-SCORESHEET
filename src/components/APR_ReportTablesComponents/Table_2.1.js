@@ -45,9 +45,9 @@ const Table2_1 = ({ year, district }) => {
                       expendature = rep.value;
                     }
 
-                    if(rep.dataElement === "f1T48vHfJc1"){
-                      console.log("percentage: ",rep.value)
-                        percentage = rep.value;
+                    if (rep.dataElement === "f1T48vHfJc1") {
+                      console.log("percentage: ", rep.value)
+                      percentage = rep.value;
                     }
                   });
 
@@ -61,7 +61,7 @@ const Table2_1 = ({ year, district }) => {
                   dimension: getAttributeValue("Development Dimension", project),
                   location: getAttributeValue("Location", project),
                   contractor: getAttributeValue("Contractor", project),
-                  contractSum: sumTotal ,
+                  contractSum: sumTotal,
                   fundingSource: getAttributeValue("Primary Funding Source", project),
                   dateOfAward: getAttributeValue("Awarded Date", project),
                   dateStarted: getAttributeValue("Start Date", project),
@@ -97,27 +97,27 @@ const Table2_1 = ({ year, district }) => {
         </div>
         <div className="card-body">
           <h7>2.1 Programme / Project Status for the year
-The projects and programmes being implemented in the Tarkwa-Nsuaem Municipality 
-have been categorized under the various sources of funding available to the Assembly. 
-These sources of funding are the District Assemblies Common Fund (DACF) and the 
-District Assemblies Common Fund Responsive Factor Grant (DACF-RFG). Others are the 
-Internally Generated Funds (IGF) and the Minerals Development Fund (MDF).
-The update on projects and programmes has been presented in the registers in Table 2.1 
-and 2.2. The registers are made up of the name of the project or programme, 
-development dimension, project location, contractor or consultant involved, budget, 
-source of funding and type of funding. The other columns also show date started, 
-expected completion date, contract sum, expenditure to date, implementation status and 
-remarks on the status of implementation. The remarks state the exact physical progress 
-of work. 
-Projects implementation progressed steadily, and visible improvements were made over 
-the period. </h7>
+            The projects and programmes being implemented in the Tarkwa-Nsuaem Municipality
+            have been categorized under the various sources of funding available to the Assembly.
+            These sources of funding are the District Assemblies Common Fund (DACF) and the
+            District Assemblies Common Fund Responsive Factor Grant (DACF-RFG). Others are the
+            Internally Generated Funds (IGF) and the Minerals Development Fund (MDF).
+            The update on projects and programmes has been presented in the registers in Table 2.1
+            and 2.2. The registers are made up of the name of the project or programme,
+            development dimension, project location, contractor or consultant involved, budget,
+            source of funding and type of funding. The other columns also show date started,
+            expected completion date, contract sum, expenditure to date, implementation status and
+            remarks on the status of implementation. The remarks state the exact physical progress
+            of work.
+            Projects implementation progressed steadily, and visible improvements were made over
+            the period. </h7>
           <div className="table-responsive">
-            <table className="table table-bordered"style={{
-    border: '1px solid #000',
-    borderCollapse: 'collapse',
-    width: '100%',
-    marginTop:"20px"
-  }}>
+            <table className="table table-bordered" style={{
+              border: '1px solid #000',
+              borderCollapse: 'collapse',
+              width: '100%',
+              marginTop: "20px"
+            }}>
               <thead>
                 <tr style={{ backgroundColor: '#d4edda', fontWeight: 'bold', border: '1px solid #000' }}>
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>No.</th>

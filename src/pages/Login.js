@@ -41,7 +41,8 @@ export default function App() {
     
     axios
       .get(`/users?filter=username:eq:${userName}&filter=email:eq:${email}&
-        filter=disabled:eq:false&fields=username,displayName,email,phoneNumber,disabled,userGroups[id,name]&paging=false`)
+        filter=disabled:eq:false&fields=username,displayName,email,phoneNumber,
+        disabled,userCredentials[userRoles[id,name]]&paging=false`)
       .then(resp => {
         const userList = resp.data.users;
 
@@ -60,7 +61,7 @@ export default function App() {
             phone: user.phoneNumber,
             disabled: user.disabled,
             email: user.email,
-            userGroup: user?.userGroups
+            userRoles: user?.userCredentials?.userRoles
           }
         };
     

@@ -40,7 +40,8 @@ export default function App() {
     }
     
     axios
-      .get(`/users?filter=username:eq:${userName}&filter=email:eq:${email}&filter=disabled:eq:false&fields=username,displayName,email,phoneNumber,disabled`)
+      .get(`/users?filter=username:eq:${userName}&filter=email:eq:${email}&
+        filter=disabled:eq:false&fields=username,displayName,email,phoneNumber,disabled,userGroups[id,name]&paging=false`)
       .then(resp => {
         const userList = resp.data.users;
     
@@ -144,13 +145,7 @@ export default function App() {
             <div className="overlay-panel overlay-left">
               <h1 style={{color:"white"}}>Welcome!</h1>
               <p>Enter your DDDP Account details to Sign In</p>
-              {/* <button
-                className="ghost"
-                id="signIn"
-                onClick={() => handleOnClick("signIn")}
-              >
-                Right View
-              </button> */}
+             
             </div>
            
           </div>

@@ -6,10 +6,6 @@ const { Title, Text } = Typography;
 
 function AAPBudgetAproval({ data, year, columns }) {
 
-    // useEffect(()=>{
-    //     console.log("budget: ",data);
-    // },[])
-
     return (
         <>
             <Title level={3}>CI 1.0 General Assembly Meetings and Approvals - 1.2 Approval of Annual Action Plan and Budget </Title>

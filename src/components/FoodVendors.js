@@ -19,7 +19,7 @@ function FoodVendors({
 
         getFoodVendors();
 
-    }, [year, district, ]);
+    }, [year, district]);
 
     const getAttributeValue = (key, val) => {
         const attr = val?.attributes.find(attr => attr.displayName === key);

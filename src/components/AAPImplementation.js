@@ -11,7 +11,7 @@ function AAPImplementation({ year, district }) {
     const [score, setScore] = useState(0);
     useEffect(()=>{
         getIndicatorsData();
-    }, [year, district, ]);
+    }, [year, district]);
 
     const aapImplementationColumns = [
         { title: `No. of activities in approved ${year} Annual Action Plan`, dataIndex: "aapApproved", key: "aapApproved" },

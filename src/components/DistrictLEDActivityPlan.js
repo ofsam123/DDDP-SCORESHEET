@@ -17,7 +17,7 @@ function DistrictLEDActivityPlan({
 
     useEffect(() => {
         getAnnualActionPlan();
-    }, [year, district, ]);
+    }, [year, district]);
 
     function getAnnualActionPlan() {
         axios

@@ -57,7 +57,7 @@ function MonitoringProjectAndActivity({ year, district }) {
     useEffect(() => {
         getData();
         getInspectorateMonitoring();
-    }, [year, district, ]);
+    }, [year, district]);
 
     function getData() {
         axios

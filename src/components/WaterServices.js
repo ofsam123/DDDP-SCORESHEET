@@ -31,7 +31,7 @@ function WaterServices({
 
     useEffect(() => {
         getServiceProviders();
-    }, [year, district, ]);
+    }, [year, district]);
 
 
     function getServiceProviders() {

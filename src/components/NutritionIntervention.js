@@ -24,7 +24,7 @@ function NutritionIntervention({
        if(data?.vendors?.length > 0){
         setScoreii(1);
        }
-    }, [year, district, ]);
+    }, [year, district]);
 
 
 

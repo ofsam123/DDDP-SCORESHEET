@@ -18,7 +18,7 @@ function PWDService({
 
     useEffect(() => {
         getPWDs();
-    }, [year, district, ]);
+    }, [year, district]);
 
 
     const calculatePercentage = (total, value) => {

@@ -62,7 +62,7 @@ function ContractManagementAndAdmins({ year, district }) {
         getIndicatorsData();
         getContingencyIndicatorsData();
         // getData();
-    }, [year, district, ]);
+    }, [year, district]);
 
     const contractManagementAndAdminsColumns = [
         { title: "No. of Projects awarded on contract (a)", dataIndex: "awardedProjects", key: "awardedProjects" },

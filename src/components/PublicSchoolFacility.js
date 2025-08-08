@@ -16,7 +16,7 @@ function PublicSchoolFacility({
 
     useEffect(() => {
         getSchools();
-    }, [year, district, ]);
+    }, [year, district]);
 
     const calculatePercentage = (total, value) => {
         const totalNum = parseFloat(total);

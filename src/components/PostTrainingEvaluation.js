@@ -21,7 +21,7 @@ function PostTrainingEvaluation({ year, district }) {
 
     useEffect(() => {
         getData();
-    }, [year, district, ]);
+    }, [year, district]);
 
     function getData() {
         axios

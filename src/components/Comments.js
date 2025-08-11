@@ -10,6 +10,7 @@ function Comment({ data, year, districtId, tableCommentedId, children }) {
   const [commentText, setCommentText] = useState("");
   const [comments, setComments] = useState([]);
   const [editingCommentId, setEditingCommentId] = useState(null);
+  const [editText, setEditText] = useState({});
 
   const currentUserRole = user?.user?.userRoles?.find(
     (role) => role.name === "DPAT Consultant" || role.name === "DPAT Reviewer"
@@ -18,7 +19,7 @@ function Comment({ data, year, districtId, tableCommentedId, children }) {
   const currentUsername = user?.user?.username || "";
   const currentFullName = user?.user?.fullName || "";
 
-  // Initialize comments from provided data, filtered by tableCommentedId and districtId
+  // Initialize comments from provided data
   useEffect(() => {
     if (data?.comments) {
       const filteredComments = data.comments.filter(
@@ -56,8 +57,8 @@ function Comment({ data, year, districtId, tableCommentedId, children }) {
     }
   }, [districtId, year, tableCommentedId]);
 
-  const handleCommentSubmit = async () => {
-    if (!commentText.trim()) {
+  const handleCommentSubmit = async (submitText = commentText) => {
+    if (!submitText.trim()) {
       message.error("Comment cannot be empty");
       return;
     }
@@ -78,7 +79,7 @@ function Comment({ data, year, districtId, tableCommentedId, children }) {
       return;
     }
 
-    const commentDate = new Date().toISOString().split("T")[0].split("-").map(Number); // [YYYY, MM, DD]
+    const commentDate = new Date().toISOString().split("T")[0].split("-").map(Number);
     const payload = {
       id: 0,
       username: user?.user?.username,
@@ -88,7 +89,7 @@ function Comment({ data, year, districtId, tableCommentedId, children }) {
       districtId: districtId,
       year: year,
       tableCommented: tableCommentedId,
-      comments: commentText,
+      comments: submitText,
       commentDate: commentDate,
       updateDate: commentDate,
     };
@@ -108,11 +109,13 @@ function Comment({ data, year, districtId, tableCommentedId, children }) {
         setComments(
           comments.map((comment) =>
             comment.id === editingCommentId
-              ? { ...comment, comments: commentText, updateDate: commentDate }
+              ? { ...comment, comments: submitText, updateDate: commentDate }
               : comment
           )
         );
         message.success("Comment updated successfully");
+        setEditingCommentId(null);
+        setEditText({});
       } else {
         // Post new comment
         const response = await axios.post(
@@ -126,10 +129,9 @@ function Comment({ data, year, districtId, tableCommentedId, children }) {
         );
         setComments([...comments, response.data]);
         message.success("Comment added successfully");
+        setCommentText("");
+        setShowCommentInput(false);
       }
-      setCommentText("");
-      setEditingCommentId(null);
-      setShowCommentInput(false);
     } catch (error) {
       console.error("Failed to save comment:", {
         message: error.message,
@@ -145,9 +147,8 @@ function Comment({ data, year, districtId, tableCommentedId, children }) {
       message.error("You can only edit your own comments.");
       return;
     }
-    setCommentText(comment.comments);
     setEditingCommentId(comment.id);
-    setShowCommentInput(true);
+    setEditText({ ...editText, [comment.id]: comment.comments });
   };
 
   const handleDeleteComment = async (commentId) => {
@@ -165,6 +166,7 @@ function Comment({ data, year, districtId, tableCommentedId, children }) {
       setComments(comments.filter((comment) => comment.id !== commentId));
       setEditingCommentId(null);
       setCommentText("");
+      setEditText({});
       setShowCommentInput(false);
       message.success("Comment deleted successfully");
     } catch (error) {
@@ -184,9 +186,16 @@ function Comment({ data, year, districtId, tableCommentedId, children }) {
     }
   };
 
+  const handleEditKeyPress = (e, commentId) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleCommentSubmit(editText[commentId]);
+    }
+  };
+
   const canShowCommentInput = () => {
     if (editingCommentId) {
-      return true;
+      return false;
     }
     return !comments.some(
       (comment) =>
@@ -207,7 +216,7 @@ function Comment({ data, year, districtId, tableCommentedId, children }) {
   const renderCommentInput = () => (
     <>
       <CommentOutlined
-        style={{ marginLeft: "10px", cursor: "pointer", fontSize: "30px", marginTop: "20px" , marginRight:"10px"}}
+        style={{ marginLeft: "10px", cursor: "pointer", fontSize: "30px", marginTop: "20px", marginRight: "10px" }}
         onClick={handleCommentButtonClick}
       />
       {showCommentInput && canShowCommentInput() && (
@@ -216,7 +225,8 @@ function Comment({ data, year, districtId, tableCommentedId, children }) {
             flex: 1,
             display: "flex",
             flexDirection: "column",
-            maxWidth: "600px",
+            maxWidth: "800px",
+            Height:"250px",
             marginTop: "15px",
           }}
         >
@@ -244,7 +254,7 @@ function Comment({ data, year, districtId, tableCommentedId, children }) {
               <SendOutlined
                 className="text-blue-500 cursor-pointer"
                 style={{ fontSize: "20px", marginLeft: "8px", marginTop: "8px" }}
-                onClick={handleCommentSubmit}
+                onClick={() => handleCommentSubmit()}
               />
             )}
           </div>
@@ -283,7 +293,7 @@ function Comment({ data, year, districtId, tableCommentedId, children }) {
                 padding: "10px",
                 border: "1px solid #f0f0f0",
                 borderRadius: "6px",
-                minWidth: "200px",
+                minWidth: "900px",
                 maxWidth: "500px",
                 flex: "0 0 auto",
               }}
@@ -299,7 +309,7 @@ function Comment({ data, year, districtId, tableCommentedId, children }) {
                     size={32}
                   />
                 </Col>
-                <div>
+                <div style={{ flex: 1 }}>
                   <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
                     <h4 style={{ margin: 0, fontSize: "13px" }}>
                       {comment.fullName} (
@@ -323,14 +333,40 @@ function Comment({ data, year, districtId, tableCommentedId, children }) {
                           style={{ cursor: "pointer", color: "#000000ff" }}
                           onClick={() => handleEditComment(comment)}
                         />
-                        <DeleteOutlined
+                        {/* <DeleteOutlined
                           style={{ cursor: "pointer", color: "#ff0000" }}
                           onClick={() => handleDeleteComment(comment.id)}
-                        />
+                        /> */}
                       </div>
                     )}
                   </div>
-                  <div>{comment.comments}</div>
+                  {editingCommentId === comment.id ? (
+                    <div style={{ display: "flex", alignItems: "center", marginTop: "8px" }}>
+                      <Input.TextArea
+                        value={editText[comment.id] || ""}
+                        onChange={(e) =>
+                          setEditText({ ...editText, [comment.id]: e.target.value })
+                        }
+                        onKeyPress={(e) => handleEditKeyPress(e, comment.id)}
+                        autoSize={{ minRows: 3, maxRows: 5 }}
+                        style={{
+                          flex: 1,
+                          borderRadius: "10px",
+                          padding: "8px 12px",
+                          background: "#f0f2f5",
+                        }}
+                      />
+                      {editText[comment.id]?.trim() && (
+                        <SendOutlined
+                          className="text-blue-500 cursor-pointer"
+                          style={{ fontSize: "20px", marginLeft: "8px" }}
+                          onClick={() => handleCommentSubmit(editText[comment.id])}
+                        />
+                      )}
+                    </div>
+                  ) : (
+                    <h11 style={{ fontSize: "16px" }}>{comment.comments}</h11>
+                  )}
                 </div>
               </div>
             </div>

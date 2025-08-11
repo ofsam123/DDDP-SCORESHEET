@@ -1,5 +1,6 @@
-import { Layout, Space, Table, Typography } from "antd";
+import { Layout, Table, Typography, Row } from "antd";
 import React from "react";
+import Comment from "../components/Comments";
 
 function EnvironmentalAndSocialSafeGuard({ year, guards }) {
 
@@ -14,42 +15,62 @@ function EnvironmentalAndSocialSafeGuard({ year, guards }) {
     ];
 
     return (
-        <>
-            <Title level={3} style={{ marginTop: "20px" }}>PI 1.0 - 1.5 Environmental & Social Safeguards</Title>
-            <Title level={4} style={{ marginTop: "20px" }}>Assessment Guide/ Requirement</Title>
-            <Content>
-            From the DCD, receive information on all ongoing physical projects (works):                <ol>
-                    <li type="i">
-                    If the MMDA has screening forms for all ongoing projects (physical works) on Project Files, score 1                    </li>
-                    <li type="i">
-                    If the MMDA has acquired EPA permits for all ongoing projects (physical works), score 2.                    </li>
-                    <li type="i">
-                    If the works department’s report on adherence to occupational health and safety standards is available, score 1                    </li>
-                </ol>
+        <Comment
+            data={guards}
+            year={year}
+            districtId={null}
+            tableCommentedId={`pi1.0-1.5-${year}`}
+        >
+            {({ renderCommentInput, renderCommentList }) => (
+                <>
+                    <Title level={3} style={{ marginTop: "20px" }}>PI 1.0 - 1.5 Environmental & Social Safeguards</Title>
+                    <Title level={4} style={{ marginTop: "20px" }}>Assessment Guide/ Requirement</Title>
+                    <Content>
+                        From the DCD, receive information on all ongoing physical projects (works):
+                        <ol>
+                            <li type="i">
+                                If the MMDA has screening forms for all ongoing projects (physical works) on Project Files, score 1
+                            </li>
+                            <li type="i">
+                                If the MMDA has acquired EPA permits for all ongoing projects (physical works), score 2
+                            </li>
+                            <li type="i">
+                                If the works department’s report on adherence to occupational health and safety standards is available, score 1
+                            </li>
+                        </ol>
+                    </Content>
 
-            </Content>
+                    <Title level={5} style={{ marginTop: "20px" }}>
+                        Maximum Score <strong>4</strong>
+                    </Title>
 
-            <Title level={5} style={{ marginTop: "20px" }}>
-                Maximum Score <strong>4</strong>
-            </Title>
+                    <Title level={5} style={{ marginTop: "20px" }}>
+                        PI 1.0-1.5i Actual Score: <strong>Score</strong>
+                    </Title>
+                    <Title level={5} style={{ marginTop: "20px" }}>
+                        PI 1.0-1.5ii Actual Score: <strong>Score</strong>
+                    </Title>
+                    <Row align="middle">
+                        <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
+                            PI 1.0-1.5iii Actual Score: <strong>Score</strong>
+                        </Title>
+                        {renderCommentInput()}
+                    </Row>
 
-            <Title level={5} style={{ marginTop: "20px" }}>
-                PI 1.0-1.5i Actual Score: <strong>Score</strong>
-            </Title>
-            <Title level={5} style={{ marginTop: "20px" }}>
-                PI 1.0-1.5ii Actual Score: <strong>Score</strong>
-            </Title>
-            <Title level={5} style={{ marginTop: "20px" }}>
-                PI 1.0-1.5iii Actual Score: <strong>Score</strong>
-            </Title>
-            <Title level={5} style={{ marginTop: "20px" }}>
-            Evidence of environmental & social safeguards on projects            </Title>
-            {<Table
-                columns={safeGuardsColumns}
-                dataSource={guards || []}
-                pagination={false} bordered />}
+                    <Title level={5} style={{ marginTop: "20px" }}>
+                        Evidence of environmental & social safeguards on projects
+                    </Title>
+                    <Table
+                        columns={safeGuardsColumns}
+                        dataSource={guards || []}
+                        pagination={false}
+                        bordered
+                    />
 
-        </>
+                    {renderCommentList()}
+                </>
+            )}
+        </Comment>
     );
 }
 

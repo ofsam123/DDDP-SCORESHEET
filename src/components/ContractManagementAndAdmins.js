@@ -1,7 +1,8 @@
-import { Layout, Space, Table, Typography } from "antd";
+import { Layout, Table, Typography, Row } from "antd";
 import React, { useEffect, useState } from "react";
 import axios from "../api/axios";
 import { calculatePercentage, formatDataGeneral, getAttributeValue } from "../utils/utils";
+import Comment from "../components/Comments";
 
 const indicators = [
     {
@@ -116,7 +117,6 @@ function ContractManagementAndAdmins({ year, district }) {
                         }
                     });
 
-
                     // Calculate derived fields
                     const completed = row.completedProject || 0;
                     const inUse = row.completedProjectInUse || 0;
@@ -132,82 +132,8 @@ function ContractManagementAndAdmins({ year, district }) {
 
                 }
 
-
             }).catch(err => console.log(err));
     }
-
-    //  function getData() {
-    //         axios
-    //             .get(`/tracker/trackedEntities?orgUnit=${district}&program=g3wMUKEMmH3&startDate=${year}-01-01&endDate=${year}-12-31`)
-    //             .then(result => {
-    //                 if (result.data.instances.length > 0) {
-    
-    //                     axios
-    //                         .get(`/tracker/events?program=g3wMUKEMmH3&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
-    //                         .then(resp => {
-    //                             const projectsAndProgrammes = result.data.instances;
-    //                             const reports = resp.data.instances;
-    //                             const temp = [];
-    //                             const reportTemp = [];
-    
-    //                             const projects = formatDataGeneral(projectsAndProgrammes, "Project & Programme Type", "Project") || [];
-                                
-    
-    //                             projects.forEach((forum, idx) => {
-    //                                 const tempDataSet = {
-    //                                     date: getAttributeValue("Date", forum),
-    //                                     venue: getAttributeValue("Meeting Venue", forum),
-    //                                     issues: getAttributeValue("Description", forum),
-    //                                     female: getAttributeValue("DPAT |  No. of direct beneficiaries (female)", forum),
-    //                                     male: getAttributeValue("DPAT |  No. of direct beneficiaries (male)", forum)
-    //                                 };
-    
-    //                                 temp.push(tempDataSet);
-    
-    //                                 const currentReport = reports.find(rep => rep.trackedEntity === forum.trackedEntity);
-    //                                 let actions = "";
-    
-    //                                 if (currentReport) {
-    
-    //                                     currentReport.dataValues.forEach(rep => {
-    
-    //                                         if (rep.dataElement === "fRf6Lla04gE") {
-    //                                             actions = rep.value;
-    //                                         }
-    //                                     });
-    
-    //                                     const reportDataSet = {
-    //                                         no: idx + 1,
-    //                                         decision: getAttributeValue("Decision", forum),
-    //                                         actions
-    //                                     };
-    //                                     reportTemp.push(reportDataSet);
-    //                                 }
-    
-    //                             });
-    
-    
-    //                             // setData(temp);
-    //                             // setReport(reportTemp)
-    
-    
-    //                             // if (temp.length >= 2) {
-    //                             //     setScorei(1);
-    //                             // }
-    
-    //                             // if (reportTemp.length > 0) {
-    //                             //     setScoreii(1);
-    //                             // }
-    
-    
-    //                         })
-    //                         .catch(err => console.log(err))
-    //                 }
-    
-    
-    //             })
-    //             .catch(err => console.log(err))
-    //     }
 
     const getContingencyIndicatorsData = () => {
         axios.get(
@@ -248,64 +174,78 @@ function ContractManagementAndAdmins({ year, district }) {
 
                     setContingengy([row])
 
-                    
                     if(row.contingencyProvision > 0 && row.contingencyUse > 0){
                         setScoreII(1)
                     }
 
                 }
 
-
             }).catch(err => console.log(err));
     }
 
     return (
-        <>
-            <Title level={3} style={{ marginTop: "20px" }}>PI 1.0 - 1.3 Records on Contract Management and Administration</Title>
-            <Title level={4} style={{ marginTop: "20px" }}>Assessment Guide/ Requirement</Title>
-            <Content>
-                From the DCD, obtain information on contract management and administration:<br /><br />
-                <ol>
-                    <li type="i">
-                        If final completion reports on all completed projects are available
-                        and all completed projects are in use, score 3; else score 0.
-                    </li>
-                    <li type="i">
-                        If contingency has been provided for works and used with written justification and duly
-                        approved, score 1; or if contingency has not been used, score 1; else score 0.
-                    </li>
-                </ol>
+        <Comment
+            data={projects}
+            year={year}
+            districtId={district}
+            tableCommentedId={`pi1.0-1.3-${year}`}
+        >
+            {({ renderCommentInput, renderCommentList }) => (
+                <>
+                    <Title level={3} style={{ marginTop: "20px" }}>PI 1.0 - 1.3 Records on Contract Management and Administration</Title>
+                    <Title level={4} style={{ marginTop: "20px" }}>Assessment Guide/ Requirement</Title>
+                    <Content>
+                        From the DCD, obtain information on contract management and administration:<br /><br />
+                        <ol>
+                            <li type="i">
+                                If final completion reports on all completed projects are available
+                                and all completed projects are in use, score 3; else score 0.
+                            </li>
+                            <li type="i">
+                                If contingency has been provided for works and used with written justification and duly
+                                approved, score 1; or if contingency has not been used, score 1; else score 0.
+                            </li>
+                        </ol>
+                    </Content>
 
-            </Content>
+                    <Title level={5} style={{ marginTop: "20px" }}>
+                        Maximum Score <strong>4</strong>
+                    </Title>
 
-            <Title level={5} style={{ marginTop: "20px" }}>
-                Maximum Score <strong>4</strong>
-            </Title>
+                    <Title level={5} style={{ marginTop: "20px" }}>
+                        PI 1.0-1.3i Actual Score: <strong>{scoreI}</strong>
+                    </Title>
+                    <Row align="middle">
+                        <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
+                            PI 1.0-1.3ii Actual Score: <strong>{scoreII}</strong>
+                        </Title>
+                        {renderCommentInput()}
+                    </Row>
 
-            <Title level={5} style={{ marginTop: "20px" }}>
-                PI 1.0-1.3i Actual Score: <strong>{scoreI}</strong>
-            </Title>
-            <Title level={5} style={{ marginTop: "20px" }}>
-                PI 1.0-1.3ii Actual Score: <strong>{scoreII}</strong>
-            </Title>
+                    <Title level={5} style={{ marginTop: "20px" }}>
+                        Evidence of project completion and use
+                    </Title>
+                    <Table
+                        columns={contractManagementAndAdminsColumns}
+                        dataSource={projects || []}
+                        pagination={false}
+                        bordered
+                    />
 
-            <Title level={5} style={{ marginTop: "20px" }}>
-                Evidence of project completion and use
-            </Title>
-            {<Table
-                columns={contractManagementAndAdminsColumns}
-                dataSource={projects || []}
-                pagination={false} bordered />}
+                    <Title level={5} style={{ marginTop: "20px" }}>
+                        Evidence of use of contingency
+                    </Title>
+                    <Table
+                        columns={contingencyColumns}
+                        dataSource={contingency || []}
+                        pagination={false}
+                        bordered
+                    />
 
-            <Title level={5} style={{ marginTop: "20px" }}>
-                Evidence of use of contingency
-            </Title>
-            {<Table
-                columns={contingencyColumns}
-                dataSource={contingency || []}
-                pagination={false} bordered />}
-
-        </>
+                    {renderCommentList()}
+                </>
+            )}
+        </Comment>
     );
 }
 

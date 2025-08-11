@@ -1,80 +1,90 @@
-import { Layout, Space, Table, Typography } from "antd";
+import { Layout, Table, Typography, Row } from "antd";
 import React, { useEffect, useState } from "react";
+import Comment from "../components/Comments";
 
 function SanitationServices({
-    year, sanitationProvidersData,
-
+  year,
+  sanitationProvidersData,
+  districtId
 }) {
+  const { Header, Content } = Layout;
+  const { Title, Text } = Typography;
+  const [score, setScore] = useState(0);
+  const [percentage, setPercentage] = useState(
+    sanitationProvidersData.length > 0 ? sanitationProvidersData[0].percentage : 0
+  );
 
-    const { Header, Content } = Layout;
-    const { Title, Text } = Typography;
-    const [score, setScore] = useState(0);
-    const [percentage, setPercentage] = useState(
-        sanitationProvidersData.length > 0 ? sanitationProvidersData[0].percentage : 0
-      );
-      
+  useEffect(() => {
+    if (sanitationProvidersData.length > 0) {
+      if (sanitationProvidersData[0].percentage >= 20) {
+        setScore(2);
+      }
+    }
+  }, [sanitationProvidersData, year]);
 
-    useEffect(()=>{
-        if(sanitationProvidersData.length > 0){
-            if(sanitationProvidersData[0].percentage >= 20 ){
-                setScore(2);
-            }
-        }
-        
-    }, [sanitationProvidersData, year])
+  const serviceProvidersColumn = [
+    { title: "Total IGF collected for the 2021 (A)", dataIndex: "ifgCollected", key: "ifgCollected" },
+    { title: "Total IGF spent on sanitation improvement services (B)", dataIndex: "igfSpentOnSanitation", key: "igfSpentOnSanitation" },
+    { title: "% of IGF spent on sanitation improvementservices (C)", dataIndex: "percentage", key: "percentage" }
+  ];
 
-    const serviceProvidersColumn = [
-        { title: "Total IGF collected for the 2021 (A)", dataIndex: "ifgCollected", key: "ifgCollected" },
-        { title: "Total IGF spent on sanitation improvement services (B)", dataIndex: "igfSpentOnSanitation", key: "igfSpentOnSanitation" },
-        { title: "% of IGF spent on sanitation improvementservices (C)", dataIndex: "percentage", key: "percentage" }
-    ];
-
-    return (
+  return (
+    <Comment
+      data={sanitationProvidersData}
+      year={year}
+      districtId={districtId}
+      tableCommentedId={`sdi2.0-2.3-${year}`}
+    >
+      {({ renderCommentInput, renderCommentList }) => (
         <>
-            <Title level={3} style={{ marginTop: "30px" }}>SDI 2.0 - 2.3 Sanitation Services</Title>
-            <Title level={4} style={{ marginTop: "30px" }}>Assessment Guide/ Requirement</Title>
-            <Content>
-                From the DCD receive information on the utilisation of the IGF collected for the year:<br /><br />
-                <ol>
-                    <li type="i">If at least 20% of the IGF was spent on sanitation improvement services in the District and there is evidence of implementation, score 2;</li>
-                </ol>
+          <Title level={3} style={{ marginTop: "30px" }}>SDI 2.0 - 2.3 Sanitation Services</Title>
+          <Title level={4} style={{ marginTop: "30px" }}>Assessment Guide/ Requirement</Title>
+          <Content>
+            From the DCD receive information on the utilisation of the IGF collected for the year:<br /><br />
+            <ol>
+              <li type="i">If at least 20% of the IGF was spent on sanitation improvement services in the District and there is evidence of implementation, score 2;</li>
+            </ol>
 
-                <b><u>Eligible Expenditures are below:</u></b>
-                <ul>
-                    <li>Activities and programmes on Solid Waste Management – Collection, Haulage or Transportation, Disposal or Treatment or Reuse</li>
-                    <li>Activities and programmes on Liquid Waste Management and Drain Cleansing – Containment, Collection, Transportation/Conveyance, Disposal or Treatment or Reuse</li>
-                    <li>Activities on Food Hygiene and Safety</li>
-                    <li>Sanitation Legislation and Enforcement Management</li>
-                    <li>Evidence of Monthly Sanitation Day Exercises</li>
-                </ul>
+            <b><u>Eligible Expenditures are below:</u></b>
+            <ul>
+              <li>Activities and programmes on Solid Waste Management – Collection, Haulage or Transportation, Disposal or Treatment or Reuse</li>
+              <li>Activities and programmes on Liquid Waste Management and Drain Cleansing – Containment, Collection, Transportation/Conveyance, Disposal or Treatment or Reuse</li>
+              <li>Activities on Food Hygiene and Safety</li>
+              <li>Sanitation Legislation and Enforcement Management</li>
+              <li>Evidence of Monthly Sanitation Day Exercises</li>
+            </ul>
+          </Content>
 
-            
-            </Content>
+          <Title level={5} style={{ marginTop: "30px" }}>Maximum Score <strong>2</strong></Title>
+          {/* {JSON.stringify(sanitationProvidersData)} */}
 
-            <Title level={5} style={{ marginTop: "30px" }}>Maximum Score <strong>2</strong></Title>
-            {/* {JSON.stringify(sanitationProvidersData)} */}
-
-            <Title level={5} style={{ marginTop: "20px" }}>
-                SDI 1.0-2.2i Actual Score: <strong>{score}</strong>
+          <Row align="middle">
+            <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
+              SDI 1.0-2.2i Actual Score: <strong>{score}</strong>
             </Title>
-            <Title level={5} style={{ marginTop: "30px" }}>I. Evidence of IGF expenditure on sanitation improvement services</Title>
-            {sanitationProvidersData && <Table
-                columns={serviceProvidersColumn}
-                dataSource={sanitationProvidersData}
-                pagination={false} bordered />}
+            {renderCommentInput()}
+          </Row>
 
-            <Content >
-                Calculated as: % of IGF i=on Sanitation = (B/A) x 100
-            </Content>
-            <Title level={5} style={{ marginTop: "10px" }}>Conclusion:</Title>
-            <Content>
+          <Title level={5} style={{ marginTop: "30px" }}>I. Evidence of IGF expenditure on sanitation improvement services</Title>
+          {sanitationProvidersData && <Table
+            columns={serviceProvidersColumn}
+            dataSource={sanitationProvidersData}
+            pagination={false} bordered />}
+
+          <Content>
+            Calculated as: % of IGF i=on Sanitation = (B/A) x 100
+          </Content>
+          <Title level={5} style={{ marginTop: "10px" }}>Conclusion:</Title>
+          <Content>
             Percentage of total expenditure on sanitation services on total IGF collected
             is  {percentage} %. And there is evidence of implementation
-            </Content>
+          </Content>
 
-            
+          {renderCommentList()}
         </>
-    );
+      )}
+    </Comment>
+  );
 }
 
 export default SanitationServices;

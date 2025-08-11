@@ -1,6 +1,7 @@
-import { Layout, Space, Table, Typography } from "antd";
+import { Layout, Table, Typography, Row } from "antd";
 import React, { useEffect, useState } from "react";
 import axios from "../api/axios";
+import Comment from "../components/Comments";
 
 const indicators = [
     {
@@ -70,7 +71,6 @@ function PaymentPoints({ year, district }) {
                         }
                     });
 
-
                     setPayments([row]);
 
                     // console.log("payments point: ",updatedIndicators)
@@ -85,45 +85,58 @@ function PaymentPoints({ year, district }) {
 
                 }
 
-
             }).catch(err => console.log(err));
     }
 
     return (
-        <>
-            <Title level={3} style={{ marginTop: "20px" }}>PI 3.0 - 3.1 Payment Points</Title>
-            <Title level={4} style={{ marginTop: "20px" }}>Assessment Guide/ Requirement</Title>
-            <Content>
-                From the DCD, obtain detailed information on all established payment points and options available to citizens in the District:<br /><br />
-                <ol>
-                    <li type="i">
-                        If the Assembly established at least 5 payment points for Metros, 3 or more for Municipals,
-                        2 for Districts (including payment points sited within the Assembly premises), score 3; else score 0
-                    </li>
+        <Comment
+            data={payments}
+            year={year}
+            districtId={district}
+            tableCommentedId={`pi3.0-3.1-${year}`}
+        >
+            {({ renderCommentInput, renderCommentList }) => (
+                <>
+                    <Title level={3} style={{ marginTop: "20px" }}>PI 3.0 - 3.1 Payment Points</Title>
+                    <Title level={4} style={{ marginTop: "20px" }}>Assessment Guide/ Requirement</Title>
+                    <Content>
+                        From the DCD, obtain detailed information on all established payment points and options available to citizens in the District:<br /><br />
+                        <ol>
+                            <li type="i">
+                                If the Assembly established at least 5 payment points for Metros, 3 or more for Municipals,
+                                2 for Districts (including payment points sited within the Assembly premises), score 3; else score 0
+                            </li>
+                        </ol>
+                    </Content>
 
-                </ol>
+                    <Title level={5} style={{ marginTop: "20px" }}>
+                        Maximum Score <strong>3</strong>
+                    </Title>
 
-            </Content>
+                    <Title level={5} style={{ marginTop: "20px" }}>
+                        PI 3.0-3.1 Actual Score: <strong>{score}</strong>
+                    </Title>
+                    <Row align="middle">
+                        <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
+                            PI 3.0-3.1 Actual Score: <strong>{score}</strong>
+                        </Title>
+                        {renderCommentInput()}
+                    </Row>
 
-            <Title level={5} style={{ marginTop: "20px" }}>
-                Maximum Score <strong>3</strong>
-            </Title>
+                    <Title level={5} style={{ marginTop: "20px" }}>
+                        Evidence of establishment of revenue payment points
+                    </Title>
+                    <Table
+                        columns={paymentPointsColumns}
+                        dataSource={payments || []}
+                        pagination={false}
+                        bordered
+                    />
 
-            <Title level={5} style={{ marginTop: "20px" }}>
-                PI 3.0-3-1 Actual Score: <strong>{score}</strong>
-            </Title>
-
-
-            <Title level={5} style={{ marginTop: "20px" }}>
-                Evidence of establishment of revenue payment points
-
-            </Title>
-            {<Table
-                columns={paymentPointsColumns}
-                dataSource={payments || []}
-                pagination={false} bordered />}
-
-        </>
+                    {renderCommentList()}
+                </>
+            )}
+        </Comment>
     );
 }
 

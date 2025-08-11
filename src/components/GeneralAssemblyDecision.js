@@ -1,88 +1,100 @@
 import React, { useEffect, useState } from "react";
-import { Layout, Typography, Table, Button, Row, Space, Col } from "antd";
+import { Layout, Typography, Table, Row } from "antd";
+import Comment from "../components/Comments";
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
 
-function GeneralAssemblyDecision({ data, year, columns, decisionDeliveryData, serviceDeliveryDecisionColumns }) {
+function GeneralAssemblyDecision({ data, year, columns, decisionDeliveryData, serviceDeliveryDecisionColumns, districtId }) {
+  const [gaDecisionScore, setGaDecisionScore] = useState(0);
 
-    const [gaDecisionScore, setGaDecisionScore] = useState(0);
-
-    return (
+  return (
+    <Comment
+      data={data}
+      year={year}
+      districtId={districtId}
+      tableCommentedId={`sdi1.0-1.1-${year}`}
+    >
+      {({ renderCommentInput, renderCommentList }) => (
         <>
-            <div>
-                <Text strong>THEMATIC AREA: </Text> <Text>
-                    MANAGEMENT & COORDINATION – IMPLEMENTATION OF SERVICE DELIVERY DECISIONS (5)
-                </Text>
-            </div>
-            <Title level={3}>SDI 1.0 - 1.1 General Assembly Decisions</Title>
-            <Title level={4} style={{ marginTop: "10px" }}>Assessment Guide/ Requirement</Title>
-            <Content>
-                From the DCD, receive signed Minutes of Meetings of the three mandatory Meetings of the General Assembly:<br /><br />
-                <ol>
-                    <li type="i">
-                        If The General Assembly took at least 50% decisions on improving service delivery in any
-                        sector of the District, score 1;
+          <div>
+            <Text strong>THEMATIC AREA: </Text>
+            <Text>
+              MANAGEMENT & COORDINATION – IMPLEMENTATION OF SERVICE DELIVERY DECISIONS (5)
+            </Text>
+          </div>
+          <Title level={3}>SDI 1.0 - 1.1 General Assembly Decisions</Title>
+          <Title level={4} style={{ marginTop: "10px" }}>Assessment Guide/ Requirement</Title>
+          <Content>
+            From the DCD, receive signed Minutes of Meetings of the three mandatory Meetings of the General Assembly:<br /><br />
+            <ol>
+              <li type="i">
+                If The General Assembly took at least 50% decisions on improving service delivery in any
+                sector of the District, score 1;
+              </li>
+            </ol>
 
-                    </li>
+            <i>Examples of services: Water, Electric power, Health, Education,
+              Transportation, Roads, Sanitation, Recreational services and Security.
+            </i>
+          </Content>
+          <Title level={5} style={{ marginTop: "20px" }}>
+            Maximum Score <strong>1</strong>
+          </Title>
 
-                </ol>
-
-                <i>Examples of services: Water, Electric power, Health, Education,
-                    Transportation, Roads, Sanitation, Recreational services and Security.
-                </i>
-            </Content>
-            <Title level={5} style={{ marginTop: "20px" }}>
-                Maximum Score <strong>1</strong>
+          <Row align="middle">
+            <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
+              SDI 1.0-1.1 Actual Score: <strong>{gaDecisionScore > 50 ? '1' : '0'}</strong>
             </Title>
+            {renderCommentInput()}
+          </Row>
 
-            <Title level={5} style={{ marginTop: "20px" }}>
-                SDI 1.0-1.1 Actual Score: <strong>{gaDecisionScore > 50 ? '1' : '0'}</strong>
-            </Title>
+          <Title level={4} style={{ marginTop: "20px" }}>Evidence of Quarterly Management Meetings</Title>
+          
+          {data && <Table columns={columns} dataSource={data} pagination={false} bordered
+            summary={pageData => {
+              let totalDecision = 0, totalDelivered = 0, totalPercent = 0;
 
-            <Title level={4} style={{ marginTop: "20px" }}>Evidence of Quarterly Management Meetings</Title>
-            
-            {data && <Table columns={columns} dataSource={data} pagination={false} bordered
-                summary={pageData => {
-                    let totalDecision = 0, totalDelivered = 0, totalPercent = 0;
+              pageData.forEach(({ total, serviceDecision, percentage }) => {
+                totalDecision += Number(total);
+                totalDecision = parseFloat(totalDecision.toFixed(2));
+                totalDelivered += Number(serviceDecision);
+                totalDelivered = parseFloat(totalDelivered.toFixed(2));
+                totalPercent += Number(percentage);
+                totalPercent = parseFloat(totalPercent.toFixed(2));
+              });
 
-                    pageData.forEach(({ total, serviceDecision, percentage }) => {
-                        totalDecision += Number(total);
-                        totalDecision = parseFloat(totalDecision.toFixed(2));
-                        totalDelivered += Number(serviceDecision);
-                        totalDelivered = parseFloat(totalDelivered.toFixed(2));
-                        totalPercent += Number(percentage);
-                        totalPercent = parseFloat(totalPercent.toFixed(2));
-                    });
+              setGaDecisionScore(totalPercent);
 
-                    setGaDecisionScore(totalPercent);
+              return (<>
+                <Table.Summary.Row style={{ fontWeight: 'bold' }}>
+                  <Table.Summary.Cell>Total Decisions</Table.Summary.Cell>
+                  <Table.Summary.Cell>
+                    <Text>{totalDecision}</Text>
+                  </Table.Summary.Cell>
+                  <Table.Summary.Cell>
+                    <Text>{totalDelivered}</Text>
+                  </Table.Summary.Cell>
+                  <Table.Summary.Cell>
+                    <Text>{totalPercent}</Text>
+                  </Table.Summary.Cell>
+                </Table.Summary.Row>
+              </>)
+            }}
+          />}
+          <Title level={5} style={{ marginTop: "20px" }}>Service Delivery Decisions</Title>
+          {decisionDeliveryData && <Table columns={serviceDeliveryDecisionColumns} dataSource={decisionDeliveryData} pagination={false} bordered />}
+          
+          <Title level={5} style={{ marginTop: "20px" }}>Conclusion</Title>
+          <Content>
+            The decisions that were on improving service delivery was {`${gaDecisionScore}%`} of the total no. of decisions made at GA Meetings in {year}.
+          </Content>
 
-                    return (<>
-                        <Table.Summary.Row style={{ fontWeight: 'bold' }}>
-                            <Table.Summary.Cell>Total Decisions</Table.Summary.Cell>
-                            <Table.Summary.Cell>
-                                <Text>{totalDecision}</Text>
-                            </Table.Summary.Cell>
-                            <Table.Summary.Cell>
-                                <Text>{totalDelivered}</Text>
-                            </Table.Summary.Cell>
-                            <Table.Summary.Cell>
-                                <Text>{totalPercent}</Text>
-                            </Table.Summary.Cell>
-                        </Table.Summary.Row>
-                    </>)
-                }}
-            />}
-            <Title level={5} style={{ marginTop: "20px" }}>Service Delivery Decisions</Title>
-                            {decisionDeliveryData && <Table columns={serviceDeliveryDecisionColumns} dataSource={decisionDeliveryData} pagination={false} bordered />}
-            
-                            <Title level={5} style={{ marginTop: "20px" }}>Conclusion</Title>
-                            <Content>
-                                The decisions that were on improving service delivery was {`${gaDecisionScore}%`} of the total no. of decisions made at GA Meetings in {year}.
-                            </Content>
-
+          {renderCommentList()}
         </>
-    );
+      )}
+    </Comment>
+  );
 }
 
 export default GeneralAssemblyDecision;

@@ -1,5 +1,6 @@
-import { Layout, Space, Table, Typography } from "antd";
+import { Layout, Table, Typography, Row } from "antd";
 import React from "react";
+import Comment from "../components/Comments";
 
 function AuditCommitteeResponsiveness({ year, audits, actions, managementLetters }) {
 
@@ -29,58 +30,76 @@ function AuditCommitteeResponsiveness({ year, audits, actions, managementLetters
     ];
 
     return (
-        <>
-            <Title level={3} style={{ marginTop: "20px" }}>PI 4.0 - 4.1 Responsiveness of Audit Committee</Title>
-            <Title level={4} style={{ marginTop: "20px" }}>Assessment Guide/ Requirement</Title>
-            <Content>
-                From the District Coordinating Director (DCD) receive information on the Audit Committee of the Assembly:<br /><br />
-                <ol>
-                    <li type="i">
-                        If the Audit Committee has received and reviewed responses to all Audit Observations in
-                        Quarterly Internal Audit Reports and the Management Letter for <strong>{year}</strong>, score 1;
-                    </li>
+        <Comment
+            data={audits?.data}
+            year={year}
+            districtId={null}
+            tableCommentedId={`pi4.0-4.1-${year}`}
+        >
+            {({ renderCommentInput, renderCommentList }) => (
+                <>
+                    <Title level={3} style={{ marginTop: "20px" }}>PI 4.0 - 4.1 Responsiveness of Audit Committee</Title>
+                    <Title level={4} style={{ marginTop: "20px" }}>Assessment Guide/ Requirement</Title>
+                    <Content>
+                        From the District Coordinating Director (DCD) receive information on the Audit Committee of the Assembly:<br /><br />
+                        <ol>
+                            <li type="i">
+                                If the Audit Committee has received and reviewed responses to all Audit Observations in
+                                Quarterly Internal Audit Reports and the Management Letter for <strong>{year}</strong>, score 1;
+                            </li>
+                        </ol>
+                    </Content>
 
+                    <Title level={5} style={{ marginTop: "20px" }}>
+                        Maximum Score <strong>1</strong>
+                    </Title>
 
-                </ol>
+                    <Title level={5} style={{ marginTop: "20px" }}>
+                        PI 4.0-4.1i Actual Score: <strong>{audits?.score || 0}</strong>
+                    </Title>
+                    <Row align="middle">
+                        <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
+                            PI 4.0-4.1i Actual Score: <strong>{audits?.score || 0}</strong>
+                        </Title>
+                        {renderCommentInput()}
+                    </Row>
 
-            </Content>
+                    <Title level={5} style={{ marginTop: "20px" }}>
+                        Audit Observations in Quarterly Internal Audit Reports
+                    </Title>
+                    <Table
+                        columns={auditReportColumns}
+                        dataSource={audits?.data || []}
+                        pagination={false}
+                        bordered
+                    />
 
-            <Title level={5} style={{ marginTop: "20px" }}>
-                Maximum Score <strong>1</strong>
-            </Title>
+                    {/* Data not available in DDDP at the moment */}
 
-            <Title level={5} style={{ marginTop: "20px" }}>
-                PI 4.0-4.1i Actual Score: <strong>{audits?.score || 0}</strong>
-            </Title>
+                    {/* <Title level={5} style={{ marginTop: "20px" }}>
+                        Recommendations and Actions Taken
+                    </Title>
+                    <Table
+                        columns={recommendationActionColumns}
+                        dataSource={actions || []}
+                        pagination={false}
+                        bordered
+                    />
 
+                    <Title level={5} style={{ marginTop: "20px" }}>
+                        Management Letters on the external audit
+                    </Title>
+                    <Table
+                        columns={managementLettersColumns}
+                        dataSource={managementLetters || []}
+                        pagination={false}
+                        bordered
+                    /> */}
 
-            <Title level={5} style={{ marginTop: "20px" }}>
-                Audit Observations in Quarterly Internal Audit Reports
-            </Title>
-            {<Table
-                columns={auditReportColumns}
-                dataSource={audits?.data || []}
-                pagination={false} bordered />}
-
-            {/* Data not available in DDDP at the moment */}
-
-            {/* <Title level={5} style={{ marginTop: "20px" }}>
-                Recommendations and Actions Taken
-            </Title>
-            {<Table
-                columns={recommendationActionColumns}
-                dataSource={actions || []}
-                pagination={false} bordered />}
-
-            <Title level={5} style={{ marginTop: "20px" }}>
-                Management Letters on the external audit
-            </Title>
-            {<Table
-                columns={managementLettersColumns}
-                dataSource={managementLetters || []}
-                pagination={false} bordered />} */}
-
-        </>
+                    {renderCommentList()}
+                </>
+            )}
+        </Comment>
     );
 }
 

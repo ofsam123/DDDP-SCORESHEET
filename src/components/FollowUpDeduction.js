@@ -1,7 +1,8 @@
-import { Layout, Space, Table, Typography } from "antd";
+import { Layout, Table, Typography, Row } from "antd";
 import React, { useEffect, useState } from "react";
 import { formatDataGeneral } from "../utils/utils";
 import axios from "../api/axios";
+import Comment from "../components/Comments";
 
 function FollowUpDeduction({ year, district }) {
 
@@ -21,7 +22,7 @@ function FollowUpDeduction({ year, district }) {
 
     useEffect(() => {
         getData();
-    }, year, district)
+    }, [year, district])
 
     function getData() {
         axios
@@ -44,7 +45,6 @@ function FollowUpDeduction({ year, district }) {
                             let governmentDeduction = "NO";
 
                             projects.forEach((project, idx) => {
-
 
                                 const currentReport = reports.find(rep => rep.trackedEntity === project.trackedEntity);
 
@@ -74,10 +74,7 @@ function FollowUpDeduction({ year, district }) {
                                 governmentDeduction
                             })
 
-
                             setData(temp);
-
-
 
                             if (paymentDeduction > 0) {
                                 setScorei(1);
@@ -91,61 +88,72 @@ function FollowUpDeduction({ year, district }) {
                                 setScoreiii(1);
                             }
 
-
-                        })
+                        }) 
                         .catch(err => console.log(err))
                 }
-
 
             })
             .catch(err => console.log(err))
     }
 
     return (
-        <>
-            <Title level={3} style={{ marginTop: "20px" }}>PI 1.0 - 1.4 Record on follow-up of deduction at source</Title>
-            <Title level={4} style={{ marginTop: "20px" }}>Assessment Guide/ Requirement</Title>
-            <Content>
-                From the DCD, receive a copy of the list of Contracts/Services related to Deductions at Source.
-                <ol>
-                    <li type="i">
-                        If a copy of the contract(s) is/are available, score 1
-                    </li>
-                    <li type="i">
-                        If there is evidence of implementation (contract implementation reports), score 1
-                    </li>
-                    <li type="i">
-                        If there is no adverse findings on Central Government Deductions, score 1; else score 0.
-                    </li>
-                </ol>
+        <Comment
+            data={data}
+            year={year}
+            districtId={district}
+            tableCommentedId={`pi1.0-1.4-${year}`}
+        >
+            {({ renderCommentInput, renderCommentList }) => (
+                <>
+                    <Title level={3} style={{ marginTop: "20px" }}>PI 1.0 - 1.4 Record on follow-up of deduction at source</Title>
+                    <Title level={4} style={{ marginTop: "20px" }}>Assessment Guide/ Requirement</Title>
+                    <Content>
+                        From the DCD, receive a copy of the list of Contracts/Services related to Deductions at Source.
+                        <ol>
+                            <li type="i">
+                                If a copy of the contract(s) is/are available, score 1
+                            </li>
+                            <li type="i">
+                                If there is evidence of implementation (contract implementation reports), score 1
+                            </li>
+                            <li type="i">
+                                If there is no adverse findings on Central Government Deductions, score 1; else score 0.
+                            </li>
+                        </ol>
+                    </Content>
 
-            </Content>
+                    <Title level={5} style={{ marginTop: "20px" }}>
+                        Maximum Score <strong>3</strong>
+                    </Title>
 
-            <Title level={5} style={{ marginTop: "20px" }}>
-                Maximum Score <strong>3</strong>
-            </Title>
+                    <Title level={5} style={{ marginTop: "20px" }}>
+                        PI 1.0-1.4i Actual Score: <strong>{scorei}</strong>
+                    </Title>
+                    <Title level={5} style={{ marginTop: "20px" }}>
+                        PI 1.0-1.4ii Actual Score: <strong>{scoreii}</strong>
+                    </Title>
+                    <Row align="middle">
+                        <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
+                            PI 1.0-1.4iii Actual Score: <strong>{scoreiii}</strong>
+                        </Title>
+                        {renderCommentInput()}
+                    </Row>
 
-            <Title level={5} style={{ marginTop: "20px" }}>
-                PI 1.0-1.4i Actual Score: <strong>{scorei}</strong>
-            </Title>
-            <Title level={5} style={{ marginTop: "20px" }}>
-                PI 1.0-1.4ii Actual Score: <strong>{scoreii}</strong>
-            </Title>
-            <Title level={5} style={{ marginTop: "20px" }}>
-                PI 1.0-1.4iii Actual Score: <strong>{scoreiii}</strong>
-            </Title>
+                    <Title level={4} style={{ marginTop: "20px" }}>
+                        Evidence of contract deductions at source
+                    </Title>
 
-            <Title level={4} style={{ marginTop: "20px" }}>
-                Evidence of contract deductions at source
+                    <Table
+                        columns={followUpColumns}
+                        dataSource={data}
+                        pagination={false}
+                        bordered
+                    />
 
-            </Title>
-
-            {<Table
-                columns={followUpColumns}
-                dataSource={data}
-                pagination={false} bordered />}
-
-        </>
+                    {renderCommentList()}
+                </>
+            )}
+        </Comment>
     );
 }
 

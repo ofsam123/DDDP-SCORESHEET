@@ -1,11 +1,11 @@
-import { Layout, Space, Table, Typography } from "antd";
+import { Layout, Table, Typography, Row } from "antd";
 import React, { useEffect, useState } from "react";
 import axios from "../api/axios";
 import { formatDataGeneral, getAttributeValue } from "../utils/utils";
+import Comment from "../components/Comments";
 
 function AgroProcessingFacilitySupport({
     year, district
-
 }) {
 
     const [data, setData] = useState([]);
@@ -30,7 +30,6 @@ function AgroProcessingFacilitySupport({
                             const reports = resp.data.instances;
                             const temp = [];
                             const businessSupportedByDistrict = formatDataGeneral(business, "Has the district contributed to the creation of this business", "true") || [];
-
 
                             businessSupportedByDistrict.forEach(business => {
 
@@ -63,19 +62,15 @@ function AgroProcessingFacilitySupport({
 
                             });
 
-
                             setData(temp);
-
 
                             if (temp.length > 0) {
                                 setScorei(2);
                             }
 
-
                         })
                         .catch(err => console.log(err))
                 }
-
 
             })
             .catch(err => console.log(err))
@@ -104,45 +99,56 @@ function AgroProcessingFacilitySupport({
         }
     ];
 
-
-
     return (
-        <>
-            <Title level={3} style={{ marginTop: "30px" }}>SDI 6.0 - 6.3 Facilitate and support small-scale
-                agro-processing and manufacturing industries</Title>
-            <Title level={4} style={{ marginTop: "30px" }}>Assessment Guide/ Requirement</Title>
-            <Content>
-                From the DCD, receive information and determine:<br /><br />
-                <ol>
-                    <li type="i">
-                        If the District has supported or provided storage facilities to reduce post-harvest losses, score 1
-                    </li>
-                    <li type="i" className="p-1">
-                        If the District has facilitated the acquisition of machinery/equipment that has resulted in the
-                        processing of local agricultural products (e.g., fruit juice, meat, and cassava processing,
-                        packaging, and branding), score 1
-                    </li>
+        <Comment
+            data={data}
+            year={year}
+            districtId={district}
+            tableCommentedId={`sdi6.0-6.3-${year}`}
+        >
+            {({ renderCommentInput, renderCommentList }) => (
+                <>
+                    <Title level={3} style={{ marginTop: "30px" }}>SDI 6.0 - 6.3 Facilitate and support small-scale
+                        agro-processing and manufacturing industries</Title>
+                    <Title level={4} style={{ marginTop: "30px" }}>Assessment Guide/ Requirement</Title>
+                    <Content>
+                        From the DCD, receive information and determine:<br /><br />
+                        <ol>
+                            <li type="i">
+                                If the District has supported or provided storage facilities to reduce post-harvest losses, score 1
+                            </li>
+                            <li type="i" className="p-1">
+                                If the District has facilitated the acquisition of machinery/equipment that has resulted in the
+                                processing of local agricultural products (e.g., fruit juice, meat, and cassava processing,
+                                packaging, and branding), score 1
+                            </li>
+                        </ol>
+                    </Content>
 
-                </ol>
+                    <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>2</strong></Title>
+                    <Title level={5} style={{ marginTop: "20px" }}>
+                        SDI 6.0-6.3 Actual Score: <strong>{scorei}</strong>
+                    </Title>
+                    <Row align="middle">
+                        <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
+                            SDI 6.0-6.3 Actual Score: <strong>{scorei}</strong>
+                        </Title>
+                        {renderCommentInput()}
+                    </Row>
 
-            </Content>
+                    <Title level={4} style={{ marginTop: "20px" }}>Evidence of Assembly’s support to small-scale agro-processing and
+                        manufacturing industries</Title>
+                    <Table
+                        columns={dataColumn}
+                        dataSource={data}
+                        pagination={false}
+                        bordered
+                    />
 
-            <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>2</strong></Title>
-            <Title level={5} style={{ marginTop: "20px" }}>
-                SDI 6.0-6.3 Actual Score: <strong>{scorei}</strong>
-            </Title>
-
-
-            <Title level={4} style={{ marginTop: "20px" }}>Evidence of Assembly’s support to small-scale agro-processing and
-                manufacturing industries a</Title>
-            <Table
-                columns={dataColumn}
-                dataSource={data}
-                pagination={false} bordered />
-
-
-
-        </>
+                    {renderCommentList()}
+                </>
+            )}
+        </Comment>
     );
 }
 

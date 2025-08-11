@@ -1,8 +1,9 @@
-import { Layout, Space, Table, Typography } from "antd";
+import { Layout, Table, Typography, Row } from "antd";
 import React, { useEffect, useState } from "react";
 import axios from "../api/axios";
 import { calculatePercentage, formatDataGeneral, getDataRank, getQuarterDate } from "../utils/utils";
 import moment from "moment/moment";
+import Comment from "../components/Comments";
 
 function CapacityBuildingImplementation({ year, district }) {
 
@@ -76,16 +77,13 @@ function CapacityBuildingImplementation({ year, district }) {
                                 setScorei(1);
                             }
 
-
                         })
                         .catch(err => console.log(err))
                 }
 
-
             })
             .catch(err => console.log(err))
     }
-
 
     function getCapacityBuilding() {
         axios
@@ -127,7 +125,6 @@ function CapacityBuildingImplementation({ year, district }) {
                                 temp.push(tempDataSet);
                             });
 
-
                             if (temp.length >= 4) {
                                 setScoreii(1);
                             }
@@ -138,62 +135,77 @@ function CapacityBuildingImplementation({ year, district }) {
                         .catch(err => console.log(err))
                 }
 
-
             })
             .catch(err => console.log(err))
     }
 
     return (
-        <>
-            <Title level={3} style={{ marginTop: "20px" }}>PI 2.0 - 2.1 Implementation of Capacity Building Plan</Title>
-            <Title level={4} style={{ marginTop: "20px" }}>Assessment Guide/ Requirement</Title>
-            <Content>
-                From the DCD and OHLGS, receive a copy of the TNA and Capacity Building Plan and Reports:<br /><br />
-                <ol>
-                    <li type="i">
-                        If all quarterly reports on capacity building activities from the capacity building plan and DPAT recommendations
-                        were received with sex-disaggregated data within 15 days after the end of the quarter, score 1; else score 0.
-                    </li>
-                    <li type="i">
-                        If the Assembly has implemented 80% of its capacity building plan, score 1.
-                    </li>
-                </ol>
+        <Comment
+            data={data}
+            year={year}
+            districtId={district}
+            tableCommentedId={`pi2.0-2.1-${year}`}
+        >
+            {({ renderCommentInput, renderCommentList }) => (
+                <>
+                    <Title level={3} style={{ marginTop: "20px" }}>PI 2.0 - 2.1 Implementation of Capacity Building Plan</Title>
+                    <Title level={4} style={{ marginTop: "20px" }}>Assessment Guide/ Requirement</Title>
+                    <Content>
+                        From the DCD and OHLGS, receive a copy of the TNA and Capacity Building Plan and Reports:<br /><br />
+                        <ol>
+                            <li type="i">
+                                If all quarterly reports on capacity building activities from the capacity building plan and DPAT recommendations
+                                were received with sex-disaggregated data within 15 days after the end of the quarter, score 1; else score 0.
+                            </li>
+                            <li type="i">
+                                If the Assembly has implemented 80% of its capacity building plan, score 1.
+                            </li>
+                        </ol>
+                    </Content>
 
-            </Content>
+                    <Title level={5} style={{ marginTop: "20px" }}>
+                        Maximum Score <strong>2</strong>
+                    </Title>
 
-            <Title level={5} style={{ marginTop: "20px" }}>
-                Maximum Score <strong>2</strong>
-            </Title>
+                    <Title level={5} style={{ marginTop: "20px" }}>
+                        PI 2.0-2.1i Actual Score: <strong>{scorei}</strong>
+                    </Title>
+                    <Row align="middle">
+                        <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
+                            PI 2.0-2.1ii Actual Score: <strong>{scoreii}</strong>
+                        </Title>
+                        {renderCommentInput()}
+                    </Row>
 
-            <Title level={5} style={{ marginTop: "20px" }}>
-                PI 2.0-2.1i Actual Score: <strong>{scorei}</strong>
-            </Title>
-            <Title level={5} style={{ marginTop: "20px" }}>
-                PI 2.0-2.1ii Actual Score: <strong>{scoreii}</strong>
-            </Title>
+                    <Title level={5} style={{ marginTop: "20px" }}>
+                        Evidence of Availability & implementation of Capacity Building Plan
+                    </Title>
+                    <Table
+                        columns={CapacityBuildingImplementationColumns}
+                        dataSource={data}
+                        pagination={false}
+                        bordered
+                    />
 
-            <Title level={5} style={{ marginTop: "20px" }}>
-                Evidence of Availability & implementation of Capacity
-                Building Plan
-            </Title>
-            {<Table
-                columns={CapacityBuildingImplementationColumns}
-                dataSource={data}
-                pagination={false} bordered />}
+                    <Title level={5} style={{ marginTop: "20px" }}>
+                        Evidence of timely submission of Capacity Building Reports
+                    </Title>
+                    <Table
+                        columns={timeLineSubmissionColumns}
+                        dataSource={report}
+                        pagination={false}
+                        bordered
+                    />
 
-            <Title level={5} style={{ marginTop: "20px" }}>
-                Evidence of timely submission of Capacity Building Reports
-            </Title>
-            {<Table
-                columns={timeLineSubmissionColumns}
-                dataSource={report}
-                pagination={false} bordered />}
+                    <Title level={5} style={{ marginTop: "10px" }}>Conclusion:</Title>
+                    <Content>
+                        {percentage.toFixed(2)} % of programmes in the Training Plan have been implemented and {report.length} quarterly reports were submitted to OHLGS within 15 days after the end of the quarter.
+                    </Content>
 
-            <Title level={5} style={{ marginTop: "10px" }}>Conclusion:</Title>
-            <Content>
-            {percentage.toFixed(2)} % of programmes in the Training Plan have been implemented and {report.length} quarterly reports were submitted to OHLGS within 15 days after the end of the quarter. 
-            </Content>
-        </>
+                    {renderCommentList()}
+                </>
+            )}
+        </Comment>
     );
 }
 

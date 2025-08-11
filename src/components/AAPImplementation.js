@@ -1,7 +1,8 @@
-import { Layout, Space, Table, Typography } from "antd";
+import { Layout, Table, Typography, Row } from "antd";
 import React, { useEffect, useState } from "react";
 import axios from "../api/axios";
 import { calculatePercentage } from "../utils/utils";
+import Comment from "../components/Comments";
 
 function AAPImplementation({ year, district }) {
 
@@ -45,39 +46,56 @@ function AAPImplementation({ year, district }) {
     }
 
     return (
-        <>
-            <Title level={3} style={{ marginTop: "20px" }}>PI 1.0 - 1.1 Implementation of Annual Action Plan (AAP)</Title>
-            <Title level={4} style={{ marginTop: "20px" }}>Assessment Guide/ Requirement</Title>
-            <Content>
-                From DCD, receive reports on the implementation of projects and programmes in the Annual Action Plan:<br /><br />
-                <ol>
-                    <li type="i">
-                        If there is evidence that at least 90% of activities implemented in
-                        2021 are from the approved Annual Action Plan, score 2; else 0
-                    </li>
-                </ol>
+        <Comment
+            data={aapImplementation}
+            year={year}
+            districtId={district}
+            tableCommentedId={`pi1.0-1.1-${year}`}
+        >
+            {({ renderCommentInput, renderCommentList }) => (
+                <>
+                    <Title level={3} style={{ marginTop: "20px" }}>PI 1.0 - 1.1 Implementation of Annual Action Plan (AAP)</Title>
+                    <Title level={4} style={{ marginTop: "20px" }}>Assessment Guide/ Requirement</Title>
+                    <Content>
+                        From DCD, receive reports on the implementation of projects and programmes in the Annual Action Plan:<br /><br />
+                        <ol>
+                            <li type="i">
+                                If there is evidence that at least 90% of activities implemented in
+                                2021 are from the approved Annual Action Plan, score 2; else 0
+                            </li>
+                        </ol>
+                    </Content>
 
-            </Content>
+                    <Title level={5} style={{ marginTop: "20px" }}>
+                        Maximum Score <strong>2</strong>
+                    </Title>
 
-            <Title level={5} style={{ marginTop: "20px" }}>
-                Maximum Score <strong>2</strong>
-            </Title>
+                    <Title level={5} style={{ marginTop: "20px" }}>
+                        PI 1.0-1.1 Actual Score: <strong>{score}</strong>
+                    </Title>
+                    <Row align="middle">
+                        <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
+                            PI 1.0-1.1 Actual Score: <strong>{score}</strong>
+                        </Title>
+                        {renderCommentInput()}
+                    </Row>
 
-            <Title level={5} style={{ marginTop: "20px" }}>
-                PI 1.0-1.1 Actual Score: <strong>{score}</strong>
-            </Title>
+                    <Table
+                        columns={aapImplementationColumns}
+                        dataSource={aapImplementation || []}
+                        pagination={false}
+                        bordered
+                    />
 
-            {<Table
-                columns={aapImplementationColumns}
-                dataSource={aapImplementation || []}
-                pagination={false} bordered />}
+                    <Title level={5} style={{ marginTop: "30px" }}>Conclusion</Title>
+                    <Content>
+                        The district has implemented 100% of Planned Projects and Programmes in the {year} AAP
+                    </Content>
 
-            <Title level={5} style={{ marginTop: "30px" }}>Conclusion</Title>
-            <Content>
-                The district has implemented 100% of Planned Projects and Programmes in the {year} AAP
-            </Content>
-
-        </>
+                    {renderCommentList()}
+                </>
+            )}
+        </Comment>
     );
 }
 

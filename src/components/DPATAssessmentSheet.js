@@ -1483,6 +1483,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         data={gaMeetingData}
                         year={year}
                         columns={generalAssemblyColumns}
+                        districtId={district?.value}
                     />}
                     {/* General Assembly Meetings and Decision End */}
                     <hr />
@@ -1493,6 +1494,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         data={meetingDataGroup}
                         year={year}
                         columns={budgetColumns}
+                        districtId={district?.value}
                     />}
                     {/* Approval of Annual Action Plan Budget End */}
                     <hr />
@@ -1507,6 +1509,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         establishmentColumns={subStructureEstablishmentColumns}
                         revenueSharing={subReportData}
                         revenuSharingColumns={revenueSharingColumns}
+                        districtId={district?.value}
                     />}
                     {/* Sub-Structures Meetings End */}
                     <hr />
@@ -1517,6 +1520,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         data={ecaMeetingData}
                         year={year}
                         columns={ECAMeetingColumns}
+                        districtId={district?.value}
                     />}
                     {/* ECA Meeting End */}
                     <hr />
@@ -1529,6 +1533,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         columns={subCommitteeCompositionColumns}
                         members={memberFinanceData}
                         memberColumns={membersColumns}
+                        districtId={district?.value}
                     />}
                     {/* Sub Committe Meeting and Members section End*/}
                     <hr />
@@ -1538,6 +1543,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         data={managementMeetingsData}
                         year={year}
                         columns={managementMeetingColumns}
+                        districtId={district?.value}
                     />}
                     <hr />
 
@@ -1546,6 +1552,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         data={prccMeetingData}
                         year={year}
                         columns={PRCCMeetingColumns}
+                        districtId={district?.value}
                     />}
 
                     <hr />
@@ -1555,6 +1562,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         data={etcMeetingData}
                         year={year}
                         columns={spcMeetingColumns}
+                        districtId={district?.value}
                     />}
                     {/* Special Committee Meeting (SPC) Meeting End*/}
                     <hr />
@@ -1566,6 +1574,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         data={spcMeetingData}
                         year={year}
                         columns={ETCMeetingColumns}
+                        districtId={district?.value}
                     />}
 
                     <hr />
@@ -1576,20 +1585,24 @@ const DPATAssessmentSheet = ({ props }) => {
                         columns={internalAuditColumns}
                         meetings={internalAuditMeetingData}
                         meetingColumns={internalAuditMeetingColumns}
+                        districtId={district?.value}
                     />}
 
                     <hr />
 
                     <ClientServiceFunctionality
                         year={year}
-                        district={district?.value}
+                       
+                        districtId={district?.value}
+                        
                     />
 
                     <hr />
 
                     <AAPPublication
                         year={year}
-                        district={district?.value}
+                        
+                        districtId={district?.value}
                     />
 
                     <hr />
@@ -1610,6 +1623,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         columns={serviceDecisionColumns}
                         decisionDeliveryData={decisionDeliveryData}
                         serviceDeliveryDecisionColumns={serviceDeliveryDecisionColumns}
+                        districtId={district?.value}
                     />}
                     {/* SDI- General Assembly Decisions End */}
 
@@ -1621,6 +1635,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         decisions={decisionDeliveryListData}
                         managementActionServiceDeliveryData={managementActionServiceDeliveryData}
                         district={district?.value}
+                        districtId={district?.value}
                     />
                     <hr />
 
@@ -1630,6 +1645,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         subStructureActivityData={subStructureActivityData}
                         cededRevenueUtilisationScore={cededRevenueUtilisationScore}
                         substructureExpendature={substructureExpendatureData}
+                        districtId={district?.value}
                     />
 
                     <hr />
@@ -1637,36 +1653,46 @@ const DPATAssessmentSheet = ({ props }) => {
                     {/* Water Services */}
                     <WaterServices
                         year={year}
-                        district={district?.value}
+                   
+                        districtId={district?.value}
                     />
                     <hr />
 
                     {/* Electricity Services */}
                     <ElectricityServices
                         year={year}
-                        district={district?.value} />
+                          districtId={district?.value}
+                        />
                     <hr />
 
                     {/* Sanitation Services */}
                     <SanitationServices year={year}
-                        sanitationProvidersData={sanitationProvidersData} />
+                        sanitationProvidersData={sanitationProvidersData}
+                        districtId={district?.value}
+                        />
                     <hr />
 
                     {/* Evidence of establishment of Planning & Building Inspectorate Unit
                   */}
                     {/* {JSON.stringify(buildingInspectorate)} */}
                     <MaintenanceInfrastructure year={year}
-                        buildingInspectorateData={buildingInspectorateData} />
+                        buildingInspectorateData={buildingInspectorateData}
+                        districtId={district?.value}
+                         />
                     <hr />
 
                     <ClientServiceCharter year={year}
-                        ClientServiceCharter={clientServiceChaterData} />
+                        ClientServiceCharter={clientServiceChaterData}
+                        
+                        districtId={district?.value}
+                        />
                     <hr />
 
                     {/* 2.6 Services on the Transportation network */}
                     <TransportationNetworkService
                         year={year}
                         transportors={transportorsData}
+                        districtId={district?.value}
                         district={district?.value} />
                     <hr />
 
@@ -1674,12 +1700,14 @@ const DPATAssessmentSheet = ({ props }) => {
                     <BuildingInspectorateUnit
                         year={year}
                         units={inspectorateUnitData}
+                        districtId={district?.value}
                         district={district?.value} />
                     <hr />
 
                     {/* 3.2 Planning and Development Permit Processing & Issuance */}
                     <PermitProcessingIssuance
                         year={year}
+                        districtId={district?.value}
                         district={district?.value} />
                     <hr />
                     {/* 3.3 Street Naming Database and Property Addressing */}
@@ -1689,6 +1717,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         district={district?.value}
                         counterColumns={streetNamingInstallationColumn}
                         streets={streetNamingData}
+                        districtId={district?.value}
                         columns={streetNamingColumn}
                     />
                     <hr />
@@ -1698,6 +1727,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     <SocialProtectionServices
                         year={year}
                         district={district?.value}
+                        districtId={district?.value}
                         services={socialServicesData}
                     />
                     <hr />
@@ -1706,6 +1736,7 @@ const DPATAssessmentSheet = ({ props }) => {
 
                     <ShelterTransactionalHousing
                         year={year}
+                        districtId={district?.value}
                         district={district?.value}
                     />
                     <hr />
@@ -1714,6 +1745,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     {districtHotlineNumberData && <DistrictHotlineNumber
                         data={districtHotlineNumberData}
                         year={year}
+                        districtId={district?.value}
                         columns={districtHotlineNumberColumn} />}
                     <hr />
 
@@ -1721,12 +1753,14 @@ const DPATAssessmentSheet = ({ props }) => {
                     <PWDService
                         year={year}
                         district={district?.value}
+                        districtId={district?.value}
                     />
                     <hr />
                     {/*  Nutrition Services */}
                     <NutritionIntervention
                         year={year}
                         district={district?.value}
+                        districtId={district?.value}
                         data={nutritionServcieData}
                     />
                     <hr />
@@ -1734,6 +1768,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     {/*  Availability of Sanitation Service Providers */}
                     <SanitationServiceProviders
                         year={year}
+                        districtId={district?.value}
                         district={district?.value}
                     />
                     <hr />
@@ -1741,6 +1776,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     {/*  Availability of Well-Maintained Dumping Site or Engineered Landfills */}
                     <DumpingSite
                         year={year}
+                        districtId={district?.value}
                         district={district?.value}
                     />
                     <hr />
@@ -1748,6 +1784,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     {/*  Monitoring and Issuance of Certificates to Food and Beverage Vendors */}
                     <FoodVendors
                         year={year}
+                        districtId={district?.value}
                         district={district?.value}
                     />
                     <hr />
@@ -1755,6 +1792,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     {/*  Availability of Institutional Toilet Facilities and Water in Public Schools */}
                     <PublicSchoolFacility
                         year={year}
+                        districtId={district?.value}
                         district={district?.value}
                     />
                     <hr />
@@ -1762,6 +1800,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     {/*  Climate Change Interventions */}
                     <ClimateChangeIntervention
                         year={year}
+                        districtId={district?.value}
                         district={district?.value}
                     />
                     <hr />
@@ -1769,6 +1808,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     {/*  Availability of District LED Activities in the AAP */}
                     <DistrictLEDActivityPlan
                         year={year}
+                        districtId={district?.value}
                         district={district?.value}
                     />
                     <hr />
@@ -1783,6 +1823,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     {/*  Facilitate and support small-scale agro-processing and manufacturing industries */}
                     <AgroProcessingFacilitySupport
                         year={year}
+                        districtId={district?.value}
                         district={district?.value}
                     />
                     <hr />
@@ -1790,6 +1831,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     {/*  Engagement with the Business Community */}
                     <BusinessCommunityEngagement
                         year={year}
+                        districtId={district?.value}
                         district={district?.value}
                     />
                     <hr />
@@ -1802,54 +1844,63 @@ const DPATAssessmentSheet = ({ props }) => {
 
                     <AAPImplementation
                         year={year}
+                        districtId={district?.value}
                         district={district?.value}
                     />
                     <hr />
 
                     <MonitoringProjectAndActivity
                         year={year}
+                        districtId={district?.value}
                         district={district?.value}
                     />
                     <hr />
 
                     <ContractManagementAndAdmins
                         year={year}
+                        districtId={district?.value}
                         district={district?.value}
                     />
                     <hr />
 
                     <FollowUpDeduction
                         year={year}
+                        districtId={district?.value}
                         district={district?.value}
                     />
                     <hr />
 
                     <EnvironmentalAndSocialSafeGuard
                         year={year}
+                        districtId={district?.value}
                         guards={guards}
                     />
                     <hr />
 
                     <CapacityBuildingImplementation
                         year={year}
+                        districtId={district?.value}
                         district={district?.value}
                     />
                     <hr />
 
                     <PostTrainingEvaluation
                         year={year}
+                        districtId={district?.value}
                         district={district?.value}
                     />
                     <hr />
 
                     <PaymentPoints
                         year={year}
+                        districtId={district?.value}
                         district={district?.value}
                     />
                     <hr />
 
                     <RateableRevenu
                         year={year}
+                        districtId={district?.value}
                         district={district?.value}
                     />
                     <hr />
@@ -1857,30 +1908,35 @@ const DPATAssessmentSheet = ({ props }) => {
                     {/* The rest of the tables need to be clarified by Fosu */}
                     <AuditCommitteeResponsiveness
                         year={year}
+                        districtId={district?.value}
                         audits={auditCommitteeMeetingData}
                     />
                     <hr />
 
                     <AuditInfractions
                         year={year}
+                        districtId={district?.value}
                         district={district?.value}
                     />
                     <hr />
 
                     <EducationServiceSupport
                         year={year}
+                        districtId={district?.value}
                         district={district?.value}
                     />
                     <hr />
 
                     <HealthServiceSupport
                         year={year}
+                        districtId={district?.value}
                         district={district?.value}
                     />
                     <hr />
 
                     <AgricultureSupport
                         year={year}
+                        districtId={district?.value}
                         district={district?.value}
                     />
                     <hr />

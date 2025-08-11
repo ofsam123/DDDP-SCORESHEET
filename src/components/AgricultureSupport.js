@@ -1,94 +1,95 @@
-import { Layout, Space, Table, Typography } from "antd";
+import { Layout, Table, Typography, Row } from "antd";
 import React, { useEffect, useState } from "react";
 import axios from "../api/axios";
+import Comment from "../components/Comments";
 
-function AgricultureSupport({ year, district }) {
+function AgricultureSupport({ year, districtId }) {
+  const { Header, Content } = Layout;
+  const { Title, Text } = Typography;
 
-    const { Header, Content } = Layout;
-    const { Title, Text } = Typography;
+  const [agricultureSupport, setAgricultureSupport] = useState([]);
+  const [score, setScore] = useState(0);
 
-    const [agricultureSupport, setAgricultureSupport] = useState([]);
-    const [score, setScore] = useState(0);
+  useEffect(() => {
+    getData();
+  }, []);
 
-    useEffect(() => {
-        getData();
-    }, []);
+  const agricultureSupportColumns = [
+    { title: "No. of AEAs", dataIndex: "noOfAEAs", key: "noOfAEAs" },
+    { title: "No of Operational Areas", dataIndex: "noOfoperational", key: "noOfoperational" },
+    { title: "Data on mapping of AEAs to operational areas", dataIndex: "mapping", key: "mapping" }
+  ];
 
-    const agricultureSupportColumns = [
-        { title: "No. of AEAs", dataIndex: "noOfAEAs", key: "noOfAEAs" },
-        { title: "No of Operational Areas", dataIndex: "noOfoperational", key: "noOfoperational" },
-        { title: "Data on mapping of AEAs to operational areas", dataIndex: "mapping", key: "mapping" }
-    ];
+  function getData() {
+    axios
+      .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=zordSafiO6O&startDate=${year}-01-01&endDate=${year}-12-31`)
+      .then(result => {
+        if (result.data.instances.length > 0) {
+          axios
+            .get(`/tracker/events?program=zordSafiO6O&orgUnit=${districtId}&startDate=${year}-01-01&endDate=${year}-12-31`)
+            .then(resp => {
+              const agricultures = result.data.instances;
+              setAgricultureSupport([{
+                noOfAEAs: agricultures.length,
+                noOfoperational: agricultures.length,
+                mapping: "1:1"
+              }]);
 
-    
-    function getData() {
-            axios
-                .get(`/tracker/trackedEntities?orgUnit=${district}&program=zordSafiO6O&startDate=${year}-01-01&endDate=${year}-12-31`)
-                .then(result => {
-                    if (result.data.instances.length > 0) {
-    
-                        axios
-                            .get(`/tracker/events?program=zordSafiO6O&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
-                            .then(resp => {
-                                const agricultures = result.data.instances;
-                                
-                                
-                                setAgricultureSupport([{
-                                    noOfAEAs: agricultures.length,
-                                    noOfoperational: agricultures.length,
-                                    mapping: "1:1"
-                                }]);
-
-                                if(agricultures.length > 0){
-                                    setScore(1)
-                                }
-    
-                            })
-                            .catch(err => console.log(err))
-                    }
-    
-    
-                })
-                .catch(err => console.log(err))
+              if (agricultures.length > 0) {
+                setScore(1)
+              }
+            })
+            .catch(err => console.log(err))
         }
+      })
+      .catch(err => console.log(err))
+  }
 
-
-    return (
+  return (
+    <Comment
+      data={agricultureSupport}
+      year={year}
+      districtId={districtId}
+      tableCommentedId={`pi5.0-5.3-${year}`}
+    >
+      {({ renderCommentInput, renderCommentList }) => (
         <>
-            <Title level={3} style={{ marginTop: "20px" }}>PI 5.0 - 5.3 Support to Agriculture</Title>
-            <Title level={4} style={{ marginTop: "20px" }}>Assessment Guide/ Requirement</Title>
-            <Content>
-                From the DCD, receive information on Agricultural services:<br /><br />
-                <ol>
-                    <li type="i">
-                        If the District has a list of Agricultural Extension Agents (AEAs) and information on their mapping
-                        to Operational Areas for delivery of support services to farmers, etc., score 1
-                    </li>
+          <Title level={3} style={{ marginTop: "20px" }}>PI 5.0 - 5.3 Support to Agriculture</Title>
+          <Title level={4} style={{ marginTop: "20px" }}>Assessment Guide/ Requirement</Title>
+          <Content>
+            From the DCD, receive information on Agricultural services:<br /><br />
+            <ol>
+              <li type="i">
+                If the District has a list of Agricultural Extension Agents (AEAs) and information on their mapping
+                to Operational Areas for delivery of support services to farmers, etc., score 1
+              </li>
+            </ol>
+          </Content>
 
+          <Title level={5} style={{ marginTop: "20px" }}>
+            Maximum Score <strong>1</strong>
+          </Title>
 
-                </ol>
-
-            </Content>
-
-            <Title level={5} style={{ marginTop: "20px" }}>
-                Maximum Score <strong>1</strong>
+          <Row align="middle">
+            <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
+              PI 5.0-5.3 Actual Score: <strong>{score}</strong>
             </Title>
+            {renderCommentInput()}
+          </Row>
 
-            <Title level={5} style={{ marginTop: "20px" }}>
-                PI 5.0-5.3 Actual Score: <strong>{score}</strong>
-            </Title>
+          <Title level={5} style={{ marginTop: "20px" }}>
+            Evidence of AEAs and operational areas
+          </Title>
+          <Table
+            columns={agricultureSupportColumns}
+            dataSource={agricultureSupport || []}
+            pagination={false} bordered />
 
-
-            <Title level={5} style={{ marginTop: "20px" }}>
-                Evidence of AEAs and operational areas
-            </Title>
-            {<Table
-                columns={agricultureSupportColumns}
-                dataSource={agricultureSupport || []}
-                pagination={false} bordered />}
-
+          {renderCommentList()}
         </>
-    );
+      )}
+    </Comment>
+  );
 }
 
 export default AgricultureSupport;

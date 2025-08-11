@@ -1,7 +1,8 @@
-import { Layout, Space, Table, Typography } from "antd";
+import { Layout, Table, Typography, Row } from "antd";
 import React, { useEffect, useState } from "react";
 import axios from "../api/axios";
 import { formatDataGeneral, getAttributeValue } from "../utils/utils";
+import Comment from "../components/Comments";
 
 function RateableRevenu({ year, district }) {
 
@@ -36,7 +37,6 @@ function RateableRevenu({ year, district }) {
                     })
                 })
 
-
             })
             .catch(err => console.log(err))
     }
@@ -60,7 +60,6 @@ function RateableRevenu({ year, district }) {
                             let propertyBillIssued = 0;
                             const businessBill = businessBillings.length;
                             let businessBillIssued = 0;
-
 
                             propertyBillings.forEach(bill => {
 
@@ -101,8 +100,6 @@ function RateableRevenu({ year, district }) {
                                     reportTemp.push({ actionType, actionDate, paymentDate, no });
                                 }
 
-
-
                             });
 
                             const temp = [
@@ -115,9 +112,6 @@ function RateableRevenu({ year, district }) {
                                     businessBillDateSubmission: businessBillings.length > 0 ? getAttributeValue("Date", businessBillings[0]) : ""
                                 }
                             ];
-
-
-
 
                             if ((propertyBill === propertyBillIssued) && (businessBill === businessBillIssued) && (propertyBill !== 0) && (businessBill !== 0)) {
                                 setScoreII(2);
@@ -133,7 +127,6 @@ function RateableRevenu({ year, district }) {
                         })
                         .catch(err => console.log(err))
                 }
-
 
             })
             .catch(err => console.log(err))
@@ -199,68 +192,84 @@ function RateableRevenu({ year, district }) {
     ];
 
     return (
-        <>
-            <Title level={3} style={{ marginTop: "20px" }}>PI 3.0 - 3.2 Revenue from Rateable Properties and Businesses</Title>
-            <Title level={4} style={{ marginTop: "20px" }}>Assessment Guide/ Requirement</Title>
-            <Content>
-                From the DCD, obtain information on rateable properties and businesses database:<br /><br />
-                <ol>
-                    <li type="i">
-                        If there is an established computerized billing system, linked to property rate
-                        roll and business inventory, score 1;
-                    </li>
-                    <li type="i">
-                        If property rates and business operating permit bills have been generated and delivered to all property
-                        and business owners before 31st December 2021, score 2;
-                    </li>
-                    <li type="i">
-                        If there is evidence of follow-up actions by the MMDA on defaulters/non-payers of 2020 bills by 31st March 2021, score 2
+        <Comment
+            data={issuance}
+            year={year}
+            districtId={district}
+            tableCommentedId={`pi3.0-3.2-${year}`}
+        >
+            {({ renderCommentInput, renderCommentList }) => (
+                <>
+                    <Title level={3} style={{ marginTop: "20px" }}>PI 3.0 - 3.2 Revenue from Rateable Properties and Businesses</Title>
+                    <Title level={4} style={{ marginTop: "20px" }}>Assessment Guide/ Requirement</Title>
+                    <Content>
+                        From the DCD, obtain information on rateable properties and businesses database:<br /><br />
+                        <ol>
+                            <li type="i">
+                                If there is an established computerized billing system, linked to property rate
+                                roll and business inventory, score 1;
+                            </li>
+                            <li type="i">
+                                If property rates and business operating permit bills have been generated and delivered to all property
+                                and business owners before 31st December 2021, score 2;
+                            </li>
+                            <li type="i">
+                                If there is evidence of follow-up actions by the MMDA on defaulters/non-payers of 2020 bills by 31st March 2021, score 2
+                            </li>
+                        </ol>
+                    </Content>
 
-                    </li>
+                    <Title level={5} style={{ marginTop: "20px" }}>
+                        Maximum Score <strong>5</strong>
+                    </Title>
 
-                </ol>
+                    <Title level={5} style={{ marginTop: "20px" }}>
+                        PI 3.0-3.2i Actual Score: <strong>{scoreI}</strong>
+                    </Title>
+                    <Title level={5} style={{ marginTop: "20px" }}>
+                        PI 3.0-3.2ii Actual Score: <strong>{scoreII}</strong>
+                    </Title>
+                    <Row align="middle">
+                        <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
+                            PI 3.0-3.2iii Actual Score: <strong>{scoreIII}</strong>
+                        </Title>
+                        {renderCommentInput()}
+                    </Row>
 
-            </Content>
+                    <Title level={5} style={{ marginTop: "20px" }}>
+                        I- Evidence of Computerized Billing System & Utilisation
+                    </Title>
+                    <Table
+                        columns={computerizedBillingSystemColumns}
+                        dataSource={software}
+                        pagination={false}
+                        bordered
+                    />
 
-            <Title level={5} style={{ marginTop: "20px" }}>
-                Maximum Score <strong>5</strong>
-            </Title>
+                    <Title level={5} style={{ marginTop: "20px" }}>
+                        II- Evidence of Issuance of Bills
+                    </Title>
+                    <Table
+                        columns={billingIssuanceColumns}
+                        dataSource={issuance}
+                        pagination={false}
+                        bordered
+                    />
 
-            <Title level={5} style={{ marginTop: "20px" }}>
-                PI 3.0-3.2i Actual Score: <strong>{scoreI}</strong>
-            </Title>
-            <Title level={5} style={{ marginTop: "20px" }}>
-                PI 3.0-3.2ii Actual Score: <strong>{scoreII}</strong>
-            </Title>
-            <Title level={5} style={{ marginTop: "20px" }}>
-                PI 3.0-3.2iii Actual Score: <strong>{scoreIII}</strong>
-            </Title>
+                    <Title level={5} style={{ marginTop: "20px" }}>
+                        III- Evidence of follow-up action by Assembly on defaulters/ nonpayers
+                    </Title>
+                    <Table
+                        columns={followUpColumns}
+                        dataSource={followup}
+                        pagination={false}
+                        bordered
+                    />
 
-            <Title level={5} style={{ marginTop: "20px" }}>
-                I- Evidence of Computerized Billing System & Utilisation
-            </Title>
-            {<Table
-                columns={computerizedBillingSystemColumns}
-                dataSource={software}
-                pagination={false} bordered />}
-
-            <Title level={5} style={{ marginTop: "20px" }}>
-                II- Evidence of Issuance of Bills
-            </Title>
-            {<Table
-                columns={billingIssuanceColumns}
-                dataSource={issuance}
-                pagination={false} bordered />}
-
-            <Title level={5} style={{ marginTop: "20px" }}>
-                III- Evidence of follow-up action by Assembly on defaulters/ nonpayers
-            </Title>
-            {<Table
-                columns={followUpColumns}
-                dataSource={followup}
-                pagination={false} bordered />}
-
-        </>
+                    {renderCommentList()}
+                </>
+            )}
+        </Comment>
     );
 }
 

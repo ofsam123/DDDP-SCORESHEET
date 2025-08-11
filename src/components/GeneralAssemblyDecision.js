@@ -29,7 +29,7 @@ function GeneralAssemblyDecision({ data, year, columns, decisionDeliveryData, se
             From the DCD, receive signed Minutes of Meetings of the three mandatory Meetings of the General Assembly:<br /><br />
             <ol>
               <li type="i">
-                If The General Assembly took at least 50% decisions on improving service delivery in any
+                If The General Assembly took at least 70% decisions on improving service delivery in any
                 sector of the District, score 1;
               </li>
             </ol>
@@ -44,7 +44,7 @@ function GeneralAssemblyDecision({ data, year, columns, decisionDeliveryData, se
 
           <Row align="middle">
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
-              SDI 1.0-1.1 Actual Score: <strong>{gaDecisionScore > 50 ? '1' : '0'}</strong>
+              SDI 1.0-1.1 Actual Score: <strong>{gaDecisionScore > 70 ? '1' : '0'}</strong>
             </Title>
             {renderCommentInput()}
           </Row>

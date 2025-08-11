@@ -36,7 +36,7 @@ function GeneralAssemblyManagementActions({
           <Content>
             <div className="mb-3">From the DCD, receive signed minutes of meetings of the Management of the Assembly:</div>
             <ol>
-              <li type="i">If Management has implemented at least 50% of the
+              <li type="i">If Management has implemented at least 70% of the
                 service delivery improvement decisions (1.1i) of The General Assembly,
                 evidenced by reports and relevant supporting documents, score 2.
               </li>
@@ -54,7 +54,7 @@ function GeneralAssemblyManagementActions({
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               SDI 1.0-1.2 Actual Score: 
               {managementActionServiceDeliveryData && 
-              <strong>{managementActionServiceDeliveryData[0]?.percentage >= 50 ? 2 : 0}</strong>}
+              <strong>{managementActionServiceDeliveryData[0]?.percentage >= 70 ? 2 : 0}</strong>}
             </Title>
             {renderCommentInput()}
           </Row>

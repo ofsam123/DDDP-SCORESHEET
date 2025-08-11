@@ -1,7 +1,8 @@
-import { Layout, Space, Table, Typography } from "antd";
+import { Layout, Table, Typography, Row } from "antd";
 import React, { useEffect, useState } from "react";
 import axios from "../api/axios";
 import { calculatePercentage, formatDataGeneral, getAttributeValue } from "../utils/utils";
+import Comment from "../components/Comments";
 
 function MonitoringProjectAndActivity({ year, district }) {
 
@@ -107,7 +108,6 @@ function MonitoringProjectAndActivity({ year, district }) {
                         .catch(err => console.log(err))
                 }
 
-
             })
             .catch(err => console.log(err))
     }
@@ -124,8 +124,6 @@ function MonitoringProjectAndActivity({ year, district }) {
                             const monitorings = result.data.instances;
                             const reports = resp.data.instances;
                             const temp = [];
-
-                            // const monitoringProjects = formatDataGeneral(budgets, "Budget Category", "M&E Activities") || [];
 
                             monitorings.forEach((project) => {
                                 const currentReport = reports.find(rep => rep.trackedEntity === project.trackedEntity);
@@ -157,66 +155,81 @@ function MonitoringProjectAndActivity({ year, district }) {
                         .catch(err => console.log(err))
                 }
 
-
             })
             .catch(err => console.log(err))
     }
 
     return (
-        <>
-            <Title level={3} style={{ marginTop: "20px" }}>PI 1.0 - 1.2 Monitoring of District Projects and Activities</Title>
-            <Title level={4} style={{ marginTop: "20px" }}>Assessment Guide/ Requirement</Title>
-            <Content>
-                From DCD, receive monitoring reports on all district programmes and projects:<br /><br />
-                <ol>
-                    <li type="i">
-                        If a clear budgetary provision has been made for M&E and 80% of the budgetary allocation is released for
-                        the implementation of planned monitoring activities, score 1; else score 0.
-                    </li>
-                    <li type="i">
-                        If there is evidence of multistakeholder participation in monitoring activities, score 1.
-                    </li>
-                </ol>
+        <Comment
+            data={data}
+            year={year}
+            districtId={district}
+            tableCommentedId={`pi1.0-1.2-${year}`}
+        >
+            {({ renderCommentInput, renderCommentList }) => (
+                <>
+                    <Title level={3} style={{ marginTop: "20px" }}>PI 1.0 - 1.2 Monitoring of District Projects and Activities</Title>
+                    <Title level={4} style={{ marginTop: "20px" }}>Assessment Guide/ Requirement</Title>
+                    <Content>
+                        From DCD, receive monitoring reports on all district programmes and projects:<br /><br />
+                        <ol>
+                            <li type="i">
+                                If a clear budgetary provision has been made for M&E and 80% of the budgetary allocation is released for
+                                the implementation of planned monitoring activities, score 1; else score 0.
+                            </li>
+                            <li type="i">
+                                If there is evidence of multistakeholder participation in monitoring activities, score 1.
+                            </li>
+                        </ol>
+                    </Content>
 
-            </Content>
+                    <Title level={5} style={{ marginTop: "20px" }}>
+                        Maximum Score <strong>2</strong>
+                    </Title>
 
-            <Title level={5} style={{ marginTop: "20px" }}>
-                Maximum Score <strong>2</strong>
-            </Title>
+                    <Title level={5} style={{ marginTop: "20px" }}>
+                        PI 1.0-1.2i Actual Score: <strong>{scorei}</strong>
+                    </Title>
+                    <Row align="middle">
+                        <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
+                            PI 1.0-1.2ii Actual Score: <strong>{scoreii}</strong>
+                        </Title>
+                        {renderCommentInput()}
+                    </Row>
 
-            <Title level={5} style={{ marginTop: "20px" }}>
-                PI 1.0-1.2i Actual Score: <strong>{scorei}</strong>
-            </Title>
-            <Title level={5} style={{ marginTop: "20px" }}>
-                PI 1.0-1.2ii Actual Score: <strong>{scoreii}</strong>
-            </Title>
-            <Title level={4} style={{ marginTop: "20px" }}>
-                I- Evidence of clear budgetary release for M&E activities
-            </Title>
-            {<Table
-                columns={activityColumns}
-                dataSource={data}
-                pagination={false} bordered />}
+                    <Title level={4} style={{ marginTop: "20px" }}>
+                        I- Evidence of clear budgetary release for M&E activities
+                    </Title>
+                    <Table
+                        columns={activityColumns}
+                        dataSource={data}
+                        pagination={false}
+                        bordered
+                    />
 
-            <Title level={4} style={{ marginTop: "20px" }}>
-                II- Evidence of multi-stakeholder participation in monitoring
-            </Title>
-            {<Table
-                columns={monitoringColumns}
-                dataSource={monitoring}
-                pagination={false} bordered />}
+                    <Title level={4} style={{ marginTop: "20px" }}>
+                        II- Evidence of multi-stakeholder participation in monitoring
+                    </Title>
+                    <Table
+                        columns={monitoringColumns}
+                        dataSource={monitoring}
+                        pagination={false}
+                        bordered
+                    />
 
-            <Title level={5} style={{ marginTop: "30px" }}>Conclusion</Title>
-            <Content>
-                {percentage} % of Budgetary allocation released for the implementation of
-                planned monitoring activities. {monitoring.length > 0 ? <>
-                And Quarterly reports exist for participation by multi stakeholders in
-                Monitoring and Evaluation activities in {year}
-                    </> : <span>There is no Quarterly report available</span>}
+                    <Title level={5} style={{ marginTop: "30px" }}>Conclusion</Title>
+                    <Content>
+                        {percentage} % of Budgetary allocation released for the implementation of
+                        planned monitoring activities. {monitoring.length > 0 ? <>
+                        And Quarterly reports exist for participation by multi stakeholders in
+                        Monitoring and Evaluation activities in {year}
+                        </> : <span>There is no Quarterly report available</span>}
+                    </Content>
 
-            </Content>
-
-        </>
+                    {renderCommentList()}
+                </>
+            )}
+        </Comment>
     );
 }
 

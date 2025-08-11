@@ -1,92 +1,101 @@
-import { Layout, Space, Table, Typography } from "antd";
+import { Layout, Table, Typography, Row } from "antd";
 import React, { useEffect, useState } from "react";
 import axios from "../api/axios";
+import Comment from "../components/Comments";
 
 function NutritionIntervention({
-    year, district, data
-
+  year,
+  districtId,
+  data
 }) {
+  const [scorei, setScorei] = useState(0);
+  const [scoreii, setScoreii] = useState(0);
 
-    const [scorei, setScorei] = useState(0);
-    const [scoreii, setScoreii] = useState(0);
+  const { Header, Content } = Layout;
+  const { Title, Text } = Typography;
 
-    const { Header, Content } = Layout;
-    const { Title, Text } = Typography;
+  useEffect(() => {
+    if (data?.aap?.lenght > 0) {
+      if (data.aap[0].publication === "YES") {
+        setScorei(1);
+      }
+    }
 
-    useEffect(() => {
+    if (data?.vendors?.length > 0) {
+      setScoreii(1);
+    }
+  }, [year, districtId]);
 
-        if(data?.aap?.lenght> 0){
-            if(data.aap[0].publication === "YES"){
-                setScorei(1);
-            }
-        }
+  const aapColumn = [
+    { title: "No. of Activities in the AAP of the Assembly", dataIndex: "aapTotal", key: "aapTotal" },
+    { title: "No. of Nutrition-oriented interventions", dataIndex: "aapNutrition", key: "aapNutrition" },
+    {
+      title: "Nutrition-oriented interventions published on Assembly website or notice board (Yes/No)",
+      dataIndex: "publication",
+      key: "publication"
+    }
+  ];
 
-       if(data?.vendors?.length > 0){
-        setScoreii(1);
-       }
-    }, [year, district]);
+  const nutritionColumn = [
+    { title: "Vendors", dataIndex: "name", key: "name" },
+    { title: "Phone", dataIndex: "phone", key: "phone" },
+    { title: "TIN", dataIndex: "tin", key: "tin" },
+    { title: "Vendor Nutrition Orientation", dataIndex: "orientation", key: "orientation" }
+  ];
 
-
-
-    const aapColumn = [
-        { title: "No. of Activities in the AAP of the Assembly", dataIndex: "aapTotal", key: "aapTotal" },
-        { title: "No. of Nutrition-oriented interventions", dataIndex: "aapNutrition", key: "aapNutrition" },
-        { title: "Nutrition-oriented interventions published on Assembly website or notice board (Yes/No)",
-             dataIndex: "publication", key: "publication" }
-    ];
-
-    const nutritionColumn = [
-        { title: "Vendors", dataIndex: "name", key: "name" },
-        { title: "Phone", dataIndex: "phone", key: "phone" },
-        { title: "TIN",dataIndex: "tin", key: "tin" },
-        { title: "Vendor Nutrition Orientation",dataIndex: "orientation", key: "orientation" }
-    ];
-
-
-    return (
+  return (
+    <Comment
+      data={data?.aap}
+      year={year}
+      districtId={districtId}
+      tableCommentedId={`sdi4.0-4.6-${year}`}
+    >
+      {({ renderCommentInput, renderCommentList }) => (
         <>
-            <Title level={3} style={{ marginTop: "30px" }}>SDI 4.0 - 4.6 Nutrition Services</Title>
-            <Title level={4} style={{ marginTop: "30px" }}>Assessment Guide/ Requirement</Title>
-            <Content>
-                From the DCD, receive information on Nutrition activities in the District:<br /><br />
-                <ol>
-                    <li type="i">
-                        If the Assembly has published the list of nutrition-oriented interventions from
-                        the Ghana Health Service (GHS) and available linkages, score 1;
-                    </li>
-                    <li type="i" className="py-1">
-                        If the Assembly has oriented food vendors and school feeding programme
-                        contractors on nutrition, score 1.
+          <Title level={3} style={{ marginTop: "30px" }}>SDI 4.0 - 4.6 Nutrition Services</Title>
+          <Title level={4} style={{ marginTop: "30px" }}>Assessment Guide/ Requirement</Title>
+          <Content>
+            From the DCD, receive information on Nutrition activities in the District:<br /><br />
+            <ol>
+              <li type="i">
+                If the Assembly has published the list of nutrition-oriented interventions from
+                the Ghana Health Service (GHS) and available linkages, score 1;
+              </li>
+              <li type="i" className="py-1">
+                If the Assembly has oriented food vendors and school feeding programme
+                contractors on nutrition, score 1.
+              </li>
+            </ol>
+          </Content>
 
-                    </li>
-
-                </ol>
-
-            </Content>
-
-            <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>2</strong></Title>
-            <Title level={5} style={{ marginTop: "20px" }}>
-                SDI 4.0-4.6 Actual Score: <strong>{scorei}</strong>
+          <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>2</strong></Title>
+          <Title level={5} style={{ marginTop: "20px" }}>
+            SDI 4.0-4.6 Actual Score: <strong>{scorei}</strong>
+          </Title>
+          <Row align="middle">
+            <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
+              SDI 4.0-4.6 Actual Score: <strong>{scoreii}</strong>
             </Title>
-            <Title level={5} style={{ marginTop: "20px" }}>
-                SDI 4.0-4.6 Actual Score: <strong>{scoreii}</strong>
-            </Title>
+            {renderCommentInput()}
+          </Row>
 
-            <Title level={4} style={{ marginTop: "20px" }}>I- Evidence of Nutrition-Oriented Activities in the Assembly</Title>
-            <Table
-                columns={aapColumn}
-                dataSource={data?.aap || []}
-                pagination={false} bordered />
+          <Title level={4} style={{ marginTop: "20px" }}>I- Evidence of Nutrition-Oriented Activities in the Assembly</Title>
+          <Table
+            columns={aapColumn}
+            dataSource={data?.aap || []}
+            pagination={false} bordered />
 
-            <Title level={4} style={{ marginTop: "20px" }}>II- Evidence of Nutrition Orientations</Title>
-            <Table
-                columns={nutritionColumn}
-                dataSource={data?.vendors || []}
-                pagination={false} bordered />
+          <Title level={4} style={{ marginTop: "20px" }}>II- Evidence of Nutrition Orientations</Title>
+          <Table
+            columns={nutritionColumn}
+            dataSource={data?.vendors || []}
+            pagination={false} bordered />
 
-
+          {renderCommentList()}
         </>
-    );
+      )}
+    </Comment>
+  );
 }
 
 export default NutritionIntervention;

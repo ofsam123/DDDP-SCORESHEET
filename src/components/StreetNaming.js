@@ -1,74 +1,87 @@
-import { Layout, Space, Table, Typography } from "antd";
+import { Layout, Table, Typography, Row } from "antd";
 import React from "react";
-
+import Comment from "../components/Comments";
 
 function StreetNaming({
-    year, streets, district, columns, counterColumns
-
+  year,
+  streets,
+  districtId,
+  columns,
+  counterColumns
 }) {
+  const { Header, Content } = Layout;
+  const { Title, Text } = Typography;
 
-    const { Header, Content } = Layout;
-    const { Title, Text } = Typography;
-
-    return (
+  return (
+    <Comment
+      data={streets?.data}
+      year={year}
+      districtId={districtId}
+      tableCommentedId={`sdi3.0-3.3-${year}`}
+    >
+      {({ renderCommentInput, renderCommentList }) => (
         <>
-            <Title level={3} style={{ marginTop: "30px" }}>SDI 3.0 - 3.3 Street Naming Database and Property Addressing</Title>
-            <Title level={4} style={{ marginTop: "30px" }}>Assessment Guide/ Requirement</Title>
-            <Content>
-                From the DCD obtain detailed information on street naming and property addressing database.
-                <ol>
-                    <li type="i">If the database has been mapped out, printed and displayed at
-                        the Assembly premises and sub-structures, score 1.</li>
-                    <li type="i" className="py-1">If the database has been mapped out, printed and displayed
-                        at the Assembly premises and sub-structures, score 1</li>
-                    <li type="i">If the Assembly has installed at least 60% of its named streets and property
-                        address plates, score 1; if less than 60%, score 0</li>
-                </ol>
+          <Title level={3} style={{ marginTop: "30px" }}>SDI 3.0 - 3.3 Street Naming Database and Property Addressing</Title>
+          <Title level={4} style={{ marginTop: "30px" }}>Assessment Guide/ Requirement</Title>
+          <Content>
+            From the DCD obtain detailed information on street naming and property addressing database.
+            <ol>
+              <li type="i">If the database has been mapped out, printed and displayed at
+                the Assembly premises and sub-structures, score 1.</li>
+              <li type="i" className="py-1">If the database has been mapped out, printed and displayed
+                at the Assembly premises and sub-structures, score 1</li>
+              <li type="i">If the Assembly has installed at least 60% of its named streets and property
+                address plates, score 1; if less than 60%, score 0</li>
+            </ol>
 
-                <br />
-            </Content>
+            <br />
+          </Content>
 
-            <Title level={5} style={{ marginTop: "30px" }}>Maximum Score <strong>3</strong></Title>
+          <Title level={5} style={{ marginTop: "30px" }}>Maximum Score <strong>3</strong></Title>
 
-            <Title level={5} style={{ marginTop: "20px" }}>
-                SDI 3.0-3.3i Actual Score:{" "}
-                <strong>
-                    {streets?.data?.length > 0 && streets.data[0].street === "YES" ? 1 : 0}
-                </strong>
+          <Title level={5} style={{ marginTop: "20px" }}>
+            SDI 3.0-3.3i Actual Score:{" "}
+            <strong>
+              {streets?.data?.length > 0 && streets.data[0].street === "YES" ? 1 : 0}
+            </strong>
+          </Title>
+
+          <Title level={5} style={{ marginTop: "20px" }}>
+            SDI 3.0-3.3ii Actual Score:{" "}
+            <strong>
+              {streets?.data?.length > 0 &&
+                streets.data[0].displayed === "YES" &&
+                streets.data[0].map === "YES"
+                ? 1
+                : 0}
+            </strong>
+          </Title>
+
+          <Row align="middle">
+            <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
+              SDI 3.0-3.3iii Actual Score:{" "}
+              <strong>{streets?.percentage >= 60 ? 1 : 0}</strong>
             </Title>
+            {renderCommentInput()}
+          </Row>
 
-            <Title level={5} style={{ marginTop: "20px" }}>
-                SDI 3.0-3.3ii Actual Score:{" "}
-                <strong>
-                    {streets?.data?.length > 0 &&
-                        streets.data[0].displayed === "YES" &&
-                        streets.data[0].map === "YES"
-                        ? 1
-                        : 0}
-                </strong>
-            </Title>
+          <Title level={5} style={{ marginTop: "20px" }}>Evidence of Street Naming Database</Title>
+          <Table
+            columns={columns}
+            dataSource={streets?.data}
+            pagination={false} bordered />
 
-            <Title level={5} style={{ marginTop: "20px" }}>
-                SDI 3.0-3.3iii Actual Score:{" "}
-                <strong>{streets?.percentage >= 60 ? 1 : 0}</strong>
-            </Title>
+          <Title level={5} style={{ marginTop: "30px" }}>Evidence of Installation of named streets</Title>
+          <Table
+            columns={counterColumns}
+            dataSource={streets?.counter}
+            pagination={false} bordered />
 
-
-            <Title level={5} style={{ marginTop: "20px" }}>Evidence of Street Naming Database</Title>
-            <Table
-                columns={columns}
-                dataSource={streets?.data}
-                pagination={false} bordered />
-
-            <Title level={5} style={{ marginTop: "30px" }}>Evidence of Installation of named streets</Title>
-            <Table
-                columns={counterColumns}
-                dataSource={streets?.counter}
-                pagination={false} bordered />
-
-
+          {renderCommentList()}
         </>
-    );
+      )}
+    </Comment>
+  );
 }
 
 export default StreetNaming;

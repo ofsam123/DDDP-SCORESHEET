@@ -1,11 +1,11 @@
-import { Layout, Space, Table, Typography } from "antd";
+import { Layout, Table, Typography, Row } from "antd";
 import React, { useEffect, useState } from "react";
 import axios from "../api/axios";
 import { formatDataGeneral, getAttributeValue } from "../utils/utils";
+import Comment from "../components/Comments";
 
 function BusinessCommunityEngagement({
     year, district
-
 }) {
 
     const [data, setData] = useState([]);
@@ -34,7 +34,6 @@ function BusinessCommunityEngagement({
                             const reportTemp = [];
 
                             const forums = formatDataGeneral(events, "Meeting Type", "Business Forum") || [];
-
 
                             forums.forEach((forum, idx) => {
                                 const tempDataSet = {
@@ -69,10 +68,8 @@ function BusinessCommunityEngagement({
 
                             });
 
-
                             setData(temp);
                             setReport(reportTemp)
-
 
                             if (temp.length >= 2) {
                                 setScorei(1);
@@ -82,11 +79,9 @@ function BusinessCommunityEngagement({
                                 setScoreii(1);
                             }
 
-
                         })
                         .catch(err => console.log(err))
                 }
-
 
             })
             .catch(err => console.log(err))
@@ -140,50 +135,62 @@ function BusinessCommunityEngagement({
     ];
 
     return (
-        <>
-            <Title level={3} style={{ marginTop: "30px" }}>SDI 6.0 - 6.4 Engagement with the Business Community</Title>
-            <Title level={4} style={{ marginTop: "30px" }}>Assessment Guide/ Requirement</Title>
-            <Content>
-                From the DCD, receive information on LED activities:<br /><br />
-                <ol>
-                    <li type="i">
-                        If the District has organized at least 2 business forums/platform meetings with the business community
-                        in the District, score 1;
-                    </li>
-                    <li type="i" className="p-1">
-                        If there is evidence of follow-up action on agreed actions from all the engagements in (i) above, score 1.
-                    </li>
+        <Comment
+            data={data}
+            year={year}
+            districtId={district}
+            tableCommentedId={`sdi6.0-6.4-${year}`}
+        >
+            {({ renderCommentInput, renderCommentList }) => (
+                <>
+                    <Title level={3} style={{ marginTop: "30px" }}>SDI 6.0 - 6.4 Engagement with the Business Community</Title>
+                    <Title level={4} style={{ marginTop: "30px" }}>Assessment Guide/ Requirement</Title>
+                    <Content>
+                        From the DCD, receive information on LED activities:<br /><br />
+                        <ol>
+                            <li type="i">
+                                If the District has organized at least 2 business forums/platform meetings with the business community
+                                in the District, score 1;
+                            </li>
+                            <li type="i" className="p-1">
+                                If there is evidence of follow-up action on agreed actions from all the engagements in (i) above, score 1.
+                            </li>
+                        </ol>
+                    </Content>
 
-                </ol>
+                    <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>2</strong></Title>
+                    <Title level={5} style={{ marginTop: "20px" }}>
+                        SDI 6.0-6.4 Actual Score: <strong>{scorei}</strong>
+                    </Title>
+                    <Row align="middle">
+                        <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
+                            SDI 6.0-6.4 Actual Score: <strong>{scoreii}</strong>
+                        </Title>
+                        {renderCommentInput()}
+                    </Row>
 
-            </Content>
+                    <Title level={4} style={{ marginTop: "20px" }}>
+                        I- Evidence of business forums/platform meetings held
+                    </Title>
+                    <Table
+                        columns={dataColumn}
+                        dataSource={data}
+                        pagination={false} bordered
+                    />
 
-            <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>2</strong></Title>
-            <Title level={5} style={{ marginTop: "20px" }}>
-                SDI 6.0-6.3 Actual Score: <strong>{scorei}</strong>
-            </Title>
-            <Title level={5} style={{ marginTop: "20px" }}>
-                SDI 6.0-6.3 Actual Score: <strong>{scoreii}</strong>
-            </Title>
+                    <Title level={4} style={{ marginTop: "20px" }}>
+                        II- Evidence of follow-up actions
+                    </Title>
+                    <Table
+                        columns={reportColumn}
+                        dataSource={report}
+                        pagination={false} bordered
+                    />
 
-
-            <Title level={4} style={{ marginTop: "20px" }}>
-                I- Evidence of business forums/platform meetings held
-            </Title>
-            <Table
-                columns={dataColumn}
-                dataSource={data}
-                pagination={false} bordered />
-
-            <Title level={4} style={{ marginTop: "20px" }}>
-                II- Evidence of follow-up actions
-            </Title>
-            <Table
-                columns={reportColumn}
-                dataSource={report}
-                pagination={false} bordered />
-
-        </>
+                    {renderCommentList()}
+                </>
+            )}
+        </Comment>
     );
 }
 

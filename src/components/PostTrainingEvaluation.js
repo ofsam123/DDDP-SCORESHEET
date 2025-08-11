@@ -1,8 +1,9 @@
-import { Layout, Space, Table, Typography } from "antd";
+import { Layout, Table, Typography, Row } from "antd";
 import React, { useEffect, useState } from "react";
 import axios from "../api/axios";
 import { getAttributeValue } from "../utils/utils";
 import moment from "moment/moment";
+import Comment from "../components/Comments";
 
 function PostTrainingEvaluation({ year, district }) {
 
@@ -46,7 +47,6 @@ function PostTrainingEvaluation({ year, district }) {
                                     currentReport.dataValues.forEach(rep => {
                                         if (rep.dataElement === "sWGQt9b00Hz" && rep.value === "true") {
 
-
                                         }else if (rep.dataElement === "Lh9kST26wbb") {
                                             assessmentDate = rep.value;
                                         }
@@ -83,40 +83,54 @@ function PostTrainingEvaluation({ year, district }) {
     }
 
     return (
-        <>
-            <Title level={3} style={{ marginTop: "20px" }}>PI 2.0 - 2.2 Post-training Evaluation</Title>
-            <Title level={4} style={{ marginTop: "20px" }}>Assessment Guide/ Requirement</Title>
-            <Content>
-                From the DCD, receive a copy of the 2021 implementation of Capacity Building/training reports:<br /><br />
-                <ol>
-                    <li type="i">
-                        If there is evidence of post-training evaluation conducted by the Human Resource Management
-                        Department (HRMD) at least three (3) months after the training was conducted, score 2
-                    </li>
+        <Comment
+            data={data}
+            year={year}
+            districtId={district}
+            tableCommentedId={`pi2.0-2.2-${year}`}
+        >
+            {({ renderCommentInput, renderCommentList }) => (
+                <>
+                    <Title level={3} style={{ marginTop: "20px" }}>PI 2.0 - 2.2 Post-training Evaluation</Title>
+                    <Title level={4} style={{ marginTop: "20px" }}>Assessment Guide/ Requirement</Title>
+                    <Content>
+                        From the DCD, receive a copy of the 2021 implementation of Capacity Building/training reports:<br /><br />
+                        <ol>
+                            <li type="i">
+                                If there is evidence of post-training evaluation conducted by the Human Resource Management
+                                Department (HRMD) at least three (3) months after the training was conducted, score 2
+                            </li>
+                        </ol>
+                    </Content>
 
-                </ol>
+                    <Title level={5} style={{ marginTop: "20px" }}>
+                        Maximum Score <strong>2</strong>
+                    </Title>
 
-            </Content>
+                    <Title level={5} style={{ marginTop: "20px" }}>
+                        PI 2.0-2.2 Actual Score: <strong>{scorei}</strong>
+                    </Title>
+                    <Row align="middle">
+                        <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
+                            PI 2.0-2.2 Actual Score: <strong>{scorei}</strong>
+                        </Title>
+                        {renderCommentInput()}
+                    </Row>
 
-            <Title level={5} style={{ marginTop: "20px" }}>
-                Maximum Score <strong>2</strong>
-            </Title>
+                    <Title level={5} style={{ marginTop: "20px" }}>
+                        Evidence of post-training impact assessment
+                    </Title>
+                    <Table
+                        columns={postTrainingEvaluationColumns}
+                        dataSource={data}
+                        pagination={false}
+                        bordered
+                    />
 
-            <Title level={5} style={{ marginTop: "20px" }}>
-                PI 2.0-2.2 Actual Score: <strong>{scorei}</strong>
-            </Title>
-
-
-            <Title level={5} style={{ marginTop: "20px" }}>
-                Evidence of post-training impact assessment
-
-            </Title>
-            {<Table
-                columns={postTrainingEvaluationColumns}
-                dataSource={data}
-                pagination={false} bordered />}
-
-        </>
+                    {renderCommentList()}
+                </>
+            )}
+        </Comment>
     );
 }
 

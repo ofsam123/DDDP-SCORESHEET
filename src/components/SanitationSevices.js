@@ -17,7 +17,7 @@ function SanitationServices({
   useEffect(() => {
     if (sanitationProvidersData.length > 0) {
       if (sanitationProvidersData[0].percentage >= 20) {
-        setScore(2);
+        setScore(3);
       }
     }
   }, [sanitationProvidersData, year]);
@@ -42,7 +42,7 @@ function SanitationServices({
           <Content>
             From the DCD receive information on the utilisation of the IGF collected for the year:<br /><br />
             <ol>
-              <li type="i">If at least 20% of the IGF was spent on sanitation improvement services in the District and there is evidence of implementation, score 2;</li>
+              <li type="i">If at least 20% of the IGF was spent on sanitation improvement services in the District and there is evidence of implementation, score 3;</li>
             </ol>
 
             <b><u>Eligible Expenditures are below:</u></b>
@@ -55,7 +55,7 @@ function SanitationServices({
             </ul>
           </Content>
 
-          <Title level={5} style={{ marginTop: "30px" }}>Maximum Score <strong>2</strong></Title>
+          <Title level={5} style={{ marginTop: "30px" }}>Maximum Score <strong>3</strong></Title>
           {/* {JSON.stringify(sanitationProvidersData)} */}
 
           <Row align="middle">

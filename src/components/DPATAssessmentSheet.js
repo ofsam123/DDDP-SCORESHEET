@@ -57,6 +57,9 @@ import BusinessAndJobPromotion from "./BusinessAndJobPromotion";
 import AgroProcessingFacilitySupport from "./AgroProcessingFacilitySupport";
 import BusinessCommunityEngagement from "./BusinessCommunityEngagement";
 import { getFileLinkIfExist } from "../utils/utils";
+import AuditCommiteeMeeting from "./AuditCommiteeMetting";
+import AuditorGeneralGAMeeting from "./AuditorGeneralGAMeeting";
+import TownHollMeeting from "./TownHollMeeting";
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
@@ -64,6 +67,17 @@ const { Title, Text } = Typography;
 // Table Data & Columns
 const generalAssemblyColumns = [
     { title: "Meeting", dataIndex: "meeting", key: "meeting" },
+    { title: "Invitation Date", dataIndex: "invitationDate", key: "invitationDate" },
+    { title: "Meeting Date", dataIndex: "meetingDate", key: "meetingDate" },
+    { title: "Meeting Agenda", dataIndex: "agenda", key: "agenda" }, ,
+    { title: "Interval (Days)", dataIndex: "interval", key: "interval" },
+    { title: "Invitation Letter Reference", dataIndex: "invitationLetterReference", key: "invitationLetterReference" },
+    { title: "Signatory of Invitation Letter", dataIndex: "signatoryInvitationLetter", key: "signatoryInvitationLetter" },
+    { title: "Signatories to minutes of meeting", dataIndex: "signatoriesMinutes", key: "signatoriesMinutes" },
+    { title: "Documents", dataIndex: "docs", key: "docs" }
+];
+
+const townHallMeetingColumns = [
     { title: "Invitation Date", dataIndex: "invitationDate", key: "invitationDate" },
     { title: "Meeting Date", dataIndex: "meetingDate", key: "meetingDate" },
     { title: "Meeting Agenda", dataIndex: "agenda", key: "agenda" }, ,
@@ -232,6 +246,7 @@ const DPATAssessmentSheet = ({ props }) => {
 
     const contentToPrint = useRef(null);
     const [gaMeetingData, setGaMeetingData] = useState(null);
+    const [towHallMeetingData, setTowHallMeetingData] = useState([]);
     const [meetingDataGroup, setMeetingDataGroup] = useState();
     const [meetings, setMeetings] = useState(props?.meetings.meetings);
     const [members, setMembers] = useState(props?.members.members);
@@ -316,6 +331,7 @@ const DPATAssessmentSheet = ({ props }) => {
         setClientServiceChaterDataDisplay();
         setSocialServiceDataDisplay();
         setNutritionServiceDataDisplay();
+        setTownHallMeeting();
     }, [props]);
 
 
@@ -359,6 +375,58 @@ const DPATAssessmentSheet = ({ props }) => {
         return attr ? attr.value : "N/A";
     };
 
+    const setTownHallMeeting = () =>{
+        const reports = props.meetings.reports;
+        const temp = [];
+        console.log("Djiba Town Hall Meeting: ", meetings)
+        setTowHallMeetingData(meetings)
+        const townHallMeeting = formatData(meetings, "Town Hall Meetings") || [];
+        console.log("Djiba Town Hall Meeting: ", townHallMeeting)
+        townHallMeeting.forEach((meeting, index) => {
+            const minuteFileNumber = getAttributeValue("Minute File Number", meeting);
+            const minuteLink = getFileLinkIfExist(reports, "LAe1t59jYNT", meeting.trackedEntity);
+
+            const meetingDataState = {
+                key: index + 1, // Static key (can be dynamic)
+                invitationDate: getAttributeValue("Invitation letter Date", meeting), // djiba sow
+                meetingDate: getAttributeValue("DPAT | Meeting Date", meeting),
+                agenda: getAttributeValue("DPAT | Meeting Agenda", meeting), // Meeting Date
+                interval: 0, // Interval (Days)
+                invitationLetterReference: getAttributeValue("Invitation letter Ref. Number", meeting), // Invitation Letter Ref
+                signatoryInvitationLetter: getAttributeValue("Who Signed the Invitation letter", meeting) === "PM" ?
+                    "Presiding Member" : "Convener", // Signatory of Invitation Letter
+                signatoriesMinutes: minuteFileNumber, // Placeholder for Signatories to minutes of meeting 
+                docs: minuteLink ? (
+                    <a
+                        className="px-2 text-primary fw-bold text-decoration-underline"
+                        href={`https://dddp.gov.gh/api/events/files?eventUid=${minuteLink}&dataElementUid=LAe1t59jYNT`} target="_blank"
+                        rel="noopener noreferrer"
+                        title="Click here to see the uploaded minutes"
+                    >
+                        View Minutes
+                    </a>
+                ) : (
+                    "Not Uploaded"
+                )
+
+            };
+
+            temp.push(meetingDataState);
+            let fulfillment = "Fulfilled";
+
+             for (const mt of temp) {
+            const missingFields = !mt.signatoriesMinutes;
+
+            if (missingFields) {
+                fulfillment = 'Not Fulfilled';
+            }
+
+            // setTowHallMeetingData({data: temp, fulfillment})
+        }
+
+
+        });
+    }
 
     const setMeetingData = () => {
         const temp = [];
@@ -1719,9 +1787,17 @@ const DPATAssessmentSheet = ({ props }) => {
                         district={district?.value}
                         year={year}
                         columns={internalAuditColumns}
+                        districtId={district?.value}
+                    />}
+
+                    <hr />
+
+                    {internalAuditMeetingData && <AuditCommiteeMeeting
+                        
                         meetings={internalAuditMeetingData}
                         meetingColumns={internalAuditMeetingColumns}
-                        districtId={district?.value}
+                        district={district?.value}
+                         year={year}
                     />}
 
                     <hr />
@@ -1740,6 +1816,28 @@ const DPATAssessmentSheet = ({ props }) => {
                         
                         districtId={district?.value}
                     />
+
+                    <hr />
+
+
+                   { (gaMeetingData && ecaMeetingData) &&  <AuditorGeneralGAMeeting
+                        gaMeetings={[]}
+                        ecaMeeting={[]}
+                        columns={generalAssemblyColumns}
+                        ecaColumns = {ECAMeetingColumns}
+                        year={year}
+                        districtId={district?.value}
+                    />}
+
+                    <hr />
+                    {/* {towHallMeetingData} sow */}
+
+                     {<TownHollMeeting
+                        meetings={towHallMeetingData}
+                        columns={townHallMeetingColumns}
+                        year={year}
+                        districtId={district?.value}
+                    />}
 
                     <hr />
 

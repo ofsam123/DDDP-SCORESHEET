@@ -90,7 +90,7 @@ function GASupport({
             <div className="mb-3">From the DCD, receive reports on the activities of all established sub-structures of
               the Assembly and Assembly’s DACF allocation to Sub-structures:</div>
             <ol>
-              <li type="i">If all the sub-structures utilized at least 30% of their ceded Revenue to support
+              <li type="i">If all the sub-structures utilized at least 50% of their ceded Revenue to support
                 activities that benefit the Community, score 1, else score 0 </li>
               <li type="i" className="py-1">If the Assembly has spent at least 90% of the up-to 2% DACF release to its
                 Sub-Structures, to support the substructures, score 1, else score 0.</li>
@@ -102,7 +102,7 @@ function GASupport({
           </Title>
 
           <Title level={5} style={{ marginTop: "20px" }}>
-            SDI 1.0-1.3i Actual Score: <strong>{cededRevenueUtilisationScore >= 30 ? '1' : '0'}</strong>
+            SDI 1.0-1.3i Actual Score: <strong>{cededRevenueUtilisationScore >= 50 ? '1' : '0'}</strong>
           </Title>
           <Row align="middle">
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>

@@ -69,8 +69,8 @@ function PWDService({
                 setScorei(1);
               }
 
-              if (igaPercentage >= 50) {
-                setScoreii(1);
+              if (igaPercentage >= 80) {
+                setScoreii(2);
               }
 
               if (cbPercentage >= 30) {
@@ -141,8 +141,8 @@ function PWDService({
                 District on the National Health Insurance Scheme, score 1;
               </li>
               <li type="i" className="py-1">
-                If the District has provided resources and engaged at least 50% of the registered
-                PWDs in Productive Inclusive / Income Generating Activities (IGAs), score 1; and
+                If the District has provided resources and engaged at least 80% of the registered PWDAs on 
+                Productive Inclusive / Income Generating Activities (IGAs), score 2; and
               </li>
               <li type="i">
                 If the District has built the capacity of at least 30% of the registered
@@ -151,7 +151,7 @@ function PWDService({
             </ol>
           </Content>
 
-          <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>3</strong></Title>
+          <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>4</strong></Title>
           <Title level={5} style={{ marginTop: "20px" }}>
             SDI 4.0-4.4i Actual Score: <strong>{scorei}</strong>
           </Title>

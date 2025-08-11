@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Layout, Typography, Table, Button, Row, Space, Col } from "antd";
+import { Layout, Typography, Button, Row, Col } from "antd";
 import moment from 'moment';
 import { FilePdfOutlined } from "@ant-design/icons";
 import { useReactToPrint } from 'react-to-print';
@@ -66,12 +66,14 @@ const generalAssemblyColumns = [
     { title: "Meeting", dataIndex: "meeting", key: "meeting" },
     { title: "Invitation Date", dataIndex: "invitationDate", key: "invitationDate" },
     { title: "Meeting Date", dataIndex: "meetingDate", key: "meetingDate" },
+    { title: "Meeting Agenda", dataIndex: "agenda", key: "agenda" }, ,
     { title: "Interval (Days)", dataIndex: "interval", key: "interval" },
     { title: "Invitation Letter Reference", dataIndex: "invitationLetterReference", key: "invitationLetterReference" },
     { title: "Signatory of Invitation Letter", dataIndex: "signatoryInvitationLetter", key: "signatoryInvitationLetter" },
     { title: "Signatories to minutes of meeting", dataIndex: "signatoriesMinutes", key: "signatoriesMinutes" },
-    { title: "Minutes Link", dataIndex: "docs", key: "docs" }
+    { title: "Documents", dataIndex: "docs", key: "docs" }
 ];
+
 
 const ECAMeetingColumns = [
     { title: "Meeting", dataIndex: "meeting", key: "meeting" },
@@ -93,17 +95,21 @@ const PRCCMeetingColumns = [
 
 const spcMeetingColumns = [
     { title: "Meeting Date", dataIndex: "meetingDate", key: "meetingDate" },
+    { title: "Meeting Agenda", dataIndex: "agenda", key: "agenda" }, ,
     { title: "Invitation Date", dataIndex: "invitationDate", key: "invitationDate" },
     { title: "Invitation Letter Reference", dataIndex: "invitationLetterReference", key: "invitationLetterReference" },
-    { title: "Availability of Minutes of Meeting", dataIndex: "signatoriesMinutesStatus", key: "signatoriesMinutesStatus" }
+    { title: "Availability of Minutes of Meeting", dataIndex: "signatoriesMinutesStatus", key: "signatoriesMinutesStatus" },
+    { title: "Documents", dataIndex: "docs", key: "docs" }
 ];
 
 const ETCMeetingColumns = [
     { title: "Quarterly ETC Meeting", dataIndex: "meeting", key: "meeting" },
     { title: "Invitation Date", dataIndex: "invitationDate", key: "invitationDate" },
     { title: "Meeting Date", dataIndex: "meetingDate", key: "meetingDate" },
+    { title: "Meeting Agenda", dataIndex: "agenda", key: "agenda" }, ,
     { title: "Invitation Letter Reference", dataIndex: "invitationLetterReference", key: "invitationLetterReference" },
-    { title: "Availability of Minutes of Meeting", dataIndex: "signatoriesMinutesStatus", key: "signatoriesMinutesStatus" }
+    { title: "Availability of Minutes of Meeting", dataIndex: "signatoriesMinutesStatus", key: "signatoriesMinutesStatus" },
+    { title: "Documents", dataIndex: "docs", key: "docs" }
 ];
 
 const internalAuditColumns = [
@@ -114,6 +120,7 @@ const internalAuditColumns = [
 
 const internalAuditMeetingColumns = [
     { title: "Meeting Date", dataIndex: "meetingDate", key: "meetingDate" },
+    { title: "Meeting Agenda", dataIndex: "agenda", key: "agenda" }, ,
     { title: "Invitation Date", dataIndex: "invitationDate", key: "invitationDate" },
     { title: "Invitation Letter Reference", dataIndex: "invitationLetterRef", key: "invitationLetterRef" },
     { title: "Munites Reference", dataIndex: "muniteRef", key: "muniteRef" },
@@ -123,14 +130,11 @@ const internalAuditMeetingColumns = [
 const managementMeetingColumns = [
     { title: "Quarter", dataIndex: "meeting", key: "meeting" },
     { title: "Meeting Date", dataIndex: "meetingDate", key: "meetingDate" },
+    { title: "Meeting Agenda", dataIndex: "agenda", key: "agenda" }, ,
     { title: "Number of Departments in MMDA", dataIndex: "departments", key: "departments" },
     { title: "HODs in Attendance", dataIndex: "hodAttendance", key: "hodAttendance" },
-    { title: "Number in Attendance", dataIndex: "attendance", key: "attendance" }
-];
-
-const generalAssemblyDecisionColumns = [
-    { title: "GAM", dataIndex: "gam", key: "gam" },
-    { title: "Decisions/Resolutions", dataIndex: "decision", key: "decision" }
+    { title: "Number in Attendance", dataIndex: "attendance", key: "attendance" },
+    { title: "Documents", dataIndex: "docs", key: "docs" }
 ];
 
 
@@ -140,6 +144,7 @@ const budgetColumns = [
     { title: "Key Documents Discussed", dataIndex: "documents", key: "documents" },
     { title: "Key Decisions Approval", dataIndex: "approvals", key: "approvals" },
     { title: "Date (Decision/Approval)", dataIndex: "decisions", key: "decisions" },
+    { title: "Documents", dataIndex: "docs", key: "docs" }
 ];
 
 const subStructureEstablishmentColumns = [
@@ -371,8 +376,9 @@ const DPATAssessmentSheet = ({ props }) => {
             const meetingDataState = {
                 key: index + 1, // Static key (can be dynamic)
                 meeting: getMeetingRank(index, "GA"), // Meeting type
-                invitationDate: getAttributeValue("Invitation letter Date", meeting), // Invitation Date
-                meetingDate: getAttributeValue("DPAT | Meeting Date", meeting), // Meeting Date
+                invitationDate: getAttributeValue("Invitation letter Date", meeting), // djiba sow
+                meetingDate: getAttributeValue("DPAT | Meeting Date", meeting),
+                agenda: getAttributeValue("DPAT | Meeting Agenda", meeting), // Meeting Date
                 interval: 0, // Interval (Days)
                 invitationLetterReference: getAttributeValue("Invitation letter Ref. Number", meeting), // Invitation Letter Ref
                 signatoryInvitationLetter: getAttributeValue("Who Signed the Invitation letter", meeting) === "PM" ?
@@ -878,8 +884,11 @@ const DPATAssessmentSheet = ({ props }) => {
     const setManagementMeetingData = () => {
         const temp = [];
         let fulfillment = 'Fulfilled';
+        const reports = props.meetings.reports;
+
         formatData(meetings, "Management Meetings").forEach((meeting, index) => {
 
+            const minuteLink = getFileLinkIfExist(reports, "LAe1t59jYNT", meeting.trackedEntity);
             const hodFemaleAttendance = getAttributeValue("DPAT | Number of Participant - HoDs - Female", meeting) || 0;
             const hodMaleAttendance = getAttributeValue("DPAT | Number of Participant - HoDs - Male", meeting) || 0;
             const femaleAttendance = getAttributeValue("DPAT | Number of Attendance - Female", meeting) || 0;
@@ -889,10 +898,23 @@ const DPATAssessmentSheet = ({ props }) => {
             const meetingDataState = {
                 key: index + 1, // Static key (can be dynamic)
                 meeting: "", // Meeting type
-                meetingDate: getAttributeValue("DPAT | Meeting Date", meeting), // Meeting Date
+                meetingDate: getAttributeValue("DPAT | Meeting Date", meeting),
+                agenda: getAttributeValue("DPAT | Meeting Agenda", meeting), // Meeting Date
                 departments: 13, // Department Members
                 hodAttendance: hodAttendence,
                 attendance: parseInt(femaleAttendance) + parseInt(maleAttendance), // Signatory of Invitation Letter
+                docs: minuteLink ? (
+                    <a
+                        className="px-2 text-primary fw-bold text-decoration-underline"
+                        href={`https://dddp.gov.gh/api/events/files?eventUid=${minuteLink}&dataElementUid=LAe1t59jYNT`} target="_blank"
+                        rel="noopener noreferrer"
+                        title="Click here to see the uploaded minutes"
+                    >
+                        View Minutes
+                    </a>
+                ) : (
+                    "Not Uploaded"
+                )
             };
 
             if (hodAttendence < 10) {
@@ -906,7 +928,7 @@ const DPATAssessmentSheet = ({ props }) => {
         const finalTemp = temp.sort((a, b) => new Date(a.meetingDate) - new Date(b.meetingDate));
 
         finalTemp.forEach((m, index) => {
-            m.meeting =  getMeetingRank(index, "Management Meetings");
+            m.meeting = getMeetingRank(index, "Management Meetings");
         });
 
         setManagementMeetingsData({ data: finalTemp, fulfillment: fulfillment });
@@ -923,15 +945,32 @@ const DPATAssessmentSheet = ({ props }) => {
             date: getAttributeValue("DPAT | Meeting Date", meeting),
         }));
 
+        const reports = props.meetings.reports;
+
+
         ecaMeeting.forEach((meeting, index) => {
+            const minuteLink = getFileLinkIfExist(reports, "LAe1t59jYNT", meeting.trackedEntity);
             const meetingDataState = {
                 key: index + 1,
                 meeting: getMeetingRank(index, "EC"),
                 invitationDate: getAttributeValue("Invitation letter Date", meeting),
                 invitationLetterReference: getAttributeValue("Invitation letter Ref. Number", meeting),
                 gaMeetingDate: gaMeetingDates[index]?.date || "", // Fallback to empty string if GA date is not available
-                ecaMeetingDate: getAttributeValue("DPAT | Meeting Date", meeting),
+                ecameetingDate: getAttributeValue("DPAT | Meeting Date", meeting),
+                agenda: getAttributeValue("DPAT | Meeting Agenda", meeting),
                 signatoriesMinutesStatus: getAttributeValue("Minute File Number", meeting) ? "YES" : "NO",
+                docs: minuteLink ? (
+                    <a
+                        className="px-2 text-primary fw-bold text-decoration-underline"
+                        href={`https://dddp.gov.gh/api/events/files?eventUid=${minuteLink}&dataElementUid=LAe1t59jYNT`} target="_blank"
+                        rel="noopener noreferrer"
+                        title="Click here to see the uploaded minutes"
+                    >
+                        View Minutes
+                    </a>
+                ) : (
+                    "Not Uploaded"
+                )
             };
 
             temp.push(meetingDataState);
@@ -945,17 +984,34 @@ const DPATAssessmentSheet = ({ props }) => {
     const setPRCCMeetingData = () => {
         const temp = [];
         let fulfillment = "Fulfilled";
+        const reports = props.meetings.reports;
+
         formatData(meetings, "PRCC").forEach((meeting, index) => {
             const invitationLetterRef = getAttributeValue("Invitation letter Ref. Number", meeting);
             const minuteFilesRef = getAttributeValue("Minute File Number", meeting);
+            const minuteLink = getFileLinkIfExist(reports, "LAe1t59jYNT", meeting.trackedEntity);
+
             const meetingDataState = {
                 key: index + 1, // Static key (can be dynamic)
                 meeting: getMeetingRank(index, "GA"), // Meeting type
                 invitationDate: getAttributeValue("Invitation letter Date", meeting), // Invitation Date
                 meetingDate: getAttributeValue("DPAT | Meeting Date", meeting),
+                agenda: getAttributeValue("DPAT | Meeting Agenda", meeting),
                 invitationLetterReference: invitationLetterRef, // Invitation Letter Ref
                 signatoriesMinutesStatus: minuteFilesRef ?
                     "YES" : "NO", // Signatory of Invitation Letter
+                docs: minuteLink ? (
+                    <a
+                        className="px-2 text-primary fw-bold text-decoration-underline"
+                        href={`https://dddp.gov.gh/api/events/files?eventUid=${minuteLink}&dataElementUid=LAe1t59jYNT`} target="_blank"
+                        rel="noopener noreferrer"
+                        title="Click here to see the uploaded minutes"
+                    >
+                        View Minutes
+                    </a>
+                ) : (
+                    "Not Uploaded"
+                )
             };
 
             if (!invitationLetterRef && !minuteFilesRef) {
@@ -977,15 +1033,31 @@ const DPATAssessmentSheet = ({ props }) => {
     const setInternalAuditCommitteeDataDisplay = () => {
         const temp = [];
         let fulfillment = "Fulfilled";
+        const reports = props.meetings.reports;
         formatData(meetings, "Audit Committee")?.forEach((meeting, index) => {
 
             const munitesRef = getAttributeValue("Minute File Number", meeting);
+            const minuteLink = getFileLinkIfExist(reports, "LAe1t59jYNT", meeting.trackedEntity);
+
             const meetingDataState = {
-                key: index + 1, // Static key (can be dynamic)
+                key: index + 1,
                 meetingDate: getAttributeValue("DPAT | Meeting Date", meeting),
+                agenda: getAttributeValue("DPAT | Meeting Agenda", meeting),
                 invitationDate: getAttributeValue("DPAT | Meeting Date", meeting),
                 invitationLetterRef: getAttributeValue("Invitation letter Ref. Number", meeting),
-                muniteRef: munitesRef
+                muniteRef: munitesRef,
+                docs: minuteLink ? (
+                    <a
+                        className="px-2 text-primary fw-bold text-decoration-underline"
+                        href={`https://dddp.gov.gh/api/events/files?eventUid=${minuteLink}&dataElementUid=LAe1t59jYNT`} target="_blank"
+                        rel="noopener noreferrer"
+                        title="Click here to see the uploaded minutes"
+                    >
+                        View Minutes
+                    </a>
+                ) : (
+                    "Not Uploaded"
+                )
             };
 
             if (!munitesRef) {
@@ -1021,13 +1093,30 @@ const DPATAssessmentSheet = ({ props }) => {
     const setAuditCommitteeDataDisplay = () => {
         const temp = [];
         let score = 0;
+
+        const reports = props.meetings.reports;
+
         formatData(meetings, "Audit Committee").forEach((meeting, index) => {
+            const minuteLink = getFileLinkIfExist(reports, "LAe1t59jYNT", meeting.trackedEntity);
 
             const meetingDataState = {
                 key: index + 1, // Static key (can be dynamic)
                 meeting: getMeetingRank(index, "Audit Committee"), // Meeting type
                 meetingDate: getAttributeValue("DPAT | Meeting Date", meeting),
-                recommendationsNo: getAttributeValue("DPAT | Number of Decisions", meeting)
+                agenda: getAttributeValue("DPAT | Meeting Agenda", meeting),
+                recommendationsNo: getAttributeValue("DPAT | Number of Decisions", meeting),
+                docs: minuteLink ? (
+                    <a
+                        className="px-2 text-primary fw-bold text-decoration-underline"
+                        href={`https://dddp.gov.gh/api/events/files?eventUid=${minuteLink}&dataElementUid=LAe1t59jYNT`} target="_blank"
+                        rel="noopener noreferrer"
+                        title="Click here to see the uploaded minutes"
+                    >
+                        View Minutes
+                    </a>
+                ) : (
+                    "Not Uploaded"
+                )
             };
 
             temp.push(meetingDataState);
@@ -1044,17 +1133,35 @@ const DPATAssessmentSheet = ({ props }) => {
     const setETCMeetingData = () => {
         const temp = [];
         let fulfillment = "Fulfilled";
+
+        const reports = props.meetings.reports;
+
         formatData(meetings, "Technical Sub-Committee").forEach((meeting, index) => {
 
             const munitesFileRef = getAttributeValue("Minute File Number", meeting);
+            const minuteLink = getFileLinkIfExist(reports, "LAe1t59jYNT", meeting.trackedEntity);
+
 
             const meetingDataState = {
                 key: index + 1, // Static key (can be dynamic)
                 meetingDate: getAttributeValue("DPAT | Meeting Date", meeting),
+                agenda: getAttributeValue("DPAT | Meeting Agenda", meeting),
                 invitationDate: getAttributeValue("Invitation letter Date", meeting), // Invitation Date
                 invitationLetterReference: munitesFileRef, // Invitation Letter Ref
                 signatoriesMinutesStatus: munitesFileRef ?
                     "YES" : "NO", // Signatory of Invitation Letter
+                docs: minuteLink ? (
+                    <a
+                        className="px-2 text-primary fw-bold text-decoration-underline"
+                        href={`https://dddp.gov.gh/api/events/files?eventUid=${minuteLink}&dataElementUid=LAe1t59jYNT`} target="_blank"
+                        rel="noopener noreferrer"
+                        title="Click here to see the uploaded minutes"
+                    >
+                        View Minutes
+                    </a>
+                ) : (
+                    "Not Uploaded"
+                )
             };
 
             if (!munitesFileRef) {
@@ -1067,14 +1174,29 @@ const DPATAssessmentSheet = ({ props }) => {
         formatData(meetings, "Spatial Planning Committee (SPC)").forEach((meeting, index) => {
 
             const munitesFileRef = getAttributeValue("Minute File Number", meeting);
+            const minuteLink = getFileLinkIfExist(reports, "LAe1t59jYNT", meeting.trackedEntity);
+
 
             const meetingDataState = {
                 key: index + 1, // Static key (can be dynamic)
                 meetingDate: getAttributeValue("DPAT | Meeting Date", meeting),
+                agenda: getAttributeValue("DPAT | Meeting Agenda", meeting),
                 invitationDate: getAttributeValue("Invitation letter Date", meeting), // Invitation Date
                 invitationLetterReference: munitesFileRef, // Invitation Letter Ref
                 signatoriesMinutesStatus: munitesFileRef ?
                     "YES" : "NO", // Signatory of Invitation Letter
+                docs: minuteLink ? (
+                    <a
+                        className="px-2 text-primary fw-bold text-decoration-underline"
+                        href={`https://dddp.gov.gh/api/events/files?eventUid=${minuteLink}&dataElementUid=LAe1t59jYNT`} target="_blank"
+                        rel="noopener noreferrer"
+                        title="Click here to see the uploaded minutes"
+                    >
+                        View Minutes
+                    </a>
+                ) : (
+                    "Not Uploaded"
+                )
             };
 
 
@@ -1086,25 +1208,39 @@ const DPATAssessmentSheet = ({ props }) => {
         });
 
 
-        // console.log("Djiba tenda meeting 1: ", temp);
-
-
         setEtcMeetingData({ data: temp, fulfillment: fulfillment });
     };
 
     const setSPCMeetingData = () => {
         const temp = [];
         let fulfillment = "Fulfilled";
+        const reports = props.meetings.reports;
+
         formatData(meetings, "Entity Tender Committee (ETC)").forEach((meeting, index) => {
+            const minuteLink = getFileLinkIfExist(reports, "LAe1t59jYNT", meeting.trackedEntity);
+
 
             const meetingDataState = {
                 key: index + 1, // Static key (can be dynamic)
                 meeting: "", // Meeting type
                 invitationDate: getAttributeValue("Invitation letter Date", meeting), // Invitation Date
                 meetingDate: getAttributeValue("DPAT | Meeting Date", meeting),
+                agenda: getAttributeValue("DPAT | Meeting Agenda", meeting),
                 invitationLetterReference: getAttributeValue("Invitation letter Ref. Number", meeting), // Invitation Letter Ref
                 signatoriesMinutesStatus: getAttributeValue("Minute File Number", meeting) ?
                     "YES" : "NO", // Signatory of Invitation Letter
+                docs: minuteLink ? (
+                    <a
+                        className="px-2 text-primary fw-bold text-decoration-underline"
+                        href={`https://dddp.gov.gh/api/events/files?eventUid=${minuteLink}&dataElementUid=LAe1t59jYNT`} target="_blank"
+                        rel="noopener noreferrer"
+                        title="Click here to see the uploaded minutes"
+                    >
+                        View Minutes
+                    </a>
+                ) : (
+                    "Not Uploaded"
+                )
             };
 
             const munitesFileRef = getAttributeValue("Minute File Number", meeting);
@@ -1167,14 +1303,14 @@ const DPATAssessmentSheet = ({ props }) => {
             if (m.meeting === "GA" && m.decisions) {
                 const link = getFileLinkIfExist(props.meetings.reports, "LAe1t59jYNT", m.trackedEntity);
 
-                if(link){
+                if (link) {
                     approvalMinutesLink = link;
                 }
 
             }
         });
 
-        const aapApprovalLink =  approvalMinutesLink  ? (
+        const aapApprovalLink = approvalMinutesLink ? (
             <a
                 className="px-2 text-primary fw-bold text-decoration-underline"
                 href={`https://dddp.gov.gh/api/events/files?eventUid=${approvalMinutesLink}&dataElementUid=LAe1t59jYNT`} target="_blank"
@@ -1478,7 +1614,6 @@ const DPATAssessmentSheet = ({ props }) => {
                         Annex 1: SECTION A - COMPLIANCE INDICATORS
                     </h3>
 
-                    {/* {JSON.stringify(gaMeetingData)} */}
                     {gaMeetingData && <GAMeeting
                         data={gaMeetingData}
                         year={year}
@@ -1581,6 +1716,7 @@ const DPATAssessmentSheet = ({ props }) => {
 
                     {internalAuditData && <InternalAuditUnitFunctionality
                         data={internalAuditData}
+                        district={district?.value}
                         year={year}
                         columns={internalAuditColumns}
                         meetings={internalAuditMeetingData}

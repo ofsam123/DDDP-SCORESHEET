@@ -10,6 +10,7 @@ const generalAssemblyColumns = [
   { title: "Meeting", dataIndex: "meeting", key: "meeting" },
   { title: "Invitation Date", dataIndex: "invitationDate", key: "invitationDate" },
   { title: "Meeting Date", dataIndex: "meetingDate", key: "meetingDate" },
+    { title: "Meeting Agenda", dataIndex: "agenda", key: "agenda" },,
   { title: "Interval (Days)", dataIndex: "interval", key: "interval" },
   { title: "Invitation Letter Reference", dataIndex: "invitationLetterReference", key: "invitationLetterReference" },
   { title: "Signatory of Invitation Letter", dataIndex: "signatoryInvitationLetter", key: "signatoryInvitationLetter" },
@@ -94,7 +95,8 @@ const DPATScoreSheet = ({ props }) => {
             key: index+1, // Static key (can be dynamic)
             meeting: getMeetingRank(index) , // Meeting type
             invitationDate: getAttributeValue("Invitation letter Date", meeting), // Invitation Date
-            meetingDate: getAttributeValue("DPAT | Meeting Date", meeting), // Meeting Date
+            meetingDate: getAttributeValue("DPAT | Meeting Date", meeting), 
+                agenda: getAttributeValue("DPAT | Meeting Agenda", meeting), // Meeting Date
             interval: 0, // Interval (Days)
             invitationLetterReference: getAttributeValue("Invitation letter Ref. Number", meeting), // Invitation Letter Ref
             signatoryInvitationLetter: getAttributeValue("Who Signed the Invitation letter", meeting), // Signatory of Invitation Letter

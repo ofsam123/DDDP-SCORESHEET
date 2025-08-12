@@ -53,7 +53,7 @@ function BusinessAndJobPromotion({
                             }])
 
                             if (temp.length > 0) {
-                                setScorei(2);
+                                setScorei(1);
                             }
 
                         })
@@ -116,15 +116,13 @@ function BusinessAndJobPromotion({
                         <ol>
                             <li type="i">
                                 If the district has invested its own resources in direct productive sectors and can show
-                                that it has resulted in new businesses creating new jobs at the local level: Score 2
+                                that it has resulted in new businesses creating new jobs at the local level: Score 1
                             </li>
                         </ol>
                     </Content>
 
-                    <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>2</strong></Title>
-                    <Title level={5} style={{ marginTop: "20px" }}>
-                        SDI 6.0-6.2 Actual Score: <strong>{scorei}</strong>
-                    </Title>
+                    <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>1</strong></Title>
+                    
                     <Row align="middle">
                         <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
                             SDI 6.0-6.2 Actual Score: <strong>{scorei}</strong>

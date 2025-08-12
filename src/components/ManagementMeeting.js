@@ -21,11 +21,10 @@ function ManagementMeeting({ data, year, columns, districtId }) {
             From the DCD, obtain minutes of Management meetings for <strong>{year}</strong>.<br /><br />
             <ol>
               <li type="i">
-                Confirm that Management meetings were held at least quarterly in <strong>{year}</strong>.
+                If Management Meetings were held, at least quarterly, and duly attended by at least 8 out of 11 for District Assemblies; 
+                10 out of 13 for Municipal Assemblies; and 13 out of 16 for Metropolitan Assemblies of HoDs <strong>{year}</strong>.
               </li>
-              <li type="i">
-                Verify that the minutes are duly signed by the appropriate officials.
-              </li>
+              
             </ol>
             <i>Then the CI is fulfilled</i>
           </Content>

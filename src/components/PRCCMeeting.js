@@ -21,10 +21,14 @@ function PRCCMeeting({ data, year, columns, districtId }) {
             From the DCD, obtain minutes of Public Relations and Complaints Committee (PRCC) meetings for <strong>{year}</strong>.<br /><br />
             <ol>
               <li type="i">
-                Confirm that the PRCC held at least three (3) meetings in <strong>{year}</strong>.
+                If PRCC is functional and Minutes of Meetings and recommendations from the meetings are available.
+              </li>
+              <li type="i" className="py-1">
+                If all complaints reported have been duly processed and recommendations made, and 
               </li>
               <li type="i">
-                Verify that the minutes are duly signed by the Chairperson and Secretary.
+                
+                iii.	If action has been taken on all the recommendations, in (ii)
               </li>
             </ol>
             <i>Then the CI is fulfilled</i>

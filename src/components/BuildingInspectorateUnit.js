@@ -51,7 +51,7 @@ function BuildingInspectorateUnit({
             From the DCD receive information on the Planning and Building 
             Inspectorate Unit of the Assembly:<br /><br />
             <ol>
-              <li type="i"> If the Planning and Building Inspectorate Unit has been established with 
+              <li type="i"> If the Building Inspectorate Unit has been established with 
                 Office and Staff or if the function has been 
                 performed by the Assembly’s Physical Planning and Works Department, score 1, and
               </li>

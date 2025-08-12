@@ -72,11 +72,11 @@ function DumpingSite({
               setSiteList(tempSiteList);
 
               if (tempSites.length > 0) {
-                setScorei(1);
+                setScorei(2);
               }
 
               if (tempSiteList.length > 0) {
-                setScoreii(2);
+                setScoreii(3);
               }
             })
             .catch(err => console.log(err))
@@ -117,16 +117,16 @@ function DumpingSite({
             <ol>
               <li type="i">
                 If there is availability of a well-maintained dumping site or
-                Engineered Landfills according to Environmental Health Standards, score 1.
+                Engineered Landfills according to Environmental Health Standards, score 2.
               </li>
               <li type="i" className="py-1">
                 If the District has a functional final disposal site or co-ownership for
-                liquid waste with documentary evidence, score 2
+                liquid waste with documentary evidence, score 3
               </li>
             </ol>
           </Content>
 
-          <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>3</strong></Title>
+          <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>5</strong></Title>
           <Title level={5} style={{ marginTop: "20px" }}>
             SDI 5.0-5.2i Actual Score: <strong>{scorei}</strong>
           </Title>

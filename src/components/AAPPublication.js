@@ -38,28 +38,19 @@ function AAPPublication({ year, districtId }) {
 
     if (data?.length > 0) {
       data.forEach((val, idx) => {
+         
         temp.push({
           key: idx,
           date: getAttributeValue("Published Date", val),
           address: getAttributeValue("Website", val)
         });
+        
       });
     }
 
     if (reports.length > 0 && temp.length > 0) {
-      fulfillment = "Fulfilled";
-      // reports.forEach(rep=>{
-      //     clientServiceReport.push({
-      //         report: rep.dataValues[2]?.value,
-      //         date: rep?.dataValues[3]?.value,
-      //         issues:rep?.dataValues[1]?.value
-      //     });
-      // })
+      fulfillment = "Fulfilled"; 
     }
-
-    // if(clientServiceTemp.length > 0 && clientServiceReport.length > 0){
-    //     fulfillment = "Fulfilled"
-    // }
 
     setPublication({ data: temp, fulfillment, report: [] });
   };
@@ -68,14 +59,12 @@ function AAPPublication({ year, districtId }) {
     axios
       .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=X5kGqVpbGoN`)
       .then(result => {
-        // console.log("Client Service tracker", result.data.instances)
-        // setClientServiceDataDisplay(result.data.instances);
+       
         if (result.data.instances.length > 0) {
           axios
             .get(`/tracker/events?program=X5kGqVpbGoN&orgUnit=${districtId}`)
             .then(resp => {
-              // console.log("Client Service report", resp.data.instances)
-              // setMeetingDecision({ decisions: result.data.instances, reports: resp.data.instances })
+              
               setDataDisplay(result.data.instances, resp.data.instances);
             })
             .catch(err => console.log(err));

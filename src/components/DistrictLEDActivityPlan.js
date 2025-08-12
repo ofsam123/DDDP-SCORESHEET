@@ -9,7 +9,6 @@ function DistrictLEDActivityPlan({
 }) {
   const [data, setData] = useState([]);
   const [scorei, setScorei] = useState(0);
-  const [scoreii, setScoreii] = useState(0);
 
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
@@ -56,13 +55,11 @@ function DistrictLEDActivityPlan({
 
               setData([temp]);
 
-              if (percentage >= 60) {
-                setScoreii(1);
+              if (percentage >= 90 && aapLED > 0) {
+                setScorei(2);
               }
 
-              if (aapLED > 0) {
-                setScorei(1);
-              }
+          
             })
             .catch(err => console.log(err))
         }
@@ -126,23 +123,19 @@ function DistrictLEDActivityPlan({
           <Content>
             From the DCD, receive information on LED activities:<br /><br />
             <ol>
-              <li type="i">
-                If the District has evidence of LED activities in the AAP, score 1.
-              </li>
+              
               <li type="i" className="py-1">
                 If the District has implemented at least 60% of the LED activities
-                in the Annual Action Plan (AAP), score 1.
+                in the Annual Action Plan (AAP), score 2.
               </li>
             </ol>
           </Content>
 
           <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>2</strong></Title>
-          <Title level={5} style={{ marginTop: "20px" }}>
-            SDI 6.0-6.1i Actual Score: <strong>{scorei}</strong>
-          </Title>
+          
           <Row align="middle">
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
-              SDI 6.0-6.1ii Actual Score: <strong>{scoreii}</strong>
+              SDI 6.0-6.1 Actual Score: <strong>{scorei}</strong>
             </Title>
             {renderCommentInput()}
           </Row>

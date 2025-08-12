@@ -41,6 +41,7 @@ function ClientServiceFunctionality({ year, districtId }) {
 
     if (data?.length > 0) {
       data.forEach((val, idx) => {
+        
         clientServiceTemp.push({
           key: idx,
           date: getAttributeValue("Established Date", val),

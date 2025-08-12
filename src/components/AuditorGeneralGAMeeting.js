@@ -6,20 +6,61 @@ import { each } from "chart.js/helpers";
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
 
-function AuditorGeneralGAMeeting({ gaMeetings, ecaMeeting, year, columns, districtId, ecaColumns }) {
 
-     const [fulfillment, seFulfillment] = useState("Not Fulfilled");
-     
+const columns = [
+  { "title": "Minute Ref.", "dataIndex": "meeting", "key": "meeting" },
+  { "title": "Meeting Type", "dataIndex": "meetingType", "key": "meetingType" },
+  { "title": "Minutes Link", "dataIndex": "minutes", "key": "minutes" }
+]
 
-    useEffect(()=>{
-        console.log("djiba data: ",{gaMeetings, ecaMeeting})
-        console.log("colums: ", {columns, ecaColumns})
+function AuditorGeneralGAMeeting({ gaMeetings, ecaMeeting, year, districtId }) {
 
-        if(ecaMeeting.fulfillment === "Fulfillment" && gaMeetings.fulfillment === "Fulfillment"){
-            seFulfillment("Fulfilled");
+  const [fulfillment, seFulfillment] = useState("Not Fulfilled");
+  const [data, setData] = useState(null);
+
+
+  useEffect(() => {
+    // console.log("djiba cherie data: ", { gaMeetings, ecaMeeting })
+    const temp = [];
+    let fulfilled = "Fulfilled";
+
+    if (gaMeetings?.meetings) {
+      gaMeetings.meetings.forEach(val => {
+        const tempDataSet = {
+          meeting: val.signatoriesMinutes,
+          meetingType: "GA Meeting",
+          minutes: val.docs
+        };
+
+        if(val.docs === "Not Uploaded"){
+            fulfilled = "Not Fulfilled";
         }
+
+        temp.push(tempDataSet);
+      });
+    }
+
+     if (ecaMeeting?.data) {
+      ecaMeeting.data.forEach(val => {
+        const tempDataSet = {
+          meeting: val.minutes,
+          meetingType: "EC Meeting",
+          minutes: val.docs
+        };
+
+        if(val.docs === "Not Uploaded"){
+            fulfilled = "Not Fulfilled";
+        }
+
+        temp.push(tempDataSet);
+      });
+    }
+
     
-    },[districtId, year])
+      seFulfillment(fulfilled);
+      setData(temp)
+  
+  }, [districtId, year, fulfillment])
 
   return (
     <Comment
@@ -30,7 +71,7 @@ function AuditorGeneralGAMeeting({ gaMeetings, ecaMeeting, year, columns, distri
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
-          <Title level={3}>CI 4.0 General Assembly Meetings and Approvals - 4.3 Presentation of 
+          <Title level={3}>CI 4.0 General Assembly Meetings and Approvals - 4.3 Presentation of
             Auditor General’s Report to the General Assembly </Title>
           <Title level={4} style={{ marginTop: "10px" }}>Assessment Guide/ Requirement</Title>
 
@@ -38,10 +79,10 @@ function AuditorGeneralGAMeeting({ gaMeetings, ecaMeeting, year, columns, distri
             From the DCD, receive Minutes of Meeting of the General Assembly. <strong>{year}</strong>:<br /><br />
             <ol>
               <li type="i">
-                    If the {year} Auditor General’s report was discussed by the Finance and Administration 
-                    Subcommittee and the Executive Committee, and subsequently presented to the 
-                    General Assembly for discussion.</li>
-              </ol>
+                If the {year} Auditor General’s report was discussed by the Finance and Administration
+                Subcommittee and the Executive Committee, and subsequently presented to the
+                General Assembly for discussion.</li>
+            </ol>
 
             <i>Then the CI is fulfilled</i>
           </Content>
@@ -57,8 +98,7 @@ function AuditorGeneralGAMeeting({ gaMeetings, ecaMeeting, year, columns, distri
             Auditor General Report to the General Assembly
           </Title>
 
-          {gaMeetings &&  <Table columns={columns} dataSource={gaMeetings} pagination={false} bordered />}
-          {ecaMeeting && <Table columns={ecaColumns} dataSource={ecaMeeting} pagination={false} bordered />}
+          {data && <Table columns={columns} dataSource={data} pagination={false} bordered />}
 
           {renderCommentList()}
         </>

@@ -16,11 +16,11 @@ function PermitProcessingIssuance({
 
   useEffect(() => {
     getIndicatorsData();
-  }, [year, districtId, data]);
+  }, [year, districtId]);
 
   const dataColumn = [
-    { title: "No. of Building Permit Requests Received in 2021 (A)", dataIndex: "permitRequest", key: "permitRequest" },
-    { title: "No. of Building Permit Requests Processed & Issued in 2021 (B)", dataIndex: "permitIssued", key: "permitIssued" },
+    { title: `No. of Building Permit Requests Received in ${year} (A)`, dataIndex: "permitRequest", key: "permitRequest" },
+    { title: `No. of Building Permit Requests Processed & Issued in ${year} (B)`, dataIndex: "permitIssued", key: "permitIssued" },
     { title: "No. of approved permits traced to Local Plans (C)", dataIndex: "permitTraced", key: "permitTraced" }
   ];
 
@@ -76,7 +76,7 @@ function PermitProcessingIssuance({
               </li>
               <li type="i" className="py-1">
                 If all the planning and development permits received, approved and issued to applicants
-                in 2021 are traceable to the approved Local Plans, score 1, else score 0
+                in {year} are traceable to the approved Local Plans, score 1, else score 0
               </li>
             </ol>
           </Content>

@@ -130,11 +130,11 @@ function PWDService({
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
-          <Title level={3} style={{ marginTop: "30px" }}>SDI 4.0 - 4.4 Service to People Living with Disabilities (PWDs)</Title>
+          <Title level={3} style={{ marginTop: "30px" }}>SDI 4.0 - 4.4 Service to Persons Who are Differently Abled  (PWDAs) </Title>
           <Title level={4} style={{ marginTop: "30px" }}>Assessment Guide/ Requirement</Title>
           <Content>
-            From the DCD and Head of Department of Social Welfare and Community Development,
-            receive information on the management of People Living with Disabilities (PWD):<br /><br />
+            From the DCD and Head of Department of Social Welfare and Community Development 
+            receive information on the management of Persons Who are Differently Abled (PWDAs):<br /><br />
             <ol>
               <li type="i">
                 If the District has enrolled at least 90% of PWDs registered with the

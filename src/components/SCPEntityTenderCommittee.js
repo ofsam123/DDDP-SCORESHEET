@@ -22,18 +22,17 @@ function SPCEntityTenderCommittee({ data, year, columns, districtId }) {
             Plan by 30th November <strong>{year}</strong>, and obtain quarterly updated Procurement Plans from the Procurement Plan for <strong>{year}</strong>.<br /><br />
             <ol>
               <li type="i">
-                Confirm whether the Entity Tender Committee met as required by law (at least once every quarter) and whether 
-                duly recorded and signed minutes of the meetings are available.
+                If the Entity Tender Committee met as required by law (at least once in every quarter)
+                 and have duly recorded and signed Minutes of Meeting
               </li>
               <li type="i">
-                Confirm whether the <strong>{parseInt(year) + 1}</strong> Annual Procurement Plan is linked to the 
-                <strong>{parseInt(year) + 1}</strong> Composite Budget and 
-                Annual Action Plan (AAP), and whether it was approved by the Entity Tender Committee by 30th 
-                November <strong>{year}</strong>, as evidenced by meeting minutes and in accordance with PPA guidelines.
+                If the {year} Annual Procurement Plan is linked to the 2024 Composite Budget 
+                and Annual Action Plan (AAP) and approved by 30th November {year - 1} by the Entity 
+                Tender Committee, as evidenced by minutes of meeting and follows the PPA guidelines; and.
               </li>
               <li type="i">
-                Confirm whether all the <strong>{year}</strong> quarterly updated Procurement Plans were duly prepared by the Procurement Unit and 
-                approved during the quarterly meetings of the Entity Tender Committee.
+                If all the 2024 quarterly updated Procurement Plans were duly prepared by the Procurement Unit 
+                and were approved at the quarterly meetings of the Entity Tender Committee.
               </li>
             </ol>
             <i>Then the CI is fulfilled</i>

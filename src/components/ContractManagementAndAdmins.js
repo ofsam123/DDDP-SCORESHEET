@@ -152,7 +152,7 @@ function ContractManagementAndAdmins({ year, district }) {
                         };
                     });
 
-                    console.log(updatedContingencyIndicators);
+                    // console.log(updatedContingencyIndicators);
 
                     // Map from indicator name to table field
                     const indicatorToFieldMap = {
@@ -174,9 +174,9 @@ function ContractManagementAndAdmins({ year, district }) {
 
                     setContingengy([row])
 
-                    if(row.contingencyProvision > 0 && row.contingencyUse > 0){
-                        setScoreII(1)
-                    }
+                    // if(row.contingencyProvision > 0 && row.contingencyUse > 0){
+                    //     setScoreI(3)
+                    // }
 
                 }
 
@@ -198,26 +198,21 @@ function ContractManagementAndAdmins({ year, district }) {
                         From the DCD, obtain information on contract management and administration:<br /><br />
                         <ol>
                             <li type="i">
-                                If final completion reports on all completed projects are available
-                                and all completed projects are in use, score 3; else score 0.
+                                If final completion reports (signed off) on all completed projects are available 
+                                and all completed projects are in use, score 3, else score 0
                             </li>
-                            <li type="i">
-                                If contingency has been provided for works and used with written justification and duly
-                                approved, score 1; or if contingency has not been used, score 1; else score 0.
-                            </li>
+                            
                         </ol>
                     </Content>
 
                     <Title level={5} style={{ marginTop: "20px" }}>
-                        Maximum Score <strong>4</strong>
+                        Maximum Score <strong>3</strong>
                     </Title>
 
-                    <Title level={5} style={{ marginTop: "20px" }}>
-                        PI 1.0-1.3i Actual Score: <strong>{scoreI}</strong>
-                    </Title>
+                    
                     <Row align="middle">
                         <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
-                            PI 1.0-1.3ii Actual Score: <strong>{scoreII}</strong>
+                            PI 1.0-1.3 Actual Score: <strong>{scoreI}</strong>
                         </Title>
                         {renderCommentInput()}
                     </Row>

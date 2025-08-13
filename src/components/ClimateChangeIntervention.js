@@ -79,7 +79,7 @@ function ClimateChangeIntervention({
               setClimateChangePlan([temp]);
               setTreePlan([tempTree]);
 
-              if (percentage >= 80) {
+              if (percentage >= 90) {
                 setScorei(1);
               }
 
@@ -142,7 +142,7 @@ function ClimateChangeIntervention({
       key: "aapTree"
     },
     {
-      title: "No. of Tree planting activities implemented in 2021",
+      title: `No. of Tree planting activities implemented in ${year}`,
       dataIndex: "aapTreeImplemented",
       key: "aapTreeImplemented"
     },
@@ -168,7 +168,7 @@ function ClimateChangeIntervention({
             From the DCD, receive information on Climate Change interventions activity implementation;<br /><br />
             <ol>
               <li type="i">
-                If the District has delivered or implemented at least 80% of climate
+                If the District has delivered or implemented at least 90% of climate
                 adaptation activities from their Annual Action Plan (AAP), score 1.
               </li>
               <li type="i" className="py-1">

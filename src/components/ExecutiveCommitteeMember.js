@@ -15,17 +15,16 @@ function ExecutiveCommitteeMember({ data, year, columns, districtId }) {
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
-          <Title level={3}>CI 2.0 Functionality of Statutory & Mandatory Organs of the Assembly - 2.1 Executive Committee Membership</Title>
+          <Title level={3}>CI 2.0 Functionality of Statutory & Mandatory Organs of the Assembly - 2.1 Executive Committee Meetings</Title>
           <Title level={4} style={{ marginTop: "10px" }}>Assessment Guide/Requirement</Title>
           <Content>
             From the DCD, obtain information on the membership of the Executive Committee for <strong>{year}</strong>.<br /><br />
             <ol>
               <li type="i">
-                Confirm that the Executive Committee is duly constituted as per legal requirements.
+                If at least a meeting of the EC/MA was held prior to each of the three mandated General Assembly meetings in 2024,
+                 and minutes duly recorded and signed by both DCD and DCE
               </li>
-              <li type="i">
-                Verify that membership records are complete and documented.
-              </li>
+              
             </ol>
             <i>Then the CI is fulfilled</i>
           </Content>
@@ -37,7 +36,7 @@ function ExecutiveCommitteeMember({ data, year, columns, districtId }) {
             {renderCommentInput()}
           </Row>
 
-          <Title level={4} style={{ marginTop: "20px" }}>Evidence of Executive Committee Membership</Title>
+          <Title level={4} style={{ marginTop: "20px" }}>Evidence of Executive Committee Meeting</Title>
           {data && <Table columns={columns} dataSource={data?.data} pagination={false} bordered />}
 
           {renderCommentList()}

@@ -60,8 +60,7 @@ function AAPImplementation({ year, district }) {
                         From DCD, receive reports on the implementation of projects and programmes in the Annual Action Plan:<br /><br />
                         <ol>
                             <li type="i">
-                                If there is evidence that at least 90% of activities implemented in
-                                2021 are from the approved Annual Action Plan, score 2; else 0
+                                If there is evidence that at least 90% of activities implemented in {year} are from the approved Annual Action Plan, score 2; else 0
                             </li>
                         </ol>
                     </Content>

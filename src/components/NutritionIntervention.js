@@ -9,20 +9,14 @@ function NutritionIntervention({
   data
 }) {
   const [scorei, setScorei] = useState(0);
-  const [scoreii, setScoreii] = useState(0);
 
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
 
   useEffect(() => {
-    if (data?.aap?.lenght > 0) {
-      if (data.aap[0].publication === "YES") {
-        setScorei(1);
-      }
-    }
 
     if (data?.vendors?.length > 0) {
-      setScoreii(1);
+      setScorei(2);
     }
   }, [year, districtId]);
 
@@ -58,23 +52,17 @@ function NutritionIntervention({
             From the DCD, receive information on Nutrition activities in the District:<br /><br />
             <ol>
               <li type="i">
-                If the Assembly has published the list of nutrition-oriented interventions from
-                the Ghana Health Service (GHS) and available linkages, score 1;
+                If the Assembly has oriented food vendors and school feeding programme contractors on nutrition, score 2
               </li>
-              <li type="i" className="py-1">
-                If the Assembly has oriented food vendors and school feeding programme
-                contractors on nutrition, score 1.
-              </li>
+              
             </ol>
           </Content>
 
           <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>2</strong></Title>
-          <Title level={5} style={{ marginTop: "20px" }}>
-            SDI 4.0-4.6 Actual Score: <strong>{scorei}</strong>
-          </Title>
+          
           <Row align="middle">
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
-              SDI 4.0-4.6 Actual Score: <strong>{scoreii}</strong>
+              SDI 4.0-4.6 Actual Score: <strong>{scorei}</strong>
             </Title>
             {renderCommentInput()}
           </Row>

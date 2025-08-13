@@ -83,7 +83,7 @@ function PublicSchoolFacility({
               setPercentageData(percentage);
               setData([temp]);
 
-              if (percentage >= 80) {
+              if (percentage >= 90) {
                 setScore(2);
               }
             })
@@ -127,8 +127,8 @@ function PublicSchoolFacility({
             From the DCD and Director, GES, receive information on public schools in the District:<br /><br />
             <ol>
               <li type="i">
-                If at least 80% of public schools in the District have functional institutional
-                toilet facilities and water facilities as at 2021, score 2.
+                If at least 90% of public schools in the District have functional institutional
+                toilet facilities and water facilities as at {year}, score 2.
               </li>
             </ol>
           </Content>

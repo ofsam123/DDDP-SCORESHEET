@@ -46,7 +46,7 @@ function GASupport({
     const amountSpendOnSub = calculateSubExpendature();
 
     if (amountSpendOnSub >= amountNinety) {
-      setScore(1);
+      setScore(2);
     }
 
     setConclusion(`Amount spent on substructure is ${amountSpendOnSub} and 90% of the 2% released is ${amountNinety}`);
@@ -90,19 +90,23 @@ function GASupport({
             <div className="mb-3">From the DCD, receive reports on the activities of all established sub-structures of
               the Assembly and Assembly’s DACF allocation to Sub-structures:</div>
             <ol>
-              <li type="i">If all the sub-structures utilized at least 50% of their ceded Revenue to support
-                activities that benefit the Community, score 1, else score 0 </li>
-              <li type="i" className="py-1">If the Assembly has spent at least 90% of the up-to 2% DACF release to its
-                Sub-Structures, to support the substructures, score 1, else score 0.</li>
+              <li type="i">If all the sub-structures utilized at least 50% of their ceded revenue to support activities that benefit the
+                 community and align with the sub-district action plan, score 2, else score 0
+
+ </li>
+              <li type="i" className="py-1">
+                If the Assembly has spent at least 90% of up to 2% of the DACF release to its 
+                sub-structures to support the sub-structures, score 2, else score 0
+              </li>
             </ol>
           </Content>
 
           <Title level={5} style={{ marginTop: "20px" }}>
-            Maximum Score <strong>2</strong>
+            Maximum Score <strong>4</strong>
           </Title>
 
           <Title level={5} style={{ marginTop: "20px" }}>
-            SDI 1.0-1.3i Actual Score: <strong>{cededRevenueUtilisationScore >= 50 ? '1' : '0'}</strong>
+            SDI 1.0-1.3i Actual Score: <strong>{cededRevenueUtilisationScore >= 50 ? '2' : '0'}</strong>
           </Title>
           <Row align="middle">
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>

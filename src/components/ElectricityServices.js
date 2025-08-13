@@ -138,7 +138,7 @@ function ElectricityServices({
             <ol>
               <li type="i">Evidence of collaboration/ facilitation between the Assembly and
                 CWSA in the district {waterProvidersData.length > 0 ? 'exist' : 'does not exist'} </li>
-              <li className="py-1" type="i">{firstPercentage} % of applications for Water Services in {year} have been
+              <li className="py-1" type="i">{firstPercentage} % of applications for Electricity Services in {year} have been
                 processed as a result of the collaboration and facilitation.</li>
             </ol>
           </Content>

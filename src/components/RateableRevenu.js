@@ -211,10 +211,10 @@ function RateableRevenu({ year, district }) {
                             </li>
                             <li type="i">
                                 If property rates and business operating permit bills have been generated and delivered to all property
-                                and business owners before 31st December 2021, score 2;
+                                and business owners before 31st December {year}, score 2;
                             </li>
                             <li type="i">
-                                If there is evidence of follow-up actions by the MMDA on defaulters/non-payers of 2020 bills by 31st March 2021, score 2
+                                If there is evidence of follow-up actions by the MMDA on defaulters/non-payers of {year - 1} bills by 31st March {year}, score 2
                             </li>
                         </ol>
                     </Content>

@@ -128,7 +128,7 @@ function PublicSchoolFacility({
             <ol>
               <li type="i">
                 If at least 90% of public schools in the District have functional institutional
-                toilet facilities and water facilities as at 2021, score 2.
+                toilet facilities and water facilities as at {year}, score 2.
               </li>
             </ol>
           </Content>

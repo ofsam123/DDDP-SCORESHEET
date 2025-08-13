@@ -19,48 +19,47 @@ function AuditorGeneralGAMeeting({ gaMeetings, ecaMeeting, year, districtId }) {
   const [data, setData] = useState(null);
 
 
-  useEffect(() => {
-    // console.log("djiba cherie data: ", { gaMeetings, ecaMeeting })
-    const temp = [];
-    let fulfilled = "Fulfilled";
+ useEffect(() => {
+  const temp = [];
+  let fulfilled = "Fulfilled";
 
-    if (gaMeetings?.meetings) {
-      gaMeetings.meetings.forEach(val => {
-        const tempDataSet = {
-          meeting: val.signatoriesMinutes,
-          meetingType: "GA Meeting",
-          minutes: val.docs
-        };
+  console.log("reload data")
 
-        if(val.docs === "Not Uploaded"){
-            fulfilled = "Not Fulfilled";
-        }
+  if (gaMeetings?.meetings) {
+    gaMeetings.meetings.forEach(val => {
+      const tempDataSet = {
+        meeting: val.signatoriesMinutes,
+        meetingType: "GA Meeting",
+        minutes: val.docs
+      };
 
-        temp.push(tempDataSet);
-      });
-    }
+      if (val.docs === "Not Uploaded") {
+        fulfilled = "Not Fulfilled";
+      }
 
-     if (ecaMeeting?.data) {
-      ecaMeeting.data.forEach(val => {
-        const tempDataSet = {
-          meeting: val.minutes,
-          meetingType: "EC Meeting",
-          minutes: val.docs
-        };
+      temp.push(tempDataSet);
+    });
+  }
 
-        if(val.docs === "Not Uploaded"){
-            fulfilled = "Not Fulfilled";
-        }
+  if (ecaMeeting?.data) {
+    ecaMeeting.data.forEach(val => {
+      const tempDataSet = {
+        meeting: val.minutes,
+        meetingType: "EC Meeting",
+        minutes: val.docs
+      };
 
-        temp.push(tempDataSet);
-      });
-    }
+      if (val.docs === "Not Uploaded") {
+        fulfilled = "Not Fulfilled";
+      }
 
-    
-      seFulfillment(fulfilled);
-      setData(temp)
-  
-  }, [districtId, year, fulfillment])
+      temp.push(tempDataSet);
+    });
+  }
+
+  seFulfillment(fulfilled);
+  setData(temp);
+}, [districtId, year, gaMeetings, ecaMeeting])
 
   return (
     <Comment

@@ -23,7 +23,7 @@ function SanitationServices({
   }, [sanitationProvidersData, year]);
 
   const serviceProvidersColumn = [
-    { title: "Total IGF collected for the 2021 (A)", dataIndex: "ifgCollected", key: "ifgCollected" },
+    { title: `Total IGF collected for the ${year} (A)`, dataIndex: "ifgCollected", key: "ifgCollected" },
     { title: "Total IGF spent on sanitation improvement services (B)", dataIndex: "igfSpentOnSanitation", key: "igfSpentOnSanitation" },
     { title: "% of IGF spent on sanitation improvementservices (C)", dataIndex: "percentage", key: "percentage" }
   ];

@@ -20,11 +20,10 @@ function SubStructureCommiteeMeeting({ data, year, columns, districtId }) {
           <Content>
             From the DCD, obtain minutes of Sub-Structure Committee meetings for <strong>{year}</strong>.<br /><br />
             <ol>
+              
               <li type="i">
-                Confirm that each Sub-Structure Committee held at least three (3) meetings in <strong>{year}</strong>.
-              </li>
-              <li type="i">
-                Verify that the minutes are duly signed by the Chairperson and Secretary.
+                If each of the 5 Statutory Sub-committees held at least one meeting prior to each of the three meetings of the EC/A in 2024 and minutes 
+                are recorded and signed by both the secretary and the chairperson of sub-committees
               </li>
             </ol>
             <i>Then the CI is fulfilled</i>

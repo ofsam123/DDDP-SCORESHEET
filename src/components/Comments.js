@@ -31,6 +31,7 @@ function Comment({ data, year, districtId, tableCommentedId, children }) {
 
   // Fetch comments from API
   useEffect(() => {
+    console.log("render comment")
     const fetchComments = async () => {
       try {
         const response = await axios.get("https://dddpadminportal.aoinnovations.org/liza/api/v1/comments", {

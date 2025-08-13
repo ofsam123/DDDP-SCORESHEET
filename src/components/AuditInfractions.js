@@ -95,11 +95,11 @@ function AuditInfractions({ year, districtId }) {
         const threePercentTotalExpendature = (0.03 * totalExpenditure).toFixed(2);
 
         if (cashIrreguarityPercentage < onePercentTotalExpendature) {
-          setScoreI(2);
+          setScoreI(3);
         }
 
         if (otherIrreguaritiesPercentage < threePercentTotalExpendature) {
-          setScoreII(2);
+          setScoreII(3);
         }
 
         const dataSource = [
@@ -165,22 +165,21 @@ function AuditInfractions({ year, districtId }) {
           <Title level={3} style={{ marginTop: "20px" }}>PI 4.0 - 4.2 Audit Infractions</Title>
           <Title level={4} style={{ marginTop: "20px" }}>Assessment Guide/ Requirement</Title>
           <Content>
-            From the DCD receive a copy of the Auditor General’s Annual Audit Report for 2021
-            on financial irregularities reported on embezzlement and/or misappropriation;<br /><br />
+            From the DCD receive a copy of the Auditor General’s Annual Audit Report for {year} on financial irregularities reported on embezzlement and/or misappropriation;<br /><br />
             <ol>
               <li type="i">
-                If the sum total of Cash irregularities is less than 1% of the total
-                expenditure of the Assembly for <strong>{year}</strong>, score 1;
+                If the sum total of Cash irregularities is less than 0% of the total
+                expenditure of the Assembly for <strong>{year}</strong>, score 3;
               </li>
               <li type="i">
-                If the sum total of all other financial irregularities is less than 3% of
-                the consolidated expenditure of the Assembly for <strong>{year}</strong>, score 2, else score 0;
+                If the sum total of all other financial irregularities is less than 1% of
+                the consolidated expenditure of the Assembly for <strong>{year}</strong>, score 3, else score 0;
               </li>
             </ol>
           </Content>
 
           <Title level={5} style={{ marginTop: "20px" }}>
-            Maximum Score <strong>4</strong>
+            Maximum Score <strong>6</strong>
           </Title>
 
           <Title level={5} style={{ marginTop: "20px" }}>

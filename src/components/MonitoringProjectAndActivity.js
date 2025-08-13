@@ -100,7 +100,7 @@ function MonitoringProjectAndActivity({ year, district }) {
                             }
 
                             setData([temp]);
-                            if (percentage >= 80) {
+                            if (percentage >= 100) {
                                 setScorei(1);
                             }
 
@@ -148,7 +148,7 @@ function MonitoringProjectAndActivity({ year, district }) {
                             setMonitoring(temp);
 
                             if (temp.length > 1) {
-                                setScoreii(1);
+                                setScoreii(2);
                             }
 
                         })
@@ -174,17 +174,17 @@ function MonitoringProjectAndActivity({ year, district }) {
                         From DCD, receive monitoring reports on all district programmes and projects:<br /><br />
                         <ol>
                             <li type="i">
-                                If a clear budgetary provision has been made for M&E and 80% of the budgetary allocation is released for
-                                the implementation of planned monitoring activities, score 1; else score 0.
+                               If a clear budgetary provision has been made for M&E and 100% of Budgetary allocation released for the 
+                               implementation of planned monitoring activities, score 1, else score 0
                             </li>
                             <li type="i">
-                                If there is evidence of multistakeholder participation in monitoring activities, score 1.
+                                If there is evidence of multi-stakeholder participation in monitoring activities, score 2
                             </li>
                         </ol>
                     </Content>
 
                     <Title level={5} style={{ marginTop: "20px" }}>
-                        Maximum Score <strong>2</strong>
+                        Maximum Score <strong>3</strong>
                     </Title>
 
                     <Title level={5} style={{ marginTop: "20px" }}>

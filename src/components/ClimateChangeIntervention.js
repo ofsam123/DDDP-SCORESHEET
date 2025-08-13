@@ -142,7 +142,7 @@ function ClimateChangeIntervention({
       key: "aapTree"
     },
     {
-      title: "No. of Tree planting activities implemented in 2021",
+      title: `No. of Tree planting activities implemented in ${year}`,
       dataIndex: "aapTreeImplemented",
       key: "aapTreeImplemented"
     },

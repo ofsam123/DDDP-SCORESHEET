@@ -444,8 +444,9 @@ function DistrictAnalytics() {
                 <Select
                   onChange={(val) => {
                     // setSelectedDistrict(val);
+                    console.log("selected district: ", val)
                     setSelectedDistrict({ value: val.value.id, label: val.label });
-                    pullTrackerInstance(val.value);
+                    pullTrackerInstance(val.value.id);
                   }}
                   options={districts}
                   value={selectedDistrict}

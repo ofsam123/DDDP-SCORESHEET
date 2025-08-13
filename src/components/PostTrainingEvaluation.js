@@ -94,7 +94,7 @@ function PostTrainingEvaluation({ year, district }) {
                     <Title level={3} style={{ marginTop: "20px" }}>PI 2.0 - 2.2 Post-training Evaluation</Title>
                     <Title level={4} style={{ marginTop: "20px" }}>Assessment Guide/ Requirement</Title>
                     <Content>
-                        From the DCD, receive a copy of the 2021 implementation of Capacity Building/training reports:<br /><br />
+                        From the DCD, receive a copy of the {year} implementation of Capacity Building/training reports:<br /><br />
                         <ol>
                             <li type="i">
                                 If there is evidence of post-training evaluation conducted by the Human Resource Management

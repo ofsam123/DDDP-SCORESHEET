@@ -10,7 +10,7 @@ function EducationServiceSupport({ year, districtId }) {
 
   const [schools, setSchools] = useState([]);
   const [educationSupport, setEducationSupport] = useState([]);
-  const [score, setScore] = useState(0);
+  const [score, setScore] = useState(1);
   const [percentage, setPercentage] = useState(0);
 
   useEffect(() => {
@@ -119,6 +119,8 @@ function EducationServiceSupport({ year, districtId }) {
                 shoolSupported: schoolSupported,
                 percentage: percentage.toFixed(2)
               }]);
+
+            
             })
             .catch(err => console.log(err))
         }
@@ -143,18 +145,18 @@ function EducationServiceSupport({ year, districtId }) {
             <ol>
               <li type="i">
                 If the Assembly has supported at least 15% of the Public Schools within the district to address
-                their challenges (furniture, teaching and learning materials (TLMs), etc.), score 2
+                their challenges (furniture, teaching and learning materials (TLMs), etc.), score 1
               </li>
             </ol>
           </Content>
 
           <Title level={5} style={{ marginTop: "20px" }}>
-            Maximum Score <strong>2</strong>
+            Maximum Score <strong>1</strong>
           </Title>
 
           <Row align="middle">
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
-              PI 5.0-5.1 Actual Score: <strong>Score</strong>
+              PI 5.0-5.1 Actual Score: <strong>{score}</strong>
             </Title>
             {renderCommentInput()}
           </Row>

@@ -28,7 +28,7 @@ function PRCCMeeting({ data, year, columns, districtId }) {
               </li>
               <li type="i">
                 
-                iii.	If action has been taken on all the recommendations, in (ii)
+                If action has been taken on all the recommendations, in (ii)
               </li>
             </ol>
             <i>Then the CI is fulfilled</i>

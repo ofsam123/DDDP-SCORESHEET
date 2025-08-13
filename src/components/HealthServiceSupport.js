@@ -114,7 +114,7 @@ function HealthServiceSupport({ year, districtId }) {
               setPercentage(percentage.toFixed(2));
 
               if (percentage >= 15) {
-                setScore(2);
+                setScore(1);
               }
 
               setHealthFacilitySupport([{
@@ -144,18 +144,15 @@ function HealthServiceSupport({ year, districtId }) {
             From the DCD and District Director of Health receive information on the list of public
             health facilities in the District and challenges faced by the centres:<br /><br />
             <ol>
+              
               <li type="i">
-                If the sum total of Cash irregularities is less than 1% of the total
-                expenditure of the Assembly for <strong>{year}</strong>, score 1;
-              </li>
-              <li type="i">
-                If the Assembly has supported at least 15% of the public health centres to address their challenges, score 2
+                If the Assembly has supported at least 15% of the public health centres to address their challenges, score 1
               </li>
             </ol>
           </Content>
 
           <Title level={5} style={{ marginTop: "20px" }}>
-            Maximum Score <strong>2</strong>
+            Maximum Score <strong>1</strong>
           </Title>
 
           <Row align="middle">

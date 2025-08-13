@@ -1037,7 +1037,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         rel="noopener noreferrer"
                         title="Click here to see the uploaded minutes"
                     >
-                        View Minutes
+                        View Attendance
                     </a>
                 ) : (
                     "Not Uploaded"
@@ -1050,7 +1050,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         rel="noopener noreferrer"
                         title="Click here to see the uploaded minutes"
                     >
-                        View Minutes
+                        View Document
                     </a>
                 ) : (
                     "Not Uploaded"
@@ -1120,7 +1120,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         rel="noopener noreferrer"
                         title="Click here to see the uploaded minutes"
                     >
-                        View Minutes
+                        View Attendance
                     </a>
                 ) : (
                     "Not Uploaded"
@@ -1133,7 +1133,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         rel="noopener noreferrer"
                         title="Click here to see the uploaded minutes"
                     >
-                        View Minutes
+                        View Document
                     </a>
                 ) : (
                     "Not Uploaded"
@@ -1188,7 +1188,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         rel="noopener noreferrer"
                         title="Click here to see the uploaded minutes"
                     >
-                        View Minutes
+                        View Attendance
                     </a>
                 ) : (
                     "Not Uploaded"
@@ -1201,7 +1201,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         rel="noopener noreferrer"
                         title="Click here to see the uploaded minutes"
                     >
-                        View Minutes
+                        View Document
                     </a>
                 ) : (
                     "Not Uploaded"
@@ -1262,7 +1262,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         rel="noopener noreferrer"
                         title="Click here to see the uploaded minutes"
                     >
-                        View Minutes
+                        View Attendance
                     </a>
                 ) : (
                     "Not Uploaded"
@@ -1275,7 +1275,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         rel="noopener noreferrer"
                         title="Click here to see the uploaded minutes"
                     >
-                        View Minutes
+                        View Document
                     </a>
                 ) : (
                     "Not Uploaded"
@@ -1349,7 +1349,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         rel="noopener noreferrer"
                         title="Click here to see the uploaded minutes"
                     >
-                        View Minutes
+                        View Attendance
                     </a>
                 ) : (
                     "Not Uploaded"
@@ -1362,7 +1362,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         rel="noopener noreferrer"
                         title="Click here to see the uploaded minutes"
                     >
-                        View Minutes
+                        View Document
                     </a>
                 ) : (
                     "Not Uploaded"
@@ -1373,7 +1373,7 @@ const DPATAssessmentSheet = ({ props }) => {
         })
 
         if (temp.length > 1) {
-            score = 1;
+            score = 3;
         }
 
         setAuditCommitteeMeetingData({ data: temp, score: score });
@@ -1421,7 +1421,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         rel="noopener noreferrer"
                         title="Click here to see the uploaded minutes"
                     >
-                        View Minutes
+                        View Attendance
                     </a>
                 ) : (
                     "Not Uploaded"
@@ -1434,7 +1434,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         rel="noopener noreferrer"
                         title="Click here to see the uploaded minutes"
                     >
-                        View Minutes
+                        View Document
                     </a>
                 ) : (
                     "Not Uploaded"
@@ -1483,7 +1483,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         rel="noopener noreferrer"
                         title="Click here to see the uploaded minutes"
                     >
-                        View Minutes
+                        View Attendance
                     </a>
                 ) : (
                     "Not Uploaded"
@@ -1496,7 +1496,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         rel="noopener noreferrer"
                         title="Click here to see the uploaded minutes"
                     >
-                        View Minutes
+                        View Document
                     </a>
                 ) : (
                     "Not Uploaded"
@@ -1554,7 +1554,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         rel="noopener noreferrer"
                         title="Click here to see the uploaded minutes"
                     >
-                        View Minutes
+                        View Attendance
                     </a>
                 ) : (
                     "Not Uploaded"
@@ -1567,7 +1567,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         rel="noopener noreferrer"
                         title="Click here to see the uploaded minutes"
                     >
-                        View Minutes
+                        View Document
                     </a>
                 ) : (
                     "Not Uploaded"

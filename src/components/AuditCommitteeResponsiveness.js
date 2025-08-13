@@ -44,22 +44,20 @@ function AuditCommitteeResponsiveness({ year, audits, actions, managementLetters
                         From the District Coordinating Director (DCD) receive information on the Audit Committee of the Assembly:<br /><br />
                         <ol>
                             <li type="i">
-                                If the Audit Committee has received and reviewed responses to all Audit Observations in
-                                Quarterly Internal Audit Reports and the Management Letter for <strong>{year}</strong>, score 1;
+                                If the Audit Committee has received and reviewed responses to all Audit Observations 
+                                in Quarterly Internal Audit Reports and the Management Letter for {year}, score 3 or else 0;
                             </li>
                         </ol>
                     </Content>
 
                     <Title level={5} style={{ marginTop: "20px" }}>
-                        Maximum Score <strong>1</strong>
+                        Maximum Score <strong>3</strong>
                     </Title>
 
-                    <Title level={5} style={{ marginTop: "20px" }}>
-                        PI 4.0-4.1i Actual Score: <strong>{audits?.score || 0}</strong>
-                    </Title>
+                   
                     <Row align="middle">
                         <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
-                            PI 4.0-4.1i Actual Score: <strong>{audits?.score || 0}</strong>
+                            PI 4.0-4.1 Actual Score: <strong>{audits?.score || 0}</strong>
                         </Title>
                         {renderCommentInput()}
                     </Row>

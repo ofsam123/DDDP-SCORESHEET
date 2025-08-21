@@ -33,6 +33,7 @@ import AuditCommitteeResponsiveness from "./AuditCommitteeResponsiveness";
 import AuditInfractions from "./AuditInfractions";
 import HealthServiceSupport from "./HealthServiceSupport";
 import AgricultureSupport from "./AgricultureSupport";
+import QualityAssuranceEditor from "./QualityAssuranceEditor";
 import EducationServiceSupport from "./EducationServiceSupport";
 import SPCEntityTenderCommittee from "./SCPEntityTenderCommittee";
 import InternalAuditUnitFunctionality from "./InternalAuditUnitFunctionality";
@@ -2460,6 +2461,13 @@ const DPATAssessmentSheet = ({ props }) => {
                     <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>Download Report</span>
                 </Button>
             </div>
+
+              <QualityAssuranceEditor
+                        year={year}
+                        districtId={district?.value}
+                        district={district?.value}
+                    />
+                    <hr />
 
         </Layout>
     );

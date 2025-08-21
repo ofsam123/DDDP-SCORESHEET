@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Input, Avatar, Col, message, Row } from "antd";
-import { CommentOutlined, SendOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { Input, Avatar, Col, message } from "antd";
+import { CommentOutlined, SendOutlined, EditOutlined } from "@ant-design/icons";
 import useAuth from "../hooks/useAuth";
 import axios from "axios";
 
@@ -13,7 +13,7 @@ function Comment({ data, year, districtId, tableCommentedId, children }) {
   const [editText, setEditText] = useState({});
 
   const currentUserRole = user?.user?.userRoles?.find(
-    (role) => role.name === "DPAT Consultant" || role.name === "DPAT Reviewer"
+    (role) => role.name === "DPAT TECHNICAL TEAM" || role.name === "DPAT QUALITY ASSURANCE"
   )?.name || "";
   const normalizedUserRole = currentUserRole ? currentUserRole.replace(" ", "_").toUpperCase() : "";
   const currentUsername = user?.user?.username || "";

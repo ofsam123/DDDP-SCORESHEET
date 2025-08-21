@@ -2304,7 +2304,11 @@ const DPATAssessmentSheet = ({ props }) => {
                     />
                     <hr />
 
-
+                  <QualityAssuranceEditor
+                        year={year}
+                        districtId={district?.value}
+                        district={district?.value}
+                    />
 
                     {/* Print Button */}
 
@@ -2334,11 +2338,7 @@ const DPATAssessmentSheet = ({ props }) => {
                 </Button>
             </div>
 
-              <QualityAssuranceEditor
-                        year={year}
-                        districtId={district?.value}
-                        district={district?.value}
-                    />
+             
                     <hr />
 
         </Layout>

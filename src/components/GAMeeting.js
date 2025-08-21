@@ -43,7 +43,7 @@ function GAMeeting({ data, year, columns, districtId }) {
 
           <Title level={5} style={{ marginTop: "10px" }}>Number of Decisions: <strong>{data?.numberOfDecision}</strong> </Title>
           <Title level={4} style={{ marginTop: "20px" }}>
-            Illustration of Meetings held in the table below:
+           Evidence of General Assembly Meetings of the Assembly
           </Title>
 
           {data?.meetings && <Table columns={columns} dataSource={data?.meetings} pagination={false} bordered />}

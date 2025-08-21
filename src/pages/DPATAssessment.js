@@ -69,10 +69,10 @@ function DPATAssessment() {
 
     function pullTrackerInstance(startDate, endDate, districtId) {
         axios
-            .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=Ch38jUWJpUR&filter=Ub0V9Z06aBc:GE:${startDate}:LE:${endDate}`)
+            .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=Ch38jUWJpUR&filter=Ub0V9Z06aBc:GE:${startDate}:LE:${endDate}&pageSize=500`)
             .then(result => {
                 axios
-                    .get(`/tracker/events?program=Ch38jUWJpUR&orgUnit=${districtId}&startDate=${startDate}&endDate=${endDate}`)
+                    .get(`/tracker/events?program=Ch38jUWJpUR&orgUnit=${districtId}&startDate=${startDate}&endDate=${endDate}&pageSize=500`)
                     .then(resp => {
                         // const meetingsData = result.data.instances
                         setGaMeeting({ meetings: result.data.instances, reports: resp.data.instances });
@@ -255,12 +255,12 @@ function DPATAssessment() {
 
     function getAnnualActionPlan(startDate, endDate, districtId) {
         axios
-            .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=ArLnAxhykoz&startDate=${startDate}&endDate=${endDate}`)
+            .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=ArLnAxhykoz&startDate=${startDate}&endDate=${endDate}&pageSize=500`)
             .then(result => {
                 if (result.data.instances.length > 0) {
 
                     axios
-                        .get(`/tracker/events?program=ArLnAxhykoz&orgUnit=${districtId}&startDate=${startDate}&endDate=${endDate}`)
+                        .get(`/tracker/events?program=ArLnAxhykoz&orgUnit=${districtId}&startDate=${startDate}&endDate=${endDate}&pageSize=1000`)
                         .then(resp => {
                             setAnnualActionPlan({ aap: result.data.instances, reports: resp.data.instances })
                         })

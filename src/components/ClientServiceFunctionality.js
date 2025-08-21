@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Layout, Typography, Table, Row } from "antd";
 import axios from "../api/axios";
 import Comment from "../components/Comments";
+import { getFileLinkIfExist } from "../utils/utils";
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
@@ -21,7 +22,7 @@ function ClientServiceFunctionality({ year, districtId }) {
   const clienServiceReportColumn = [
     { title: "Title of Report on activities", dataIndex: "report", key: "report" },
     { title: "Date of Report", dataIndex: "date", key: "date" },
-    { title: "Key Issues in the Reports", dataIndex: "issues", key: "issues" }
+    { title: "Attachments", dataIndex: "attachments", key: "attachments" }
   ];
 
   useEffect(() => {
@@ -41,26 +42,76 @@ function ClientServiceFunctionality({ year, districtId }) {
 
     if (data?.length > 0) {
       data.forEach((val, idx) => {
-        
+
+        const complaintLink = getFileLinkIfExist(reports, "fHGCEnkTRnW", val.trackedEntity);
+        const workPlanLink = getFileLinkIfExist(reports, "RnjmtOxz2V5", val.trackedEntity);
+        const reportLink = getFileLinkIfExist(reports, "TH0o7vTWcAy", val.trackedEntity);
+
         clientServiceTemp.push({
           key: idx,
           date: getAttributeValue("Established Date", val),
           officeAvailability: getAttributeValue("Office Available (Yes/No)", val) === "true" ? "YES" : "NO",
-          bookAvailability: getAttributeValue("Complaint’s Book available (Yes/No)", val) === "true" ? "YES" : "NO",
-          planAvailability: getAttributeValue("Work plan available (Yes/No)", val) === "true" ? "YES" : "NO",
           officerName: getAttributeValue("Schedule Officer Name", val),
-          phone: getAttributeValue("Dedicated Mobile Number", val)
-        });
-      });
-    }
+          phone: getAttributeValue("Dedicated Mobile Number", val),
+          bookAvailability: complaintLink ? (
+            <a
+              className="px-2 text-primary fw-bold text-decoration-underline"
+              href={`https://dddp.gov.gh/api/events/files?eventUid=${complaintLink}&dataElementUid=fHGCEnkTRnW`} target="_blank"
+              rel="noopener noreferrer"
+              title="Click here to see the uploaded document"
+            >
+              View Commplaint Book
+            </a>
+          ) : (
+            "Not Uploaded"
+          ),
 
-    if (reports.length > 0) {
-      reports.forEach(rep => {
-        clientServiceReport.push({
-          report: rep.dataValues[2]?.value,
-          date: rep?.dataValues[3]?.value,
-          issues: rep?.dataValues[1]?.value
+          planAvailability: workPlanLink ? (
+            <a
+              className="px-2 text-primary fw-bold text-decoration-underline"
+              href={`https://dddp.gov.gh/api/events/files?eventUid=${workPlanLink}&dataElementUid=RnjmtOxz2V5`} target="_blank"
+              rel="noopener noreferrer"
+              title="Click here to see the uploaded document"
+            >
+              View Work Plan
+            </a>
+          ) : (
+            "Not Uploaded"
+          )
         });
+
+        const currentReport = reports.find(rep => rep.trackedEntity === val.trackedEntity);
+
+        if (currentReport) {
+          const dataReportSet = {
+            report: "",
+            date: "",
+            attachments: reportLink ? (
+            <a
+              className="px-2 text-primary fw-bold text-decoration-underline"
+              href={`https://dddp.gov.gh/api/events/files?eventUid=${reportLink}&dataElementUid=TH0o7vTWcAy`} target="_blank"
+              rel="noopener noreferrer"
+              title="Click here to see the uploaded document"
+            >
+              View Report
+            </a>
+          ) : (
+            "Not Uploaded"
+          )
+          }
+
+          currentReport.dataValues.forEach(rep => {
+
+            if (rep.dataElement === "EXpYmoD23TM") {
+              dataReportSet.report = rep.value;
+            }else if (rep.dataElement === "ISuGmawTpiF") {
+              dataReportSet.date = rep.value;
+            }
+          });
+
+          clientServiceReport.push(dataReportSet);
+        }
+
       });
     }
 
@@ -124,7 +175,7 @@ function ClientServiceFunctionality({ year, districtId }) {
 
           <Title level={4} style={{ marginTop: "20px" }}>Evidence of Establishment of Client Service Unit</Title>
           {clientService && <Table columns={clienServiceColumn} dataSource={clientService?.data} pagination={false} bordered />}
-          <br/>
+          <br />
           {/* <Title level={4} style={{ marginTop: "20px" }}>Evidence of establishment of sub-structures</Title> */}
           {clientService && <Table columns={clienServiceReportColumn} dataSource={clientService?.report} pagination={false} bordered />}
 

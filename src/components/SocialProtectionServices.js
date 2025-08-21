@@ -35,7 +35,7 @@ function SocialProtectionServices({
     { title: "a. Number of activities in AAP", dataIndex: "aapTotal", key: "aapTotal" },
     { title: "b. Number of Social Protection activities in AAP", dataIndex: "aapSocialProtection", key: "aapSocialProtection" },
     { title: "c. Number of Social Protection activities in AAP implemented", dataIndex: "aapSocialProtectionImp", key: "aapSocialProtectionImp" },
-    { title: "d. Percentage of Social Protection activities implemented (c/b x 100", dataIndex: "percentage", key: "percentage" }
+    { title: "d. Percentage of Social Protection activities implemented (c/b x 100)", dataIndex: "percentage", key: "percentage" }
   ];
 
   const publicationColumn = [
@@ -98,7 +98,7 @@ function SocialProtectionServices({
 
           <Title level={5} style={{ marginTop: "30px" }}>Conclusion</Title>
           <Content>
-            {percentage}% of Road Safety interventions in the Annual Action Plan were implemented
+            {percentage}% of Social Protection activities in the Annual Action Plan were implemented
           </Content>
 
           {renderCommentList()}

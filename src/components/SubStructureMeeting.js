@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Layout, Typography, Table, Row } from "antd";
 import Comment from "../components/Comments";
 
@@ -6,11 +6,24 @@ const { Header, Content } = Layout;
 const { Title, Text } = Typography;
 
 function SubStructureMeeting({ data, columns, establishment, establishmentColumns, revenueSharing, revenuSharingColumns, districtId,year }) {
-  // useEffect(() => {
-  //     console.log("budget: ", data);
-  //     console.log("establishment : ", establishment);
-  // }, [])
 
+  const [fulfillment, setFulfillment] = useState(data?.fulfillment);
+
+  useEffect(() => {
+  if (!data) return; // if data is missing, do nothing
+
+  if (data.fulfillment === "Fulfilled" && data.subMeeting?.length !== establishment?.length) {
+    setFulfillment("Not Fulfilled");
+  } else {
+    setFulfillment(data.fulfillment || "Not Fulfilled");
+  }
+
+  if(revenueSharing?.fulfillment === "Not Fulfilled"){
+    setFulfillment("Not Fulfilled");
+  }
+}, [data, establishment, year, districtId]);
+
+ 
   return (
     <Comment
       data={data}
@@ -41,7 +54,7 @@ function SubStructureMeeting({ data, columns, establishment, establishmentColumn
 
           <Row align="middle">
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
-              CI Result: <strong style={{ color: data?.fulfillment === "Fulfilled" ? "green" : "red" }}>{data?.fulfillment}</strong>
+              CI Result: <strong style={{ color: fulfillment === "Fulfilled" ? "green" : "red" }}>{fulfillment}</strong>
             </Title>
             {renderCommentInput()}
           </Row>
@@ -53,7 +66,7 @@ function SubStructureMeeting({ data, columns, establishment, establishmentColumn
           {establishment && <Table columns={establishmentColumns} dataSource={establishment} pagination={false} bordered />}
 
           <Title level={4} style={{ marginTop: "20px" }}>Evidence of revenue sharing</Title>
-          {revenueSharing && <Table columns={revenuSharingColumns} dataSource={revenueSharing} pagination={false} bordered />}
+          {revenueSharing && <Table columns={revenuSharingColumns} dataSource={revenueSharing?.data} pagination={false} bordered />}
 
           {renderCommentList()}
         </>

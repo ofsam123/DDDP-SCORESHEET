@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Layout, Typography, Table, Row } from "antd";
 import Comment from "../components/Comments";
+import { calculatePercentage } from "../utils/utils";
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
@@ -17,12 +18,6 @@ function GeneralAssemblyDecision({ data, year, columns, decisionDeliveryData, se
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
-          <div>
-            <Text strong>THEMATIC AREA: </Text>
-            <Text>
-              MANAGEMENT & COORDINATION – IMPLEMENTATION OF SERVICE DELIVERY DECISIONS (5)
-            </Text>
-          </div>
           <Title level={3}>SDI 1.0 - 1.1 General Assembly Decisions</Title>
           <Title level={4} style={{ marginTop: "10px" }}>Assessment Guide/ Requirement</Title>
           <Content>
@@ -55,16 +50,16 @@ function GeneralAssemblyDecision({ data, year, columns, decisionDeliveryData, se
             summary={pageData => {
               let totalDecision = 0, totalDelivered = 0, totalPercent = 0;
 
-              pageData.forEach(({ total, serviceDecision, percentage }) => {
+              pageData.forEach(({ total, serviceDecision }) => {
                 totalDecision += Number(total);
                 totalDecision = parseFloat(totalDecision.toFixed(2));
                 totalDelivered += Number(serviceDecision);
                 totalDelivered = parseFloat(totalDelivered.toFixed(2));
-                totalPercent += Number(percentage);
-                totalPercent = parseFloat(totalPercent.toFixed(2));
               });
 
-              setGaDecisionScore(totalPercent);
+              const percentage = calculatePercentage(totalDelivered, totalDecision);
+
+              setGaDecisionScore(parseFloat(percentage.toFixed(2)));
 
               return (<>
                 <Table.Summary.Row style={{ fontWeight: 'bold' }}>
@@ -76,7 +71,7 @@ function GeneralAssemblyDecision({ data, year, columns, decisionDeliveryData, se
                     <Text>{totalDelivered}</Text>
                   </Table.Summary.Cell>
                   <Table.Summary.Cell>
-                    <Text>{totalPercent}</Text>
+                    <Text>{parseFloat(percentage.toFixed(2))}</Text>
                   </Table.Summary.Cell>
                 </Table.Summary.Row>
               </>)

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Input, Avatar, Col, message } from "antd";
-import { CommentOutlined, SendOutlined, EditOutlined } from "@ant-design/icons";
+import { Input, Avatar, Col, message, Row } from "antd";
+import { CommentOutlined, SendOutlined, EditOutlined, DeleteOutlined, DislikeOutlined } from "@ant-design/icons";
 import useAuth from "../hooks/useAuth";
 import axios from "axios";
 
@@ -14,16 +14,18 @@ function Comment({ data, year, districtId, tableCommentedId, children }) {
 
   const currentUserRole = user?.user?.userRoles?.find(
     (role) => role.name === "DPAT TECHNICAL TEAM" || role.name === "DPAT QUALITY ASSURANCE"
+   
   )?.name || "";
   const normalizedUserRole = currentUserRole ? currentUserRole.replace(" ", "_").toUpperCase() : "";
   const currentUsername = user?.user?.username || "";
   const currentFullName = user?.user?.fullName || "";
+  const isReviewer = currentUserRole === "DPAT QUALITY ASSURANCE";
 
   // Initialize comments from provided data
   useEffect(() => {
     if (data?.comments) {
       const filteredComments = data.comments.filter(
-        (comment) => comment.tableCommented === tableCommentedId && comment.districtId === districtId
+        (comment) => comment.tableCommented === tableCommentedId 
       );
       setComments(filteredComments);
     }
@@ -31,17 +33,16 @@ function Comment({ data, year, districtId, tableCommentedId, children }) {
 
   // Fetch comments from API
   useEffect(() => {
-    console.log("render comment")
     const fetchComments = async () => {
       try {
-        const response = await axios.get("https://dddpadminportal.aoinnovations.org/liza/api/v1/comments", {
+        const response = await axios.get(`https://dddpadminportal.aoinnovations.org/liza/api/v1/comments/tables/${districtId}/${year}/DPAT`, {
           params: { districtId, year, tableCommentedId },
           headers: {
             Authorization: `Bearer ${localStorage.getItem("dddp_token") || ""}`,
           },
         });
         const filteredComments = response.data.filter(
-          (comment) => comment.tableCommented === tableCommentedId && comment.districtId === districtId
+          (comment) => comment.tableCommented === tableCommentedId && comment.districtId === districtId && comment.userRole === "DPAT_TECHNICAL TEAM"
         );
         setComments(filteredComments);
       } catch (error) {
@@ -75,7 +76,7 @@ function Comment({ data, year, districtId, tableCommentedId, children }) {
         comment.districtId === districtId
     );
 
-    if (existingComment && existingComment.username !== currentUsername) {
+    if (existingComment && existingComment.username !== currentUsername && !editingCommentId) {
       message.error(`Only one ${currentUserRole.replace("_", " ")} can comment on this indicator for this district.`);
       return;
     }
@@ -195,6 +196,9 @@ function Comment({ data, year, districtId, tableCommentedId, children }) {
   };
 
   const canShowCommentInput = () => {
+    if (isReviewer) {
+      return false; // DPAT QUALITY ASSURANCE cannot comment
+    }
     if (editingCommentId) {
       return false;
     }
@@ -207,6 +211,10 @@ function Comment({ data, year, districtId, tableCommentedId, children }) {
   };
 
   const handleCommentButtonClick = () => {
+    if (isReviewer) {
+      message.info("DPAT QUALITY ASSURANCE cannot comment on indicators.");
+      return;
+    }
     if (canShowCommentInput()) {
       setShowCommentInput(!showCommentInput);
     } else {
@@ -215,53 +223,45 @@ function Comment({ data, year, districtId, tableCommentedId, children }) {
   };
 
   const renderCommentInput = () => (
-    <>
-      <CommentOutlined
-        style={{ marginLeft: "10px", cursor: "pointer", fontSize: "30px", marginTop: "20px", marginRight: "10px" }}
-        onClick={handleCommentButtonClick}
-      />
+    <div style={{ display: "flex", alignItems: "flex-start", marginTop: "20px", maxWidth: "800px" }}>
+      {!isReviewer && (
+        <DislikeOutlined
+          style={{ cursor: "pointer", fontSize: "30px", marginRight: "10px", flexShrink: 0 }}
+          onClick={handleCommentButtonClick}
+        />
+      )}
       {showCommentInput && canShowCommentInput() && (
-        <div
-          style={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            maxWidth: "800px",
-            Height:"250px",
-            marginTop: "15px",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <Avatar
-              src={user?.image || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTL_JlCFnIGX5omgjEjgV9F3sBRq14eTERK9w&s"}
-              style={{ marginRight: "10px", borderRadius: "50%" }}
-              size={32}
+        <div style={{ display: "flex", alignItems: "center", flex: 1 }}>
+          <Avatar
+            src={user?.image || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTL_JlCFnIGX5omgjEjgV9F3sBRq14eTERK9w&s"}
+            style={{ marginRight: "10px", borderRadius: "50%", flexShrink: 0 }}
+            size={32}
+          />
+          <Input.TextArea
+            value={commentText}
+            onChange={(e) => setCommentText(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder="Add a comment..."
+            autoSize={{ minRows: 3, maxRows: 5 }}
+            bordered={false}
+            style={{
+              flex: 1,
+              borderRadius: "10px",
+              padding: "8px 12px",
+              background: "#f0f2f5",
+              width :"700px"
+            }}
+          />
+          {commentText.trim() && (
+            <SendOutlined
+              className="text-blue-500 cursor-pointer"
+              style={{ fontSize: "20px", marginLeft: "8px", flexShrink: 0 }}
+              onClick={() => handleCommentSubmit()}
             />
-            <Input.TextArea
-              value={commentText}
-              onChange={(e) => setCommentText(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder="Add a comment..."
-              autoSize={{ minRows: 3, maxRows: 5 }}
-              bordered={false}
-              style={{
-                flex: 1,
-                borderRadius: "10px",
-                padding: "8px 12px",
-                background: "#f0f2f5",
-              }}
-            />
-            {commentText.trim() && (
-              <SendOutlined
-                className="text-blue-500 cursor-pointer"
-                style={{ fontSize: "20px", marginLeft: "8px", marginTop: "8px" }}
-                onClick={() => handleCommentSubmit()}
-              />
-            )}
-          </div>
+          )}
         </div>
       )}
-    </>
+    </div>
   );
 
   const renderCommentList = () => (
@@ -279,7 +279,7 @@ function Comment({ data, year, districtId, tableCommentedId, children }) {
         <div
           style={{
             flex: 1,
-            maxWidth: "100%",
+            maxWidth: "700%",
             paddingLeft: "12px",
             marginTop: showCommentInput && canShowCommentInput() ? "16px" : "0",
             display: "flex",
@@ -334,10 +334,10 @@ function Comment({ data, year, districtId, tableCommentedId, children }) {
                           style={{ cursor: "pointer", color: "#000000ff" }}
                           onClick={() => handleEditComment(comment)}
                         />
-                        {/* <DeleteOutlined
+                        <DeleteOutlined
                           style={{ cursor: "pointer", color: "#ff0000" }}
                           onClick={() => handleDeleteComment(comment.id)}
-                        /> */}
+                        />
                       </div>
                     )}
                   </div>

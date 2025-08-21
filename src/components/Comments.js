@@ -14,6 +14,7 @@ function Comment({ data, year, districtId, tableCommentedId, children }) {
 
   const currentUserRole = user?.user?.userRoles?.find(
     (role) => role.name === "DPAT TECHNICAL TEAM" || role.name === "DPAT QUALITY ASSURANCE"
+   
   )?.name || "";
   const normalizedUserRole = currentUserRole ? currentUserRole.replace(" ", "_").toUpperCase() : "";
   const currentUsername = user?.user?.username || "";

@@ -23,8 +23,6 @@ function AuditorGeneralGAMeeting({ gaMeetings, ecaMeeting, year, districtId }) {
   const temp = [];
   let fulfilled = "Fulfilled";
 
-  console.log("reload data")
-
   if (gaMeetings?.meetings) {
     gaMeetings.meetings.forEach(val => {
       const tempDataSet = {

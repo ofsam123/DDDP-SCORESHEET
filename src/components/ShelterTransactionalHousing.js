@@ -72,9 +72,9 @@ function ShelterTransactionalHousing({
   }
 
   const rhcColumn = [
-    { title: "Name of RHC(s) in Municipality", dataIndex: "name", key: "name" },
-    { title: "Location/Digital Address of RHC", dataIndex: "address", key: "address" },
-    { title: "No. of staff at each RHC", dataIndex: "staffNo", key: "staffNo" },
+    { title: "Name of RH/C(s) in Municipality", dataIndex: "name", key: "name" },
+    { title: "Location/Digital Address of RH/C", dataIndex: "address", key: "address" },
+    { title: "No. of staff at each RH/C", dataIndex: "staffNo", key: "staffNo" },
     { title: "Report on operations available", dataIndex: "reportAvailability", key: "reportAvailability" }
   ];
 
@@ -91,7 +91,7 @@ function ShelterTransactionalHousing({
           <Title level={4} style={{ marginTop: "30px" }}>Assessment Guide/ Requirement</Title>
           <Content>
             From the DCD and Head of Department of Social Welfare and Community Development, receive information on
-            the operations of Residential Home Centres (RHCs) (Transitional Housing) in the District:<br /><br />
+            the operations of Residential Home Centres (RH/Cs) (Transitional Housing) in the District:<br /><br />
             <ol>
               <li type="i"> If the Department has at least one (1)
                 Residential Home Centre and there is a report on the operations of the centre, score 1.
@@ -108,7 +108,7 @@ function ShelterTransactionalHousing({
           </Row>
 
           {/* {JSON.stringify(transportations)} */}
-          <Title level={4} style={{ marginTop: "20px" }}>Evidence of Residential Home Centre (RHC) Operation</Title>
+          <Title level={4} style={{ marginTop: "20px" }}>Evidence of Residential Home/Centre (RH/C) Operation</Title>
           <Table
             columns={rhcColumn}
             dataSource={services || []}

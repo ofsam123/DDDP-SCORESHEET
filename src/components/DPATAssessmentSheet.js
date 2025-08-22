@@ -1820,6 +1820,8 @@ const DPATAssessmentSheet = ({ props }) => {
 
                     {/* General Assembly Meetings and Decision End */}
 
+                    {/* {JSON.stringify(gaMeetingData)} */}
+
                     {gaMeetingData && <GAMeeting
                         data={gaMeetingData}
                         year={year}

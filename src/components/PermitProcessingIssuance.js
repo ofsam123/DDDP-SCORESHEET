@@ -67,7 +67,7 @@ function PermitProcessingIssuance({
           <Title level={4} style={{ marginTop: "30px" }}>Assessment Guide/ Requirement</Title>
           <Content>
             From the DCD obtain information on the number of Planning Permit and Development Permit applications and
-            Spatial Planning Committee decision on Applications for <strong>year</strong>:<br /><br />
+            Spatial Planning Committee decision on Applications for <strong>{year}</strong>:<br /><br />
             <ol>
               <li type="i">
                 If all the planning and development permit applications received were processed,

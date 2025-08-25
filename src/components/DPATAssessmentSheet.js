@@ -409,7 +409,7 @@ const DPATAssessmentSheet = ({ props }) => {
 
                 const data = res.data?.rows;
 
-                console.log("gando-djiba:", data)
+                // console.log("gando-djiba:", data)
 
                 if (data?.length > 0) {
                     const percentage = calculatePercentage(decisionOnServiceDeliveryNo, data[0][2]);
@@ -1117,7 +1117,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         className="px-2 text-primary fw-bold text-decoration-underline"
                         href={`https://dddp.gov.gh/api/events/files?eventUid=${attendanceLink}&dataElementUid=brh8c5XO30Q`} target="_blank"
                         rel="noopener noreferrer"
-                        title="Click here to see the uploaded minutes"
+                        title="Click here to see the uploaded documented"
                     >
                         View Attendance
                     </a>
@@ -1130,7 +1130,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         className="px-2 text-primary fw-bold text-decoration-underline"
                         href={`https://dddp.gov.gh/api/events/files?eventUid=${recommendationLink}&dataElementUid=LLgjgXRMB5x`} target="_blank"
                         rel="noopener noreferrer"
-                        title="Click here to see the uploaded minutes"
+                        title="Click here to see the uploaded document"
                     >
                         View Document
                     </a>
@@ -1165,7 +1165,7 @@ const DPATAssessmentSheet = ({ props }) => {
         })
 
 
-        setInternalAuditMeetingData(temp);
+        setInternalAuditMeetingData({data: temp, fulfillment});
         setInternalAuditData({ data: auditTemp, fulfillment });
     };
 
@@ -1276,7 +1276,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         className="px-2 text-primary fw-bold text-decoration-underline"
                         href={`https://dddp.gov.gh/api/events/files?eventUid=${attendanceLink}&dataElementUid=brh8c5XO30Q`} target="_blank"
                         rel="noopener noreferrer"
-                        title="Click here to see the uploaded minutes"
+                        title="Click here to see the uploaded document"
                     >
                         View Attendance
                     </a>
@@ -1298,9 +1298,12 @@ const DPATAssessmentSheet = ({ props }) => {
                 )
             };
 
-            if (!attendanceLink || !minuteLink || !recommendationLink) {
+            if(index < 12){
+                if (!attendanceLink || !minuteLink || !recommendationLink) {
                 fulfillment = "Not Fulfilled";
             }
+            }
+            
 
             temp.push(meetingDataState);
         });
@@ -1333,7 +1336,7 @@ const DPATAssessmentSheet = ({ props }) => {
         formatData(meetings, "Entity Tender Committee (ETC)").forEach((meeting, index) => {
             const minuteLink = getFileLinkIfExist(reports, "LAe1t59jYNT", meeting.trackedEntity);
             const attendanceLink = getFileLinkIfExist(reports, "brh8c5XO30Q", meeting.trackedEntity);
-            const recommendationLink = getFileLinkIfExist(reports, "sZTHUWRoY7H", meeting.trackedEntity);
+            const recommendationLink = getFileLinkIfExist(reports, "LLgjgXRMB5x", meeting.trackedEntity);
 
 
             const meetingDataState = {
@@ -1375,7 +1378,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         className="px-2 text-primary fw-bold text-decoration-underline"
                         href={`https://dddp.gov.gh/api/events/files?eventUid=${recommendationLink}&dataElementUid=LLgjgXRMB5x`} target="_blank"
                         rel="noopener noreferrer"
-                        title="Click here to see the uploaded minutes"
+                        title="Click here to see the uploaded document"
                     >
                         View Document
                     </a>

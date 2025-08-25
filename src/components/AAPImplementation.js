@@ -69,9 +69,7 @@ function AAPImplementation({ year, district }) {
                         Maximum Score <strong>2</strong>
                     </Title>
 
-                    <Title level={5} style={{ marginTop: "20px" }}>
-                        PI 1.0-1.1 Actual Score: <strong>{score}</strong>
-                    </Title>
+                    
                     <Row align="middle">
                         <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
                             PI 1.0-1.1 Actual Score: <strong>{score}</strong>

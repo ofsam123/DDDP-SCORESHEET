@@ -118,7 +118,7 @@ function TransportationNetworkService({
             dataSource={transportations || []}
             pagination={false} bordered />}
 
-          <Title level={4} style={{ marginTop: "20px" }}>Evidence Public Transport Facilities</Title>
+          <Title level={4} style={{ marginTop: "20px" }}>Evidence of Transport Operators</Title>
           {<Table
             columns={transportatorsColumn}
             dataSource={transportors?.transportors}

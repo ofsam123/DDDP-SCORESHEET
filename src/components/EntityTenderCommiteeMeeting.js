@@ -39,7 +39,7 @@ function EntityTenderCommitteeMeeting({ data, year, columns, districtId }) {
             {renderCommentInput()}
           </Row>
 
-          <Title level={4} style={{ marginTop: "20px" }}>Evidence of Spatial Planning Committee (SPC) duly constituted</Title>
+          <Title level={4} style={{ marginTop: "20px" }}>Evidence of Spatial Planning Committee (SPC) Meeting</Title>
           {data && <Table columns={columns} dataSource={data?.data} pagination={false} bordered />}
 
           {renderCommentList()}

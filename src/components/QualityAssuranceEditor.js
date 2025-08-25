@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Button, message, Avatar, Col } from "antd";
-import {  EditOutlined,  } from "@ant-design/icons";
+import { EditOutlined, } from "@ant-design/icons";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import useAuth from "../hooks/useAuth";
-import axios from "axios";
+import instance from "../api/cmsapi";
 
 function QualityAssuranceEditor({ year, districtId }) {
   const { user } = useAuth();
@@ -31,12 +31,7 @@ function QualityAssuranceEditor({ year, districtId }) {
       }
       try {
         setLoading(true);
-        const response = await axios.get("https://dddpadminportal.aoinnovations.org/liza/api/v1/comments", {
-          params: { districtId, year, tableCommentedId },
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("dddp_token") || ""}`,
-          },
-        });
+        const response = await instance.get("comments");
         const filteredComments = response.data.filter(
           (comment) => comment.tableCommented === tableCommentedId && comment.districtId === districtId
         );
@@ -103,15 +98,7 @@ function QualityAssuranceEditor({ year, districtId }) {
     try {
       setLoading(true);
       if (existingCommentId) {
-        await axios.put(
-          `https://dddpadminportal.aoinnovations.org/liza/api/v1/comments/${existingCommentId}`,
-          payload,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("dddp_token") || ""}`,
-            },
-          }
-        );
+        await instance.put(`comments/${existingCommentId}`, payload);
         setComments(
           comments.map((comment) =>
             comment.id === existingCommentId
@@ -122,14 +109,7 @@ function QualityAssuranceEditor({ year, districtId }) {
         message.success("Overall comment updated successfully");
         setEditing(false);
       } else {
-        const response = await axios.post(
-          "https://dddpadminportal.aoinnovations.org/liza/api/v1/comments",
-          payload,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("dddp_token") || ""}`,
-            },
-          }
+        const response = await instance.post("comments", payload
         );
         setComments([...comments, response.data]);
         setExistingCommentId(response.data.id);
@@ -197,7 +177,7 @@ function QualityAssuranceEditor({ year, districtId }) {
               />
             </Col>
             <div style={{ flex: 1 }}>
-              <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap",width:"800px" }}>
+              <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", width: "800px" }}>
                 <h4 style={{ margin: 0, fontSize: "13px" }}>
                   {comment.fullName} (DPAT QUALITY ASSURANCE)
                 </h4>
@@ -205,16 +185,10 @@ function QualityAssuranceEditor({ year, districtId }) {
                 {comment.username === currentUsername && isQualityAssurance && (
 
                   <EditOutlined
-                          style={{ cursor: "pointer", color: "#000000ff", marginLeft: "10px"}}
-                          onClick={handleEdit}
-                        />
-                  // <Button
-                  //   type="link"
-                  //   onClick={handleEdit}
-                  //   style={{ marginLeft: "8px", padding: 0 }}
-                  // >
-                  //   Editsz
-                  // </Button>
+                    style={{ cursor: "pointer", color: "#000000ff", marginLeft: "10px" }}
+                    onClick={handleEdit}
+                  />
+
                 )}
               </div>
               <div
@@ -274,11 +248,13 @@ function QualityAssuranceEditor({ year, districtId }) {
           <Button
             type="primary"
             onClick={handleSave}
-            style={{ marginTop: "10px" }}
+            style={{ marginTop: "10px"}}
             loading={loading}
           >
-            Save Overall Comment
+            <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>Save Memo</span>
+            
           </Button>
+
         </div>
       )}
       {renderCommentList()}

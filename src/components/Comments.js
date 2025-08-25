@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Input, Avatar, Col, message, Row } from "antd";
 import { CommentOutlined, SendOutlined, EditOutlined, DeleteOutlined, DislikeOutlined } from "@ant-design/icons";
 import useAuth from "../hooks/useAuth";
-import axios from "axios";
+import instance from "../api/cmsapi";
+
 
 function Comment({ data, year, districtId, tableCommentedId, children }) {
   const { user } = useAuth();
@@ -35,12 +36,7 @@ function Comment({ data, year, districtId, tableCommentedId, children }) {
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const response = await axios.get(`https://dddpadminportal.aoinnovations.org/liza/api/v1/comments/tables/${districtId}/${year}/DPAT`, {
-          params: { districtId, year, tableCommentedId },
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("dddp_token") || ""}`,
-          },
-        });
+        const response = await instance.get(`comments/tables/${districtId}/${year}/DPAT`);
         const filteredComments = response.data.filter(
           (comment) => comment.tableCommented === tableCommentedId && comment.districtId === districtId && comment.userRole === "DPAT_TECHNICAL TEAM"
         );
@@ -99,14 +95,8 @@ function Comment({ data, year, districtId, tableCommentedId, children }) {
     try {
       if (editingCommentId) {
         // Update existing comment
-        const response = await axios.put(
-          `https://dddpadminportal.aoinnovations.org/liza/api/v1/comments/${editingCommentId}`,
-          payload,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("dddp_token") || ""}`,
-            },
-          }
+        const response = await instance.put(`comments/${editingCommentId}`,
+          payload
         );
         setComments(
           comments.map((comment) =>
@@ -120,14 +110,8 @@ function Comment({ data, year, districtId, tableCommentedId, children }) {
         setEditText({});
       } else {
         // Post new comment
-        const response = await axios.post(
-          "https://dddpadminportal.aoinnovations.org/liza/api/v1/comments",
-          payload,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("dddp_token") || ""}`,
-            },
-          }
+        const response = await instance.post("comments",
+          payload
         );
         setComments([...comments, response.data]);
         message.success("Comment added successfully");
@@ -160,11 +144,7 @@ function Comment({ data, year, districtId, tableCommentedId, children }) {
       return;
     }
     try {
-      await axios.delete(`https://dddpadminportal.aoinnovations.org/liza/api/v1/comments/${commentId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("dddp_token") || ""}`,
-        },
-      });
+      await instance.delete(`comments/${commentId}`);
       setComments(comments.filter((comment) => comment.id !== commentId));
       setEditingCommentId(null);
       setCommentText("");

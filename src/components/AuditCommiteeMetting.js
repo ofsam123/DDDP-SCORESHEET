@@ -6,21 +6,7 @@ const { Title } = Typography;
 
 
 function AuditCommiteeMeeting({ meetings, meetingColumns, district, year }) {
-
-    const [fulfillment, seFulfillment] = useState("Not Fulfilled");
-
-    useEffect(() => {
-        getData();
-    }, [district, year]);
-
-   function getData(){
-
-    if(meetings.length > 3){
-        seFulfillment("Fulfilled");
-    }
    
-
-   }
     return (
         <>
             <Title level={3}>CI 3.0 Public Financial Management and Auditing -
@@ -44,12 +30,12 @@ function AuditCommiteeMeeting({ meetings, meetingColumns, district, year }) {
                 <i>Then the CI is fulfilled</i>
             </Content>
 
-            <Title level={5} style={{ marginTop: "20px" }}>CI Result: <strong style={{ color: fulfillment === "Fulfilled" ? "green" : "red", }}>
-                {fulfillment}</strong>
+            <Title level={5} style={{ marginTop: "20px" }}>CI Result: <strong style={{ color: meetings?.fulfillment === "Fulfilled" ? "green" : "red", }}>
+                {meetings?.fulfillment}</strong>
             </Title>
 
             <Title level={4} style={{ marginTop: "20px" }}>Evidence of Audit Committee Meetings</Title>
-            {meetings && <Table columns={meetingColumns} dataSource={meetings} pagination={false} bordered />}
+            {meetings && <Table columns={meetingColumns} dataSource={meetings?.data} pagination={false} bordered />}
 
         </>
     );

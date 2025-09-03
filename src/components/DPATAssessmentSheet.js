@@ -61,7 +61,8 @@ import { checkECANDGAMeetingFulfillment, formatSubStatutoryMeetings, formatSubSt
 import AuditCommiteeMeeting from "./AuditCommiteeMetting";
 import AuditorGeneralGAMeeting from "./AuditorGeneralGAMeeting";
 import TownHollMeeting from "./TownHollMeeting";
-import { budgetApprovalColumns, ECAMeetingColumns, ETCMeetingColumns, gaMeetingColumns, internalAuditColumns, internalAuditMeetingColumns, managementMeetingColumns, membersColumns, PRCCMeetingColumns, revenueSharingColumns, serviceDecisionColumns, serviceDeliveryDecisionColumns, spcMeetingColumns, subCommitteeCompositionColumns, subStatutoryMeetingsColumns, subStructureColumns, subStructureEstablishmentColumns, townHallMeetingColumns } from "../utils/tableColums";
+import { budgetApprovalColumns, districtHotlineNumberColumn, ECAMeetingColumns, ETCMeetingColumns, gaMeetingColumns, internalAuditColumns, internalAuditMeetingColumns, managementMeetingColumns, membersColumns, PRCCMeetingColumns, revenueSharingColumns, serviceDecisionColumns, serviceDeliveryDecisionColumns, spcMeetingColumns, subCommitteeCompositionColumns, subStatutoryMeetingsColumns, subStructureColumns, subStructureEstablishmentColumns, townHallMeetingColumns } from "../utils/tableColums";
+import DeepeningGenderMainstreaming from "./DeepeningGenderMainstreaming";
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
@@ -69,7 +70,7 @@ const { Title, Text } = Typography;
 
 
 const streetNamingColumn = [
-    { title: "Street Naming and Property Addressing Data base (NOT Excel) available (Yes/No)", dataIndex: "street", key: "street" },
+    { title: "Street Naming and Property Addressing Database (NOT Excel) available (Yes/No)", dataIndex: "street", key: "street" },
     { title: "Street Addressing Map of district displayed at Assembly Premises (Yes/No)", dataIndex: "displayed", key: "displayed" },
     { title: "Street Addressing Map of district displayed at Substructures (Yes/No)", dataIndex: "map", key: "map" }
 ];
@@ -80,12 +81,6 @@ const streetNamingInstallationColumn = [
     { title: "Number of street signage’s installed (c)", dataIndex: "streetNamedInstalled", key: "streetNamedInstalled" }
 ];
 
-
-const districtHotlineNumberColumn = [
-    { title: "Dedicated hotline exist (Yes/No)", dataIndex: "hotline", key: "hotline" },
-    { title: "Hotline Number", dataIndex: "number", key: "number" },
-    { title: "Hotline Number publicized on DA notice boards & at sub-structures (Yes/No)", dataIndex: "publication", key: "publication" }
-];
 
 
 
@@ -103,7 +98,6 @@ const DPATAssessmentSheet = ({ props }) => {
     const [subStructureActivity, setSubStructureActivity] = useState(props?.subActivity.activities);
     const [subStructuresMeetingData, setSubStructuresMeetingData] = useState([]);
     const [buildingInspectorate, setBuildingInspectorate] = useState(props?.inspectorates.inspectorates);
-    const [clientServiceChaterData, setClientServiceChaterData] = useState([]);
     const [districtGeneral, setDistrictGeneral] = useState(props?.districtGeneral.data);
     const [substructureExpendatureData, setSubstructureExpendatureData] = useState(null);
     const [districtHotlineNumberData, setDistrictHotlineNumberData] = useState([]);
@@ -139,8 +133,11 @@ const DPATAssessmentSheet = ({ props }) => {
     const [subReportData, setSubReportData] = useState(null);
     const [cededRevenueUtilisationData, setCededRevenueUtilisationData] = useState(null);
     const [decisionsData, setDecisionsData] = useState(null);
+    const [aapDocuments, setAapDocuments] = useState([]);
     const [year, setYear] = useState(props?.year);
-    const [table, setTable] = useState([]);
+    const [pAndP, setPAndP] = useState(props?.pAndP);
+    const [deepGenderData, setDeepGenderData] = useState([]);
+    const [sanitationServiceList, setSanitationServiceList] = useState([]);
     const [district, setDistrict] = useState(props.district);
     const [region, setRegion] = useState(props?.region);
     const [cededRevenueUtilisationScore, setCededRevenueUtilisationScore] = useState(0);
@@ -179,10 +176,12 @@ const DPATAssessmentSheet = ({ props }) => {
         setTransportorsDataDisplay();
         setInspectorateUnitDataDisplay();
         setSanitationServiceDataDisplay();
-        setClientServiceChaterDataDisplay();
         setSocialServiceDataDisplay();
         setNutritionServiceDataDisplay();
+        sanitationServiceData();
         setTownHallMeeting();
+        setDeepeningGender();
+        // aapAndMTDPLinks();
     }, [props]);
 
 
@@ -243,7 +242,7 @@ const DPATAssessmentSheet = ({ props }) => {
                 key: index + 1, // Static key (can be dynamic)
                 invitationDate: getAttributeValue("Invitation letter Date", meeting), // djiba sow
                 meetingDate: getAttributeValue("DPAT | Meeting Date", meeting),
-                
+
                 invitationLetterReference: getAttributeValue("Invitation letter Ref. Number", meeting), // Invitation Letter Ref
                 signatoryInvitationLetter: getAttributeValue("Who Signed the Invitation letter", meeting) === "PM" ?
                     "Presiding Member" : "Convener", // Signatory of Invitation Letter
@@ -285,7 +284,7 @@ const DPATAssessmentSheet = ({ props }) => {
 
         });
 
-        if (temp.length < 2 ) {
+        if (temp.length < 2) {
             fulfillment = "Not Fulfilled";
         }
 
@@ -493,6 +492,149 @@ const DPATAssessmentSheet = ({ props }) => {
 
     }
 
+    const sanitationServiceData = ()=>{
+        const temp = getAAPAndMTDPLinks("Sanitation");
+        setSanitationServiceList(temp);
+    }
+
+    const getAAPAndMTDPLinks = (type = "default") => {
+        const documents = props?.documents.data;
+        const tempAAP = formatDataGeneral(documents, "DPAT | M&E Tool Type", "Annual Action Plan Progress Report") || [];
+        const tempMTDP = formatDataGeneral(documents, "DPAT | M&E Tool Type", "Medium Term Development Plan (MTDP)") || [];
+
+        const tempSaniationServiceProviders = formatDataGeneral(documents, "DPAT | M&E Tool Type", "Sanitation Service Provider") || [];
+        const reports = props?.documents.reports;
+
+
+        let aapLink = "";
+        let mtdpLink = "";
+        let sspLink = "";
+
+        if (tempSaniationServiceProviders.length > 0) {
+            sspLink = getFileLinkIfExist(reports, "MjPmcbueEdU", tempSaniationServiceProviders[0]?.trackedEntity);
+        }
+
+        if (type !== "default") {
+            return [
+                {
+                    title: "Sanitation Service Provider Report",
+                    link: sspLink ? (
+                        <a
+                            className="px-2 text-primary fw-bold text-decoration-underline"
+                            href={`https://dddp.gov.gh/api/events/files?eventUid=${sspLink}&dataElementUid=MjPmcbueEdU`} target="_blank"
+                            rel="noopener noreferrer"
+                            title="Click here to see the uploaded document"
+                        >
+                            View Report
+                        </a>
+                    ) : (
+                        "Not Uploaded"
+                    ),
+                }]
+        }
+
+        if (tempAAP.length > 0) {
+            aapLink = getFileLinkIfExist(reports, "MjPmcbueEdU", tempAAP[0]?.trackedEntity);
+        }
+
+        if (tempMTDP.length > 0) {
+            mtdpLink = getFileLinkIfExist(reports, "MjPmcbueEdU", tempMTDP[0]?.trackedEntity);
+        }
+
+        const links = [
+            {
+                title: "Annual Action Plan Progress Report",
+                link: aapLink ? (
+                    <a
+                        className="px-2 text-primary fw-bold text-decoration-underline"
+                        href={`https://dddp.gov.gh/api/events/files?eventUid=${aapLink}&dataElementUid=MjPmcbueEdU`} target="_blank"
+                        rel="noopener noreferrer"
+                        title="Click here to see the uploaded Document"
+                    >
+                        View Report
+                    </a>
+                ) : (
+                    "Not Uploaded"
+                ),
+            },
+
+            {
+                title: "Meduim Term Development Plan Document",
+                link: mtdpLink ? (
+                    <a
+                        className="px-2 text-primary fw-bold text-decoration-underline"
+                        href={`https://dddp.gov.gh/api/events/files?eventUid=${mtdpLink}&dataElementUid=MjPmcbueEdU`} target="_blank"
+                        rel="noopener noreferrer"
+                        title="Click here to see the uploaded documents"
+                    >
+                        View Document
+                    </a>
+                ) : (
+                    "Not Uploaded"
+                ),
+            },
+        ];
+
+        setAapDocuments(links);
+
+        return links;
+    }
+
+    const setDeepeningGender = () => {
+        const documents = props?.documents.data;
+        const tempAAP = formatDataGeneral(documents, "DPAT | M&E Tool Type", "Annual Action Plan Progress Report") || [];
+        const socialWelfare = formatDataGeneral(documents, "DPAT | M&E Tool Type", "Social Welfare Progress Report") || [];
+        const reports = props?.documents.reports;
+
+        let aapLink = "";
+        let swLink = "";
+
+        if (tempAAP.length > 0) {
+            aapLink = getFileLinkIfExist(reports, "MjPmcbueEdU", tempAAP[0]?.trackedEntity);
+        }
+
+        if (socialWelfare.length > 0) {
+            swLink = getFileLinkIfExist(reports, "MjPmcbueEdU", socialWelfare[0]?.trackedEntity);
+        }
+
+        const links = [
+            {
+                title: "Annual Action Plan Progess Report",
+                link: aapLink ? (
+                    <a
+                        className="px-2 text-primary fw-bold text-decoration-underline"
+                        href={`https://dddp.gov.gh/api/events/files?eventUid=${aapLink}&dataElementUid=MjPmcbueEdU`} target="_blank"
+                        rel="noopener noreferrer"
+                        title="Click here to see the uploaded Document"
+                    >
+                        View Report
+                    </a>
+                ) : (
+                    "Not Uploaded"
+                ),
+            },
+
+            {
+                title: "Social Welfare Progress Report",
+                link: swLink ? (
+                    <a
+                        className="px-2 text-primary fw-bold text-decoration-underline"
+                        href={`https://dddp.gov.gh/api/events/files?eventUid=${swLink}&dataElementUid=MjPmcbueEdU`} target="_blank"
+                        rel="noopener noreferrer"
+                        title="Click here to see the uploaded documents"
+                    >
+                        View Report
+                    </a>
+                ) : (
+                    "Not Uploaded"
+                ),
+            },
+        ];
+
+        setDeepGenderData(links);
+
+    }
+
     const setSocialServiceDataDisplay = () => {
         const aap = props.plans?.aap;
         const reports = props.plans?.reports;
@@ -530,50 +672,24 @@ const DPATAssessmentSheet = ({ props }) => {
 
         if (publicationOfSS?.length > 0) {
             const date = getAttributeValue("Published Date", publicationOfSS[0]);
+            const link = getAttributeValue("Website", publicationOfSS[0]);
             const tempData = {
                 list: "YES",
-                publication: "YES",
+                publication: link !== "N/A" ? "YES" : "NO",
+                website: link,
                 summary: `The list of the social services was published on the ${date}`
             };
 
             tempPublication.push(tempData);
         }
 
-
-        setSocialServicesData({ aap: [planData], publication: tempPublication });
-
-    }
-
-    const setClientServiceChaterDataDisplay = () => {
-        const docs = props?.documents;
-        const documents = formatDataGeneral(docs?.data, "DPAT | M&E Tool Type", "Client Service Unit Report") || [];
-        const temp = [];
-
-        documents.forEach(document => {
-
-            const tempDataSet = {
-                availability: "NO",
-                approvalDate: getAttributeValue("Document Approval Date", document),
-                docReference: getAttributeValue("DPAR | Reference Number", document),
-                trackedEntity: document.trackedEntity
-            };
-
-            temp.push(tempDataSet);
-
-        });
-
-        temp.forEach(document => {
-            const currentReport = docs.reports.find(rep => rep.trackedEntity === document.trackedEntity);
-
-            if (currentReport) {
-                temp[0].availability = "YES";
-            }
-        });
+        const links = getAAPAndMTDPLinks();
 
 
-        setClientServiceChaterData(temp);
+        setSocialServicesData({ aap: [planData], publication: tempPublication, links });
 
     }
+
 
 
     const setAllDataFromDistrictGeneral = () => {
@@ -646,8 +762,14 @@ const DPATAssessmentSheet = ({ props }) => {
             aapRoadsActivities: transportationPlans.length,
             aapRoadsActivitiesImp: 0,
             availability: temp.length > 0 ? "YES" : "NO"
-        }
-        setTransportorsData({ data: transp, transportors: temp });
+        };
+
+        // sow-djiba
+
+        //get uploaded documents if exist(AAP and MTDP)
+        const links = getAAPAndMTDPLinks();
+
+        setTransportorsData({ data: transp, transportors: temp, links });
 
     }
 
@@ -655,6 +777,7 @@ const DPATAssessmentSheet = ({ props }) => {
     const setNutritionServiceDataDisplay = () => {
         const aap = props.plans?.aap;
         const publications = props.publications?.data;
+        const publicationReport = props.publications?.reports;
         const publicationOfNS = formatDataGeneral(publications, "Document Published", "Nutrition Services") || [];
 
         const nutritionOrientedIntervention = formatDataGeneral(aap, "Activity Source", "Nutrition-Oriented Intervention Activity") || [];
@@ -672,13 +795,42 @@ const DPATAssessmentSheet = ({ props }) => {
             foodTemp.push(tempDataSet);
         });
 
+        const tempPublication = [];
+        publicationOfNS.forEach((document, index) => {
+
+            const reportLink = getFileLinkIfExist(publicationReport, "xjRCTFFiMA3", document.trackedEntity);
+
+            const tempDataSet = {
+                availability: reportLink ? "YES" : "NO",
+                docReference: getAttributeValue("Document Reference ", document),
+                channel: getAttributeValue("Publication Channel", document),
+                webSiteLink: getAttributeValue("Website", document),
+                document: reportLink ? (
+                    <a
+                        className="px-2 text-primary fw-bold text-decoration-underline"
+                        href={`https://dddp.gov.gh/api/events/files?eventUid=${reportLink}&dataElementUid=xjRCTFFiMA3`} target="_blank"
+                        rel="noopener noreferrer"
+                        title="Click here to see the uploaded document"
+                    >
+                        View Evidence
+                    </a>
+                ) : (
+                    "Not Uploaded"
+                ),
+            };
+
+            tempPublication.push(tempDataSet);
+
+
+        });
+
         const temp = {
             aapTotal: aap?.length,
             aapNutrition: nutritionOrientedIntervention?.length,
             publication: publicationOfNS?.length > 0 ? "YES" : "NO"
         };
 
-        setNutritionServcieData({ aap: [temp], vendors: foodTemp });
+        setNutritionServcieData({ aap: [temp], vendors: foodTemp, publications: tempPublication });
     }
 
     const setInspectorateUnitDataDisplay = () => {
@@ -1019,7 +1171,7 @@ const DPATAssessmentSheet = ({ props }) => {
 
             const meetingDataState = {
                 key: index + 1, // Static key (can be dynamic)
-                meeting: index +1, // Meeting type
+                meeting: index + 1, // Meeting type
                 invitationDate: getAttributeValue("Invitation letter Date", meeting), // Invitation Date
                 meetingDate: getAttributeValue("DPAT | Meeting Date", meeting),
                 agenda: getAttributeValue("DPAT | Meeting Agenda", meeting),
@@ -1165,7 +1317,7 @@ const DPATAssessmentSheet = ({ props }) => {
         })
 
 
-        setInternalAuditMeetingData({data: temp, fulfillment});
+        setInternalAuditMeetingData({ data: temp, fulfillment });
         setInternalAuditData({ data: auditTemp, fulfillment });
     };
 
@@ -1298,12 +1450,12 @@ const DPATAssessmentSheet = ({ props }) => {
                 )
             };
 
-            if(index < 12){
+            if (index < 12) {
                 if (!attendanceLink || !minuteLink || !recommendationLink) {
-                fulfillment = "Not Fulfilled";
+                    fulfillment = "Not Fulfilled";
+                }
             }
-            }
-            
+
 
             temp.push(meetingDataState);
         });
@@ -1322,7 +1474,7 @@ const DPATAssessmentSheet = ({ props }) => {
         const missingMonths = allMonths.filter(m => !monthsWithMeetings.has(m));
 
         if (missingMonths.length !== 0) {
-           fulfillment = "Not Fulfilled";
+            fulfillment = "Not Fulfilled";
         }
 
         setEtcMeetingData({ data: temp, fulfillment: fulfillment });
@@ -2049,10 +2201,10 @@ const DPATAssessmentSheet = ({ props }) => {
                     />
                     <hr />
 
-                    <ClientServiceCharter year={year}
-                        ClientServiceCharter={clientServiceChaterData}
-
+                    <ClientServiceCharter
+                        year={year}
                         districtId={district?.value}
+                        publications={props.publications}
                     />
                     <hr />
 
@@ -2110,12 +2262,13 @@ const DPATAssessmentSheet = ({ props }) => {
                     <hr />
 
                     {/* Dedicated Hotline Number for the District Start */}
-                    {districtHotlineNumberData && <DistrictHotlineNumber
-                        data={districtHotlineNumberData}
+                    <DistrictHotlineNumber
                         year={year}
                         districtId={district?.value}
-                        columns={districtHotlineNumberColumn} />}
+                    />
                     <hr />
+
+                    
 
                     {/* Service to People Living with Disabilities (PWDs) */}
                     <PWDService
@@ -2124,13 +2277,22 @@ const DPATAssessmentSheet = ({ props }) => {
                         districtId={district?.value}
                     />
                     <hr />
+
+                     {/* Deepening Gender Meanstreaming Start */}
+                    <DeepeningGenderMainstreaming
+                        year={year}
+                        districtId={district?.value}
+                        data={deepGenderData}
+                    />
+                    <hr />
+                    
                     {/*  Nutrition Services */}
-                    <NutritionIntervention
+                    {nutritionServcieData && <NutritionIntervention
                         year={year}
                         district={district?.value}
                         districtId={district?.value}
                         data={nutritionServcieData}
-                    />
+                    />}
                     <hr />
 
                     {/*  Availability of Sanitation Service Providers */}
@@ -2138,6 +2300,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         year={year}
                         districtId={district?.value}
                         district={district?.value}
+                        document={sanitationServiceList}
                     />
                     <hr />
 
@@ -2214,6 +2377,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         year={year}
                         districtId={district?.value}
                         district={district?.value}
+                        data={aapDocuments}
                     />
                     <hr />
 
@@ -2228,6 +2392,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         year={year}
                         districtId={district?.value}
                         district={district?.value}
+                        data={pAndP}
                     />
                     <hr />
 
@@ -2235,13 +2400,14 @@ const DPATAssessmentSheet = ({ props }) => {
                         year={year}
                         districtId={district?.value}
                         district={district?.value}
+                        data={pAndP}
                     />
                     <hr />
 
                     <EnvironmentalAndSocialSafeGuard
                         year={year}
                         districtId={district?.value}
-                        guards={guards}
+                        data={pAndP}
                     />
                     <hr />
 
@@ -2259,12 +2425,12 @@ const DPATAssessmentSheet = ({ props }) => {
                     />
                     <hr />
 
-                    <PaymentPoints
+                    {/* <PaymentPoints
                         year={year}
                         districtId={district?.value}
                         district={district?.value}
                     />
-                    <hr />
+                    <hr /> */}
 
                     <RateableRevenu
                         year={year}
@@ -2309,7 +2475,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     />
                     <hr />
 
-                  <QualityAssuranceEditor
+                    <QualityAssuranceEditor
                         year={year}
                         districtId={district?.value}
                         district={district?.value}
@@ -2343,8 +2509,8 @@ const DPATAssessmentSheet = ({ props }) => {
                 </Button>
             </div>
 
-             
-                    <hr />
+
+            <hr />
 
         </Layout>
     );

@@ -1,7 +1,7 @@
 import { Layout, Table, Typography, Row } from "antd";
 import React, { useEffect, useState } from "react";
 import axios from "../api/axios";
-import { getAttributeValue } from "../utils/utils";
+import { getAttributeValue, getFileLinkIfExist } from "../utils/utils";
 import moment from "moment/moment";
 import Comment from "../components/Comments";
 
@@ -16,8 +16,8 @@ function PostTrainingEvaluation({ year, district }) {
     const postTrainingEvaluationColumns = [
         { title: "Training Topic", dataIndex: "topic", key: "topic" },
         { title: "Date of Training", dataIndex: "date", key: "date" },
-        { title: "Reports Submission", dataIndex: "report", key: "report" },
-        { title: "Date of Post-Training Impact Assessment", dataIndex: "assessmentDate", key: "assessmentDate" }
+        { title: "Date of Post-Training Impact Assessment", dataIndex: "assessmentDate", key: "assessmentDate" },
+        { title: "Report", dataIndex: "report", key: "report" }
     ];
 
     useEffect(() => {
@@ -39,15 +39,16 @@ function PostTrainingEvaluation({ year, district }) {
 
                             trainings.forEach(training => {
                                 const currentReport = reports.find(rep => rep.trackedEntity === training.trackedEntity);
+                                const reportLink = getFileLinkIfExist(reports, "hM6AUNKRbKB", training.trackedEntity);
                                 let assessmentDate = "";
-                                
+
 
                                 if (currentReport) {
 
                                     currentReport.dataValues.forEach(rep => {
                                         if (rep.dataElement === "sWGQt9b00Hz" && rep.value === "true") {
 
-                                        }else if (rep.dataElement === "Lh9kST26wbb") {
+                                        } else if (rep.dataElement === "Lh9kST26wbb") {
                                             assessmentDate = rep.value;
                                         }
                                     })
@@ -57,7 +58,19 @@ function PostTrainingEvaluation({ year, district }) {
                                     topic: getAttributeValue("Topic", training),
                                     date: getAttributeValue("End Date", training),
                                     report: moment(currentReport.createdAt).format("YYYY-DD-MM"),
-                                    assessmentDate
+                                    assessmentDate,
+                                    report: reportLink ? (
+                                        <a
+                                            className="px-2 text-primary fw-bold text-decoration-underline"
+                                            href={`https://dddp.gov.gh/api/events/files?eventUid=${reportLink}&dataElementUid=hM6AUNKRbKB`} target="_blank"
+                                            rel="noopener noreferrer"
+                                            title="Click here to see the uploaded document"
+                                        >
+                                            View Report
+                                        </a>
+                                    ) : (
+                                        "Not Uploaded"
+                                    ),
                                 };
 
                                 temp.push(tempDataSet);
@@ -65,12 +78,12 @@ function PostTrainingEvaluation({ year, district }) {
 
                             let score = temp.length > 0 ? 2 : 0;
 
-                            temp.forEach(el=>{
-                                if(el.assessmentDate == ""){
+                            temp.forEach(el => {
+                                if (el.assessmentDate == "" || el.report === "Not Uploaded") {
                                     score = 0;
                                 }
                             });
-                           
+
                             setData(temp);
                             setScorei(score)
 
@@ -107,9 +120,7 @@ function PostTrainingEvaluation({ year, district }) {
                         Maximum Score <strong>2</strong>
                     </Title>
 
-                    <Title level={5} style={{ marginTop: "20px" }}>
-                        PI 2.0-2.2 Actual Score: <strong>{scorei}</strong>
-                    </Title>
+                    
                     <Row align="middle">
                         <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
                             PI 2.0-2.2 Actual Score: <strong>{scorei}</strong>

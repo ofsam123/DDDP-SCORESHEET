@@ -15,10 +15,10 @@ function NutritionIntervention({
 
   useEffect(() => {
 
-    if (data?.vendors?.length > 0) {
+    if ((data?.vendors?.length > 0 && data?.publications?.length > 0)) {
       setScorei(2);
     }
-  }, [year, districtId]);
+  }, [year, districtId, data]);
 
   const aapColumn = [
     { title: "No. of Activities in the AAP of the Assembly", dataIndex: "aapTotal", key: "aapTotal" },
@@ -35,6 +35,14 @@ function NutritionIntervention({
     { title: "Phone", dataIndex: "phone", key: "phone" },
     { title: "TIN", dataIndex: "tin", key: "tin" },
     { title: "Vendor Nutrition Orientation", dataIndex: "orientation", key: "orientation" }
+  ];
+
+  const permitRequestColumn = [
+    { title: "Client Service Charter Availability (YES/NO)", dataIndex: "availability", key: "availability" },
+    { title: "Document Reference", dataIndex: "docReference", key: "docReference" },
+    { title: "Web site", dataIndex: "webSiteLink", key: "webSiteLink" },
+    { title: "Channel", dataIndex: "channel", key: "channel" },
+    { title: "Document", dataIndex: "document", key: "document" }
   ];
 
   return (
@@ -54,12 +62,12 @@ function NutritionIntervention({
               <li type="i">
                 If the Assembly has oriented food vendors and school feeding programme contractors on nutrition, score 2
               </li>
-              
+
             </ol>
           </Content>
 
           <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>2</strong></Title>
-          
+
           <Row align="middle">
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               SDI 4.0-4.6 Actual Score: <strong>{scorei}</strong>
@@ -78,6 +86,14 @@ function NutritionIntervention({
             columns={nutritionColumn}
             dataSource={data?.vendors || []}
             pagination={false} bordered />
+
+          <Title level={4} style={{ marginTop: "20px" }}>III- Evidence of Nutrition Service Publication</Title>
+          <Table
+            columns={permitRequestColumn}
+            dataSource={data?.publications || []}
+            pagination={false} bordered />
+
+          
 
           {renderCommentList()}
         </>

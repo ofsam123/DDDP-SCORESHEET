@@ -2,6 +2,7 @@ import { Layout, Table, Typography, Row } from "antd";
 import React, { useEffect, useState } from "react";
 import axios from "../api/axios";
 import Comment from "../components/Comments";
+import { documentsColumn } from "../utils/tableColums";
 
 function TransportationNetworkService({
   year,
@@ -31,6 +32,7 @@ function TransportationNetworkService({
     { title: "No. of Road Safety interventions / activities in the AAP implemented", dataIndex: "aapRoadsActivitiesImp", key: "aapRoadsActivitiesImp" },
     { title: "Availability of register on public transport facilities", dataIndex: "availability", key: "availability" }
   ];
+
 
   const transportatorsColumn = [
     { title: "Business", dataIndex: "business", key: "business" },
@@ -123,6 +125,12 @@ function TransportationNetworkService({
             columns={transportatorsColumn}
             dataSource={transportors?.transportors}
             pagination={false} bordered />}
+
+          <Title level={4} style={{ marginTop: "20px" }}>Evidence of Attached Documents</Title>
+          {<Table
+            columns={documentsColumn}
+            dataSource={transportors?.links}
+            pagination={false} bordered />}  
 
           <Title level={5} style={{ marginTop: "30px" }}>Conclusion</Title>
           <Content>

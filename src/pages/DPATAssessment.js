@@ -12,6 +12,7 @@ import SideBarWrapper from "../components/SideBarWrapper";
 import DPATScoreSheet from "../components/DPATScoreSheet";
 import DPATAssessmentSheet from "../components/DPATAssessmentSheet";
 import { Button } from "antd";
+import { filterTrackedEntitiesByCreatedAt } from "../utils/utils";
 
 const years = [
     { label: 2015, value: 2015 },
@@ -37,6 +38,7 @@ function DPATAssessment() {
     const [audit, setAudit] = useState([]);
     const [schools, setSchools] = useState([]);
     const [foodVendors, setFoodVendors] = useState([]);
+    const [pAndP, setPAndP] = useState([]);
     const [transportors, setTransportors] = useState([]);
     const [inspectorateUnit, setInspectorateUnit] = useState([]);
     const [igf, setIGF] = useState([]);
@@ -351,6 +353,29 @@ function DPATAssessment() {
             .catch(err => console.log(err))
     }
 
+    function getProjectAndProgramme(startDate, endDate, districtId) {
+        axios
+            .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=g3wMUKEMmH3&pageSize=1000`)
+            .then(result => {
+                if (result.data.instances.length > 0) {
+                   
+                    axios
+                        .get(`/tracker/events?program=g3wMUKEMmH3&orgUnit=${districtId}&startDate=${startDate}&endDate=${endDate}&pageSize=2000`)
+                        .then(resp => {
+                            const data = filterTrackedEntitiesByCreatedAt(result.data.instances, startDate, endDate);
+
+                            // console.log("Djiba p&p: ", data)
+
+                            setPAndP({ data, reports: resp.data.instances })
+                        })
+                        .catch(err => console.log(err))
+                }
+
+
+            })
+            .catch(err => console.log(err))
+    }
+
     function getTransportors(startDate, endDate, districtId) {
         axios
             .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=R5MX47LvztN`)
@@ -488,6 +513,7 @@ function DPATAssessment() {
                                         pullSubStructureEstablishment(startDate, endDate, val.value.id);
 
                                         getDistrictAssemblyDepartment(startDate, endDate, val.value.id);
+                                        getProjectAndProgramme(startDate, endDate, val.value.id);
 
                                         getMembersByDistrict(startDate, endDate, val.value.id);
                                         getSubStructuresActivity(startDate, endDate, val.value.id);
@@ -512,28 +538,28 @@ function DPATAssessment() {
                                 />
                             </div>}
 
-                            
+
                             <div className="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-12">
-                            <Button
-                                type="primary"
-                                onClick={() => {
-                                 window.location.reload();  
-                                }}
-                                style={{
-                                    backgroundColor: "#1890ff",
-                                    borderColor: "#1890ff",
-                                
-                                }}
-                            >
-                                <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>
-                                    Refresh
-                                </span>
-                            </Button>
-                        </div>
+                                <Button
+                                    type="primary"
+                                    onClick={() => {
+                                        window.location.reload();
+                                    }}
+                                    style={{
+                                        backgroundColor: "#1890ff",
+                                        borderColor: "#1890ff",
+
+                                    }}
+                                >
+                                    <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>
+                                        Refresh
+                                    </span>
+                                </Button>
+                            </div>
 
                         </div>
-                       
-                        {gaMeeting && selectedYear && selectedDistrict && (
+
+                        {gaMeeting && selectedYear && selectedDistrict && pAndP && (
                             <DPATAssessmentSheet
                                 key={`${selectedDistrict.value}-${selectedYear.value}`} // forces re-render on change
                                 props={{
@@ -559,7 +585,8 @@ function DPATAssessment() {
                                     inspectorateUnits: inspectorateUnit,
                                     ifg: igf,
                                     documents: documents,
-                                    publications: publications
+                                    publications: publications,
+                                    pAndP: pAndP
                                 }}
                             />
                         )}

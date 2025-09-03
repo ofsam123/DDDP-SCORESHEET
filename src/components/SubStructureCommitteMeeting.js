@@ -35,23 +35,6 @@ function SubStructureCommiteeMeeting({ data, year, columns, memberColumns, distr
           temp.push(dataState);
         });
 
-        // const tempMembers = temp.reduce((acc, { department, key, name, type }) => {
-        //   // look for existing department in array
-        //   let dept = acc.find(d => d.department === department);
-
-        //   if (!dept) {
-        //     // create new department entry
-        //     dept = { department, count: 0, staff: [] };
-        //     acc.push(dept);
-        //   }
-
-        //   // add member to this department
-        //   dept.staff.push({ key, name, type });
-        //   dept.count++;
-
-        //   return acc;
-        // }, []);
-
         const departmentCounts = Object.values(
           temp.reduce((acc, { department }) => {
             if (!acc[department]) {
@@ -65,8 +48,6 @@ function SubStructureCommiteeMeeting({ data, year, columns, memberColumns, distr
           ...dept
         }));
 
-
-        // console.log("Djiba statutory formatted members: ", temp);
 
         setDepartments(departmentCounts);
         setMembers(temp);

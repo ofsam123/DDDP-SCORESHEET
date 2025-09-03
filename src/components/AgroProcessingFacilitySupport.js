@@ -1,7 +1,7 @@
 import { Layout, Table, Typography, Row } from "antd";
 import React, { useEffect, useState } from "react";
 import axios from "../api/axios";
-import { formatDataGeneral, getAttributeValue } from "../utils/utils";
+import { formatDataGeneral, getAttributeValue, getFileLinkIfExist } from "../utils/utils";
 import Comment from "../components/Comments";
 
 function AgroProcessingFacilitySupport({
@@ -29,11 +29,13 @@ function AgroProcessingFacilitySupport({
                             const business = result.data.instances;
                             const reports = resp.data.instances;
                             const temp = [];
+                            let isEvidenceAttached = true;
                             const businessSupportedByDistrict = formatDataGeneral(business, "Has the district contributed to the creation of this business", "true") || [];
 
                             businessSupportedByDistrict.forEach(business => {
 
                                 const currentReport = reports.find(rep => rep.trackedEntity === business.trackedEntity);
+                                const reportLink = getFileLinkIfExist(reports, "E6mSis1p8NG", business.trackedEntity);
 
                                 if (currentReport) {
                                     let support = "NO";
@@ -48,14 +50,30 @@ function AgroProcessingFacilitySupport({
                                         } else if (rep.dataElement === "TsTYaz7dtAn") {
                                             evidence = rep.value;
                                         }
-                                    })
+                                    });
 
                                     const tempDataSet = {
                                         business: getAttributeValue("District investment Details", business),
                                         support,
                                         acquisition,
-                                        evidence
+                                        evidence,
+                                        report: reportLink ? (
+                                            <a
+                                                className="px-2 text-primary fw-bold text-decoration-underline"
+                                                href={`https://dddp.gov.gh/api/events/files?eventUid=${reportLink}&dataElementUid=E6mSis1p8NG`} target="_blank"
+                                                rel="noopener noreferrer"
+                                                title="Click here to see the uploaded minutes"
+                                            >
+                                                View Evidence
+                                            </a>
+                                        ) : (
+                                            "Not Uploaded"
+                                        ),
                                     };
+
+                                    if(!reportLink){
+                                        isEvidenceAttached = false;
+                                    }
 
                                     temp.push(tempDataSet);
                                 }
@@ -64,7 +82,7 @@ function AgroProcessingFacilitySupport({
 
                             setData(temp);
 
-                            if (temp.length > 0) {
+                            if (temp.length > 0 && isEvidenceAttached) {
                                 setScorei(1);
                             }
 
@@ -96,6 +114,11 @@ function AgroProcessingFacilitySupport({
             title: "Evidence Provided",
             dataIndex: "evidence",
             key: "evidence"
+        },
+        {
+            title: "Support Evidence",
+            dataIndex: "report",
+            key: "report"
         }
     ];
 
@@ -114,7 +137,7 @@ function AgroProcessingFacilitySupport({
                     <Content>
                         From the DCD, receive information and determine:<br /><br />
                         <ol>
-                            
+
                             <li type="i" className="p-1">
                                 If the District has facilitated the acquisition of machinery/equipment that has resulted in the
                                 processing of local agricultural products (e.g., fruit juice, meat, and cassava processing,
@@ -124,7 +147,7 @@ function AgroProcessingFacilitySupport({
                     </Content>
 
                     <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>1</strong></Title>
-                    
+
                     <Row align="middle">
                         <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
                             SDI 6.0-6.3 Actual Score: <strong>{scorei}</strong>

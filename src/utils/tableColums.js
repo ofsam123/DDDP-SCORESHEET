@@ -1,22 +1,22 @@
 export const gaMeetingColumns = [
-        { title: "Meeting", dataIndex: "meeting", key: "meeting" },
-        { title: "Invitation Date", dataIndex: "invitationDate", key: "invitationDate" },
-        { title: "Meeting Date", dataIndex: "meetingDate", key: "meetingDate" },
-        { title: "Interval (Days)", dataIndex: "interval", key: "interval" },
-        { title: "Invitation Letter Reference", dataIndex: "invitationLetterReference", key: "invitationLetterReference" },
-        { title: "Signatory of Invitation Letter", dataIndex: "signatoryInvitationLetter", key: "signatoryInvitationLetter" },
-        { title: "Signatories to minutes of meeting", dataIndex: "signatoriesMinutes", key: "signatoriesMinutes" },
-        { title: "Invitation", dataIndex: "invitation", key: "invitation" },
-        { title: "Minutes", dataIndex: "docs", key: "docs" }
-    ];
+    { title: "Meeting", dataIndex: "meeting", key: "meeting" },
+    { title: "Invitation Date", dataIndex: "invitationDate", key: "invitationDate" },
+    { title: "Meeting Date", dataIndex: "meetingDate", key: "meetingDate" },
+    { title: "Interval (Days)", dataIndex: "interval", key: "interval" },
+    { title: "Invitation Letter Reference", dataIndex: "invitationLetterReference", key: "invitationLetterReference" },
+    { title: "Signatory of Invitation Letter", dataIndex: "signatoryInvitationLetter", key: "signatoryInvitationLetter" },
+    { title: "Signatories to minutes of meeting", dataIndex: "signatoriesMinutes", key: "signatoriesMinutes" },
+    { title: "Invitation", dataIndex: "invitation", key: "invitation" },
+    { title: "Minutes", dataIndex: "docs", key: "docs" }
+];
 
 export const budgetApprovalColumns = [
-        { title: "Meeting (Statutory Organ)", dataIndex: "meeting", key: "meeting" },
-        { title: "Date(s) Held", dataIndex: "date", key: "date" },
-        { title: "Key Documents Discussed", dataIndex: "documents", key: "documents" },
-        { title: "Key Decisions Approval", dataIndex: "approvals", key: "approvals" },
-        { title: "Date (Decision/Approval)", dataIndex: "decisions", key: "decisions" },
-    ];
+    { title: "Meeting (Statutory Organ)", dataIndex: "meeting", key: "meeting" },
+    { title: "Date(s) Held", dataIndex: "date", key: "date" },
+    { title: "Key Documents Discussed", dataIndex: "documents", key: "documents" },
+    { title: "Key Decisions Approval", dataIndex: "approvals", key: "approvals" },
+    { title: "Date (Decision/Approval)", dataIndex: "decisions", key: "decisions" },
+];
 
 export const subStructureEstablishmentColumns = [
     { title: "Name of substructure", dataIndex: "name", key: "meeting" },
@@ -171,3 +171,9 @@ export const serviceDeliveryDecisionColumns = [
         render: (cell, row) => renderWithLineBreaks(cell)
     }
 ];
+
+export const documentsColumn = [
+    { title: "Documents", dataIndex: "title", key: "title" },
+    { title: "Documents Link", dataIndex: "link", key: "link" },
+];
+

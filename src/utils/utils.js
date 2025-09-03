@@ -279,6 +279,41 @@ export function formatSubStatutoryMeetings(data) {
   return Object.values(grouped);
 }
 
+export  const getMeetingRank = (index, type) => {
+        if (type === 'GA') {
+            switch (index) {
+                case 0: return "1st Ordinary Meeting";
+                case 1: return "2nd Ordinary Meeting";
+                case 2: return "3rd Ordinary Meeting";
+                default: return "Bonus Ordinary Meeting";
+            }
+        }
+        else if (type === 'EC') {
+            switch (index) {
+                case 0: return "1st";
+                case 1: return "2nd";
+                case 2: return "3rd";
+                default: return "Other";
+            }
+        } else if (type === 'Management Meetings') {
+            switch (index) {
+                case 0: return "1st";
+                case 1: return "2nd";
+                case 2: return "3rd";
+                case 3: return "4th";
+                default: return "Other";
+            }
+        } else if ((type === 'Entity Tender Committee (ETC)') || (type === 'Audit Committee')) {
+            switch (index) {
+                case 0: return "1st Quarter";
+                case 1: return "2nd Quarter";
+                case 2: return "3rd Quarter";
+                case 3: return "4th Quarter";
+                default: return "Other";
+            }
+        }
+    };
+
 
 
 

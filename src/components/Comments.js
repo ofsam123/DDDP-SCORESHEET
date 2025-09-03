@@ -6,6 +6,7 @@ import {
   EditOutlined,
   DeleteOutlined,
   BarsOutlined,
+  PlusCircleOutlined,
 } from "@ant-design/icons";
 import useAuth from "../hooks/useAuth";
 import instance from "../api/cmsapi";
@@ -357,11 +358,18 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
   const renderCommentInput = () => (
     <div style={{ display: "flex", flexDirection: "column", gap: "10px", maxWidth: "800px" }}>
       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        
         {!hideComment && !isReviewer && (
+          <>
+          <span>
+          ADD COMMENT
+          </span>
           <CommentOutlined
             style={{ cursor: "pointer", fontSize: "30px", flexShrink: 0, marginTop: "50px" }}
             onClick={handleCommentButtonClick}
           />
+          </>
+          
         )}
       </div>
       {!hideComment && showCommentInput && canShowCommentInput() && (
@@ -399,9 +407,9 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
         </div>
       )}
       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-        <h5 style={{ marginLeft: "-10px", fontSize: "" }}>GAPS</h5>
+        <h5 style={{ marginLeft: "-10px", fontSize: "" }}>ADD GAPS</h5>
         {!hideComment && !isReviewer && (
-          <BarsOutlined
+          <PlusCircleOutlined
             style={{ cursor: "pointer", fontSize: "25px", flexShrink: 0 }}
             onClick={handleGapsButtonClick}
           />

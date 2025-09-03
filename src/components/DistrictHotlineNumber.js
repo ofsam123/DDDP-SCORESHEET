@@ -17,7 +17,7 @@ useImperativeHandle(ref , ()=> ({
     })
   }))
 
-  
+
   useEffect(() => {
     getData();
   }, [year, districtId]);
@@ -96,10 +96,7 @@ useImperativeHandle(ref , ()=> ({
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
-          <div>
-            <Text strong>THEMATIC AREA: </Text>
-            <Text>SOCIAL PROTECTION, GENDER & NUTRITION (14)</Text>
-          </div>
+         
           <Title level={3}>SDI 4.0 - 4.3 Availability of Dedicated Hotline for the Vulnerable</Title>
           <Title level={4} style={{ marginTop: "10px" }}>Assessment Guide/ Requirement</Title>
           <Content>

@@ -6,7 +6,7 @@ import { formatDataGeneral, getAttributeValue, getFileLinkIfExist } from "../uti
 
 function ClientServiceCharter({
   year,
-  ClientServiceCharter,
+
   districtId,
   publications,
   hideComment
@@ -93,7 +93,7 @@ function ClientServiceCharter({
 
   return (
     <Comment
-      data={ClientServiceCharter}
+      data={clientServiceCharter}
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi2.0-2.5-${year}`}

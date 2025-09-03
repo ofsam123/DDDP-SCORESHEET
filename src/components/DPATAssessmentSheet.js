@@ -58,12 +58,13 @@ import DistrictLEDActivityPlan from "./DistrictLEDActivityPlan";
 import BusinessAndJobPromotion from "./BusinessAndJobPromotion";
 import AgroProcessingFacilitySupport from "./AgroProcessingFacilitySupport";
 import BusinessCommunityEngagement from "./BusinessCommunityEngagement";
-import { checkECANDGAMeetingFulfillment, formatSubStatutoryMeetings, formatSubStructureMeetings, getFileLinkIfExist } from "../utils/utils";
+import { checkECANDGAMeetingFulfillment, formatSubStatutoryMeetings, formatSubStructureMeetings, getFileLinkIfExist, getMeetingRank } from "../utils/utils";
 import AuditCommiteeMeeting from "./AuditCommiteeMetting";
 import AuditorGeneralGAMeeting from "./AuditorGeneralGAMeeting";
 import TownHollMeeting from "./TownHollMeeting";
 import { budgetApprovalColumns, districtHotlineNumberColumn, ECAMeetingColumns, ETCMeetingColumns, gaMeetingColumns, internalAuditColumns, internalAuditMeetingColumns, managementMeetingColumns, membersColumns, PRCCMeetingColumns, revenueSharingColumns, serviceDecisionColumns, serviceDeliveryDecisionColumns, spcMeetingColumns, subCommitteeCompositionColumns, subStatutoryMeetingsColumns, subStructureColumns, subStructureEstablishmentColumns, townHallMeetingColumns } from "../utils/tableColums";
 import DeepeningGenderMainstreaming from "./DeepeningGenderMainstreaming";
+import instance from "../api/cmsapi";
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
@@ -766,6 +767,7 @@ const DPATAssessmentSheet = ({ props }) => {
         const links = getAAPAndMTDPLinks();
 
         setTransportorsData({ data: transp, transportors: temp, links });
+    }
 
     const setNutritionServiceDataDisplay = () => {
         const aap = props.plans?.aap;
@@ -1824,41 +1826,7 @@ const DPATAssessmentSheet = ({ props }) => {
         setSubStatutoryData({ data: formattedData, fulfillment: fulfillment });
     };
 
-    const getMeetingRank = (index, type) => {
-        if (type === 'GA') {
-            switch (index) {
-                case 0: return "1st Ordinary Meeting";
-                case 1: return "2nd Ordinary Meeting";
-                case 2: return "3rd Ordinary Meeting";
-                default: return "Bonus Ordinary Meeting";
-            }
-        }
-        else if (type === 'EC') {
-            switch (index) {
-                case 0: return "1st";
-                case 1: return "2nd";
-                case 2: return "3rd";
-                default: return "Other";
-            }
-        } else if (type === 'Management Meetings') {
-            switch (index) {
-                case 0: return "1st";
-                case 1: return "2nd";
-                case 2: return "3rd";
-                case 3: return "4th";
-                default: return "Other";
-            }
-        } else if ((type === 'Entity Tender Committee (ETC)') || (type === 'Audit Committee')) {
-            switch (index) {
-                case 0: return "1st Quarter";
-                case 1: return "2nd Quarter";
-                case 2: return "3rd Quarter";
-                case 3: return "4th Quarter";
-                default: return "Other";
-            }
-        }
-    };
-
+   
     const getDecisionRank = (index) => {
         switch (index) {
             case 0: return "1st";
@@ -2706,7 +2674,7 @@ const handleCloseReviewSubmit = async () => {
                     <EnvironmentalAndSocialSafeGuard
                         year={year}
                         districtId={district?.value}
-                        data={pAndP}
+                        guards={guards}
                     />
                     <hr />
 

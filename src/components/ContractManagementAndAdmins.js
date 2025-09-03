@@ -3,51 +3,7 @@ import React, { useEffect, useState } from "react";
 import { formatDataGeneral, getAttributeValue, getFirstFileLinkIfExist } from "../utils/utils";
 import Comment from "../components/Comments";
 
-const indicators = [
-    {
-        indicator: 'No. of Projects awarded on contract',
-        id: 'qZSULWbMR2R',
-        value: 0
-    },
-    {
-        indicator: 'No. of Projects completed',
-        id: 'Hf5p1kc2JeR',
-        value: 0
-    },
-    {
-        indicator: 'No. of Projects completed and in use',
-        id: 'yQEv4PwpL3t',
-        value: 0
-    },
-    {
-        indicator: 'No. of completed projects with Completion Reports',
-        id: 's6gfdfWo5Nq',
-        value: 0
-    }
-];
 
-const contingencyIndicators = [
-    {
-        indicator: 'No. of projects with contingency provision',
-        id: 'emhjn8smNMD',
-        value: 0
-    },
-    {
-        indicator: 'No. of projects with contingency used',
-        id: 'hsnSY36kN8H',
-        value: 0
-    },
-    {
-        indicator: 'No. of projects with contingency used with written justification',
-        id: 'faTS25Cv9RI',
-        value: 0
-    },
-    {
-        indicator: 'No. of projects with contingency duly approved and used',
-        id: 'E24X37zoXD8',
-        value: 0
-    }
-];
 
 function ContractManagementAndAdmins({ year, district, data, hideComment}) {
 

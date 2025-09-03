@@ -2,6 +2,7 @@ import { Layout, Table, Typography, Row } from "antd";
 import React, { useEffect, useState } from "react";
 import axios from "../api/axios";
 import Comment from "../components/Comments";
+import { getFileLinkIfExist } from "../utils/utils";
 
 function ShelterTransactionalHousing({
   year,
@@ -38,6 +39,7 @@ function ShelterTransactionalHousing({
                 let reportAvailability = "NO";
 
                 const currentReport = reports.find(rep => rep.trackedEntity === res.trackedEntity);
+                const reportLink = getFileLinkIfExist(reports, "hM6AUNKRbKB", res.trackedEntity);
 
                 if (currentReport) {
                   currentReport.dataValues.forEach(r => {
@@ -57,7 +59,19 @@ function ShelterTransactionalHousing({
                   address: getAttributeValue("Address Location", res),
                   staffNo: totalStaff,
                   reportAvailability: reportAvailability,
-                  trackedEntity: res.trackedEntity
+                  trackedEntity: res.trackedEntity,
+                  report: reportLink ? (
+                    <a
+                      className="px-2 text-primary fw-bold text-decoration-underline"
+                      href={`https://dddp.gov.gh/api/events/files?eventUid=${reportLink}&dataElementUid=hM6AUNKRbKB`} target="_blank"
+                      rel="noopener noreferrer"
+                      title="Click here to see the uploaded document"
+                    >
+                      View Report
+                    </a>
+                  ) : (
+                    "Not Uploaded"
+                  ),
                 };
 
                 temp.push(tempDataSet);
@@ -75,7 +89,8 @@ function ShelterTransactionalHousing({
     { title: "Name of RH/C(s) in Municipality", dataIndex: "name", key: "name" },
     { title: "Location/Digital Address of RH/C", dataIndex: "address", key: "address" },
     { title: "No. of staff at each RH/C", dataIndex: "staffNo", key: "staffNo" },
-    { title: "Report on operations available", dataIndex: "reportAvailability", key: "reportAvailability" }
+    { title: "Report on operations available", dataIndex: "reportAvailability", key: "reportAvailability" },
+    { title: "Reports", dataIndex: "report", key: "report" }
   ];
 
   return (

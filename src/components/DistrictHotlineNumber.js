@@ -1,32 +1,94 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { Layout, Typography, Table, Row } from "antd";
 import Comment from "../components/Comments";
+import axios from "../api/axios";
+import { getAttributeValue, getFileLinkIfExist } from "../utils/utils";
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
 
-const DistrictHotlineNumber = forwardRef(({ data, year, columns, districtId, hideComment }, ref) => {
+const DistrictHotlineNumber = forwardRef(({ year, districtId, hideComment }, ref) => {
   const [dataSet, setDataSet] = useState([]);
+  const [dataTable, setDataTable] = useState([]);
   const [score, setScore] = useState(0);
-
-  useImperativeHandle(ref , ()=> ({
+useImperativeHandle(ref , ()=> ({
     getData: () => ({
       score, dataSet
     })
   }))
 
+  
   useEffect(() => {
-    initiateData();
-  }, [year, data]);
+    getData();
+  }, [year, districtId]);
 
-  const initiateData = () => {
-    setDataSet(data?.data);
-    setScore(data?.score);
-  };
+  const districtHotlineNumberColumn = [
+    { title: "Dedicated hotline exist (Yes/No)", dataIndex: "hotline", key: "hotline" },
+    { title: "Hotline Number", dataIndex: "number", key: "number" },
+    { title: "Reports", dataIndex: "report", key: "report" }
+];
+
+
+   function getData() {
+      axios
+        .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=ng9HEemUaIM`)
+        .then(result => {
+  
+          if (result.data.instances.length > 0) {
+            axios
+              .get(`/tracker/events?program=ng9HEemUaIM&orgUnit=${districtId}`)
+              .then(resp => {
+  
+                const data = result.data.instances;
+                const reports = resp.data.instances;
+                const temp = [];
+                let tempScore = 1;
+  
+                data.forEach((document, index) => {
+  
+                  const reportLink = getFileLinkIfExist(reports, "hM6AUNKRbKB", document.trackedEntity);
+  
+                  const tempDataSet = {
+                    hotline: reportLink ? "YES" : "NO",
+                    number: getAttributeValue("Hotline Number", document),
+                    report: reportLink ? (
+                      <a
+                        className="px-2 text-primary fw-bold text-decoration-underline"
+                        href={`https://dddp.gov.gh/api/events/files?eventUid=${reportLink}&dataElementUid=hM6AUNKRbKB`} target="_blank"
+                        rel="noopener noreferrer"
+                        title="Click here to see the uploaded document"
+                      >
+                        View Report
+                      </a>
+                    ) : (
+                      "Not Uploaded"
+                    ),
+                  };
+  
+                  temp.push(tempDataSet);
+  
+                  if(!reportLink){
+                    tempScore = 0;
+                  }
+                });
+  
+                if(temp.length === 0){
+                  tempScore = 0;
+                }
+  
+                setScore(tempScore);
+  
+                setDataTable(temp);
+              })
+              .catch(err => console.log(err));
+          }
+        })
+        .catch(err => console.log("decisions error ", err));
+    }
 
   return (
     <Comment
-      data={dataSet}
+      data={dataTable}
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi4.0-4.3-${year}`}
@@ -58,11 +120,11 @@ const DistrictHotlineNumber = forwardRef(({ data, year, columns, districtId, hid
           </Row>
           <Title level={4} style={{ marginTop: "20px" }}>Evidence of Dedicated Functional Hotline for Vulnerable Groups</Title>
           {/* {data && <Table columns={columns} dataSource={data?.data} pagination={false} bordered />} */}
-          {dataSet &&
+          
             <Table
-              columns={columns}
-              dataSource={dataSet}
-              pagination={false} bordered />}
+              columns={districtHotlineNumberColumn}
+              dataSource={dataTable}
+              pagination={false} bordered />
           
           <Title level={5} style={{ marginTop: "20px" }}>Conclusion</Title>
           <Content>

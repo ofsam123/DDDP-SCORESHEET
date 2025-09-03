@@ -1,104 +1,126 @@
 import { Layout, Table, Typography, Row } from "antd";
 import React, { useEffect, useState } from "react";
-import { formatDataGeneral } from "../utils/utils";
-import axios from "../api/axios";
+import { formatDataGeneral, getAttributeValue, getFirstFileLinkIfExist } from "../utils/utils";
 import Comment from "../components/Comments";
 
-function FollowUpDeduction({ year, district,hideComment }) {
+function FollowUpDeduction({ year, district, data, hideComment }) {
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
-    const [data, setData] = useState([]);
+    const [projectList, setProjectList] = useState([]);
     const [scorei, setScorei] = useState(0);
     const [scoreii, setScoreii] = useState(0);
     const [scoreiii, setScoreiii] = useState(0);
 
-    const followUpColumns = [
-        { title: "No. of Contracts/Services with source deduction payments", dataIndex: "paymentDeduction", key: "paymentDeduction" },
-        { title: "Copies of all contracts with source deductions available (Yes/No)", dataIndex: "contractDeduction", key: "contractDeduction" },
-        { title: "No. of contracts implemented with reports available", dataIndex: "contractImplemented", key: "contractImplemented" },
-        { title: "Any adverse findings on central government deductions (Yes/No)", dataIndex: "governmentDeduction", key: "governmentDeduction" }
-    ];
-
     useEffect(() => {
         getData();
-    }, [year, district])
+    }, [year, district, data]);
+
+
+    const projectColumns = [
+        { title: "No", dataIndex: "no", key: "no" },
+        { title: "Projects", dataIndex: "project", key: "project" },
+        { title: "Is there any Adverse Findings on Central Government Deductions?", dataIndex: "status", key: "status" },
+        { title: "TOR", dataIndex: "tor", key: "tor" },
+        { title: "Report", dataIndex: "report", key: "report" },
+        { title: "Contract", dataIndex: "contract", key: "contract" }
+    ];
 
     function getData() {
-        axios
-            .get(`/tracker/trackedEntities?orgUnit=${district}&program=g3wMUKEMmH3&startDate=${year}-01-01&endDate=${year}-12-31`)
-            .then(result => {
-                if (result.data.instances.length > 0) {
 
-                    axios
-                        .get(`/tracker/events?program=g3wMUKEMmH3&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
-                        .then(resp => {
-                            const projectsAndProgrammes = result.data.instances;
-                            const reports = resp.data.instances;
-                            const temp = [];
-                            const reportTemp = [];
+        const projects = formatDataGeneral(data?.data, "Project & Programme Type", "Project") || [];
+        const reports = data?.reports;
 
-                            const projects = formatDataGeneral(projectsAndProgrammes, "Project & Programme Type", "Project") || [];
-                            let paymentDeduction = 0;
-                            let contractDeduction = 0;
-                            let contractImplemented = 0;
-                            let governmentDeduction = "NO";
+        const temp = [];
 
-                            projects.forEach((project, idx) => {
+        projects.forEach((item, index) => {
 
-                                const currentReport = reports.find(rep => rep.trackedEntity === project.trackedEntity);
+            const reportLink = getFirstFileLinkIfExist(reports, "i1171kI9OBD", item.trackedEntity, "TrdgYOz3XUL");
+            const torLink = getFirstFileLinkIfExist(reports, "X3uzSfGg9Wo", item.trackedEntity, "TrdgYOz3XUL");
+            const contractLink = getFirstFileLinkIfExist(reports, "TKC9UdFpqB6", item.trackedEntity, "rRWa5ghYO35");
+            const status = getFirstFileLinkIfExist(reports, "YDgvR2PKQTT", item.trackedEntity, "rRWa5ghYO35", "status");
 
-                                if (currentReport) {
+            const tempDataSet = {
+                no: index + 1,
+                project: getAttributeValue("Name", item),
+                status: status ? status === "true" ? "YES" : "NO" : "Not Provided",
+                tor: torLink ? (
+                    <a
+                        className="px-2 text-primary fw-bold text-decoration-underline"
+                        href={`https://dddp.gov.gh/api/events/files?eventUid=${torLink}&dataElementUid=X3uzSfGg9Wo`} target="_blank"
+                        rel="noopener noreferrer"
+                        title="Click here to see the uploaded document"
+                    >
+                        View TOR
+                    </a>
+                ) : (
+                    "Not Uploaded"
+                ),
+                report: reportLink ? (
+                    <a
+                        className="px-2 text-primary fw-bold text-decoration-underline"
+                        href={`https://dddp.gov.gh/api/events/files?eventUid=${reportLink}&dataElementUid=i1171kI9OBD`} target="_blank"
+                        rel="noopener noreferrer"
+                        title="Click here to see the uploaded document"
+                    >
+                        View Report
+                    </a>
+                ) : (
+                    "Not Uploaded"
+                ),
+                contract: contractLink ? (
+                    <a
+                        className="px-2 text-primary fw-bold text-decoration-underline"
+                        href={`https://dddp.gov.gh/api/events/files?eventUid=${contractLink}&dataElementUid=TKC9UdFpqB6`} target="_blank"
+                        rel="noopener noreferrer"
+                        title="Click here to see the uploaded document"
+                    >
+                        View Contract
+                    </a>
+                ) : (
+                    "Not Uploaded"
+                ),
+            };
 
-                                    currentReport.dataValues.forEach(rep => {
+            temp.push(tempDataSet);
 
-                                        if (rep.dataElement === "TKC9UdFpqB6") {
-                                            paymentDeduction++;
-                                        } else if (rep.dataElement === "l9FIYnhUH7z" && rep.value === "true") {
-                                            contractDeduction++;
-                                        } else if (rep.dataElement === "tE3QKB203nh" && rep.value === "Completed") {
-                                            contractImplemented++;
-                                        } else if (rep.dataElement === "YDgvR2PKQTT" && rep.value === "true") {
-                                            governmentDeduction = "YES";
-                                        }
-                                    });
 
-                                }
+        });
 
-                            });
+        let score1 = 1;
+        let score2 = 1;
+        let score3 = 1;
 
-                            temp.push({
-                                paymentDeduction,
-                                contractDeduction,
-                                contractImplemented,
-                                governmentDeduction
-                            })
+        for (let project of temp) {
+            if (project.contract === "Not Uplaoded") {
+                score1 = 0;
+            }
 
-                            setData(temp);
+            if (project.report === "Not Uplaoded") {
+                score2 = 0;
+            }
 
-                            if (paymentDeduction > 0) {
-                                setScorei(1);
-                            }
+             if (project.status === "YES") {
+                score3 = 0;
+            }
+        }
 
-                            if (contractDeduction > 0) {
-                                setScoreii(1);
-                            }
+        if (temp.length === 0) {
+            score1 = 0;
+            score2 = 0;
+            score2 = 0;
+        }
 
-                            if (contractImplemented > 0 && governmentDeduction !== "YES") {
-                                setScoreiii(1);
-                            }
+        setProjectList(temp)
+        setScorei(score1);
+        setScoreii(score2);
+        setScoreiii(score3);
 
-                        }) 
-                        .catch(err => console.log(err))
-                }
-
-            })
-            .catch(err => console.log(err))
     }
 
     return (
         <Comment
-            data={data}
+            data={projectList}
             year={year}
             districtId={district}
             tableCommentedId={`pi1.0-1.4-${year}`}
@@ -145,8 +167,8 @@ function FollowUpDeduction({ year, district,hideComment }) {
                     </Title>
 
                     <Table
-                        columns={followUpColumns}
-                        dataSource={data}
+                        columns={projectColumns}
+                        dataSource={projectList}
                         pagination={false}
                         bordered
                     />

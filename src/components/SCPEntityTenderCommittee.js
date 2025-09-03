@@ -27,12 +27,12 @@ function SPCEntityTenderCommittee({ data, year, columns, districtId,hideComment 
                  and have duly recorded and signed Minutes of Meeting
               </li>
               <li type="i">
-                If the {year} Annual Procurement Plan is linked to the 2024 Composite Budget 
+                If the {year +1} Annual Procurement Plan is linked to the {year +1} Composite Budget 
                 and Annual Action Plan (AAP) and approved by 30th November {year - 1} by the Entity 
                 Tender Committee, as evidenced by minutes of meeting and follows the PPA guidelines; and.
               </li>
               <li type="i">
-                If all the 2024 quarterly updated Procurement Plans were duly prepared by the Procurement Unit 
+                If all the {year +1} quarterly updated Procurement Plans were duly prepared by the Procurement Unit 
                 and were approved at the quarterly meetings of the Entity Tender Committee.
               </li>
             </ol>

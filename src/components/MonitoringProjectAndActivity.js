@@ -1,7 +1,7 @@
 import { Layout, Table, Typography, Row } from "antd";
 import React, { useEffect, useState } from "react";
 import axios from "../api/axios";
-import { calculatePercentage, formatDataGeneral, getAttributeValue } from "../utils/utils";
+import { calculatePercentage, formatDataGeneral, getAttributeValue, getFileLinkIfExist } from "../utils/utils";
 import Comment from "../components/Comments";
 
 function MonitoringProjectAndActivity({ year, district,hideComment }) {
@@ -29,6 +29,11 @@ function MonitoringProjectAndActivity({ year, district,hideComment }) {
             title: "% Budgetary Allocation released for planned M&E activities",
             dataIndex: "percentage",
             key: "percentage"
+        },
+        {
+            title: "Report",
+            dataIndex: "report",
+            key: "report"
         }
     ];
 
@@ -75,9 +80,25 @@ function MonitoringProjectAndActivity({ year, district,hideComment }) {
                             let allocatedAmount = 0;
 
                             const monitoringBudgets = formatDataGeneral(budgets, "Budget Category", "M&E Activities") || [];
+                            let report = "Not Uploaded";
+
 
                             monitoringBudgets.forEach((budget) => {
                                 const currentReport = reports.find(rep => rep.trackedEntity === budget.trackedEntity);
+                                const reportLink = getFileLinkIfExist(reports, "hM6AUNKRbKB", budget.trackedEntity);
+
+                                if(reportLink){
+                                    report = (
+                                    <a
+                                        className="px-2 text-primary fw-bold text-decoration-underline"
+                                        href={`https://dddp.gov.gh/api/events/files?eventUid=${reportLink}&dataElementUid=hM6AUNKRbKB`} target="_blank"
+                                        rel="noopener noreferrer"
+                                        title="Click here to see the uploaded document"
+                                    >
+                                        View Report
+                                    </a>
+                                )
+                                }
                                 allocatedAmount = getAttributeValue("Allocated Budget", budget);
                                 if (currentReport) {
                                     currentReport.dataValues.forEach(rep => {
@@ -96,7 +117,8 @@ function MonitoringProjectAndActivity({ year, district,hideComment }) {
                             const temp = {
                                 aapApproved: allocatedAmount,
                                 aapImplented: amountReleased,
-                                percentage
+                                percentage,
+                                report
                             }
 
                             setData([temp]);
@@ -175,8 +197,8 @@ function MonitoringProjectAndActivity({ year, district,hideComment }) {
                         From DCD, receive monitoring reports on all district programmes and projects:<br /><br />
                         <ol>
                             <li type="i">
-                               If a clear budgetary provision has been made for M&E and 100% of Budgetary allocation released for the 
-                               implementation of planned monitoring activities, score 1, else score 0
+                                If a clear budgetary provision has been made for M&E and 100% of Budgetary allocation released for the
+                                implementation of planned monitoring activities, score 1, else score 0
                             </li>
                             <li type="i">
                                 If there is evidence of multi-stakeholder participation in monitoring activities, score 2
@@ -222,8 +244,8 @@ function MonitoringProjectAndActivity({ year, district,hideComment }) {
                     <Content>
                         {percentage} % of Budgetary allocation released for the implementation of
                         planned monitoring activities. {monitoring.length > 0 ? <>
-                        And Quarterly reports exist for participation by multi stakeholders in
-                        Monitoring and Evaluation activities in {year}
+                            And Quarterly reports exist for participation by multi stakeholders in
+                            Monitoring and Evaluation activities in {year}
                         </> : <span>There is no Quarterly report available</span>}
                     </Content>
 

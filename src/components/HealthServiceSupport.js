@@ -1,7 +1,7 @@
 import { Layout, Table, Typography, Row } from "antd";
 import React, { useEffect, useState } from "react";
 import axios from "../api/axios";
-import { calculatePercentage, formatDataGeneral, getAttributeValue } from "../utils/utils";
+import { calculatePercentage, formatDataGeneral, getAttributeValue, getFileLinkIfExist } from "../utils/utils";
 import Comment from "../components/Comments";
 
 function HealthServiceSupport({ year, districtId,hideComment }) {
@@ -42,6 +42,11 @@ function HealthServiceSupport({ year, districtId,hideComment }) {
       dataIndex: 'support',
       key: 'support',
     },
+    {
+      title: 'Support Evidence',
+      dataIndex: 'report',
+      key: 'report',
+    }
   ];
 
   const healthSupportColumns = [
@@ -78,6 +83,7 @@ function HealthServiceSupport({ year, districtId,hideComment }) {
 
               publicHospitals.forEach((facility, idx) => {
                 const currentReport = reports.find(rep => rep.trackedEntity === facility.trackedEntity);
+                const reportLink = getFileLinkIfExist(reports, "E6mSis1p8NG", facility.trackedEntity);
                 let support = "";
 
                 if (currentReport) {
@@ -93,7 +99,19 @@ function HealthServiceSupport({ year, districtId,hideComment }) {
                   facility: getAttributeValue("Name", facility),
                   location: getAttributeValue("Location", facility),
                   date: getAttributeValue("Construction End Date", facility),
-                  support
+                  support,
+                  report: reportLink ? (
+                    <a
+                        className="px-2 text-primary fw-bold text-decoration-underline"
+                        href={`https://dddp.gov.gh/api/events/files?eventUid=${reportLink}&dataElementUid=E6mSis1p8NG`} target="_blank"
+                        rel="noopener noreferrer"
+                        title="Click here to see the uploaded document"
+                    >
+                        View Evidence
+                    </a>
+                ) : (
+                    "Not Uploaded"
+                )
                 };
 
                 temp.push(tempDataSet);

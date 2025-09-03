@@ -1,22 +1,123 @@
 import { Layout, Table, Typography, Row } from "antd";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Comment from "../components/Comments";
+import { formatDataGeneral, getAttributeValue, getFirstFileLinkIfExist } from "../utils/utils";
 
-function EnvironmentalAndSocialSafeGuard({ year, guards,districtId,hideComment  }) {
+function EnvironmentalAndSocialSafeGuard({ year, data, districtId, hideComment  }) {
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
 
-    const safeGuardsColumns = [
-        { title: "No. of ongoing projects (completed)", dataIndex: "noGoingProject", key: "noGoingProject" },
-        { title: "No. of ongoing projects with screening forms on file", dataIndex: "projectFile", key: "projectFile" },
-        { title: "No. of ongoing projects with EPA permits", dataIndex: "epaPermit", key: "epaPermit" },
-        { title: "Report on adherence to occupational health and safety standards available (Yes/No)", dataIndex: "healthSafety", key: "healthSafety" }
+    const [projectList, setProjectList] = useState([]);
+    const [scorei, setScorei] = useState(0);
+    const [scoreii, setScoreii] = useState(0);
+    const [scoreiii, setScoreiii] = useState(0);
+
+    useEffect(() => {
+        getData();
+    }, [year, districtId, data]);
+
+
+    const projectColumns = [
+        { title: "No", dataIndex: "no", key: "no" },
+        { title: "Projects", dataIndex: "project", key: "project" },
+        { title: "Screeming Froms", dataIndex: "screeming", key: "screeming" },
+        { title: "EPA Permits", dataIndex: "permit", key: "permit" },
+         { title: "Report", dataIndex: "report", key: "report" },
     ];
 
+    function getData() {
+
+        const projects = formatDataGeneral(data?.data, "Project & Programme Type", "Project") || [];
+        const reports = data?.reports;
+
+        const temp = [];
+
+        projects.forEach((item, index) => {
+
+            const reportLink = getFirstFileLinkIfExist(reports, "hM6AUNKRbKB", item.trackedEntity, "b5nVLLk5sPU");
+            const screemingLink = getFirstFileLinkIfExist(reports, "wBJOB5CE6Du", item.trackedEntity, "b5nVLLk5sPU");
+            const epaLink = getFirstFileLinkIfExist(reports, "POdgz2rYh8H", item.trackedEntity, "b5nVLLk5sPU");
+
+            const tempDataSet = {
+                no: index + 1,
+                project: getAttributeValue("Name", item),
+                screeming: screemingLink ? (
+                    <a
+                        className="px-2 text-primary fw-bold text-decoration-underline"
+                        href={`https://dddp.gov.gh/api/events/files?eventUid=${screemingLink}&dataElementUid=wBJOB5CE6Du`} target="_blank"
+                        rel="noopener noreferrer"
+                        title="Click here to see the uploaded document"
+                    >
+                        View Screeming Form
+                    </a>
+                ) : (
+                    "Not Uploaded"
+                ),
+                report: reportLink ? (
+                    <a
+                        className="px-2 text-primary fw-bold text-decoration-underline"
+                        href={`https://dddp.gov.gh/api/events/files?eventUid=${reportLink}&dataElementUid=hM6AUNKRbKB`} target="_blank"
+                        rel="noopener noreferrer"
+                        title="Click here to see the uploaded document"
+                    >
+                        View Report
+                    </a>
+                ) : (
+                    "Not Uploaded"
+                ),
+                permit: epaLink ? (
+                    <a
+                        className="px-2 text-primary fw-bold text-decoration-underline"
+                        href={`https://dddp.gov.gh/api/events/files?eventUid=${epaLink}&dataElementUid=POdgz2rYh8H`} target="_blank"
+                        rel="noopener noreferrer"
+                        title="Click here to see the uploaded document"
+                    >
+                        View Permit
+                    </a>
+                ) : (
+                    "Not Uploaded"
+                ),
+            };
+
+            temp.push(tempDataSet);
+
+
+        });
+
+        let score1 = 1;
+        let score2 = 1;
+        let score3 = 1;
+
+        for (let project of temp) {
+            if (project.screeming === "Not Uploaded") {
+                score1 = 0;
+            }
+
+            if (project.report === "Not Uploaded") {
+                score3 = 0;
+            }
+
+            if (project.permit === "Not Uploaded") {
+                score2 = 0;
+            }
+        }
+
+        if (temp.length === 0) {
+            score1 = 0;
+            score2 = 0;
+            score2 = 0;
+        }
+
+        setProjectList(temp)
+        setScorei(score1);
+        setScoreii(score2);
+        setScoreiii(score3);
+
+    }
     return (
         <Comment
-            data={guards}
+            data={projectList}
             year={year}
             districtId={districtId}
             tableCommentedId={`pi1.0-1.5-${year}`}
@@ -46,14 +147,14 @@ function EnvironmentalAndSocialSafeGuard({ year, guards,districtId,hideComment  
                     </Title>
 
                     <Title level={5} style={{ marginTop: "20px" }}>
-                        PI 1.0-1.5i Actual Score: <strong>Score</strong>
+                        PI 1.0-1.5i Actual Score: <strong>{scorei}</strong>
                     </Title>
                     <Title level={5} style={{ marginTop: "20px" }}>
-                        PI 1.0-1.5ii Actual Score: <strong>Score</strong>
+                        PI 1.0-1.5ii Actual Score: <strong>{scoreii}</strong>
                     </Title>
                     <Row align="middle">
                         <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
-                            PI 1.0-1.5iii Actual Score: <strong>Score</strong>
+                            PI 1.0-1.5iii Actual Score: <strong>{scoreiii}</strong>
                         </Title>
                         {!hideComment && renderCommentInput()}
                     </Row>
@@ -62,8 +163,8 @@ function EnvironmentalAndSocialSafeGuard({ year, guards,districtId,hideComment  
                         Evidence of environmental & social safeguards on projects
                     </Title>
                     <Table
-                        columns={safeGuardsColumns}
-                        dataSource={guards || []}
+                        columns={projectColumns}
+                        dataSource={projectList}
                         pagination={false}
                         bordered
                     />

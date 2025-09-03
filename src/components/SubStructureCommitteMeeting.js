@@ -103,10 +103,10 @@ const SubStructureCommiteeMeeting = forwardRef (({ data, year, columns, memberCo
           ...dept,
         }));
 
+
         setDepartments(departmentCounts);
         setMembers(temp);
-        console.log("Prop departments:", departmentCounts);
-        console.log("Prop members:", temp);
+     
       })
       .catch((err) => {
         // console.error("Failed to fetch members:", err);

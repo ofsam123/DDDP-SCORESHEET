@@ -1,7 +1,7 @@
 import { Layout, Table, Typography, Row } from "antd";
 import React, { useEffect, useState } from "react";
 import axios from "../api/axios";
-import { calculatePercentage, formatDataGeneral, getAttributeValue } from "../utils/utils";
+import { calculatePercentage, formatDataGeneral, getAttributeValue, getFirstFileLinkIfExist } from "../utils/utils";
 import Comment from "../components/Comments";
 
 function EducationServiceSupport({ year, districtId, hideComment }) {
@@ -10,7 +10,7 @@ function EducationServiceSupport({ year, districtId, hideComment }) {
 
   const [schools, setSchools] = useState([]);
   const [educationSupport, setEducationSupport] = useState([]);
-  const [score, setScore] = useState(1);
+  const [score, setScore] = useState(0);
   const [percentage, setPercentage] = useState(0);
 
   useEffect(() => {
@@ -42,6 +42,11 @@ function EducationServiceSupport({ year, districtId, hideComment }) {
       title: 'Support(s)',
       dataIndex: 'support',
       key: 'support',
+    },
+    {
+      title: 'Support Evidence',
+      dataIndex: 'report',
+      key: 'report',
     },
   ];
 
@@ -78,7 +83,9 @@ function EducationServiceSupport({ year, districtId, hideComment }) {
               const publicSchools = formatDataGeneral(schools, "Type", "Public") || [];
 
               publicSchools.forEach((school, idx) => {
-                const currentReport = reports.find(rep => rep.trackedEntity === school.trackedEntity);
+                const currentReport = reports.find(rep => (rep.trackedEntity === school.trackedEntity)
+                 && rep.programStage === "z6mWkIfypaw");
+                 const reportLink = getFirstFileLinkIfExist(reports, "E6mSis1p8NG", school.trackedEntity, "z6mWkIfypaw");
                 let support = "";
 
                 if (currentReport) {
@@ -94,7 +101,19 @@ function EducationServiceSupport({ year, districtId, hideComment }) {
                   school: getAttributeValue("Name of School", school),
                   community: getAttributeValue("Community", school),
                   date: getAttributeValue("Established Date", school),
-                  support
+                  support,
+                  report: reportLink ? (
+                    <a
+                        className="px-2 text-primary fw-bold text-decoration-underline"
+                        href={`https://dddp.gov.gh/api/events/files?eventUid=${reportLink}&dataElementUid=E6mSis1p8NG`} target="_blank"
+                        rel="noopener noreferrer"
+                        title="Click here to see the uploaded document"
+                    >
+                        View Evidence
+                    </a>
+                ) : (
+                    "Not Uploaded"
+                ),
                 };
 
                 temp.push(tempDataSet);
@@ -111,6 +130,10 @@ function EducationServiceSupport({ year, districtId, hideComment }) {
               });
 
               const percentage = calculatePercentage(schoolSupported, temp.length);
+
+              if(percentage >= 15){
+                setScore(1)
+              }
 
               setPercentage(percentage.toFixed(2));
 

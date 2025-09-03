@@ -2,6 +2,7 @@ import { Layout, Table, Typography, Row } from "antd";
 import React, { useEffect, useState } from "react";
 import axios from "../api/axios";
 import Comment from "../components/Comments";
+import { documentsColumn } from "../utils/tableColums";
 
 function SocialProtectionServices({
   year,
@@ -42,6 +43,7 @@ function SocialProtectionServices({
   const publicationColumn = [
     { title: "List of Social Services Available (Yes/No)", dataIndex: "list", key: "list" },
     { title: "List of Social Services published on Notice Boards or Website (Yes/No)", dataIndex: "publication", key: "publication" },
+    { title: "Web site Link", dataIndex: "website", key: "website" },
     { title: "Summary", dataIndex: "summary", key: "summary" }
   ];
 
@@ -85,7 +87,6 @@ function SocialProtectionServices({
             </Title>
             {!hideComment && renderCommentInput()}
           </Row>
-          {/* {JSON.stringify(transportations)} */}
           <Title level={4} style={{ marginTop: "20px" }}>I- Evidence of Dissemination of Social Services to Citizens</Title>
           <Table
             columns={publicationColumn}
@@ -97,6 +98,12 @@ function SocialProtectionServices({
             columns={aapColumn}
             dataSource={services?.aap}
             pagination={false} bordered />}
+
+           <Title level={4} style={{ marginTop: "20px" }}>III- Evidence of Attached Documents</Title>
+                    {<Table
+                      columns={documentsColumn}
+                      dataSource={services?.links}
+                      pagination={false} bordered />}  
 
           <Title level={5} style={{ marginTop: "30px" }}>Conclusion</Title>
           <Content>

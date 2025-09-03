@@ -1,7 +1,7 @@
 import { Layout, Table, Typography, Row } from "antd";
 import React, { useEffect, useState } from "react";
 import axios from "../api/axios";
-import { formatDataGeneral, getAttributeValue } from "../utils/utils";
+import { formatDataGeneral, getAttributeValue, getFileLinkIfExist } from "../utils/utils";
 import Comment from "../components/Comments";
 
 function BusinessCommunityEngagement({
@@ -36,6 +36,7 @@ function BusinessCommunityEngagement({
                             const forums = formatDataGeneral(events, "Meeting Type", "Business Forum") || [];
 
                             forums.forEach((forum, idx) => {
+
                                 const tempDataSet = {
                                     date: getAttributeValue("Date", forum),
                                     venue: getAttributeValue("Meeting Venue", forum),
@@ -47,6 +48,8 @@ function BusinessCommunityEngagement({
                                 temp.push(tempDataSet);
 
                                 const currentReport = reports.find(rep => rep.trackedEntity === forum.trackedEntity);
+                                const reportLink = getFileLinkIfExist(reports, "f5aRBjgbRsa", forum.trackedEntity);
+
                                 let actions = "";
 
                                 if (currentReport) {
@@ -61,7 +64,19 @@ function BusinessCommunityEngagement({
                                     const reportDataSet = {
                                         no: idx + 1,
                                         decision: getAttributeValue("Decision", forum),
-                                        actions
+                                        actions,
+                                        evidence: reportLink ? (
+                                            <a
+                                                className="px-2 text-primary fw-bold text-decoration-underline"
+                                                href={`https://dddp.gov.gh/api/events/files?eventUid=${reportLink}&dataElementUid=f5aRBjgbRsa`} target="_blank"
+                                                rel="noopener noreferrer"
+                                                title="Click here to see the uploaded document"
+                                            >
+                                                View Evidence
+                                            </a>
+                                        ) : (
+                                            "Not Uploaded"
+                                        ),
                                     };
                                     reportTemp.push(reportDataSet);
                                 }
@@ -131,6 +146,11 @@ function BusinessCommunityEngagement({
             dataIndex: "actions",
             key: "actions"
         },
+        {
+            title: "Documents",
+            dataIndex: "evidence",
+            key: "evidence"
+        }
 
     ];
 

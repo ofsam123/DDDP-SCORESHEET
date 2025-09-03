@@ -6,7 +6,9 @@ import Comment from "../components/Comments";
 function SanitationServiceProviders({
   year,
   districtId,
+  document,
   hideComment
+
 }) {
   const [scorei, setScorei] = useState(0);
   const [scoreii, setScoreii] = useState(0);
@@ -95,6 +97,11 @@ function SanitationServiceProviders({
     { title: "Availability of Monitoring Reports (Yes/No)", dataIndex: "reportAvailability", key: "reportAvailability" }
   ];
 
+  const serviceProvidersListColumn = [
+    { title: "Title", dataIndex: "title", key: "title" },
+    { title: "Sanitation Service Providers", dataIndex: "link", key: "link" },
+  ];
+
   return (
     <Comment
       data={data}
@@ -142,6 +149,12 @@ function SanitationServiceProviders({
           <Table
             columns={serviceProvidersReportColumn}
             dataSource={monitoring}
+            pagination={false} bordered />
+
+          <Title level={4} style={{ marginTop: "20px" }}>III- Sanitation Service Providers Document</Title>
+          <Table
+            columns={serviceProvidersListColumn}
+            dataSource={document}
             pagination={false} bordered />
 
           {renderCommentList()}

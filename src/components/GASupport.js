@@ -8,7 +8,8 @@ function GASupport({
   subStructureActivityData,
   cededRevenueUtilisationScore,
   substructureExpendature,
-  districtId
+  districtId,
+  hideComment
 }) {
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
@@ -81,6 +82,7 @@ function GASupport({
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi1.0-1.3-${year}`}
+       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -112,7 +114,7 @@ function GASupport({
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               SDI 1.0-1.3ii Actual Score: <strong>{score}</strong>
             </Title>
-            {renderCommentInput()}
+            {!hideComment && renderCommentInput()}
           </Row>
 
           <p level={5} style={{ marginTop: "10px" }}>

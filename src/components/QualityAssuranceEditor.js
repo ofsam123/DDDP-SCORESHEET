@@ -6,7 +6,7 @@ import "react-quill/dist/quill.snow.css";
 import useAuth from "../hooks/useAuth";
 import instance from "../api/cmsapi";
 
-function QualityAssuranceEditor({ year, districtId }) {
+function QualityAssuranceEditor({ year, districtId, }) {
   const { user } = useAuth();
   const [editorContent, setEditorContent] = useState("");
   const [loading, setLoading] = useState(false);

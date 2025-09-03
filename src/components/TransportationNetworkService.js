@@ -7,7 +7,8 @@ import { documentsColumn } from "../utils/tableColums";
 function TransportationNetworkService({
   year,
   transportors,
-  districtId
+  districtId,
+  hideComment
 }) {
   const [transportations, setTransportations] = useState([]);
   const [scorei, setScorei] = useState(0);
@@ -79,6 +80,7 @@ function TransportationNetworkService({
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi2.0-2.6-${year}`}
+       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -111,7 +113,7 @@ function TransportationNetworkService({
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               SDI 2.0-2.6iii Actual Score: <strong>{scoreiii}</strong>
             </Title>
-            {renderCommentInput()}
+            {!hideComment && renderCommentInput()}
           </Row>
           {/* {JSON.stringify(transportations)} */}
           <Title level={4} style={{ marginTop: "20px" }}>Evidence of road safety activities in Plans of the Assembly</Title>

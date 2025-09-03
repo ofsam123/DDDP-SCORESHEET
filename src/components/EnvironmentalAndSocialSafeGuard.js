@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import Comment from "../components/Comments";
 import { formatDataGeneral, getAttributeValue, getFirstFileLinkIfExist } from "../utils/utils";
 
-function EnvironmentalAndSocialSafeGuard({ year, data, districtId }) {
+function EnvironmentalAndSocialSafeGuard({ year, data, districtId, hideComment  }) {
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
@@ -119,8 +119,9 @@ function EnvironmentalAndSocialSafeGuard({ year, data, districtId }) {
         <Comment
             data={projectList}
             year={year}
-            districtId={null}
+            districtId={districtId}
             tableCommentedId={`pi1.0-1.5-${year}`}
+             hideComment={hideComment}
         >
             {({ renderCommentInput, renderCommentList }) => (
                 <>
@@ -155,7 +156,7 @@ function EnvironmentalAndSocialSafeGuard({ year, data, districtId }) {
                         <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
                             PI 1.0-1.5iii Actual Score: <strong>{scoreiii}</strong>
                         </Title>
-                        {renderCommentInput()}
+                        {!hideComment && renderCommentInput()}
                     </Row>
 
                     <Title level={5} style={{ marginTop: "20px" }}>

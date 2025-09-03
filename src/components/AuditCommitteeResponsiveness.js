@@ -2,7 +2,7 @@ import { Layout, Table, Typography, Row } from "antd";
 import React from "react";
 import Comment from "../components/Comments";
 
-function AuditCommitteeResponsiveness({ year, audits, actions, managementLetters }) {
+function AuditCommitteeResponsiveness({ year, audits, actions, managementLetters,hideComment}) {
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
@@ -35,6 +35,7 @@ function AuditCommitteeResponsiveness({ year, audits, actions, managementLetters
             year={year}
             districtId={null}
             tableCommentedId={`pi4.0-4.1-${year}`}
+             hideComment={hideComment}
         >
             {({ renderCommentInput, renderCommentList }) => (
                 <>
@@ -59,7 +60,7 @@ function AuditCommitteeResponsiveness({ year, audits, actions, managementLetters
                         <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
                             PI 4.0-4.1 Actual Score: <strong>{audits?.score || 0}</strong>
                         </Title>
-                        {renderCommentInput()}
+                        {!hideComment && renderCommentInput()}
                     </Row>
 
                     <Title level={5} style={{ marginTop: "20px" }}>

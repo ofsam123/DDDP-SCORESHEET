@@ -1,17 +1,115 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Layout, Typography, Table, Row } from "antd";
 import Comment from "../components/Comments";
+import instance from "../api/cmsapi";
 
 const { Header, Content } = Layout;
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
-function ExecutiveCommitteeMember({ data, year, columns, districtId }) {
+function ExecutiveCommitteeMember({ data, year, columns, districtId, hideComment }) {
+  const [endpointData, setEndpointData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Fetch data from the endpoint
+  useEffect(() => {
+    const fetchEndpointData = async () => {
+      if (!districtId || !year) {
+        setError("District ID or year is missing");
+        return;
+      }
+      setLoading(true);
+      try {
+        const response = await instance.get(`comments/tables/${districtId}/${year}/DPAT`);
+        // Log the full response for debugging
+        console.log("Endpoint response:", response.data);
+        // Find the comment with tableCommented = "assessment_start_DAPT"
+        const relevantComment = response.data.find(
+          (comment) => comment.tableCommented === "assessment_start_DAPT"
+        );
+        if (!relevantComment) {
+          setError("No comment found with tableCommented = 'assessment_start_DAPT'");
+          setEndpointData(null);
+        } else if (!relevantComment.dddpData?.tables?.ecaMeetingData) {
+          setError("No ecaMeetingData found in assessment_start_DAPT comment");
+          setEndpointData(null);
+        } else {
+          setEndpointData(relevantComment.dddpData.tables.ecaMeetingData);
+          setError(null);
+          console.log("Fetched ecaMeetingData:", relevantComment.dddpData.tables.ecaMeetingData);
+        }
+      } catch (error) {
+        console.error("Failed to fetch endpoint data:", {
+          message: error.message,
+          response: error.response?.data,
+          status: error.response?.status,
+        });
+        setError(`Failed to fetch Executive Committee meeting data: ${error.message}`);
+        setEndpointData(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchEndpointData();
+  }, [districtId, year]);
+
+  // Transform data to handle React element objects (e.g., docs, attendance, recommendation)
+  const transformData = (dataArray) => {
+    if (!dataArray) return [];
+    return dataArray.map((item) => ({
+      ...item,
+      docs: item.docs && typeof item.docs === "object" && item.docs?.props?.href ? (
+        <a
+          href={item.docs.props.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="px-2 text-primary fw-bold text-decoration-underline"
+        >
+          {item.docs.props.children || "View Document"}
+        </a>
+      ) : typeof item.docs === "string" ? (
+        item.docs
+      ) : (
+        "N/A"
+      ),
+      attendance: item.attendance && typeof item.attendance === "object" && item.attendance?.props?.href ? (
+        <a
+          href={item.attendance.props.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="px-2 text-primary fw-bold text-decoration-underline"
+        >
+          {item.attendance.props.children || "View Document"}
+        </a>
+      ) : typeof item.attendance === "string" ? (
+        item.attendance
+      ) : (
+        "N/A"
+      ),
+      recommendation: item.recommendation && typeof item.recommendation === "object" && item.recommendation?.props?.href ? (
+        <a
+          href={item.recommendation.props.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="px-2 text-primary fw-bold text-decoration-underline"
+        >
+          {item.recommendation.props.children || "View Document"}
+        </a>
+      ) : typeof item.recommendation === "string" ? (
+        item.recommendation
+      ) : (
+        "N/A"
+      ),
+    }));
+  };
+
   return (
     <Comment
       data={data}
       year={year}
       districtId={districtId}
       tableCommentedId={`c2.0-2.1-${year}`}
+      hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -21,23 +119,55 @@ function ExecutiveCommitteeMember({ data, year, columns, districtId }) {
             From the DCD, obtain information on the membership of the Executive Committee for <strong>{year}</strong>.<br /><br />
             <ol>
               <li type="i">
-                If at least a meeting of the EC/MA was held prior to each of the three mandated General Assembly meetings in 2024,
-                 and minutes duly recorded and signed by both DCD and DCE
+                If at least a meeting of the EC/MA was held prior to each of the three mandated General Assembly meetings in {year},
+                and minutes duly recorded and signed by both DCD and DCE
               </li>
-              
             </ol>
             <i>Then the CI is fulfilled</i>
           </Content>
 
           <Row align="middle">
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
-              CI Result: <strong style={{ color: data?.fulfillment === "Fulfilled" ? "green" : "red" }}>{data?.fulfillment}</strong>
+              CI Result: <strong style={{ color: (endpointData?.fulfillment || data?.fulfillment) === "Fulfilled" ? "green" : "red" }}>
+                {endpointData?.fulfillment || data?.fulfillment || "N/A"}
+              </strong>
             </Title>
-            {renderCommentInput()}
+            {!hideComment && renderCommentInput()}
           </Row>
 
           <Title level={4} style={{ marginTop: "20px" }}>Evidence of Executive Committee Meeting</Title>
-          {data && <Table columns={columns} dataSource={data?.data} pagination={false} bordered />}
+          {loading && <Text>Loading data from endpoint...</Text>}
+          {error && <Text type="danger">{error}</Text>}
+
+          {endpointData?.data && endpointData.data.length > 0 ? (
+            <>
+              <Title level={5} style={{ marginTop: "20px" }}>
+                {/* Data from Endpoint (ecaMeetingData) */}
+              </Title>
+              <Table
+                columns={columns}
+                dataSource={transformData(endpointData.data)}
+                pagination={false}
+                bordered
+                rowKey={(record, index) => `${record.key || index}`}
+              />
+            </>
+          ) : data?.data && data.data.length > 0 ? (
+            <>
+              <Title level={5} style={{ marginTop: "20px" }}>
+                {/* Data from Prop Data */}
+              </Title>
+              <Table
+                columns={columns}
+                dataSource={transformData(data.data)}
+                pagination={false}
+                bordered
+                rowKey={(record, index) => `${record.key || index}`}
+              />
+            </>
+          ) : (
+            <Text>No Executive Committee meeting data available</Text>
+          )}
 
           {renderCommentList()}
         </>

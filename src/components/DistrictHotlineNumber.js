@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { Layout, Typography, Table, Row } from "antd";
 import Comment from "../components/Comments";
 import axios from "../api/axios";
@@ -7,11 +7,16 @@ import { getAttributeValue, getFileLinkIfExist } from "../utils/utils";
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
 
-function DistrictHotlineNumber({ year,districtId }) {
+const DistrictHotlineNumber = forwardRef(({ year, districtId, hideComment }, ref) => {
   const [dataSet, setDataSet] = useState([]);
   const [dataTable, setDataTable] = useState([]);
   const [score, setScore] = useState(0);
-  
+useImperativeHandle(ref , ()=> ({
+    getData: () => ({
+      score, dataSet
+    })
+  }))
+
 
   useEffect(() => {
     getData();
@@ -87,13 +92,11 @@ function DistrictHotlineNumber({ year,districtId }) {
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi4.0-4.3-${year}`}
+       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
-          <div>
-            <Text strong>THEMATIC AREA: </Text>
-            <Text>SOCIAL PROTECTION, GENDER & NUTRITION (14)</Text>
-          </div>
+         
           <Title level={3}>SDI 4.0 - 4.3 Availability of Dedicated Hotline for the Vulnerable</Title>
           <Title level={4} style={{ marginTop: "10px" }}>Assessment Guide/ Requirement</Title>
           <Content>
@@ -110,7 +113,7 @@ function DistrictHotlineNumber({ year,districtId }) {
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               SDI 4.0-4.3 Actual Score: <strong>{score}</strong>
             </Title>
-            {renderCommentInput()}
+            {!hideComment && renderCommentInput()}
           </Row>
           <Title level={4} style={{ marginTop: "20px" }}>Evidence of Dedicated Functional Hotline for Vulnerable Groups</Title>
           {/* {data && <Table columns={columns} dataSource={data?.data} pagination={false} bordered />} */}
@@ -131,6 +134,8 @@ function DistrictHotlineNumber({ year,districtId }) {
       )}
     </Comment>
   );
+
 }
+);
 
 export default DistrictHotlineNumber;

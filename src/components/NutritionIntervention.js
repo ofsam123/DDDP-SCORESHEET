@@ -6,7 +6,8 @@ import Comment from "../components/Comments";
 function NutritionIntervention({
   year,
   districtId,
-  data
+  data,
+  hideComment
 }) {
   const [scorei, setScorei] = useState(0);
 
@@ -51,6 +52,7 @@ function NutritionIntervention({
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi4.0-4.6-${year}`}
+      hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -72,7 +74,7 @@ function NutritionIntervention({
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               SDI 4.0-4.6 Actual Score: <strong>{scorei}</strong>
             </Title>
-            {renderCommentInput()}
+            {!hideComment && renderCommentInput()}
           </Row>
 
           <Title level={4} style={{ marginTop: "20px" }}>I- Evidence of Nutrition-Oriented Activities in the Assembly</Title>

@@ -3,53 +3,9 @@ import React, { useEffect, useState } from "react";
 import { formatDataGeneral, getAttributeValue, getFirstFileLinkIfExist } from "../utils/utils";
 import Comment from "../components/Comments";
 
-const indicators = [
-    {
-        indicator: 'No. of Projects awarded on contract',
-        id: 'qZSULWbMR2R',
-        value: 0
-    },
-    {
-        indicator: 'No. of Projects completed',
-        id: 'Hf5p1kc2JeR',
-        value: 0
-    },
-    {
-        indicator: 'No. of Projects completed and in use',
-        id: 'yQEv4PwpL3t',
-        value: 0
-    },
-    {
-        indicator: 'No. of completed projects with Completion Reports',
-        id: 's6gfdfWo5Nq',
-        value: 0
-    }
-];
 
-const contingencyIndicators = [
-    {
-        indicator: 'No. of projects with contingency provision',
-        id: 'emhjn8smNMD',
-        value: 0
-    },
-    {
-        indicator: 'No. of projects with contingency used',
-        id: 'hsnSY36kN8H',
-        value: 0
-    },
-    {
-        indicator: 'No. of projects with contingency used with written justification',
-        id: 'faTS25Cv9RI',
-        value: 0
-    },
-    {
-        indicator: 'No. of projects with contingency duly approved and used',
-        id: 'E24X37zoXD8',
-        value: 0
-    }
-];
 
-function ContractManagementAndAdmins({ year, district, data }) {
+function ContractManagementAndAdmins({ year, district, data, hideComment}) {
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
@@ -156,10 +112,11 @@ function ContractManagementAndAdmins({ year, district, data }) {
             year={year}
             districtId={district}
             tableCommentedId={`pi1.0-1.3-${year}`}
+             hideComment={hideComment}
         >
             {({ renderCommentInput, renderCommentList }) => (
                 <>
-                    <Title level={3} style={{ marginTop: "20px" }}>PI 1.0 - 1.3 Records on Contract Management and Administration</Title>
+                    <Title level={3} style={{ marginTop: "20px" }}>PI 1.0 - 1.3  Management and Administration</Title>
                     <Title level={4} style={{ marginTop: "20px" }}>Assessment Guide/ Requirement</Title>
                     <Content>
                         From the DCD, obtain information on contract management and administration:<br /><br />
@@ -181,7 +138,7 @@ function ContractManagementAndAdmins({ year, district, data }) {
                         <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
                             PI 1.0-1.3 Actual Score: <strong>{scoreI}</strong>
                         </Title>
-                        {renderCommentInput()}
+                        {!hideComment && renderCommentInput()}
                     </Row>
 
                     <Title level={5} style={{ marginTop: "20px" }}>

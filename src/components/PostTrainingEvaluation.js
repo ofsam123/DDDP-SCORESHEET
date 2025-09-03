@@ -5,7 +5,7 @@ import { getAttributeValue, getFileLinkIfExist } from "../utils/utils";
 import moment from "moment/moment";
 import Comment from "../components/Comments";
 
-function PostTrainingEvaluation({ year, district }) {
+function PostTrainingEvaluation({ year, district,hideComment }) {
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
@@ -101,6 +101,7 @@ function PostTrainingEvaluation({ year, district }) {
             year={year}
             districtId={district}
             tableCommentedId={`pi2.0-2.2-${year}`}
+             hideComment={hideComment}
         >
             {({ renderCommentInput, renderCommentList }) => (
                 <>
@@ -125,7 +126,7 @@ function PostTrainingEvaluation({ year, district }) {
                         <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
                             PI 2.0-2.2 Actual Score: <strong>{scorei}</strong>
                         </Title>
-                        {renderCommentInput()}
+                        {!hideComment && renderCommentInput()}
                     </Row>
 
                     <Title level={5} style={{ marginTop: "20px" }}>

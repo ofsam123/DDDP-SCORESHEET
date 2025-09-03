@@ -21,7 +21,7 @@ const indicators = [
     }
 ];
 
-function PaymentPoints({ year, district }) {
+function PaymentPoints({ year, district,hideComment }) {
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
@@ -94,6 +94,7 @@ function PaymentPoints({ year, district }) {
             year={year}
             districtId={district}
             tableCommentedId={`pi3.0-3.1-${year}`}
+             hideComment={hideComment}
         >
             {({ renderCommentInput, renderCommentList }) => (
                 <>
@@ -120,7 +121,7 @@ function PaymentPoints({ year, district }) {
                         <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
                             PI 3.0-3.1 Actual Score: <strong>{score}</strong>
                         </Title>
-                        {renderCommentInput()}
+                        {!hideComment && renderCommentInput()}
                     </Row>
 
                     <Title level={5} style={{ marginTop: "20px" }}>

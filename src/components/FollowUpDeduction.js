@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { formatDataGeneral, getAttributeValue, getFirstFileLinkIfExist } from "../utils/utils";
 import Comment from "../components/Comments";
 
-function FollowUpDeduction({ year, district, data }) {
+function FollowUpDeduction({ year, district, data, hideComment }) {
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
@@ -124,6 +124,7 @@ function FollowUpDeduction({ year, district, data }) {
             year={year}
             districtId={district}
             tableCommentedId={`pi1.0-1.4-${year}`}
+             hideComment={hideComment}
         >
             {({ renderCommentInput, renderCommentList }) => (
                 <>
@@ -158,7 +159,7 @@ function FollowUpDeduction({ year, district, data }) {
                         <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
                             PI 1.0-1.4iii Actual Score: <strong>{scoreiii}</strong>
                         </Title>
-                        {renderCommentInput()}
+                        {!hideComment && renderCommentInput()}
                     </Row>
 
                     <Title level={4} style={{ marginTop: "20px" }}>

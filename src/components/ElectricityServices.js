@@ -6,7 +6,7 @@ import Comment from "../components/Comments";
 
 function ElectricityServices({
   year,
-  districtId
+  districtId, hideComment
 }) {
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
@@ -94,6 +94,7 @@ function ElectricityServices({
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi2.0-2.2-${year}`}
+       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -118,7 +119,7 @@ function ElectricityServices({
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               SDI 1.0-2.2ii Actual Score: <strong>{scoreii}</strong>
             </Title>
-            {renderCommentInput()}
+            {!hideComment && renderCommentInput()}
           </Row>
 
           <Title level={5} style={{ marginTop: "30px" }}>I. Evidence of existing collaboration/facilitation electricity service providers</Title>

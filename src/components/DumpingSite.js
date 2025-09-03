@@ -5,7 +5,7 @@ import Comment from "../components/Comments";
 
 function DumpingSite({
   year,
-  districtId
+  districtId, hideComment
 }) {
   const [scorei, setScorei] = useState(0);
   const [scoreii, setScoreii] = useState(0);
@@ -72,11 +72,11 @@ function DumpingSite({
               setSiteList(tempSiteList);
 
               if (tempSites.length > 0) {
-                setScorei(2);
+                setScorei(1);
               }
 
               if (tempSiteList.length > 0) {
-                setScoreii(3);
+                setScoreii(2);
               }
             })
             .catch(err => console.log(err))
@@ -106,6 +106,7 @@ function DumpingSite({
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi5.0-5.2-${year}`}
+       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -117,16 +118,15 @@ function DumpingSite({
             <ol>
               <li type="i">
                 If there is availability of a well-maintained dumping site or
-                Engineered Landfills according to Environmental Health Standards, score 2.
+                Engineered Landfills according to Environmental Health Standards, score 1.
               </li>
               <li type="i" className="py-1">
-                If the District has a functional final disposal site or co-ownership for
-                liquid waste with documentary evidence, score 3
+                If the District has a functional final disposal site or co-ownership for Solid/liquid waste with documentary evidence, score 2. 
               </li>
             </ol>
           </Content>
 
-          <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>5</strong></Title>
+          <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>3</strong></Title>
           <Title level={5} style={{ marginTop: "20px" }}>
             SDI 5.0-5.2i Actual Score: <strong>{scorei}</strong>
           </Title>
@@ -134,7 +134,7 @@ function DumpingSite({
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               SDI 5.0-5.2ii Actual Score: <strong>{scoreii}</strong>
             </Title>
-            {renderCommentInput()}
+            {!hideComment && renderCommentInput()}
           </Row>
 
           <Title level={4} style={{ marginTop: "20px" }}>I- Evidence of Disposal of Refuse</Title>

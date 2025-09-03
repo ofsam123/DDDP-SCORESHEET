@@ -4,7 +4,14 @@ import Comment from "../components/Comments";
 import axios from "../api/axios";
 import { formatDataGeneral, getAttributeValue, getFileLinkIfExist } from "../utils/utils";
 
-function ClientServiceCharter({ year, districtId, publications }) {
+function ClientServiceCharter({
+  year,
+
+  districtId,
+  publications,
+  hideComment
+
+}) {
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
   const [clientServiceCharter, setClientServiceCharter] = useState([]);
@@ -86,10 +93,11 @@ function ClientServiceCharter({ year, districtId, publications }) {
 
   return (
     <Comment
-      data={ClientServiceCharter}
+      data={clientServiceCharter}
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi2.0-2.5-${year}`}
+       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -108,7 +116,7 @@ function ClientServiceCharter({ year, districtId, publications }) {
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               SDI 2.0-2.5 Actual Score: <strong>{score}</strong>
             </Title>
-            {renderCommentInput()}
+            {!hideComment && renderCommentInput()}
           </Row>
 
           <Title level={4} style={{ marginTop: "30px" }}>Findings / Observations & Conclusion</Title>

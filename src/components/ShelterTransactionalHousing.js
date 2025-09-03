@@ -6,7 +6,7 @@ import { getFileLinkIfExist } from "../utils/utils";
 
 function ShelterTransactionalHousing({
   year,
-  districtId
+  districtId,hideComment
 }) {
   const [score, setScore] = useState(0);
   const [services, setServices] = useState([]);
@@ -99,6 +99,7 @@ function ShelterTransactionalHousing({
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi4.0-4.2-${year}`}
+       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -119,7 +120,7 @@ function ShelterTransactionalHousing({
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               SDI 4.0-4.2 Actual Score: <strong>{score}</strong>
             </Title>
-            {renderCommentInput()}
+            {!hideComment && renderCommentInput()}
           </Row>
 
           {/* {JSON.stringify(transportations)} */}

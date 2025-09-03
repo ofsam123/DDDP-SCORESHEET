@@ -5,7 +5,8 @@ import Comment from "../components/Comments";
 function SanitationServices({
   year,
   sanitationProvidersData,
-  districtId
+  districtId,
+hideComment
 }) {
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
@@ -34,6 +35,7 @@ function SanitationServices({
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi2.0-2.3-${year}`}
+       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -62,7 +64,7 @@ function SanitationServices({
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               SDI 1.0-2.2i Actual Score: <strong>{score}</strong>
             </Title>
-            {renderCommentInput()}
+            {!hideComment && renderCommentInput()}
           </Row>
 
           <Title level={5} style={{ marginTop: "30px" }}>I. Evidence of IGF expenditure on sanitation improvement services</Title>

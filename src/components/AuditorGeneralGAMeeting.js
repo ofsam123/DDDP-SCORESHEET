@@ -13,7 +13,7 @@ const columns = [
   { "title": "Minutes Link", "dataIndex": "minutes", "key": "minutes" }
 ]
 
-function AuditorGeneralGAMeeting({ gaMeetings, ecaMeeting, year, districtId }) {
+function AuditorGeneralGAMeeting({ gaMeetings, ecaMeeting, year, districtId,hideComment }) {
 
   const [fulfillment, seFulfillment] = useState("Not Fulfilled");
   const [data, setData] = useState(null);
@@ -65,6 +65,7 @@ function AuditorGeneralGAMeeting({ gaMeetings, ecaMeeting, year, districtId }) {
       year={year}
       districtId={districtId}
       tableCommentedId={`c1.0-1.1-${year}`}
+       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -88,7 +89,7 @@ function AuditorGeneralGAMeeting({ gaMeetings, ecaMeeting, year, districtId }) {
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               CI Result: <strong style={{ color: fulfillment === "Fulfilled" ? "green" : "red" }}>{fulfillment}</strong>
             </Title>
-            {renderCommentInput()}
+            {!hideComment&& renderCommentInput()}
           </Row>
 
           <Title level={4} style={{ marginTop: "20px" }}>

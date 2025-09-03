@@ -6,7 +6,7 @@ import { each } from "chart.js/helpers";
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
 
-function TownHollMeeting({ meetings,year, columns, districtId }) {
+function TownHollMeeting({ meetings,year, columns, districtId,hideComment }) {
 
   return (
     <Comment
@@ -14,6 +14,7 @@ function TownHollMeeting({ meetings,year, columns, districtId }) {
       year={year}
       districtId={districtId}
       tableCommentedId={`c1.0-1.1-${year}`}
+       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -43,7 +44,7 @@ function TownHollMeeting({ meetings,year, columns, districtId }) {
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               CI Result: <strong style={{ color: meetings?.fulfillment === "Fulfilled" ? "green" : "red" }}>{meetings?.fulfillment}</strong>
             </Title>
-            {renderCommentInput()}
+            {!hideComment && renderCommentInput()}
           </Row>
 
           <Title level={4} style={{ marginTop: "20px" }}>

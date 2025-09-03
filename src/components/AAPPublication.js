@@ -7,7 +7,7 @@ import { formatDataGeneral, getAttributeValue, getFileLinkIfExist } from "../uti
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
 
-function AAPPublication({ year, districtId }) {
+function AAPPublication({ year, districtId,hideComment }) {
   const [publication, setPublication] = useState(null);
 
   const publicationColumn = [
@@ -89,6 +89,7 @@ function AAPPublication({ year, districtId }) {
       year={year}
       districtId={districtId}
       tableCommentedId={`c4.0-4.2-${year}`}
+       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -114,7 +115,7 @@ function AAPPublication({ year, districtId }) {
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               CI Result: <strong style={{ color: publication?.fulfillment === "Fulfilled" ? "green" : "red" }}>{publication?.fulfillment}</strong>
             </Title>
-            {renderCommentInput()}
+            {!hideComment && renderCommentInput()}
           </Row>
 
           {/* {JSON.stringify(clientService)} */}

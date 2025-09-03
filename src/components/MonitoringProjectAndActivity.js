@@ -4,7 +4,7 @@ import axios from "../api/axios";
 import { calculatePercentage, formatDataGeneral, getAttributeValue, getFileLinkIfExist } from "../utils/utils";
 import Comment from "../components/Comments";
 
-function MonitoringProjectAndActivity({ year, district }) {
+function MonitoringProjectAndActivity({ year, district,hideComment }) {
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
@@ -187,6 +187,7 @@ function MonitoringProjectAndActivity({ year, district }) {
             year={year}
             districtId={district}
             tableCommentedId={`pi1.0-1.2-${year}`}
+             hideComment={hideComment}
         >
             {({ renderCommentInput, renderCommentList }) => (
                 <>
@@ -216,7 +217,7 @@ function MonitoringProjectAndActivity({ year, district }) {
                         <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
                             PI 1.0-1.2ii Actual Score: <strong>{scoreii}</strong>
                         </Title>
-                        {renderCommentInput()}
+                        {!hideComment && renderCommentInput()}
                     </Row>
 
                     <Title level={4} style={{ marginTop: "20px" }}>

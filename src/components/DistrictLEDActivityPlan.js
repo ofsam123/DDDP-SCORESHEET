@@ -5,7 +5,7 @@ import Comment from "../components/Comments";
 
 function DistrictLEDActivityPlan({
   year,
-  districtId
+  districtId,hideComment
 }) {
   const [data, setData] = useState([]);
   const [scorei, setScorei] = useState(0);
@@ -115,6 +115,7 @@ function DistrictLEDActivityPlan({
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi6.0-6.1-${year}`}
+       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -137,7 +138,7 @@ function DistrictLEDActivityPlan({
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               SDI 6.0-6.1 Actual Score: <strong>{scorei}</strong>
             </Title>
-            {renderCommentInput()}
+            {!hideComment && renderCommentInput()}
           </Row>
 
           <Title level={4} style={{ marginTop: "20px" }}>Evidence of Implementation of LED activities</Title>

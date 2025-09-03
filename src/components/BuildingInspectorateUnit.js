@@ -5,7 +5,8 @@ import Comment from "../components/Comments";
 function BuildingInspectorateUnit({
   year,
   units,
-  districtId
+  districtId,
+  hideComment
 }) {
   const [scorei, setScorei] = useState(0);
   const [scoreii, setScoreii] = useState(0);
@@ -42,6 +43,7 @@ function BuildingInspectorateUnit({
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi3.0-3.1-${year}`}
+       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -69,7 +71,7 @@ function BuildingInspectorateUnit({
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               SDI 3.0-3.1ii Actual Score: <strong>{scoreii}</strong>
             </Title>
-            {renderCommentInput()}
+            {!hideComment && renderCommentInput()}
           </Row>
           
           <Title level={4} style={{ marginTop: "20px" }}>Evidence of establishment of Planning & Building Inspectorate Unit</Title>

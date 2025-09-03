@@ -5,7 +5,8 @@ import Comment from "../components/Comments";
 function MaintenanceInfrastructure({
   year,
   buildingInspectorateData,
-  districtId
+  districtId,
+  hideComment
 }) {
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
@@ -24,6 +25,7 @@ function MaintenanceInfrastructure({
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi2.0-2.4-${year}`}
+       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -42,9 +44,9 @@ function MaintenanceInfrastructure({
 
            <Row align="middle">
 
-          <Title level={5} style={{ marginTop: "30px" }}>Maximum Score <strong>3</strong></Title>
+          <Title level={5} style={{ marginTop: "30px", marginRight:"10px"}}>Maximum Score <strong>3</strong></Title>
 
-            {renderCommentInput()}
+            {!hideComment && renderCommentInput()}
 </Row>
           <Title level={5} style={{ marginTop: "30px" }}>I. Evidence of O&M Plan in existence</Title>
           <Space><Text strong>Actual Score: </Text> <Text>{!true ? '1' : '0'}</Text></Space>

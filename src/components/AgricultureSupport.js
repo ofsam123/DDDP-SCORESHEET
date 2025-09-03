@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import axios from "../api/axios";
 import Comment from "../components/Comments";
 
-function AgricultureSupport({ year, districtId }) {
+function AgricultureSupport({ year, districtId,hideComment }) {
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
 
@@ -51,6 +51,7 @@ function AgricultureSupport({ year, districtId }) {
       year={year}
       districtId={districtId}
       tableCommentedId={`pi5.0-5.3-${year}`}
+       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -74,7 +75,7 @@ function AgricultureSupport({ year, districtId }) {
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               PI 5.0-5.3 Actual Score: <strong>{score}</strong>
             </Title>
-            {renderCommentInput()}
+            {!hideComment && renderCommentInput()}
           </Row>
 
           <Title level={5} style={{ marginTop: "20px" }}>

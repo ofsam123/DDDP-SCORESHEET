@@ -86,7 +86,7 @@ function EnvironmentalAndSocialSafeGuard({ year, data, districtId, hideComment  
         });
 
         let score1 = 1;
-        let score2 = 1;
+        let score2 = 2;
         let score3 = 1;
 
         for (let project of temp) {

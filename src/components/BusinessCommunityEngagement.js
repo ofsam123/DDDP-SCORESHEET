@@ -5,7 +5,7 @@ import { formatDataGeneral, getAttributeValue } from "../utils/utils";
 import Comment from "../components/Comments";
 
 function BusinessCommunityEngagement({
-    year, district
+    year, district,hideComment
 }) {
 
     const [data, setData] = useState([]);
@@ -140,6 +140,7 @@ function BusinessCommunityEngagement({
             year={year}
             districtId={district}
             tableCommentedId={`sdi6.0-6.4-${year}`}
+             hideComment={hideComment}
         >
             {({ renderCommentInput, renderCommentList }) => (
                 <>
@@ -166,7 +167,7 @@ function BusinessCommunityEngagement({
                         <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
                             SDI 6.0-6.4 Actual Score: <strong>{scoreii}</strong>
                         </Title>
-                        {renderCommentInput()}
+                        {!hideComment && renderCommentInput()}
                     </Row>
 
                     <Title level={4} style={{ marginTop: "20px" }}>

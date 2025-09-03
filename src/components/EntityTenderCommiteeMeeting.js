@@ -5,13 +5,15 @@ import Comment from "../components/Comments";
 const { Header, Content } = Layout;
 const { Title } = Typography;
 
-function EntityTenderCommitteeMeeting({ data, year, columns, districtId }) {
+function EntityTenderCommitteeMeeting({ data, year, columns, districtId,hideComment }) {
   return (
     <Comment
       data={data}
       year={year}
       districtId={districtId}
       tableCommentedId={`c2.0-2.5-${year}`}
+      hideComment={hideComment}
+      
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -36,7 +38,7 @@ function EntityTenderCommitteeMeeting({ data, year, columns, districtId }) {
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               CI Result: <strong style={{ color: data?.fulfillment === "Fulfilled" ? "green" : "red" }}>{data?.fulfillment}</strong>
             </Title>
-            {renderCommentInput()}
+            {!hideComment && renderCommentInput()}
           </Row>
 
           <Title level={4} style={{ marginTop: "20px" }}>Evidence of Spatial Planning Committee (SPC) Meeting</Title>

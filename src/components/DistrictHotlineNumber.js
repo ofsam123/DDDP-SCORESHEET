@@ -1,13 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { Layout, Typography, Table, Row } from "antd";
 import Comment from "../components/Comments";
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
 
-function DistrictHotlineNumber({ data, year, columns, districtId }) {
+const DistrictHotlineNumber = forwardRef(({ data, year, columns, districtId, hideComment }, ref) => {
   const [dataSet, setDataSet] = useState([]);
   const [score, setScore] = useState(0);
+
+  useImperativeHandle(ref , ()=> ({
+    getData: () => ({
+      score, dataSet
+    })
+  }))
 
   useEffect(() => {
     initiateData();
@@ -24,6 +30,7 @@ function DistrictHotlineNumber({ data, year, columns, districtId }) {
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi4.0-4.3-${year}`}
+       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -47,7 +54,7 @@ function DistrictHotlineNumber({ data, year, columns, districtId }) {
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               SDI 4.0-4.3 Actual Score: <strong>{score}</strong>
             </Title>
-            {renderCommentInput()}
+            {!hideComment && renderCommentInput()}
           </Row>
           <Title level={4} style={{ marginTop: "20px" }}>Evidence of Dedicated Functional Hotline for Vulnerable Groups</Title>
           {/* {data && <Table columns={columns} dataSource={data?.data} pagination={false} bordered />} */}
@@ -68,6 +75,8 @@ function DistrictHotlineNumber({ data, year, columns, districtId }) {
       )}
     </Comment>
   );
+
 }
+);
 
 export default DistrictHotlineNumber;

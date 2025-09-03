@@ -5,7 +5,7 @@ import Comment from "../components/Comments";
 
 function PublicSchoolFacility({
   year,
-  districtId
+  districtId,hideComment
 }) {
   const [score, setScore] = useState(0);
   const [data, setData] = useState([]);
@@ -117,6 +117,7 @@ function PublicSchoolFacility({
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi5.0-5.4-${year}`}
+       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -138,7 +139,7 @@ function PublicSchoolFacility({
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               SDI 5.0-5.4 Actual Score: <strong>{score}</strong>
             </Title>
-            {renderCommentInput()}
+            {!hideComment && renderCommentInput()}
           </Row>
 
           <Title level={4} style={{ marginTop: "20px" }}>Evidence of functional toilet and water facilities in public schools</Title>

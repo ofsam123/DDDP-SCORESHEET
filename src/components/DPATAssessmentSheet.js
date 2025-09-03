@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Layout, Typography, Button, Row, Col } from "antd";
+import { Layout, Typography, Button, Row, Col, message, Spin } from "antd";
 import moment from 'moment';
+import useAuth from "../hooks/useAuth";
 import { FilePdfOutlined } from "@ant-design/icons";
 import { useReactToPrint } from 'react-to-print';
 import GAMeeting from "./GAMeeting";
@@ -62,11 +63,9 @@ import AuditCommiteeMeeting from "./AuditCommiteeMetting";
 import AuditorGeneralGAMeeting from "./AuditorGeneralGAMeeting";
 import TownHollMeeting from "./TownHollMeeting";
 import { budgetApprovalColumns, ECAMeetingColumns, ETCMeetingColumns, gaMeetingColumns, internalAuditColumns, internalAuditMeetingColumns, managementMeetingColumns, membersColumns, PRCCMeetingColumns, revenueSharingColumns, serviceDecisionColumns, serviceDeliveryDecisionColumns, spcMeetingColumns, subCommitteeCompositionColumns, subStatutoryMeetingsColumns, subStructureColumns, subStructureEstablishmentColumns, townHallMeetingColumns } from "../utils/tableColums";
-
+import instance from "../api/cmsapi";
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
-
-
 
 const streetNamingColumn = [
     { title: "Street Naming and Property Addressing Data base (NOT Excel) available (Yes/No)", dataIndex: "street", key: "street" },
@@ -80,19 +79,14 @@ const streetNamingInstallationColumn = [
     { title: "Number of street signage’s installed (c)", dataIndex: "streetNamedInstalled", key: "streetNamedInstalled" }
 ];
 
-
 const districtHotlineNumberColumn = [
     { title: "Dedicated hotline exist (Yes/No)", dataIndex: "hotline", key: "hotline" },
     { title: "Hotline Number", dataIndex: "number", key: "number" },
     { title: "Hotline Number publicized on DA notice boards & at sub-structures (Yes/No)", dataIndex: "publication", key: "publication" }
 ];
 
-
-
-
 // Main Component
 const DPATAssessmentSheet = ({ props }) => {
-
     const contentToPrint = useRef(null);
     const [gaMeetingData, setGaMeetingData] = useState(null);
     const [towHallMeetingData, setTowHallMeetingData] = useState([]);
@@ -116,7 +110,7 @@ const DPATAssessmentSheet = ({ props }) => {
     const [transportorsData, setTransportorsData] = useState([]);
     const [nutritionServcieData, setNutritionServcieData] = useState([]);
     const [inspectorateUnitData, setInspectorateUnitData] = useState(null);
-
+    const { user } = useAuth();
     const [subStructureActivityData, setSubStructureActivityData] = useState(null);
     const [ecaCompositionData, setEcaCompositionData] = useState(null);
     const [subStatutoryData, setSubStatutoryData] = useState(null);
@@ -144,7 +138,16 @@ const DPATAssessmentSheet = ({ props }) => {
     const [district, setDistrict] = useState(props.district);
     const [region, setRegion] = useState(props?.region);
     const [cededRevenueUtilisationScore, setCededRevenueUtilisationScore] = useState(0);
+    const [assessmentStatus, setAssessmentStatus] = useState(null); // New state for assessment status
+    const [progressLoad, setProgressLoad] = useState(false); // New state for loading
+    const hotlineRef = useRef();
 
+    const currentUserRole = user?.user?.userRoles?.find(
+        (role) => role.name === "DPAT TECHNICAL TEAM" || role.name === "DPAT QUALITY ASSURANCE"
+    )?.name || "";
+    const normalizedUserRole = currentUserRole ? currentUserRole.replace(" ", "_").toUpperCase() : "";
+    const currentUsername = user?.user?.username || "";
+    const currentFullName = user?.user?.fullName || "";
 
     const handlePrint = useReactToPrint({
         content: () => contentToPrint.current,
@@ -154,6 +157,24 @@ const DPATAssessmentSheet = ({ props }) => {
         removeAfterPrint: true,
     });
 
+    // Fetch assessment status on component mount
+    useEffect(() => {
+        const fetchAssessmentStatus = async () => {
+            try {
+                const response = await instance.get(
+                    `assessments/dpat/${district?.value}/${year}/DPAT`
+                );
+                setAssessmentStatus(response.data);
+            } catch (error) {
+                console.error("Failed to fetch assessment status:", error);
+                setAssessmentStatus(null); // Set to null if API call fails
+            }
+        };
+
+        if (district?.value && year) {
+            fetchAssessmentStatus();
+        }
+    }, [district?.value, year]);
 
     useEffect(() => {
         setMeetingData();
@@ -184,7 +205,6 @@ const DPATAssessmentSheet = ({ props }) => {
         setNutritionServiceDataDisplay();
         setTownHallMeeting();
     }, [props]);
-
 
     function formatData(meetings, meetingType) {
         return meetings.filter(item =>
@@ -220,7 +240,6 @@ const DPATAssessmentSheet = ({ props }) => {
         return Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Convert to days
     };
 
-
     const getAttributeValue = (key, val) => {
         const attr = val?.attributes.find(attr => attr.displayName === key);
         return attr ? attr.value : "N/A";
@@ -230,7 +249,7 @@ const DPATAssessmentSheet = ({ props }) => {
         const reports = props.meetings.reports;
         const temp = [];
 
-        setTowHallMeetingData(meetings)
+        setTowHallMeetingData(meetings);
         const townHallMeeting = formatData(meetings, "Town Hall Meetings") || [];
         let fulfillment = "Fulfilled";
 
@@ -240,15 +259,13 @@ const DPATAssessmentSheet = ({ props }) => {
             const attendanceLink = getFileLinkIfExist(reports, "Vf1Fdd6ORkI", meeting.trackedEntity);
             const recommendationLink = getFileLinkIfExist(reports, "LLgjgXRMB5x", meeting.trackedEntity);
             const meetingDataState = {
-                key: index + 1, // Static key (can be dynamic)
-                invitationDate: getAttributeValue("Invitation letter Date", meeting), // djiba sow
+                key: index + 1,
+                invitationDate: getAttributeValue("Invitation letter Date", meeting),
                 meetingDate: getAttributeValue("DPAT | Meeting Date", meeting),
-                
-                invitationLetterReference: getAttributeValue("Invitation letter Ref. Number", meeting), // Invitation Letter Ref
+                invitationLetterReference: getAttributeValue("Invitation letter Ref. Number", meeting),
                 signatoryInvitationLetter: getAttributeValue("Who Signed the Invitation letter", meeting) === "PM" ?
-                    "Presiding Member" : "Convener", // Signatory of Invitation Letter
-                minutes: minuteFileNumber, // Placeholder for Signatories to minutes of meeting 
-                //    minutes: getAttributeValue("Minute File Number", meeting),
+                    "Presiding Member" : "Convener",
+                minutes: minuteFileNumber,
                 docs: minuteLink ? (
                     <a
                         className="px-2 text-primary fw-bold text-decoration-underline"
@@ -261,7 +278,6 @@ const DPATAssessmentSheet = ({ props }) => {
                 ) : (
                     "Not Uploaded"
                 ),
-
                 invitation: attendanceLink ? (
                     <a
                         className="px-2 text-primary fw-bold text-decoration-underline"
@@ -281,16 +297,14 @@ const DPATAssessmentSheet = ({ props }) => {
             if (!minuteLink) {
                 fulfillment = "Not Fulfilled";
             }
-
-
         });
 
-        if (temp.length < 2 ) {
+        if (temp.length < 2) {
             fulfillment = "Not Fulfilled";
         }
 
-        setTowHallMeetingData({ data: temp, fulfillment })
-    }
+        setTowHallMeetingData({ data: temp, fulfillment });
+    };
 
     const setMeetingData = () => {
         const temp = [];
@@ -307,16 +321,16 @@ const DPATAssessmentSheet = ({ props }) => {
             const attendanceLink = getFileLinkIfExist(reports, "Vf1Fdd6ORkI", meeting.trackedEntity);
 
             const meetingDataState = {
-                key: index + 1, // Static key (can be dynamic)
-                meeting: getMeetingRank(index, "GA"), // Meeting type
-                invitationDate: getAttributeValue("Invitation letter Date", meeting), // djiba sow
+                key: index + 1,
+                meeting: getMeetingRank(index, "GA"),
+                invitationDate: getAttributeValue("Invitation letter Date", meeting),
                 meetingDate: getAttributeValue("DPAT | Meeting Date", meeting),
-                agenda: getAttributeValue("DPAT | Meeting Agenda", meeting), // Meeting Date
-                interval: 0, // Interval (Days)
-                invitationLetterReference: getAttributeValue("Invitation letter Ref. Number", meeting), // Invitation Letter Ref
+                agenda: getAttributeValue("DPAT | Meeting Agenda", meeting),
+                interval: 0,
+                invitationLetterReference: getAttributeValue("Invitation letter Ref. Number", meeting),
                 signatoryInvitationLetter: getAttributeValue("Who Signed the Invitation letter", meeting) === "PM" ?
-                    "Presiding Member" : "Convener", // Signatory of Invitation Letter
-                signatoriesMinutes: minuteFileNumber, // Placeholder for Signatories to minutes of meeting 
+                    "Presiding Member" : "Convener",
+                signatoriesMinutes: minuteFileNumber,
                 docs: minuteLink ? (
                     <a
                         className="px-2 text-primary fw-bold text-decoration-underline"
@@ -329,7 +343,6 @@ const DPATAssessmentSheet = ({ props }) => {
                 ) : (
                     "Not Uploaded"
                 ),
-
                 invitation: attendanceLink ? (
                     <a
                         className="px-2 text-primary fw-bold text-decoration-underline"
@@ -342,7 +355,6 @@ const DPATAssessmentSheet = ({ props }) => {
                 ) : (
                     "Not Uploaded"
                 )
-
             };
 
             meetingDataState.interval = getDaysBetween(meetingDataState.invitationDate, meetingDataState.meetingDate);
@@ -351,7 +363,6 @@ const DPATAssessmentSheet = ({ props }) => {
             temp.push(meetingDataState);
 
             const serviceDeliveryDecion = getDecisionsByMeeting(meetingDecisions, minuteFileNumber);
-            // console.log("Gando Djiba: ",serviceDeliveryDecion);
 
             serviceDeliveryDecion?.forEach(s => {
                 serviceDeliveries.push({
@@ -367,27 +378,24 @@ const DPATAssessmentSheet = ({ props }) => {
 
             const gam = `${getMeetingRank(index, "EC")}  General Assembly Meeting`;
 
-
             const decisionServiceDelivery = {
-                key: index + 1, // Static key (can be dynamic)
-                gam: gam, // Meeting type
-                total: decNo, // Total Decision 
-                serviceDecision: serviceDeliveryNo, // Meeting Date
+                key: index + 1,
+                gam: gam,
+                total: decNo,
+                serviceDecision: serviceDeliveryNo,
                 percentage: calculatePercentage(decNo, serviceDeliveryNo)
             };
 
             decisionOnServiceDeliveryNo += parseInt(serviceDeliveryNo);
 
             tempDecisions.push(decisionServiceDelivery);
-            tempDecisionList.push({ gam: gam, service: decisionList })
-
+            tempDecisionList.push({ gam: gam, service: decisionList });
         });
-
 
         const finalTemp = temp.sort((a, b) => new Date(a.meetingDate) - new Date(b.meetingDate));
 
         finalTemp.forEach((m, index) => {
-            m.meeting = getMeetingRank(index, "GA")
+            m.meeting = getMeetingRank(index, "GA");
         });
 
         setGaMeetingData({
@@ -400,27 +408,22 @@ const DPATAssessmentSheet = ({ props }) => {
         setDecisionDeliveryData(tempDecisionList);
         setDecisionDeliveryListData(serviceDeliveries);
         getIndicatorsData(decisionOnServiceDeliveryNo);
-
-
     };
+
     const getIndicatorsData = (decisionOnServiceDeliveryNo) => {
         axios.get(`/analytics.json?dimension=dx:y6pHogjYlez&dimension=ou:LEVEL-3;${district}&filter=pe:${year}-01-01;${year}-12-31`)
             .then(res => {
-
                 const data = res.data?.rows;
-
-                // console.log("gando-djiba:", data)
 
                 if (data?.length > 0) {
                     const percentage = calculatePercentage(decisionOnServiceDeliveryNo, data[0][2]);
                     const p = percentage;
-                    setManagementActionServiceDeliveryData([{ no: decisionOnServiceDeliveryNo, service: data[0][2], percentage: p }])
+                    setManagementActionServiceDeliveryData([{ no: decisionOnServiceDeliveryNo, service: data[0][2], percentage: p }]);
                 } else {
-                    setManagementActionServiceDeliveryData([{ no: decisionOnServiceDeliveryNo, service: 0, percentage: 0 }])
+                    setManagementActionServiceDeliveryData([{ no: decisionOnServiceDeliveryNo, service: 0, percentage: 0 }]);
                 }
-
             }).catch(err => console.log(err));
-    }
+    };
 
     const getActionTakentByDecision = (trackedEntity) => {
         const decisionReports = props.decisions.reports;
@@ -447,15 +450,13 @@ const DPATAssessmentSheet = ({ props }) => {
         return ((valueNum / totalNum) * 100).toFixed(2);
     };
 
-
     const getDecisionsByMeeting = (decisions, meetingReference) => {
         return decisions?.filter(item =>
             item.attributes.some(attr =>
                 attr.displayName === "DPAT | Meeting Reference Number" && attr.value === meetingReference
             )
         );
-    }
-
+    };
 
     const setSanitationServiceDataDisplay = () => {
         const aap = props?.plans?.aap;
@@ -487,11 +488,10 @@ const DPATAssessmentSheet = ({ props }) => {
             ifgCollected: totalIGF,
             igfSpentOnSanitation: totalBudget,
             percentage
-        }
+        };
 
         setSanitationProvidersData([sanitationData]);
-
-    }
+    };
 
     const setSocialServiceDataDisplay = () => {
         const aap = props.plans?.aap;
@@ -507,16 +507,13 @@ const DPATAssessmentSheet = ({ props }) => {
             const currentReport = reports.find(rep => rep.trackedEntity === plan.trackedEntity);
 
             if (currentReport) {
-
                 currentReport.dataValues.forEach(rep => {
                     if (rep.dataElement === "SZcHb5mvjJx" && rep.value === "Completed") {
                         totalSocialProtectionCompleted++;
                     }
-                })
+                });
             }
-
         });
-
 
         const percentage = calculatePercentage(totalSocialServicePlan, totalSocialProtectionCompleted);
         const planData = {
@@ -524,7 +521,7 @@ const DPATAssessmentSheet = ({ props }) => {
             aapSocialProtection: totalSocialServicePlan,
             aapSocialProtectionImp: totalSocialProtectionCompleted,
             percentage
-        }
+        };
 
         const tempPublication = [];
 
@@ -539,10 +536,8 @@ const DPATAssessmentSheet = ({ props }) => {
             tempPublication.push(tempData);
         }
 
-
         setSocialServicesData({ aap: [planData], publication: tempPublication });
-
-    }
+    };
 
     const setClientServiceChaterDataDisplay = () => {
         const docs = props?.documents;
@@ -550,7 +545,6 @@ const DPATAssessmentSheet = ({ props }) => {
         const temp = [];
 
         documents.forEach(document => {
-
             const tempDataSet = {
                 availability: "NO",
                 approvalDate: getAttributeValue("Document Approval Date", document),
@@ -559,7 +553,6 @@ const DPATAssessmentSheet = ({ props }) => {
             };
 
             temp.push(tempDataSet);
-
         });
 
         temp.forEach(document => {
@@ -570,14 +563,10 @@ const DPATAssessmentSheet = ({ props }) => {
             }
         });
 
-
         setClientServiceChaterData(temp);
-
-    }
-
+    };
 
     const setAllDataFromDistrictGeneral = () => {
-
         const hotline = [];
         let score = 0;
 
@@ -594,18 +583,14 @@ const DPATAssessmentSheet = ({ props }) => {
             }
         }
 
-
-        setDistrictHotlineNumberData({ data: hotline, score: score })
-
-    }
-
+        setDistrictHotlineNumberData({ data: hotline, score: score });
+    };
 
     const setBuildingInspectoratesData = () => {
         const temp = [];
 
         formatDataGeneral(buildingInspectorate, "DPAT | Inspectorate Type", "Planning and Building")
             ?.forEach((building, index) => {
-
                 const buildingInspectorateDateSet = {
                     key: index + 1,
                     date: getAttributeValue("Name of Business", building),
@@ -619,14 +604,12 @@ const DPATAssessmentSheet = ({ props }) => {
             });
 
         setBuildingInspectorateData(temp);
-
-    }
+    };
 
     const setTransportorsDataDisplay = () => {
         const temp = [];
         const trans = props?.transportors.data;
         trans?.forEach((tr, index) => {
-
             const transportDateSet = {
                 key: index + 1,
                 business: getAttributeValue("Name of Business", tr),
@@ -646,17 +629,14 @@ const DPATAssessmentSheet = ({ props }) => {
             aapRoadsActivities: transportationPlans.length,
             aapRoadsActivitiesImp: 0,
             availability: temp.length > 0 ? "YES" : "NO"
-        }
+        };
         setTransportorsData({ data: transp, transportors: temp });
+    };
 
-    }
-
-    //set data for nutrition service and food vendors
     const setNutritionServiceDataDisplay = () => {
         const aap = props.plans?.aap;
         const publications = props.publications?.data;
         const publicationOfNS = formatDataGeneral(publications, "Document Published", "Nutrition Services") || [];
-
         const nutritionOrientedIntervention = formatDataGeneral(aap, "Activity Source", "Nutrition-Oriented Intervention Activity") || [];
         const foodVendors = props.foodVendors?.data;
         const foodTemp = [];
@@ -679,7 +659,7 @@ const DPATAssessmentSheet = ({ props }) => {
         };
 
         setNutritionServcieData({ aap: [temp], vendors: foodTemp });
-    }
+    };
 
     const setInspectorateUnitDataDisplay = () => {
         const temp = [];
@@ -688,7 +668,6 @@ const DPATAssessmentSheet = ({ props }) => {
         const reports = props?.inspectorateUnits?.reports;
 
         units?.forEach((unit, index) => {
-
             const unitDataSet = {
                 key: index + 1,
                 date: getAttributeValue("Established Date", unit),
@@ -701,7 +680,6 @@ const DPATAssessmentSheet = ({ props }) => {
         });
 
         reports?.forEach((rep, index) => {
-
             const reportDataSet = {
                 key: index + 1,
                 title: rep.dataValues[2]?.value,
@@ -713,8 +691,7 @@ const DPATAssessmentSheet = ({ props }) => {
         });
 
         setInspectorateUnitData({ data: temp, report: tempReports });
-
-    }
+    };
 
     const setSubStructureMeetingDataDisplay = () => {
         const temp = [];
@@ -725,7 +702,6 @@ const DPATAssessmentSheet = ({ props }) => {
         const subTemp = [];
 
         subStructureMeeting.forEach((meeting, index) => {
-
             const minuteLink = getFileLinkIfExist(reports, "LAe1t59jYNT", meeting.trackedEntity);
             const dataSet = {
                 key: index,
@@ -749,9 +725,7 @@ const DPATAssessmentSheet = ({ props }) => {
         });
 
         setEcMeetingTemp(subTemp);
-        // Example usage
         const formattedData = formatSubStructureMeetings(subTemp);
-
 
         const createMeetingData = (label, data) => ({
             key: label,
@@ -777,12 +751,10 @@ const DPATAssessmentSheet = ({ props }) => {
             }
         });
 
-
         setSubStructuresMeetingData({ data: temp.concat(formattedData), fulfillment, subMeeting: formattedData });
     };
 
     const setStreetNamingDataDisplay = () => {
-
         const streets = props.streets.streets;
         const streetReport = props.streets.reports;
         let streetNo = streets?.length;
@@ -805,7 +777,6 @@ const DPATAssessmentSheet = ({ props }) => {
                     }
                 });
             });
-
         }
 
         const tempStreet = {
@@ -823,10 +794,7 @@ const DPATAssessmentSheet = ({ props }) => {
         const percentage = calculatePercentage(streetNamedNo, streetSignalInstalledNo);
 
         setStreetNamingData({ data: [tempStreet], counter: [tempStreetCounter], percentage });
-
-
-    }
-
+    };
 
     function checkGaMeetingFulfillment(gaMeetings) {
         if (gaMeetings.length < 3) {
@@ -850,14 +818,12 @@ const DPATAssessmentSheet = ({ props }) => {
         return 'Fulfilled';
     }
 
-
     const setManagementMeetingData = () => {
         const temp = [];
         let fulfillment = 'Fulfilled';
         const reports = props.meetings.reports;
 
         formatData(meetings, "Management Meetings").forEach((meeting, index) => {
-
             const minuteLink = getFileLinkIfExist(reports, "LAe1t59jYNT", meeting.trackedEntity);
             const attendanceLink = getFileLinkIfExist(reports, "Vf1Fdd6ORkI", meeting.trackedEntity);
             const recommendationLink = getFileLinkIfExist(reports, "LLgjgXRMB5x", meeting.trackedEntity);
@@ -869,9 +835,9 @@ const DPATAssessmentSheet = ({ props }) => {
             const hodAttendence = parseInt(hodFemaleAttendance) + parseInt(hodMaleAttendance);
 
             const meetingDataState = {
-                key: index + 1, // Static key (can be dynamic)
+                key: index + 1,
                 meetingDate: getAttributeValue("DPAT | Meeting Date", meeting),
-                departments: 13, // Department Members
+                departments: 13,
                 hodAttendance: hodAttendence,
                 attendance: parseInt(femaleAttendance) + parseInt(maleAttendance),
                 minutes: getAttributeValue("Minute File Number", meeting),
@@ -887,7 +853,6 @@ const DPATAssessmentSheet = ({ props }) => {
                 ) : (
                     "Not Uploaded"
                 ),
-
                 invitation: attendanceLink ? (
                     <a
                         className="px-2 text-primary fw-bold text-decoration-underline"
@@ -900,7 +865,6 @@ const DPATAssessmentSheet = ({ props }) => {
                 ) : (
                     "Not Uploaded"
                 ),
-
                 recommendation: recommendationLink ? (
                     <a
                         className="px-2 text-primary fw-bold text-decoration-underline"
@@ -922,7 +886,6 @@ const DPATAssessmentSheet = ({ props }) => {
             temp.push(meetingDataState);
         });
 
-        // sow
         const finalTemp = temp.sort((a, b) => new Date(a.meetingDate) - new Date(b.meetingDate));
 
         finalTemp.forEach((m, index) => {
@@ -934,18 +897,16 @@ const DPATAssessmentSheet = ({ props }) => {
 
     const setECAMeetingData = () => {
         const temp = [];
-        const gaMeeting = formatData(meetings, "GA"); // GA Meeting data
-        const ecaMeeting = formatData(meetings, "EC"); // EC Meeting data
+        const gaMeeting = formatData(meetings, "GA");
+        const ecaMeeting = formatData(meetings, "EC");
         const reports = props.meetings.reports;
 
-        // Preprocess GA meeting dates
         const gaMeetingDates = gaMeeting.map((meeting, index) => ({
             key: index + 1,
             date: getAttributeValue("DPAT | Meeting Date", meeting),
         }));
 
         ecaMeeting.forEach((meeting, index) => {
-
             const minuteLink = getFileLinkIfExist(reports, "LAe1t59jYNT", meeting.trackedEntity);
             const attendanceLink = getFileLinkIfExist(reports, "brh8c5XO30Q", meeting.trackedEntity);
             const recommendationLink = getFileLinkIfExist(reports, "LLgjgXRMB5x", meeting.trackedEntity);
@@ -955,7 +916,7 @@ const DPATAssessmentSheet = ({ props }) => {
                 meeting: getMeetingRank(index, "EC"),
                 invitationDate: getAttributeValue("Invitation letter Date", meeting),
                 invitationLetterReference: getAttributeValue("Invitation letter Ref. Number", meeting),
-                gaMeetingDate: gaMeetingDates[index]?.date || "", // Fallback to empty string if GA date is not available
+                gaMeetingDate: gaMeetingDates[index]?.date || "",
                 ecaMeetingDate: getAttributeValue("DPAT | Meeting Date", meeting),
                 minutes: getAttributeValue("Minute File Number", meeting),
                 docs: minuteLink ? (
@@ -970,7 +931,6 @@ const DPATAssessmentSheet = ({ props }) => {
                 ) : (
                     "Not Uploaded"
                 ),
-
                 attendance: attendanceLink ? (
                     <a
                         className="px-2 text-primary fw-bold text-decoration-underline"
@@ -983,7 +943,6 @@ const DPATAssessmentSheet = ({ props }) => {
                 ) : (
                     "Not Uploaded"
                 ),
-
                 recommendation: recommendationLink ? (
                     <a
                         className="px-2 text-primary fw-bold text-decoration-underline"
@@ -1005,7 +964,6 @@ const DPATAssessmentSheet = ({ props }) => {
         setEcaMeetingData({ data: temp, fulfillment });
     };
 
-
     const setPRCCMeetingData = () => {
         const temp = [];
         let fulfillment = "Fulfilled";
@@ -1018,12 +976,12 @@ const DPATAssessmentSheet = ({ props }) => {
             const recommendationLink = getFileLinkIfExist(reports, "LLgjgXRMB5x", meeting.trackedEntity);
 
             const meetingDataState = {
-                key: index + 1, // Static key (can be dynamic)
-                meeting: index +1, // Meeting type
-                invitationDate: getAttributeValue("Invitation letter Date", meeting), // Invitation Date
+                key: index + 1,
+                meeting: index + 1,
+                invitationDate: getAttributeValue("Invitation letter Date", meeting),
                 meetingDate: getAttributeValue("DPAT | Meeting Date", meeting),
                 agenda: getAttributeValue("DPAT | Meeting Agenda", meeting),
-                invitationLetterReference: invitationLetterRef, // Invitation Letter Ref
+                invitationLetterReference: invitationLetterRef,
                 minutes: getAttributeValue("Minute File Number", meeting),
                 docs: minuteLink ? (
                     <a
@@ -1037,7 +995,6 @@ const DPATAssessmentSheet = ({ props }) => {
                 ) : (
                     "Not Uploaded"
                 ),
-
                 attendance: attendanceLink ? (
                     <a
                         className="px-2 text-primary fw-bold text-decoration-underline"
@@ -1050,7 +1007,6 @@ const DPATAssessmentSheet = ({ props }) => {
                 ) : (
                     "Not Uploaded"
                 ),
-
                 recommendation: recommendationLink ? (
                     <a
                         className="px-2 text-primary fw-bold text-decoration-underline"
@@ -1070,13 +1026,11 @@ const DPATAssessmentSheet = ({ props }) => {
             }
 
             temp.push(meetingDataState);
-
         });
 
         if (temp.length == 0) {
             fulfillment = "Not Fulfilled";
         }
-
 
         setPrccMeetingData({ data: temp, fulfillment: fulfillment });
     };
@@ -1086,7 +1040,6 @@ const DPATAssessmentSheet = ({ props }) => {
         let fulfillment = "Fulfilled";
         const reports = props.meetings.reports;
         formatData(meetings, "Audit Committee")?.forEach((meeting, index) => {
-
             const munitesRef = getAttributeValue("Minute File Number", meeting);
             const minuteLink = getFileLinkIfExist(reports, "LAe1t59jYNT", meeting.trackedEntity);
             const attendanceLink = getFileLinkIfExist(reports, "brh8c5XO30Q", meeting.trackedEntity);
@@ -1111,7 +1064,6 @@ const DPATAssessmentSheet = ({ props }) => {
                 ) : (
                     "Not Uploaded"
                 ),
-
                 attendance: attendanceLink ? (
                     <a
                         className="px-2 text-primary fw-bold text-decoration-underline"
@@ -1124,7 +1076,6 @@ const DPATAssessmentSheet = ({ props }) => {
                 ) : (
                     "Not Uploaded"
                 ),
-
                 recommendation: recommendationLink ? (
                     <a
                         className="px-2 text-primary fw-bold text-decoration-underline"
@@ -1144,8 +1095,7 @@ const DPATAssessmentSheet = ({ props }) => {
             }
 
             temp.push(meetingDataState);
-        })
-
+        });
 
         const audits = formatDataGeneral(props?.audits.data, "Audit Category", "Internal Audit") || [];
 
@@ -1162,10 +1112,9 @@ const DPATAssessmentSheet = ({ props }) => {
                 audit: getAttributeValue("Name", audit),
                 recommendion: getAttributeValue("Audit Recommendation", audit)
             });
-        })
+        });
 
-
-        setInternalAuditMeetingData({data: temp, fulfillment});
+        setInternalAuditMeetingData({ data: temp, fulfillment });
         setInternalAuditData({ data: auditTemp, fulfillment });
     };
 
@@ -1181,8 +1130,8 @@ const DPATAssessmentSheet = ({ props }) => {
             const recommendationLink = getFileLinkIfExist(reports, "LLgjgXRMB5x", meeting.trackedEntity);
 
             const meetingDataState = {
-                key: index + 1, // Static key (can be dynamic)
-                meeting: getMeetingRank(index, "Audit Committee"), // Meeting type
+                key: index + 1,
+                meeting: getMeetingRank(index, "Audit Committee"),
                 meetingDate: getAttributeValue("DPAT | Meeting Date", meeting),
                 recommendationsNo: getAttributeValue("DPAT | Number of Decisions", meeting),
                 minutes: getAttributeValue("Minute File Number", meeting),
@@ -1198,7 +1147,6 @@ const DPATAssessmentSheet = ({ props }) => {
                 ) : (
                     "Not Uploaded"
                 ),
-
                 attendance: attendanceLink ? (
                     <a
                         className="px-2 text-primary fw-bold text-decoration-underline"
@@ -1211,7 +1159,6 @@ const DPATAssessmentSheet = ({ props }) => {
                 ) : (
                     "Not Uploaded"
                 ),
-
                 recommendation: recommendationLink ? (
                     <a
                         className="px-2 text-primary fw-bold text-decoration-underline"
@@ -1227,7 +1174,7 @@ const DPATAssessmentSheet = ({ props }) => {
             };
 
             temp.push(meetingDataState);
-        })
+        });
 
         if (temp.length > 1) {
             score = 3;
@@ -1236,7 +1183,6 @@ const DPATAssessmentSheet = ({ props }) => {
         setAuditCommitteeMeetingData({ data: temp, score: score });
     };
 
-
     const setETCMeetingData = () => {
         const temp = [];
         let fulfillment = "Fulfilled";
@@ -1244,19 +1190,17 @@ const DPATAssessmentSheet = ({ props }) => {
         const reports = props.meetings.reports;
 
         formatData(meetings, "Spatial Planning Committee (SPC)").forEach((meeting, index) => {
-
             const munitesFileRef = getAttributeValue("Minute File Number", meeting);
             const minuteLink = getFileLinkIfExist(reports, "LAe1t59jYNT", meeting.trackedEntity);
             const attendanceLink = getFileLinkIfExist(reports, "brh8c5XO30Q", meeting.trackedEntity);
             const recommendationLink = getFileLinkIfExist(reports, "LLgjgXRMB5x", meeting.trackedEntity);
 
-
             const meetingDataState = {
-                key: index + 1, // Static key (can be dynamic)
+                key: index + 1,
                 meetingDate: getAttributeValue("DPAT | Meeting Date", meeting),
                 agenda: getAttributeValue("DPAT | Meeting Agenda", meeting),
-                invitationDate: getAttributeValue("Invitation letter Date", meeting), // Invitation Date
-                invitationLetterReference: munitesFileRef, // Invitation Letter Ref
+                invitationDate: getAttributeValue("Invitation letter Date", meeting),
+                invitationLetterReference: munitesFileRef,
                 minutes: getAttributeValue("Minute File Number", meeting),
                 docs: minuteLink ? (
                     <a
@@ -1270,7 +1214,6 @@ const DPATAssessmentSheet = ({ props }) => {
                 ) : (
                     "Not Uploaded"
                 ),
-
                 attendance: attendanceLink ? (
                     <a
                         className="px-2 text-primary fw-bold text-decoration-underline"
@@ -1283,7 +1226,6 @@ const DPATAssessmentSheet = ({ props }) => {
                 ) : (
                     "Not Uploaded"
                 ),
-
                 recommendation: recommendationLink ? (
                     <a
                         className="px-2 text-primary fw-bold text-decoration-underline"
@@ -1298,12 +1240,11 @@ const DPATAssessmentSheet = ({ props }) => {
                 )
             };
 
-            if(index < 12){
+            if (index < 12) {
                 if (!attendanceLink || !minuteLink || !recommendationLink) {
-                fulfillment = "Not Fulfilled";
+                    fulfillment = "Not Fulfilled";
+                }
             }
-            }
-            
 
             temp.push(meetingDataState);
         });
@@ -1312,17 +1253,15 @@ const DPATAssessmentSheet = ({ props }) => {
             fulfillment = "Not Fulfilled";
         }
 
-
         const monthsWithMeetings = new Set(
             temp.map(m => new Date(m.meetingDate).getMonth())
         );
 
-        // ✅ Check for missing months
         const allMonths = Array.from({ length: 12 }, (_, i) => i);
         const missingMonths = allMonths.filter(m => !monthsWithMeetings.has(m));
 
         if (missingMonths.length !== 0) {
-           fulfillment = "Not Fulfilled";
+            fulfillment = "Not Fulfilled";
         }
 
         setEtcMeetingData({ data: temp, fulfillment: fulfillment });
@@ -1338,14 +1277,13 @@ const DPATAssessmentSheet = ({ props }) => {
             const attendanceLink = getFileLinkIfExist(reports, "brh8c5XO30Q", meeting.trackedEntity);
             const recommendationLink = getFileLinkIfExist(reports, "LLgjgXRMB5x", meeting.trackedEntity);
 
-
             const meetingDataState = {
-                key: index + 1, // Static key (can be dynamic)
-                meeting: "", // Meeting type
-                invitationDate: getAttributeValue("Invitation letter Date", meeting), // Invitation Date
+                key: index + 1,
+                meeting: "",
+                invitationDate: getAttributeValue("Invitation letter Date", meeting),
                 meetingDate: getAttributeValue("DPAT | Meeting Date", meeting),
                 agenda: getAttributeValue("DPAT | Meeting Agenda", meeting),
-                invitationLetterReference: getAttributeValue("Invitation letter Ref. Number", meeting), // Invitation Letter Ref
+                invitationLetterReference: getAttributeValue("Invitation letter Ref. Number", meeting),
                 minutes: getAttributeValue("Minute File Number", meeting),
                 docs: minuteLink ? (
                     <a
@@ -1359,7 +1297,6 @@ const DPATAssessmentSheet = ({ props }) => {
                 ) : (
                     "Not Uploaded"
                 ),
-
                 attendance: attendanceLink ? (
                     <a
                         className="px-2 text-primary fw-bold text-decoration-underline"
@@ -1372,7 +1309,6 @@ const DPATAssessmentSheet = ({ props }) => {
                 ) : (
                     "Not Uploaded"
                 ),
-
                 recommendation: recommendationLink ? (
                     <a
                         className="px-2 text-primary fw-bold text-decoration-underline"
@@ -1386,7 +1322,6 @@ const DPATAssessmentSheet = ({ props }) => {
                     "Not Uploaded"
                 )
             };
-
 
             if (!minuteLink || !attendanceLink || !recommendationLink) {
                 fulfillment = "Not Fulfilled";
@@ -1402,9 +1337,8 @@ const DPATAssessmentSheet = ({ props }) => {
         const finalTemp = temp.sort((a, b) => new Date(a.meetingDate) - new Date(b.meetingDate));
 
         finalTemp.forEach((m, index) => {
-            m.meeting = getMeetingRank(index, "Entity Tender Committee (ETC)")
+            m.meeting = getMeetingRank(index, "Entity Tender Committee (ETC)");
         });
-
 
         setSpcMeetingData({ data: finalTemp, fulfillment: fulfillment });
     };
@@ -1415,11 +1349,9 @@ const DPATAssessmentSheet = ({ props }) => {
         let fulfillment = 'Not Fulfilled';
 
         meetingTypes?.forEach((type, index) => {
-            // Get the first meeting that matches the current meeting type
             const matchingMeeting = formatDataGroup(meetings, [type])[0];
 
-            if (matchingMeeting) { // Ensure there's a match before adding
-                // const date = getAttributeValue("DPAT | Meeting Date", matchingMeeting);
+            if (matchingMeeting) {
                 const meetingDataState = {
                     key: index + 1,
                     meeting: type,
@@ -1449,12 +1381,11 @@ const DPATAssessmentSheet = ({ props }) => {
                 if (link) {
                     approvalMinutesLink = link;
                 }
-
             }
         });
 
         if (approvalMinutesLink) {
-            fulfillment = fulfillment = 'Fulfilled';
+            fulfillment = 'Fulfilled';
         }
 
         const aapApprovalLink = approvalMinutesLink ? (
@@ -1468,11 +1399,10 @@ const DPATAssessmentSheet = ({ props }) => {
             </a>
         ) : (
             "There is no minutes uploaded for the Approval of AAP"
-        )
+        );
 
         setMeetingDataGroup({ data: temp, fulfillment: fulfillment, aapApprovalLink });
     };
-
 
     const setDecisionData = () => {
         let temp = [];
@@ -1498,7 +1428,6 @@ const DPATAssessmentSheet = ({ props }) => {
             finalTemp.push(meetDecisions);
         });
 
-
         setDecisionsData(finalTemp);
     };
 
@@ -1507,7 +1436,6 @@ const DPATAssessmentSheet = ({ props }) => {
         const temp = [];
         reports?.forEach(re => {
             if (re.programStage === 'B0knjAzOqD4') {
-                // console.log("Sow: ", re?.dataValues)
                 temp.push({
                     quarter: "",
                     amountReleased: re?.dataValues[0]?.value,
@@ -1521,7 +1449,7 @@ const DPATAssessmentSheet = ({ props }) => {
         let score = 1;
 
         temp.forEach((t, idx) => {
-            t.quarter = `Quarter  ${idx + 1}`
+            t.quarter = `Quarter  ${idx + 1}`;
 
             if (t.percentageSpentSubstructure < 90) {
                 score = 0;
@@ -1529,8 +1457,7 @@ const DPATAssessmentSheet = ({ props }) => {
         });
 
         setSubstructureExpendatureData({ data: temp, score });
-
-    }
+    };
 
     const setSubtructureEstablishmentsData = () => {
         const temp = [];
@@ -1573,7 +1500,6 @@ const DPATAssessmentSheet = ({ props }) => {
 
                 const minuteLink = getFileLinkIfExist(subReports, "TxE2hVHyNuG", instance.trackedEntity);
 
-
                 reportsTemp.push({
                     key: index + 1,
                     name: getAttributeValue("DPAT | Name of Sub Structure", instance),
@@ -1593,9 +1519,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         "Not Uploaded"
                     ),
                 });
-
             });
-
 
         setSubReportData({ data: reportsTemp, fulfillment });
 
@@ -1625,7 +1549,6 @@ const DPATAssessmentSheet = ({ props }) => {
             percentage: <strong>{calculatePercentage(collectedTotal, cededTotal)}</strong>
         });
 
-
         setCededRevenueUtilisationData(finalRevenueDetails);
         setCededRevenueUtilisationScore(calculatePercentage(collectedTotal, cededTotal));
     };
@@ -1634,7 +1557,6 @@ const DPATAssessmentSheet = ({ props }) => {
         const temp = [];
 
         subStructureActivity?.forEach((sub, index) => {
-
             const subStructureActivityDataState = {
                 key: index + 1,
                 no: index + 1,
@@ -1649,7 +1571,6 @@ const DPATAssessmentSheet = ({ props }) => {
 
         setSubStructureActivityData(temp);
     };
-
 
     const setMemberData = () => {
         const temp = [];
@@ -1689,16 +1610,14 @@ const DPATAssessmentSheet = ({ props }) => {
     };
 
     const setSubCommitteesCompositionData = () => {
-
-        //Statutory member meetings
         const statutoryMeetings = formatData(meetings, "Statutory Sub - Committee") || [];
         const tempMeeting = [];
-        const reports = props.meetings.reports
+        const reports = props.meetings.reports;
 
         statutoryMeetings.forEach((meeting, index) => {
             const minuteLink = getFileLinkIfExist(reports, "LAe1t59jYNT", meeting.trackedEntity);
             const meetingDataState = {
-                key: index + 1, // Static key (can be dynamic) 
+                key: index + 1,
                 meeting: getAttributeValue("Sub Statutory Committee Department", meeting),
                 meetingDate: getAttributeValue("DPAT | Meeting Date", meeting),
                 minutes: getAttributeValue("Minute File Number", meeting),
@@ -1714,7 +1633,6 @@ const DPATAssessmentSheet = ({ props }) => {
                 ) : (
                     "Not Uploaded"
                 ),
-
             };
             tempMeeting.push(meetingDataState);
         });
@@ -1726,28 +1644,21 @@ const DPATAssessmentSheet = ({ props }) => {
         }
 
         const formattedData = formatSubStatutoryMeetings(tempMeeting);
-        // setTable(tempMeeting)
-
-
 
         for (let item of formattedData) {
             if (
                 item.firstLink === "Not Uploaded" ||
                 item.secondLink === "Not Uploaded" ||
                 item.thirdLink === "Not Uploaded") {
-                fulfillment = "Not Fulfilled"
+                fulfillment = "Not Fulfilled";
                 break;
             }
         }
 
-        // djiba-sow
         setSubStatutoryData({ data: formattedData, fulfillment: fulfillment });
-
     };
 
-
     const getMeetingRank = (index, type) => {
-
         if (type === 'GA') {
             switch (index) {
                 case 0: return "1st Ordinary Meeting";
@@ -1780,24 +1691,319 @@ const DPATAssessmentSheet = ({ props }) => {
                 default: return "Other";
             }
         }
-
-    }
+    };
 
     const getDecisionRank = (index) => {
-
         switch (index) {
             case 0: return "1st";
             case 1: return "2nd";
             case 2: return "3rd";
             default: return "Other";
         }
-    }
+    };
 
+    const assessmentStartDate = new Date().toISOString().split("T")[0].split("-").map(Number);
+
+
+const handleStartAssessmentSubmit = async () => {
+  setProgressLoad(true);
+  const payload = {
+    id: 0,
+    username: user?.user?.username,
+    fullName: user?.user?.fullName,
+    userRole: normalizedUserRole,
+    type: "DPAT",
+    districtId: district?.value,
+    year: year,
+    status: "Start",
+    assessmentStartDate: assessmentStartDate,
+    assessmentEndDate: null,
+    reviewStartDate: null,
+    reviewEndDate: null,
+    closedDate: null,
+  };
+
+  try {
+    // Step 1: Post to assessments endpoint
+    const assessmentResponse = await instance.post(`assessments`, payload);
+    setAssessmentStatus(assessmentResponse.data);
+    message.success({
+      content: (
+        <div>
+          <p>Assessment started successfully (Status: 201)</p>
+        </div>
+      ),
+      duration: 3,
+    });
+
+    // Step 2: Fetch assessment status from the provided endpoint
+    const assessmentStatusResponse = await instance.get(
+      `assessments/dpat/${district?.value}/${year}/DPAT`
+    );
+    const fetchedStatus = assessmentStatusResponse.data?.status; // Adjust based on actual response structure
+    setAssessmentStatus(assessmentStatusResponse.data); // Update state with the fetched assessment data
+
+    // Step 3: Post to comments endpoint
+    const commentDate = new Date().toISOString().split("T")[0];
+    const commentPayload = {
+      id: 0,
+      username: user?.user?.username,
+      fullName: user?.user?.fullName,
+      userRole: normalizedUserRole,
+      type: "DPAT",
+      districtId: district?.value,
+      year: year,
+      tableCommented: "assessment_start_DAPT", // Using a generic identifier; adjust as needed
+      comments: `Assessment started automatically with status: ${fetchedStatus || "Start"}`,
+      gaps: "",
+      commentDate: commentDate,
+      updateDate: commentDate,
+      dddpDataDate: commentDate,
+      dddpData: {
+        indicator: "assessment_start_DAPT",
+        tables: {
+          gaMeetingData,
+          meetingDataGroup,
+           subStructures: [
+      subStructuresMeetingData,
+      subStructureData,
+      subReportData,
+    ],
+          ecaMeetingData,
+          subStatutoryData,
+          managementMeetingsData,
+          prccMeetingData,
+          etcMeetingData,
+          spcMeetingData,
+          internalAuditData,
+          internalAuditMeetingData,
+          towHallMeetingData,
+          decisionServiceData,
+          decisionDeliveryListData,
+          managementActionServiceDeliveryData,
+          cededRevenueUtilisationData,
+          subStructureActivityData,
+          substructureExpendatureData,
+          sanitationProvidersData,
+
+        },
+      },
+    };
+
+    const commentResponse = await instance.post(`comments`, commentPayload);
+    message.success({
+      content: (
+        <div>
+          <p>Comment added successfully (Status: 201)</p>
+        </div>
+      ),
+      duration: 3,
+    });
+  } catch (error) {
+    console.error("Failed to process assessment or comment:", {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status,
+    });
+    message.error(`Failed to process: ${error.response?.data?.message || error.message}`);
+  } finally {
+    setProgressLoad(false);
+  }
+};
+
+const handlePendingAssessmentSubmit = async () => {
+  setProgressLoad(true);
+  const assessmentEndDate = new Date().toISOString().split("T")[0];
+  const assessmentStartDate = assessmentStatus?.assessmentStartDate || new Date().toISOString().split("T")[0]; // Use existing start date or fallback to today
+
+  // Ensure assessmentStatus has an ID
+  if (!assessmentStatus?.id) {
+    message.error("No assessment ID found. Please start the assessment first.");
+    setProgressLoad(false);
+    return;
+  }
+
+  const payload = {
+    id: assessmentStatus.id, // Use dynamic ID from assessmentStatus
+    username: user?.user?.username,
+    fullName: user?.user?.fullName,
+    userRole: normalizedUserRole,
+    type: "DPAT",
+    districtId: district?.value,
+    year: year,
+    status: "Pending",
+    assessmentStartDate: assessmentStartDate,
+    assessmentEndDate: assessmentEndDate,
+    reviewStartDate: assessmentEndDate,
+    reviewEndDate: null,
+    closedDate: null,
+  };
+
+  try {
+    // Step 1: Update assessment with PUT request
+    const response = await instance.put(`assessments/${payload.id}`, payload);
+    setAssessmentStatus(response.data);
+    message.success({
+      content: (
+        <div>
+          <p>Assessment completed successfully (Status: 200)</p>
+        </div>
+      ),
+      duration: 3,
+    });
+
+    // Step 2: Fetch assessment status from the provided endpoint
+    const assessmentStatusResponse = await instance.get(
+      `assessments/dpat/${district?.value}/${year}/DPAT`
+    );
+    const fetchedStatus = assessmentStatusResponse.data?.status; // Adjust based on actual response structure
+    setAssessmentStatus(assessmentStatusResponse.data); // Update state with the fetched assessment data
+
+   
+
+   
+  } catch (error) {
+    console.error("Failed to complete assessment or comment:", {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status,
+    });
+    message.error(`Failed to complete assessment: ${error.response?.data?.message || error.message}`);
+  } finally {
+    setProgressLoad(false);
+  }
+};
+
+const handleCompleteReviewSubmit = async () => {
+  setProgressLoad(true);
+  const reviewEndDate = new Date().toISOString().split("T")[0];
+  const assessmentStartDate = assessmentStatus?.assessmentStartDate || new Date().toISOString().split("T")[0]; // Use existing start date or fallback to today
+  const assessmentEndDate = assessmentStatus?.assessmentEndDate || new Date().toISOString().split("T")[0]; // Use existing end date or fallback to today
+
+  // Ensure assessmentStatus has an ID
+  if (!assessmentStatus?.id) {
+    message.error("No assessment ID found. Please start the assessment first.");
+    setProgressLoad(false);
+    return;
+  }
+
+  const payload = {
+    id: assessmentStatus.id, // Use dynamic ID from assessmentStatus
+    username: user?.user?.username,
+    fullName: user?.user?.fullName,
+    userRole: "DAQ",
+    type: "DPAT",
+    districtId: district?.value,
+    year: year,
+    status: "Completed",
+    assessmentStartDate: assessmentStartDate,
+    assessmentEndDate: assessmentEndDate,
+    reviewStartDate: assessmentStatus?.reviewStartDate || assessmentEndDate, // Use existing review start date or fallback to assessmentEndDate
+    reviewEndDate: reviewEndDate,
+    closedDate: null,
+  };
+
+  try {
+    // Step 1: Update assessment with PUT request
+    const response = await instance.put(`assessments/${payload.id}`, payload);
+    setAssessmentStatus(response.data);
+    message.success({
+      content: (
+        <div>
+          <p>Review completed successfully (Status: 200)</p>
+        </div>
+      ),
+      duration: 3,
+    });
+
+    // Step 2: Fetch assessment status from the provided endpoint
+    const assessmentStatusResponse = await instance.get(
+      `assessments/dpat/${district?.value}/${year}/DPAT`
+    );
+    const fetchedStatus = assessmentStatusResponse.data?.status; // Adjust based on actual response structure
+    setAssessmentStatus(assessmentStatusResponse.data); // Update state with the fetched assessment data
+
+   
+
+  
+  } catch (error) {
+    console.error("Failed to complete review or comment:", {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status,
+    });
+    message.error(`Failed to complete review: ${error.response?.data?.message || error.message}`);
+  } finally {
+    setProgressLoad(false);
+  }
+};
+
+const handleCloseReviewSubmit = async () => {
+  setProgressLoad(true);
+  const reviewEndDate = new Date().toISOString().split("T")[0];
+  const assessmentStartDate = assessmentStatus?.assessmentStartDate || new Date().toISOString().split("T")[0]; // Use existing start date or fallback to today
+  const assessmentEndDate = assessmentStatus?.assessmentEndDate || new Date().toISOString().split("T")[0]; // Use existing end date or fallback to today
+
+  // Ensure assessmentStatus has an ID
+  if (!assessmentStatus?.id) {
+    message.error("No assessment ID found. Please start the assessment first.");
+    setProgressLoad(false);
+    return;
+  }
+
+  const payload = {
+    id: assessmentStatus.id, // Use dynamic ID from assessmentStatus
+    username: user?.user?.username,
+    fullName: user?.user?.fullName,
+    userRole: "DQA",
+    type: "DPAT",
+    districtId: district?.value,
+    year: year,
+    status: "Closed",
+    assessmentStartDate: assessmentStartDate,
+    assessmentEndDate: assessmentEndDate,
+    reviewStartDate: assessmentStatus?.reviewStartDate || assessmentEndDate, // Use existing review start date or fallback to assessmentEndDate
+    reviewEndDate: reviewEndDate,
+    closedDate: null,
+  };
+
+  try {
+    // Step 1: Update assessment with PUT request
+    const response = await instance.put(`assessments/${payload.id}`, payload);
+    setAssessmentStatus(response.data);
+    message.success({
+      content: (
+        <div>
+          <p>Review completed successfully (Status: 200)</p>
+        </div>
+      ),
+      duration: 3,
+    });
+
+    // Step 2: Fetch assessment status from the provided endpoint
+    const assessmentStatusResponse = await instance.get(
+      `assessments/dpat/${district?.value}/${year}/DPAT`
+    );
+    const fetchedStatus = assessmentStatusResponse.data?.status; // Adjust based on actual response structure
+    setAssessmentStatus(assessmentStatusResponse.data); // Update state with the fetched assessment data
+   
+
+  } catch (error) {
+    console.error("Failed to complete review or comment:", {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status,
+    });
+    message.error(`Failed to complete review: ${error.response?.data?.message || error.message}`);
+  } finally {
+    setProgressLoad(false);
+  }
+};
+    const hideComment = !assessmentStatus || assessmentStatus?.status === "Pending" || assessmentStatus?.status === "Completed" || assessmentStatus?.status === "Closed";
 
     return (
-        <Layout style={{ padding: "20px", background: "#fff" }} >
+        <Layout style={{ padding: "20px", background: "#fff" }}>
             <div ref={contentToPrint} className="p-2">
-                {/* Header */}
                 <Header style={{ background: "#1890ff", color: "#fff", textAlign: "center", padding: "10px", height: 'auto' }}>
                     <Title level={2} style={{ color: "#fff", margin: 0 }}>
                         DISTRICT ASSEMBLY PERFORMANCE ASSESSMENT REPORT {year && <span style={{ color: "#fff", fontSize: "30px" }}>{year}</span>}
@@ -1809,17 +2015,53 @@ const DPATAssessmentSheet = ({ props }) => {
                         <Col span={8} className="gutter-row">
                             <Text strong>Name of MMDA: </Text> <Text className="ms-3">{district?.label}</Text>
                         </Col>
-                        <Col span={8} className="gutter-row">
-                            {/* {JSON.stringify(district)} */}
+                        <Col span={6} className="gutter-row">
                             <Text strong>Region: </Text> <Text>{region}</Text>
                         </Col>
                         <Col span={8} className="gutter-row">
                             <Text strong>Date of Assessment: </Text> <Text>{moment().format('MMMM Do YYYY, h:mm:ss A')}</Text>
                         </Col>
+                        
+                        <Col span={10} className="gutter-row">
+                          {(!assessmentStatus || ![null, "Start", "Pending", "Completed", "Closed"].includes(assessmentStatus?.status)) && 
+                            normalizedUserRole !== "DPAT_QUALITY ASSURANCE" && (
+                            <Button
+                                type="primary"
+                          onClick={handleStartAssessmentSubmit}
+                             style={{
+                                backgroundColor: "#1890ff",
+                               borderColor: "#1890ff",
+                              }}
+                             loading={progressLoad}
+                              >
+                      <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>
+                             START
+                            </span>
+                        </Button>
+                        )}
+                        </Col>
                     </Row>
                     <h3 style={{ textAlign: "center", padding: "10px" }}>
                         Annex 1: SECTION A - COMPLIANCE INDICATORS
                     </h3>
+                    
+                {/* 
+                     <Button
+                                type="primary"
+                          onClick={()=>{
+                            console.log(hotlineRef.current?.getData())
+                          }}
+                             style={{
+                                backgroundColor: "#1890ff",
+                               borderColor: "#1890ff",
+                              }}
+                             loading={progressLoad}
+                              >
+                      <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>
+                             Hotline
+                            </span>
+                        </Button> */}
+                    
 
                     {/* General Assembly Meetings and Decision End */}
 
@@ -1830,6 +2072,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         year={year}
                         columns={gaMeetingColumns}
                         districtId={district?.value}
+                         hideComment={hideComment}
                     />}
                     {/* General Assembly Meetings and Decision End */}
                     <hr />
@@ -1841,6 +2084,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         year={year}
                         columns={budgetApprovalColumns}
                         districtId={district?.value}
+                         hideComment={hideComment}
                     />}
                     {/* Approval of Annual Action Plan Budget End */}
                     <hr />
@@ -1856,6 +2100,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         revenueSharing={subReportData}
                         revenuSharingColumns={revenueSharingColumns}
                         districtId={district?.value}
+                         hideComment={hideComment}
                     />}
                     {/* Sub-Structures Meetings End */}
                     <hr />
@@ -1866,6 +2111,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         year={year}
                         columns={ECAMeetingColumns}
                         districtId={district?.value}
+                         hideComment={hideComment}
                     />}
                     {/* ECA Meeting End */}
                     <hr />
@@ -1879,6 +2125,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         memberColumns={membersColumns}
                         districtId={district?.value}
                         year={year}
+                         hideComment={hideComment}
                     />}
                     {/* Sub Committe Meeting and Members section End*/}
                     <hr />
@@ -1889,6 +2136,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         year={year}
                         columns={managementMeetingColumns}
                         districtId={district?.value}
+                         hideComment={hideComment}
                     />}
                     <hr />
 
@@ -1898,6 +2146,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         year={year}
                         columns={PRCCMeetingColumns}
                         districtId={district?.value}
+                         hideComment={hideComment}
                     />}
 
                     <hr />
@@ -1908,6 +2157,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         year={year}
                         columns={spcMeetingColumns}
                         districtId={district?.value}
+                         hideComment={hideComment}
                     />}
                     {/* Special Committee Meeting (SPC) Meeting End*/}
                     <hr />
@@ -1920,6 +2170,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         year={year}
                         columns={ETCMeetingColumns}
                         districtId={district?.value}
+                         hideComment={hideComment}
                     />}
 
                     <hr />
@@ -1930,6 +2181,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         year={year}
                         columns={internalAuditColumns}
                         districtId={district?.value}
+                         hideComment={hideComment}
                     />}
 
                     <hr />
@@ -1939,6 +2191,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         meetingColumns={internalAuditMeetingColumns}
                         district={district?.value}
                         year={year}
+                         hideComment={hideComment}
                     />}
 
                     <hr />
@@ -1946,6 +2199,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     <ClientServiceFunctionality
                         year={year}
                         districtId={district?.value}
+                         hideComment={hideComment}
                     />
 
                     <hr />
@@ -1953,6 +2207,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     <AAPPublication
                         year={year}
                         districtId={district?.value}
+                         hideComment={hideComment}
                     />
 
                     <hr />
@@ -1963,6 +2218,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         ecaMeeting={ecaMeetingData || []}
                         year={year}
                         districtId={district?.value}
+                         hideComment={hideComment}
                     />}
 
                     <hr />
@@ -1973,6 +2229,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         columns={townHallMeetingColumns}
                         year={year}
                         districtId={district?.value}
+                         hideComment={hideComment}
                     />}
 
                     <hr />
@@ -1992,6 +2249,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         decisionDeliveryData={decisionDeliveryData}
                         serviceDeliveryDecisionColumns={serviceDeliveryDecisionColumns}
                         districtId={district?.value}
+                         hideComment={hideComment}
                     />}
                     {/* SDI- General Assembly Decisions End */}
 
@@ -2004,6 +2262,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         managementActionServiceDeliveryData={managementActionServiceDeliveryData}
                         district={district?.value}
                         districtId={district?.value}
+                         hideComment={hideComment}
                     />
                     <hr />
 
@@ -2014,6 +2273,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         cededRevenueUtilisationScore={cededRevenueUtilisationScore}
                         substructureExpendature={substructureExpendatureData}
                         districtId={district?.value}
+                        hideComment={hideComment}
                     />
 
                     <hr />
@@ -2023,6 +2283,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         year={year}
 
                         districtId={district?.value}
+                         hideComment={hideComment}
                     />
                     <hr />
 
@@ -2030,6 +2291,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     <ElectricityServices
                         year={year}
                         districtId={district?.value}
+                         hideComment={hideComment}
                     />
                     <hr />
 
@@ -2037,6 +2299,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     <SanitationServices year={year}
                         sanitationProvidersData={sanitationProvidersData}
                         districtId={district?.value}
+                         hideComment={hideComment}
                     />
                     <hr />
 
@@ -2046,6 +2309,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     <MaintenanceInfrastructure year={year}
                         buildingInspectorateData={buildingInspectorateData}
                         districtId={district?.value}
+                         hideComment={hideComment}
                     />
                     <hr />
 
@@ -2053,6 +2317,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         ClientServiceCharter={clientServiceChaterData}
 
                         districtId={district?.value}
+                         hideComment={hideComment}
                     />
                     <hr />
 
@@ -2061,6 +2326,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         year={year}
                         transportors={transportorsData}
                         districtId={district?.value}
+                         hideComment={hideComment}
                         district={district?.value} />
                     <hr />
 
@@ -2069,6 +2335,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         year={year}
                         units={inspectorateUnitData}
                         districtId={district?.value}
+                         hideComment={hideComment}
                         district={district?.value} />
                     <hr />
 
@@ -2076,6 +2343,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     <PermitProcessingIssuance
                         year={year}
                         districtId={district?.value}
+                         hideComment={hideComment}
                         district={district?.value} />
                     <hr />
                     {/* 3.3 Street Naming Database and Property Addressing */}
@@ -2086,6 +2354,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         counterColumns={streetNamingInstallationColumn}
                         streets={streetNamingData}
                         districtId={district?.value}
+                         hideComment={hideComment}
                         columns={streetNamingColumn}
                     />
                     <hr />
@@ -2096,6 +2365,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         year={year}
                         district={district?.value}
                         districtId={district?.value}
+                         hideComment={hideComment}
                         services={socialServicesData}
                     />
                     <hr />
@@ -2105,6 +2375,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     <ShelterTransactionalHousing
                         year={year}
                         districtId={district?.value}
+                         hideComment={hideComment}
                         district={district?.value}
                     />
                     <hr />
@@ -2114,6 +2385,8 @@ const DPATAssessmentSheet = ({ props }) => {
                         data={districtHotlineNumberData}
                         year={year}
                         districtId={district?.value}
+                        ref={hotlineRef}
+                         hideComment={hideComment}
                         columns={districtHotlineNumberColumn} />}
                     <hr />
 
@@ -2121,6 +2394,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     <PWDService
                         year={year}
                         district={district?.value}
+                         hideComment={hideComment}
                         districtId={district?.value}
                     />
                     <hr />
@@ -2129,6 +2403,7 @@ const DPATAssessmentSheet = ({ props }) => {
                         year={year}
                         district={district?.value}
                         districtId={district?.value}
+                         hideComment={hideComment}
                         data={nutritionServcieData}
                     />
                     <hr />
@@ -2137,6 +2412,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     <SanitationServiceProviders
                         year={year}
                         districtId={district?.value}
+                         hideComment={hideComment}
                         district={district?.value}
                     />
                     <hr />
@@ -2145,6 +2421,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     <DumpingSite
                         year={year}
                         districtId={district?.value}
+                         hideComment={hideComment}
                         district={district?.value}
                     />
                     <hr />
@@ -2153,6 +2430,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     <FoodVendors
                         year={year}
                         districtId={district?.value}
+                         hideComment={hideComment}
                         district={district?.value}
                     />
                     <hr />
@@ -2161,6 +2439,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     <PublicSchoolFacility
                         year={year}
                         districtId={district?.value}
+                         hideComment={hideComment}
                         district={district?.value}
                     />
                     <hr />
@@ -2169,6 +2448,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     <ClimateChangeIntervention
                         year={year}
                         districtId={district?.value}
+                         hideComment={hideComment}
                         district={district?.value}
                     />
                     <hr />
@@ -2177,6 +2457,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     <DistrictLEDActivityPlan
                         year={year}
                         districtId={district?.value}
+                         hideComment={hideComment}
                         district={district?.value}
                     />
                     <hr />
@@ -2184,6 +2465,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     {/*  Promotion of new businesses and of new jobs */}
                     <BusinessAndJobPromotion
                         year={year}
+                         hideComment={hideComment}
                         district={district?.value}
                     />
                     <hr />
@@ -2192,6 +2474,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     <AgroProcessingFacilitySupport
                         year={year}
                         districtId={district?.value}
+                         hideComment={hideComment}
                         district={district?.value}
                     />
                     <hr />
@@ -2200,6 +2483,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     <BusinessCommunityEngagement
                         year={year}
                         districtId={district?.value}
+                         hideComment={hideComment}
                         district={district?.value}
                     />
                     <hr />
@@ -2213,6 +2497,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     <AAPImplementation
                         year={year}
                         districtId={district?.value}
+                         hideComment={hideComment}
                         district={district?.value}
                     />
                     <hr />
@@ -2220,6 +2505,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     <MonitoringProjectAndActivity
                         year={year}
                         districtId={district?.value}
+                         hideComment={hideComment}
                         district={district?.value}
                     />
                     <hr />
@@ -2227,6 +2513,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     <ContractManagementAndAdmins
                         year={year}
                         districtId={district?.value}
+                         hideComment={hideComment}
                         district={district?.value}
                     />
                     <hr />
@@ -2234,6 +2521,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     <FollowUpDeduction
                         year={year}
                         districtId={district?.value}
+                         hideComment={hideComment}
                         district={district?.value}
                     />
                     <hr />
@@ -2241,6 +2529,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     <EnvironmentalAndSocialSafeGuard
                         year={year}
                         districtId={district?.value}
+                         hideComment={hideComment}
                         guards={guards}
                     />
                     <hr />
@@ -2248,6 +2537,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     <CapacityBuildingImplementation
                         year={year}
                         districtId={district?.value}
+                         hideComment={hideComment}
                         district={district?.value}
                     />
                     <hr />
@@ -2255,6 +2545,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     <PostTrainingEvaluation
                         year={year}
                         districtId={district?.value}
+                         hideComment={hideComment}
                         district={district?.value}
                     />
                     <hr />
@@ -2262,6 +2553,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     <PaymentPoints
                         year={year}
                         districtId={district?.value}
+                         hideComment={hideComment}
                         district={district?.value}
                     />
                     <hr />
@@ -2269,6 +2561,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     <RateableRevenu
                         year={year}
                         districtId={district?.value}
+                         hideComment={hideComment}
                         district={district?.value}
                     />
                     <hr />
@@ -2277,6 +2570,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     <AuditCommitteeResponsiveness
                         year={year}
                         districtId={district?.value}
+                         hideComment={hideComment}
                         audits={auditCommitteeMeetingData}
                     />
                     <hr />
@@ -2284,6 +2578,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     <AuditInfractions
                         year={year}
                         districtId={district?.value}
+                         hideComment={hideComment}
                         district={district?.value}
                     />
                     <hr />
@@ -2291,6 +2586,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     <EducationServiceSupport
                         year={year}
                         districtId={district?.value}
+                         hideComment={hideComment}
                         district={district?.value}
                     />
                     <hr />
@@ -2298,6 +2594,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     <HealthServiceSupport
                         year={year}
                         districtId={district?.value}
+                         hideComment={hideComment}
                         district={district?.value}
                     />
                     <hr />
@@ -2305,6 +2602,7 @@ const DPATAssessmentSheet = ({ props }) => {
                     <AgricultureSupport
                         year={year}
                         districtId={district?.value}
+                         hideComment={hideComment}
                         district={district?.value}
                     />
                     <hr />
@@ -2312,6 +2610,7 @@ const DPATAssessmentSheet = ({ props }) => {
                   <QualityAssuranceEditor
                         year={year}
                         districtId={district?.value}
+                         hideComment={hideComment}
                         district={district?.value}
                     />
 
@@ -2321,6 +2620,9 @@ const DPATAssessmentSheet = ({ props }) => {
                 </Content>
             </div>
             <div style={{ textAlign: "right" }}>
+                  {/* <Col span={10} className="gutter-row"> */}
+                         
+                        {/* </Col> */}
                 <Button
                     type="primary"
                     icon={<FilePdfOutlined style={{ fontSize: "20px", color: "white", fontWeight: "bold" }} />}
@@ -2341,6 +2643,60 @@ const DPATAssessmentSheet = ({ props }) => {
                 >
                     <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>Download Report</span>
                 </Button>
+                {assessmentStatus?.status === "Start" && (
+                                <Button
+                                    type="primary"
+                                    onClick={handlePendingAssessmentSubmit}
+                                    style={{
+                                        backgroundColor: "#2e7f05ff",
+                                        borderColor: "#2e7f05ff",
+                                         marginLeft: "30px"
+                                    }}
+                                    loading={progressLoad}
+                                >
+                                    <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>
+                                        COMPLETE ASSESSMENT
+                                    </span>
+                                </Button>
+                            )}
+                            
+                              {normalizedUserRole === "DPAT_QUALITY ASSURANCE" && assessmentStatus?.status === "Pending" &&  (
+                                <Button
+                                    type="primary"
+                                    onClick={handleCompleteReviewSubmit}
+                                    style={{
+                                        backgroundColor: "#338e06ff",
+                                        borderColor: "#338e06ff",
+                                        marginLeft: "30px"
+                                    }}
+                                    loading={progressLoad}
+                                >
+                                    <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>
+                                        COMPLETE REVIEW
+                                    </span>
+                                </Button>
+                            )}
+
+                             {normalizedUserRole === "DPAT_QUALITY ASSURANCE" && assessmentStatus?.status === "Completed" && (
+                                <Button
+                                    type="primary"
+                                    onClick={handleCloseReviewSubmit}
+                                    style={{
+                                        backgroundColor: "#a00000ff",
+                                        borderColor: "#a00000ff",
+                                        marginLeft: "30px"
+                                    }}
+                                    loading={progressLoad}
+                                >
+                                    <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>
+                                        CLOSE REVIEW
+                                    </span>
+                                </Button>
+                            )}
+
+
+
+                            
             </div>
 
              

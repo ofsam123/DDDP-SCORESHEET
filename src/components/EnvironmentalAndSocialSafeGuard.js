@@ -2,7 +2,7 @@ import { Layout, Table, Typography, Row } from "antd";
 import React from "react";
 import Comment from "../components/Comments";
 
-function EnvironmentalAndSocialSafeGuard({ year, guards }) {
+function EnvironmentalAndSocialSafeGuard({ year, guards,districtId,hideComment  }) {
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
@@ -18,8 +18,9 @@ function EnvironmentalAndSocialSafeGuard({ year, guards }) {
         <Comment
             data={guards}
             year={year}
-            districtId={null}
+            districtId={districtId}
             tableCommentedId={`pi1.0-1.5-${year}`}
+             hideComment={hideComment}
         >
             {({ renderCommentInput, renderCommentList }) => (
                 <>
@@ -54,7 +55,7 @@ function EnvironmentalAndSocialSafeGuard({ year, guards }) {
                         <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
                             PI 1.0-1.5iii Actual Score: <strong>Score</strong>
                         </Title>
-                        {renderCommentInput()}
+                        {!hideComment && renderCommentInput()}
                     </Row>
 
                     <Title level={5} style={{ marginTop: "20px" }}>

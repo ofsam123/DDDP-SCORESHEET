@@ -5,7 +5,7 @@ import Comment from "../components/Comments";
 
 function PWDService({
   year,
-  districtId
+  districtId,hideComment
 }) {
   const [scorei, setScorei] = useState(0);
   const [scoreii, setScoreii] = useState(0);
@@ -127,6 +127,7 @@ function PWDService({
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi4.0-4.4-${year}`}
+       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -162,7 +163,7 @@ function PWDService({
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               SDI 4.0-4.4iii Actual Score: <strong>{scoreiii}</strong>
             </Title>
-            {renderCommentInput()}
+            {!hideComment && renderCommentInput()}
           </Row>
 
           <Title level={4} style={{ marginTop: "20px" }}>I- Evidence of Registration of PWDs with NHIS</Title>

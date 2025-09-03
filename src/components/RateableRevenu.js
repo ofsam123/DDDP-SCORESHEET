@@ -4,7 +4,7 @@ import axios from "../api/axios";
 import { formatDataGeneral, getAttributeValue } from "../utils/utils";
 import Comment from "../components/Comments";
 
-function RateableRevenu({ year, district }) {
+function RateableRevenu({ year, district,hideComment }) {
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
@@ -197,6 +197,7 @@ function RateableRevenu({ year, district }) {
             year={year}
             districtId={district}
             tableCommentedId={`pi3.0-3.2-${year}`}
+             hideComment={hideComment}
         >
             {({ renderCommentInput, renderCommentList }) => (
                 <>
@@ -233,7 +234,7 @@ function RateableRevenu({ year, district }) {
                         <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
                             PI 3.0-3.2iii Actual Score: <strong>{scoreIII}</strong>
                         </Title>
-                        {renderCommentInput()}
+                        {!hideComment && renderCommentInput()}
                     </Row>
 
                     <Title level={5} style={{ marginTop: "20px" }}>

@@ -5,7 +5,7 @@ import { formatDataGeneral, getAttributeValue } from "../utils/utils";
 import Comment from "../components/Comments";
 
 function AgroProcessingFacilitySupport({
-    year, district
+    year, district,hideComment
 }) {
 
     const [data, setData] = useState([]);
@@ -105,6 +105,7 @@ function AgroProcessingFacilitySupport({
             year={year}
             districtId={district}
             tableCommentedId={`sdi6.0-6.3-${year}`}
+             hideComment={hideComment}
         >
             {({ renderCommentInput, renderCommentList }) => (
                 <>
@@ -129,7 +130,7 @@ function AgroProcessingFacilitySupport({
                         <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
                             SDI 6.0-6.3 Actual Score: <strong>{scorei}</strong>
                         </Title>
-                        {renderCommentInput()}
+                        {!hideComment && renderCommentInput()}
                     </Row>
 
                     <Title level={4} style={{ marginTop: "20px" }}>Evidence of Assembly’s support to small-scale agro-processing and

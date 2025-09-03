@@ -5,13 +5,14 @@ import Comment from "../components/Comments";
 const { Header, Content } = Layout;
 const { Title } = Typography;
 
-function SPCEntityTenderCommittee({ data, year, columns, districtId }) {
+function SPCEntityTenderCommittee({ data, year, columns, districtId,hideComment }) {
   return (
     <Comment
       data={data}
       year={year}
       districtId={districtId}
       tableCommentedId={`c3.0-3.1-${year}`}
+      hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -42,7 +43,7 @@ function SPCEntityTenderCommittee({ data, year, columns, districtId }) {
             <Title level={5} style={{ marginTop: "20px", marginRight:"20px",marginLeft:"10px" }}>
               CI Result: <strong style={{ color: data?.fulfillment === "Fulfilled" ? "green" : "red" }}>{data?.fulfillment}</strong>
             </Title>
-            {renderCommentInput()}
+            {!hideComment && renderCommentInput()}
           </Row>
 
           <Title level={4} style={{ marginTop: "20px" }}>Evidence of Entity Tender Committee Meetings</Title>

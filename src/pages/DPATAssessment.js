@@ -559,7 +559,7 @@ function DPATAssessment() {
                                     inspectorateUnits: inspectorateUnit,
                                     ifg: igf,
                                     documents: documents,
-                                    publications: publications
+                                    publications: publications,
                                 }}
                             />
                         )}

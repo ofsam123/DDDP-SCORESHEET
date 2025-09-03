@@ -9,7 +9,7 @@ function GeneralAssemblyManagementActions({
   year,
   decisions,
   managementActionServiceDeliveryData,
-  districtId
+  districtId,hideComment
 }) {
   const managementServiceDeliveryActionColumns = [
     { title: "No. of decisions on service delivery improvement", dataIndex: "no", key: "no" },
@@ -28,6 +28,7 @@ function GeneralAssemblyManagementActions({
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi1.0-1.2-${year}`}
+       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -56,7 +57,7 @@ function GeneralAssemblyManagementActions({
               {managementActionServiceDeliveryData && 
               <strong>{managementActionServiceDeliveryData[0]?.percentage >= 70 ? 2 : 0}</strong>}
             </Title>
-            {renderCommentInput()}
+            {!hideComment && renderCommentInput()}
           </Row>
 
           <Title level={5} style={{ marginTop: "30px" }}>I. Evidence of management actions on service delivery decisions</Title>

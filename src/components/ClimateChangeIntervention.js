@@ -5,7 +5,8 @@ import Comment from "../components/Comments";
 
 function ClimateChangeIntervention({
   year,
-  districtId
+  districtId,
+  hideComment
 }) {
   const [climateChangePlan, setClimateChangePlan] = useState([]);
   const [treePlan, setTreePlan] = useState([]);
@@ -159,6 +160,7 @@ function ClimateChangeIntervention({
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi5.0-5.5-${year}`}
+       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -186,7 +188,7 @@ function ClimateChangeIntervention({
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               SDI 5.0-5.5ii Actual Score: <strong>{scoreii}</strong>
             </Title>
-            {renderCommentInput()}
+            {!hideComment && renderCommentInput()}
           </Row>
 
           <Title level={4} style={{ marginTop: "20px" }}>I- Evidence of implementation of climate adaptation activities</Title>

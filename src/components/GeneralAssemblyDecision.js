@@ -6,7 +6,7 @@ import { calculatePercentage } from "../utils/utils";
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
 
-function GeneralAssemblyDecision({ data, year, columns, decisionDeliveryData, serviceDeliveryDecisionColumns, districtId }) {
+function GeneralAssemblyDecision({ data, year, columns, decisionDeliveryData, serviceDeliveryDecisionColumns, districtId,hideComment }) {
   const [gaDecisionScore, setGaDecisionScore] = useState(0);
 
   return (
@@ -15,6 +15,7 @@ function GeneralAssemblyDecision({ data, year, columns, decisionDeliveryData, se
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi1.0-1.1-${year}`}
+       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -41,7 +42,7 @@ function GeneralAssemblyDecision({ data, year, columns, decisionDeliveryData, se
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               SDI 1.0-1.1 Actual Score: <strong>{gaDecisionScore > 70 ? '1' : '0'}</strong>
             </Title>
-            {renderCommentInput()}
+            {!hideComment && renderCommentInput()}
           </Row>
 
           <Title level={4} style={{ marginTop: "20px" }}>Evidence of Quarterly Management Meetings</Title>

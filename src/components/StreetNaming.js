@@ -7,7 +7,8 @@ function StreetNaming({
   streets,
   districtId,
   columns,
-  counterColumns
+  counterColumns,
+  hideComment
 }) {
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
@@ -18,6 +19,7 @@ function StreetNaming({
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi3.0-3.3-${year}`}
+       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -49,7 +51,7 @@ function StreetNaming({
               SDI 3.0-3.3ii Actual Score:{" "}
               <strong>{streets?.percentage >= 70 ? 2 : 0}</strong>
             </Title>
-            {renderCommentInput()}
+            {!hideComment && renderCommentInput()}
           </Row>
 
           <Title level={5} style={{ marginTop: "20px" }}>Evidence of Street Naming Database</Title>

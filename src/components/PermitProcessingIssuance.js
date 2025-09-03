@@ -5,7 +5,7 @@ import Comment from "../components/Comments";
 
 function PermitProcessingIssuance({
   year,
-  districtId
+  districtId,hideComment
 }) {
   const [data, setData] = useState([]);
   const [scorei, setScorei] = useState(0);
@@ -60,6 +60,7 @@ function PermitProcessingIssuance({
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi3.0-3.2-${year}`}
+       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -89,7 +90,7 @@ function PermitProcessingIssuance({
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               SDI 3.0-3.2ii Actual Score: <strong>{scoreii}</strong>
             </Title>
-            {renderCommentInput()}
+            {!hideComment && renderCommentInput()}
           </Row>
 
           <Title level={4} style={{ marginTop: "20px" }}>Evidence of Processing & Issuance of Building Permit

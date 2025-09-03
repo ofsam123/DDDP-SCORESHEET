@@ -5,7 +5,8 @@ import Comment from "../components/Comments";
 function ClientServiceCharter({
   year,
   ClientServiceCharter,
-  districtId
+  districtId,
+  hideComment
 }) {
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
@@ -32,6 +33,7 @@ function ClientServiceCharter({
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi2.0-2.5-${year}`}
+       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -49,7 +51,7 @@ function ClientServiceCharter({
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               SDI 2.0-2.5 Actual Score: <strong>{score}</strong>
             </Title>
-            {renderCommentInput()}
+            {!hideComment && renderCommentInput()}
           </Row>
 
           <Title level={4} style={{ marginTop: "30px" }}>Findings / Observations & Conclusion</Title>

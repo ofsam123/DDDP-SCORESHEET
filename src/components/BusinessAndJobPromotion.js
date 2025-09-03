@@ -5,7 +5,7 @@ import { formatDataGeneral, getAttributeValue } from "../utils/utils";
 import Comment from "../components/Comments";
 
 function BusinessAndJobPromotion({
-    year, district
+    year, district, hideComment
 }) {
 
     const [data, setData] = useState([]);
@@ -106,6 +106,7 @@ function BusinessAndJobPromotion({
             year={year}
             districtId={district}
             tableCommentedId={`sdi6.0-6.2-${year}`}
+             hideComment={hideComment}
         >
             {({ renderCommentInput, renderCommentList }) => (
                 <>
@@ -127,7 +128,7 @@ function BusinessAndJobPromotion({
                         <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
                             SDI 6.0-6.2 Actual Score: <strong>{scorei}</strong>
                         </Title>
-                        {renderCommentInput()}
+                        {!hideComment && renderCommentInput()}
                     </Row>
 
                     <Title level={4} style={{ marginTop: "20px" }}>Evidence of Business and Jobs Creation</Title>

@@ -7,7 +7,7 @@ import { getFileLinkIfExist } from "../utils/utils";
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
 
-function ClientServiceFunctionality({ year, districtId }) {
+function ClientServiceFunctionality({ year, districtId,hideComment }) {
   const [clientService, setClientService] = useState(null);
 
   const clienServiceColumn = [
@@ -144,6 +144,7 @@ function ClientServiceFunctionality({ year, districtId }) {
       year={year}
       districtId={districtId}
       tableCommentedId={`c4.0-4.1-${year}`}
+       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -168,7 +169,7 @@ function ClientServiceFunctionality({ year, districtId }) {
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               CI Result: <strong style={{ color: clientService?.fulfillment === "Fulfilled" ? "green" : "red" }}>{clientService?.fulfillment}</strong>
             </Title>
-            {renderCommentInput()}
+            {!hideComment && renderCommentInput()}
           </Row>
 
           {/* {JSON.stringify(clientService)} */}

@@ -4,7 +4,7 @@ import axios from "../api/axios";
 import { calculatePercentage, formatDataGeneral, getAttributeValue } from "../utils/utils";
 import Comment from "../components/Comments";
 
-function EducationServiceSupport({ year, districtId }) {
+function EducationServiceSupport({ year, districtId, hideComment }) {
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
 
@@ -134,6 +134,7 @@ function EducationServiceSupport({ year, districtId }) {
       year={year}
       districtId={districtId}
       tableCommentedId={`pi5.0-5.1-${year}`}
+       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -158,7 +159,7 @@ function EducationServiceSupport({ year, districtId }) {
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               PI 5.0-5.1 Actual Score: <strong>{score}</strong>
             </Title>
-            {renderCommentInput()}
+            {!hideComment && renderCommentInput()}
           </Row>
 
           <Title level={5} style={{ marginTop: "20px" }}>

@@ -50,7 +50,7 @@ const contingencyIndicators = [
     }
 ];
 
-function ContractManagementAndAdmins({ year, district }) {
+function ContractManagementAndAdmins({ year, district,hideComment }) {
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
@@ -189,10 +189,11 @@ function ContractManagementAndAdmins({ year, district }) {
             year={year}
             districtId={district}
             tableCommentedId={`pi1.0-1.3-${year}`}
+             hideComment={hideComment}
         >
             {({ renderCommentInput, renderCommentList }) => (
                 <>
-                    <Title level={3} style={{ marginTop: "20px" }}>PI 1.0 - 1.3 Records on Contract Management and Administration</Title>
+                    <Title level={3} style={{ marginTop: "20px" }}>PI 1.0 - 1.3  Management and Administration</Title>
                     <Title level={4} style={{ marginTop: "20px" }}>Assessment Guide/ Requirement</Title>
                     <Content>
                         From the DCD, obtain information on contract management and administration:<br /><br />
@@ -214,7 +215,7 @@ function ContractManagementAndAdmins({ year, district }) {
                         <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
                             PI 1.0-1.3 Actual Score: <strong>{scoreI}</strong>
                         </Title>
-                        {renderCommentInput()}
+                        {!hideComment && renderCommentInput()}
                     </Row>
 
                     <Title level={5} style={{ marginTop: "20px" }}>

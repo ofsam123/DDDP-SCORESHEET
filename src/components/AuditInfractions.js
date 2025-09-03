@@ -27,7 +27,7 @@ const dataElementsAuditReport = [
   { id: 'eElDNWrVib7', name: 'IGF - Under Procurement & Stores' },
 ];
 
-function AuditInfractions({ year, districtId }) {
+function AuditInfractions({ year, districtId, hideComment }) {
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
   const [irregularities, setIrregularities] = useState([]);
@@ -159,6 +159,7 @@ function AuditInfractions({ year, districtId }) {
       year={year}
       districtId={districtId}
       tableCommentedId={`pi4.0-4.2-${year}`}
+       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -190,7 +191,7 @@ function AuditInfractions({ year, districtId }) {
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               PI 4.0-4.2ii Actual Score: <strong>{scoreII}</strong>
             </Title>
-            {renderCommentInput()}
+            {!hideComment && renderCommentInput()}
           </Row>
 
           <Title level={5} style={{ marginTop: "20px" }}>

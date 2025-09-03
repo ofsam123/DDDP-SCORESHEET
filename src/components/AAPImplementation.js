@@ -4,7 +4,7 @@ import axios from "../api/axios";
 import { calculatePercentage } from "../utils/utils";
 import Comment from "../components/Comments";
 
-function AAPImplementation({ year, district }) {
+function AAPImplementation({ year, district,hideComment }) {
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
@@ -51,6 +51,7 @@ function AAPImplementation({ year, district }) {
             year={year}
             districtId={district}
             tableCommentedId={`pi1.0-1.1-${year}`}
+             hideComment={hideComment}
         >
             {({ renderCommentInput, renderCommentList }) => (
                 <>
@@ -74,7 +75,7 @@ function AAPImplementation({ year, district }) {
                         <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
                             PI 1.0-1.1 Actual Score: <strong>{score}</strong>
                         </Title>
-                        {renderCommentInput()}
+                        {!hideComment && renderCommentInput()}
                     </Row>
 
                     <Table

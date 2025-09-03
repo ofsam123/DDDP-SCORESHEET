@@ -5,7 +5,7 @@ import { calculatePercentage, formatDataGeneral, getDataRank, getQuarterDate } f
 import moment from "moment/moment";
 import Comment from "../components/Comments";
 
-function CapacityBuildingImplementation({ year, district }) {
+function CapacityBuildingImplementation({ year, district,hideComment }) {
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
@@ -145,6 +145,7 @@ function CapacityBuildingImplementation({ year, district }) {
             year={year}
             districtId={district}
             tableCommentedId={`pi2.0-2.1-${year}`}
+             hideComment={hideComment}
         >
             {({ renderCommentInput, renderCommentList }) => (
                 <>
@@ -174,7 +175,7 @@ function CapacityBuildingImplementation({ year, district }) {
                         <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
                             PI 2.0-2.1ii Actual Score: <strong>{scoreii}</strong>
                         </Title>
-                        {renderCommentInput()}
+                        {!hideComment && renderCommentInput()}
                     </Row>
 
                     <Title level={5} style={{ marginTop: "20px" }}>

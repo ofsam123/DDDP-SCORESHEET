@@ -6,7 +6,8 @@ import Comment from "../components/Comments";
 function SocialProtectionServices({
   year,
   services,
-  districtId
+  districtId,
+  hideComment
 }) {
   const [scorei, setScorei] = useState(0);
   const [scoreii, setScoreii] = useState(0);
@@ -50,6 +51,7 @@ function SocialProtectionServices({
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi4.0-4.1-${year}`}
+       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -81,7 +83,7 @@ function SocialProtectionServices({
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               SDI 4.0-4.1iii Actual Score: <strong>{scoreiii}</strong>
             </Title>
-            {renderCommentInput()}
+            {!hideComment && renderCommentInput()}
           </Row>
           {/* {JSON.stringify(transportations)} */}
           <Title level={4} style={{ marginTop: "20px" }}>I- Evidence of Dissemination of Social Services to Citizens</Title>

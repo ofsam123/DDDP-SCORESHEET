@@ -4,7 +4,7 @@ import axios from "../api/axios";
 import { calculatePercentage, formatDataGeneral, getAttributeValue } from "../utils/utils";
 import Comment from "../components/Comments";
 
-function HealthServiceSupport({ year, districtId }) {
+function HealthServiceSupport({ year, districtId,hideComment }) {
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
   const [healthFacilities, setHealthFacilities] = useState([]);
@@ -135,6 +135,7 @@ function HealthServiceSupport({ year, districtId }) {
       year={year}
       districtId={districtId}
       tableCommentedId={`pi5.0-5.2-${year}`}
+       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -159,7 +160,7 @@ function HealthServiceSupport({ year, districtId }) {
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               PI 5.0-5.2 Actual Score: <strong>{score}</strong>
             </Title>
-            {renderCommentInput()}
+            {!hideComment && renderCommentInput()}
           </Row>
 
           <Title level={5} style={{ marginTop: "20px" }}>

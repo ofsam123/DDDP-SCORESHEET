@@ -5,7 +5,8 @@ import Comment from "../components/Comments";
 
 function SanitationServiceProviders({
   year,
-  districtId
+  districtId,
+  hideComment
 }) {
   const [scorei, setScorei] = useState(0);
   const [scoreii, setScoreii] = useState(0);
@@ -100,6 +101,7 @@ function SanitationServiceProviders({
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi5.0-5.1-${year}`}
+       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -127,7 +129,7 @@ function SanitationServiceProviders({
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               SDI 5.0-5.1ii Actual Score: <strong>{scoreii}</strong>
             </Title>
-            {renderCommentInput()}
+            {!hideComment && renderCommentInput()}
           </Row>
 
           <Title level={4} style={{ marginTop: "20px" }}>I- Evidence of Availability of Sanitation Service Providers</Title>

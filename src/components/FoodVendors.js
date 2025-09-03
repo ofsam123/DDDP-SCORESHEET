@@ -5,7 +5,8 @@ import Comment from "../components/Comments";
 
 function FoodVendors({
   year,
-  districtId
+  districtId,
+  hideComment
 }) {
   const [scorei, setScorei] = useState(0);
   const [scoreii, setScoreii] = useState(0);
@@ -116,6 +117,7 @@ function FoodVendors({
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi5.0-5.3-${year}`}
+       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -149,7 +151,7 @@ function FoodVendors({
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               SDI 5.0-5.3iii Actual Score: <strong>{scoreiii}</strong>
             </Title>
-            {renderCommentInput()}
+            {!hideComment && renderCommentInput()}
           </Row>
 
           <Title level={4} style={{ marginTop: "20px" }}>Evidence of Registration & Screening of Food Vendors</Title>

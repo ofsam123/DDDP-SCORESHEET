@@ -126,7 +126,7 @@ function AuditInfractions({ year, districtId }) {
             name: <strong>Total Contract Management irregularities (x)</strong>,
             value: totalContract,
           },
-          { key: 'procurement-header', name: 'Procurement & Stores Irregularities', value: '' },
+          { key: 'procurement-header', name: <strong>Procurement & Stores Irregularities</strong> , value: '' },
           ...procurementIrregularities.map((item, index) => ({
             key: `proc-${index}`,
             name: item.name,

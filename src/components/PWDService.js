@@ -2,6 +2,7 @@ import { Layout, Table, Typography, Row } from "antd";
 import React, { useEffect, useState } from "react";
 import axios from "../api/axios";
 import Comment from "../components/Comments";
+import { getAttributeValue, getFileLinkIfExist } from "../utils/utils";
 
 function PWDService({
   year,
@@ -11,6 +12,7 @@ function PWDService({
   const [scoreii, setScoreii] = useState(0);
   const [scoreiii, setScoreiii] = useState(0);
   const [pwdData, setPwdData] = useState({ pwd: [], iga: [], cb: [] });
+  const [pwdList, setPwdList] = useState([]);
 
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
@@ -44,9 +46,11 @@ function PWDService({
               let nhisTotal = 0;
               let igaTotal = 0;
               let cbTotal = 0;
+              const temp = [];
 
               pwds.forEach(pwd => {
                 const currentReport = reports.find(rep => rep.trackedEntity === pwd.trackedEntity);
+                const reportLink = getFileLinkIfExist(reports, "TxE2hVHyNuG", pwd.trackedEntity);
 
                 if (currentReport) {
                   currentReport.dataValues.forEach(r => {
@@ -59,11 +63,36 @@ function PWDService({
                     }
                   });
                 }
+
+                const fistName = getAttributeValue("First Name", pwd);
+                const lastName = getAttributeValue("Last Name", pwd);
+
+                const dataSet = {
+                  name: `${fistName} ${lastName}`,
+                  gender: getAttributeValue("Sex", pwd),
+                  card: getAttributeValue("Ghana Card Number", pwd),
+                  evidence: reportLink ? (
+                      <a
+                        className="px-2 text-primary fw-bold text-decoration-underline"
+                        href={`https://dddp.gov.gh/api/events/files?eventUid=${reportLink}&dataElementUid=TxE2hVHyNuG`} target="_blank"
+                        rel="noopener noreferrer"
+                        title="Click here to see the uploaded document"
+                      >
+                        View Evidence
+                      </a>
+                    ) : (
+                      "Not Uploaded"
+                    ),
+                };
+
+                temp.push(dataSet);
               });
 
               const pwdPercentage = calculatePercentage(pwdTotal, nhisTotal);
               const igaPercentage = calculatePercentage(pwdTotal, igaTotal);
               const cbPercentage = calculatePercentage(pwdTotal, cbTotal);
+
+              setPwdList(temp);
 
               if (pwdPercentage >= 90) {
                 setScorei(1);
@@ -121,6 +150,13 @@ function PWDService({
     { title: "c. % of PWDs whose capacity has been built (b/a X 100) ", dataIndex: "percentage", key: "percentage" }
   ];
 
+  const pwdListColumn = [
+    { title: "Name", dataIndex: "name", key: "name" },
+    { title: "Gender", dataIndex: "gender", key: "gender" },
+    { title: "Ghana Card", dataIndex: "card", key: "card" },
+    { title: "Evidence", dataIndex: "evidence", key: "evidence" },
+  ];
+
   return (
     <Comment
       data={pwdData.pwd}
@@ -164,6 +200,12 @@ function PWDService({
             </Title>
             {renderCommentInput()}
           </Row>
+
+          <Title level={4} style={{ marginTop: "20px" }}>List of Registered PWD</Title>
+          <Table
+            columns={pwdListColumn}
+            dataSource={pwdList}
+            pagination={false} bordered />
 
           <Title level={4} style={{ marginTop: "20px" }}>I- Evidence of Registration of PWDs with NHIS</Title>
           <Table

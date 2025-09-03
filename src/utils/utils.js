@@ -156,6 +156,38 @@ export function getFileLinkIfExist(reports, attribute, trackedEntity) {
   return "";
 }
 
+export function getFirstFileLinkIfExist(reports, attribute, trackedEntity, stageId, type = "report") {
+  const currentReport = reports.find(rep =>
+    (rep.trackedEntity === trackedEntity) &&
+    (rep.dataValues.length > 0) &&
+    (rep.programStage === stageId)
+  );
+
+  if (type === "status") {
+    if (currentReport) {
+
+      for (const rep of currentReport.dataValues) {
+
+        if (rep.dataElement === attribute) {
+          return rep.value;
+        }
+      }
+    }
+  } else {
+    if (currentReport) {
+      const eventId = currentReport.event;
+      for (const rep of currentReport.dataValues) {
+
+        if (rep.dataElement === attribute) {
+          return eventId;
+        }
+      }
+    }
+  }
+
+  return "";
+}
+
 export function checkECANDGAMeetingFulfillment(meetings) {
 
   if (meetings.length === 0) {
@@ -184,7 +216,7 @@ export function checkECANDGAMeetingFulfillment(meetings) {
 export function formatSubStructureMeetings(data) {
   const grouped = {};
 
-  data.filter(val=> val.meeting !== "N/A").forEach(item => {
+  data.filter(val => val.meeting !== "N/A").forEach(item => {
     const meetingName = item.meeting;
     if (!grouped[meetingName]) {
       grouped[meetingName] = {
@@ -217,7 +249,7 @@ export function formatSubStructureMeetings(data) {
 export function formatSubStatutoryMeetings(data) {
   const grouped = {};
 
-  data.filter(val=> val.meeting !== "N/A").forEach(item => {
+  data.filter(val => val.meeting !== "N/A").forEach(item => {
     const meetingName = item.meeting;
     if (!grouped[meetingName]) {
       grouped[meetingName] = {

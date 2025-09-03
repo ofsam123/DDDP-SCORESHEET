@@ -1,7 +1,7 @@
 import { Layout, Table, Typography, Row } from "antd";
 import React, { useEffect, useState } from "react";
 import axios from "../api/axios";
-import { formatDataGeneral, getAttributeValue } from "../utils/utils";
+import { formatDataGeneral, getAttributeValue, getFileLinkIfExist } from "../utils/utils";
 import Comment from "../components/Comments";
 
 function RateableRevenu({ year, district }) {
@@ -22,23 +22,55 @@ function RateableRevenu({ year, district }) {
     }, [year, district]);
 
     const getBillingDetails = () => {
+        axios.get(`/tracker/trackedEntities?orgUnit=${district}&program=z20IsSBulcq&startDate=${year}-01-01&endDate=${year}-12-31`)
+            .then(result => {
+                if (result.data.instances.length > 0) {
+                    axios
+                        .get(`/tracker/events?program=z20IsSBulcq&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
+                        .then(resp => {
+                            const systems = result.data.instances;
+                            const reports = resp.data.instances;
+                            const temp = [];
 
-        axios
-            .get(`/tracker/events?program=RwWtjFaorvN&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
-            .then(resp => {
-                const bills = resp.data.instances;
+                            systems.forEach((system, index) => {
+                                const reportLink = getFileLinkIfExist(reports, "hM6AUNKRbKB", system.trackedEntity);
+                                const tempDataSet = {
+                                    billing: "YES",
+                                    functional: reportLink ? "YES" : "NO",
+                                    name: getAttributeValue("Name", system),
+                                    report: reportLink ? (
+                                        <a
+                                            className="px-2 text-primary fw-bold text-decoration-underline"
+                                            href={`https://dddp.gov.gh/api/events/files?eventUid=${reportLink}&dataElementUid=hM6AUNKRbKB`} target="_blank"
+                                            rel="noopener noreferrer"
+                                            title="Click here to see the uploaded document"
+                                        >
+                                            View Report
+                                        </a>
+                                    ) : (
+                                        "Not Uploaded"
+                                    ),
+                                };
 
-                bills.forEach(b => {
-                    b.dataValues.forEach(sub => {
-                        if (sub.dataElement === "Tf7TRBG6uCZ") {
-                            setSoftware([{ billing: "YES", name: sub.value, functional: "YES" }]);
-                            setScoreI(1)
-                        }
-                    })
-                })
+                                temp.push(tempDataSet);
+    
+                            });
+
+                            if(temp.length > 0){
+                                setScoreI(1)
+                            }
+
+                            setSoftware(temp);
+
+                        })
+                        .catch(err => console.log(err))
+                }
 
             })
             .catch(err => console.log(err))
+
+
+
     }
 
     function getBillingData() {
@@ -147,6 +179,11 @@ function RateableRevenu({ year, district }) {
             title: "Functional (YES/NO)",
             dataIndex: "functional",
             key: "functional"
+        },
+        {
+            title: "Reports",
+            dataIndex: "report",
+            key: "report"
         }
     ];
 
@@ -200,7 +237,7 @@ function RateableRevenu({ year, district }) {
         >
             {({ renderCommentInput, renderCommentList }) => (
                 <>
-                    <Title level={3} style={{ marginTop: "20px" }}>PI 3.0 - 3.2 Revenue from Rateable Properties and Businesses</Title>
+                    <Title level={3} style={{ marginTop: "20px" }}>PI 3.0 - 3.1 Revenue from Rateable Properties and Businesses</Title>
                     <Title level={4} style={{ marginTop: "20px" }}>Assessment Guide/ Requirement</Title>
                     <Content>
                         From the DCD, obtain information on rateable properties and businesses database:<br /><br />
@@ -224,14 +261,14 @@ function RateableRevenu({ year, district }) {
                     </Title>
 
                     <Title level={5} style={{ marginTop: "20px" }}>
-                        PI 3.0-3.2i Actual Score: <strong>{scoreI}</strong>
+                        PI 3.0-3.1i Actual Score: <strong>{scoreI}</strong>
                     </Title>
                     <Title level={5} style={{ marginTop: "20px" }}>
-                        PI 3.0-3.2ii Actual Score: <strong>{scoreII}</strong>
+                        PI 3.0-3.1ii Actual Score: <strong>{scoreII}</strong>
                     </Title>
                     <Row align="middle">
                         <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
-                            PI 3.0-3.2iii Actual Score: <strong>{scoreIII}</strong>
+                            PI 3.0-3.1iii Actual Score: <strong>{scoreIII}</strong>
                         </Title>
                         {renderCommentInput()}
                     </Row>

@@ -2,6 +2,7 @@ import { Layout, Table, Typography, Row } from "antd";
 import React, { useEffect, useState } from "react";
 import axios from "../api/axios";
 import Comment from "../components/Comments";
+import { getFileLinkIfExist } from "../utils/utils";
 
 function FoodVendors({
   year,
@@ -10,7 +11,9 @@ function FoodVendors({
   const [scorei, setScorei] = useState(0);
   const [scoreii, setScoreii] = useState(0);
   const [scoreiii, setScoreiii] = useState(0);
+  const [percentage, setPercentage] = useState(0);
   const [data, setData] = useState([]);
+  const [foodVendors, setFoodVendors] = useState([]);
 
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
@@ -49,11 +52,49 @@ function FoodVendors({
               let screenedTotal = 0;
               let certificateTotal = 0;
               let reportAvailability = "NO";
+              const foodTemp = [];
 
               vendors.forEach(vendor => {
                 const currentReport = reports.find(rep => rep.trackedEntity === vendor.trackedEntity);
                 const isScreened = getAttributeValue("DPAT | Is Food and beverage vendors screened?", vendor);
                 const isCertified = getAttributeValue("DPAT | Is there a Health Certificate?", vendor);
+
+                const reportLink = getFileLinkIfExist(reports, "TxE2hVHyNuG", vendor.trackedEntity);
+                const certificateLink = getFileLinkIfExist(reports, "POdgz2rYh8H", vendor.trackedEntity);
+
+                const tempDataSet = {
+                  name: getAttributeValue("DCACT | Food Vendors - Name of vendor / Business", vendor),
+                  phone: getAttributeValue("Phone", vendor),
+                  tin: getAttributeValue("TIN", vendor),
+                  card: getAttributeValue("Ghana Card Number", vendor),
+                  location: getAttributeValue("Ghana Card Number", vendor),
+                  report: reportLink ? (
+                    <a
+                      className="px-2 text-primary fw-bold text-decoration-underline"
+                      href={`https://dddp.gov.gh/api/events/files?eventUid=${reportLink}&dataElementUid=TxE2hVHyNuG`} target="_blank"
+                      rel="noopener noreferrer"
+                      title="Click here to see the uploaded document"
+                    >
+                      View Report
+                    </a>
+                  ) : (
+                    "Not Uploaded"
+                  ),
+                  certificate: certificateLink ? (
+                    <a
+                      className="px-2 text-primary fw-bold text-decoration-underline"
+                      href={`https://dddp.gov.gh/api/events/files?eventUid=${certificateLink}&dataElementUid=POdgz2rYh8H`} target="_blank"
+                      rel="noopener noreferrer"
+                      title="Click here to see the uploaded document"
+                    >
+                      View Certificate
+                    </a>
+                  ) : (
+                    "Not Uploaded"
+                  ),
+                };
+
+                foodTemp.push(tempDataSet);
 
                 if (isScreened === "true") {
                   screenedTotal++;
@@ -78,12 +119,15 @@ function FoodVendors({
 
               const percentage = calculatePercentage(screenedTotal, certificateTotal);
 
+              setFoodVendors(foodTemp);
+
               setData([temp]);
 
               if (vendorTotal > 0) {
                 setScorei(1);
               }
 
+              setPercentage(percentage);
               if (percentage >= 80) {
                 setScoreii(1)
               }
@@ -108,6 +152,16 @@ function FoodVendors({
       title: `Number of screened vendors issued with certificates for ${year}`, dataIndex: "certificateTotal", key: "certificateTotal"
     },
     { title: "Availability of Monitoring Reports (Yes/No)", dataIndex: "reportAvailability", key: "reportAvailability" }
+  ];
+
+  const vendorsColumn = [
+    { title: "Vendors", dataIndex: "name", key: "name" },
+    { title: "Phone", dataIndex: "phone", key: "phone" },
+    { title: "TIN", dataIndex: "tin", key: "tin" },
+    { title: "Ghana Card", dataIndex: "card", key: "card" },
+    { title: "Location", dataIndex: "location", key: "location" },
+    { title: "Certificate", dataIndex: "certificate", key: "certificate" },
+    { title: "Report", dataIndex: "report", key: "report" }
   ];
 
   return (
@@ -157,6 +211,17 @@ function FoodVendors({
             columns={foodVendorsColumn}
             dataSource={data || []}
             pagination={false} bordered />
+
+          <Title level={4} style={{ marginTop: "20px" }}>Evidence of Registration of Food Vendors</Title>
+          <Table
+            columns={vendorsColumn}
+            dataSource={foodVendors}
+            pagination={false} bordered />
+
+          <Title level={5} style={{ marginTop: "20px" }}>Conclusion</Title>
+          <p>
+            {percentage}% of the screened food vendors were issued with certificates in {year}
+          </p>
 
           {renderCommentList()}
         </>

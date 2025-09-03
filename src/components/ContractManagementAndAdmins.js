@@ -1,7 +1,6 @@
 import { Layout, Table, Typography, Row } from "antd";
 import React, { useEffect, useState } from "react";
-import axios from "../api/axios";
-import { calculatePercentage, formatDataGeneral, getAttributeValue } from "../utils/utils";
+import { formatDataGeneral, getAttributeValue, getFirstFileLinkIfExist } from "../utils/utils";
 import Comment from "../components/Comments";
 
 const indicators = [
@@ -50,142 +49,110 @@ const contingencyIndicators = [
     }
 ];
 
-function ContractManagementAndAdmins({ year, district }) {
+function ContractManagementAndAdmins({ year, district, data }) {
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
-    const [projects, setProjects] = useState([]);
-    const [contingency, setContingengy] = useState([]);
+    const [projectList, setProjectList] = useState([]);
     const [scoreI, setScoreI] = useState(0);
-    const [scoreII, setScoreII] = useState(0);
+
 
     useEffect(() => {
-        getIndicatorsData();
-        getContingencyIndicatorsData();
-        // getData();
-    }, [year, district]);
+        getData(); 
+    }, [year, district, data]);
 
-    const contractManagementAndAdminsColumns = [
-        { title: "No. of Projects awarded on contract (a)", dataIndex: "awardedProjects", key: "awardedProjects" },
-        { title: "No. of Projects completed (b)", dataIndex: "completedProject", key: "completedProject" },
-        { title: "No. of completed projects with Completion Reports (c)", dataIndex: "completedProjectReport", key: "completedProjectReport" },
-        { title: "No. of Projects completed and in use (d)", dataIndex: "completedProjectInUse", key: "completedProjectInUse" },
-        { title: "% completed projects in use", dataIndex: "percentageInUse", key: "percentageInUse" },
-        { title: "% completed projects with reports", dataIndex: "percenageCompletedProjectReport", key: "percenageCompletedProjectReport" }
+
+    const projectColumns = [
+        { title: "No", dataIndex: "no", key: "no" },
+        { title: "Projects", dataIndex: "project", key: "project" },
+        { title: "Status", dataIndex: "status", key: "status" },
+        { title: "TOR", dataIndex: "tor", key: "tor" },
+        { title: "Contingency", dataIndex: "contingency", key: "contingency" },
+        { title: "Completion Report", dataIndex: "report", key: "report" }
     ];
 
-    const contingencyColumns = [
-        { title: "No. of projects with contingency provision ", dataIndex: "contingencyProvision", key: "contingencyProvision" },
-        { title: "No. of projects with contingency used", dataIndex: "contingencyUse", key: "contingencyUse" },
-        { title: "No. of projects with contingency used with written justification", dataIndex: "contingencyJustification", key: "contingencyJustification" },
-        { title: "d. No. of projects with contingency duly approved and used", dataIndex: "contingencyApproved", key: "contingencyApproved" }
-    ];
+    function getData() {
 
-    const getIndicatorsData = () => {
-        axios.get(
-            `/analytics.json?dimension=dx:qZSULWbMR2R;Hf5p1kc2JeR;yQEv4PwpL3t;s6gfdfWo5Nq&dimension=ou:LEVEL-3;${district}&filter=pe:${year}-01-01;${year}-12-31`)
-            .then(res => {
-                const data = res.data?.rows;
+        const projects = formatDataGeneral(data?.data, "Project & Programme Type", "Project") || [];
+        const reports = data?.reports;
 
-                // console.log("Djiba projects:", data);
+        const temp = [];
 
-                if (data?.length > 0) {
-                    
-                    const updatedIndicators = indicators.map(ind => {
-                        const match = data.find(r => r[0] === ind.id);
-                        return {
-                            ...ind,
-                            value: match ? parseFloat(match[2]) : 0
-                        };
-                    });
-                    
-                    // Map from indicator name to table field
-                    const indicatorToFieldMap = {
-                        'No. of Projects awarded on contract': 'awardedProjects',
-                        'No. of Projects completed': 'completedProject',
-                        'No. of completed projects with Completion Reports': 'completedProjectReport',
-                        'No. of Projects completed and in use': 'completedProjectInUse'
-                    };
+        projects.forEach((item, index) => {
 
-                    // Build the row object
-                    const row = {};
+            const reportLink = getFirstFileLinkIfExist(reports, "i1171kI9OBD", item.trackedEntity, "TrdgYOz3XUL");
+            const torLink = getFirstFileLinkIfExist(reports, "X3uzSfGg9Wo", item.trackedEntity, "TrdgYOz3XUL");
+            const contingencyLink = getFirstFileLinkIfExist(reports, "Rb98cVPjatA", item.trackedEntity, "JqitfVltImd");
+            const status = getFirstFileLinkIfExist(reports, "tE3QKB203nh", item.trackedEntity, "rRWa5ghYO35", "status");
 
-                    updatedIndicators.forEach(ind => {
-                        const key = indicatorToFieldMap[ind.indicator];
-                        if (key) {
-                            row[key] = ind.value;
-                        }
-                    });
+            const tempDataSet = {
+                no: index + 1,
+                project: getAttributeValue("Name", item),
+                status: status ? status : "Not Provided",
+                tor: torLink ? (
+                    <a
+                        className="px-2 text-primary fw-bold text-decoration-underline"
+                        href={`https://dddp.gov.gh/api/events/files?eventUid=${torLink}&dataElementUid=X3uzSfGg9Wo`} target="_blank"
+                        rel="noopener noreferrer"
+                        title="Click here to see the uploaded document"
+                    >
+                        View TOR
+                    </a>
+                ) : (
+                    "Not Uploaded"
+                ),
+                report: reportLink ? (
+                    <a
+                        className="px-2 text-primary fw-bold text-decoration-underline"
+                        href={`https://dddp.gov.gh/api/events/files?eventUid=${reportLink}&dataElementUid=i1171kI9OBD`} target="_blank"
+                        rel="noopener noreferrer"
+                        title="Click here to see the uploaded document"
+                    >
+                        View Completion Report
+                    </a>
+                ) : (
+                    "Not Uploaded"
+                ),
+                contingency: contingencyLink ? (
+                    <a
+                        className="px-2 text-primary fw-bold text-decoration-underline"
+                        href={`https://dddp.gov.gh/api/events/files?eventUid=${contingencyLink}&dataElementUid=Rb98cVPjatA`} target="_blank"
+                        rel="noopener noreferrer"
+                        title="Click here to see the uploaded document"
+                    >
+                        View Contingency
+                    </a>
+                ) : (
+                    "Not Uploaded"
+                )
+            };
 
-                    // Calculate derived fields
-                    const completed = row.completedProject || 0;
-                    const inUse = row.completedProjectInUse || 0;
-                    const withReports = row.completedProjectReport || 0;
+            temp.push(tempDataSet);
 
-                    row.percentageInUse = completed > 0 ? calculatePercentage(inUse, completed) : 0;
-                    row.percenageCompletedProjectReport = completed > 0 ? calculatePercentage(withReports, completed) : 0;
+            
+        });
 
-                    setProjects([row]);                    
-                    if(row.percentageInUse == 100 && row.percenageCompletedProjectReport == 100){
-                        setScoreI(3)
-                    }
+        let score = 3;
 
-                }
+        for(let project of temp){
+            if(project.report === "Not Uplaoded" || project.status !== "Completed and in-use"){
+                score = 0;
+            }
+        }
 
-            }).catch(err => console.log(err));
+        if(temp.length === 0){
+            score = 0;
+        }
+
+        setProjectList(temp)
+        setScoreI(score);
+
     }
 
-    const getContingencyIndicatorsData = () => {
-        axios.get(
-            `/analytics.json?dimension=dx:emhjn8smNMD;hsnSY36kN8H;faTS25Cv9RI;E24X37zoXD8&dimension=ou:LEVEL-3;${district}&filter=pe:${year}-01-01;${year}-12-31`)
-            .then(res => {
-                const data = res.data?.rows;
-
-                if (data?.length > 0) {
-                    // const percentage = calculatePercentage(data[1][2], data[0][2]);
-                    // Update indicator values based on result
-                    const updatedContingencyIndicators = contingencyIndicators.map(ind => {
-                        const match = data.find(r => r[0] === ind.id);
-                        return {
-                            ...ind,
-                            value: match ? parseFloat(match[2]) : 0
-                        };
-                    });
-
-                    // console.log(updatedContingencyIndicators);
-
-                    // Map from indicator name to table field
-                    const indicatorToFieldMap = {
-                        'No. of projects with contingency provision': 'contingencyProvision',
-                        'No. of projects with contingency used': 'contingencyUse',
-                        'No. of projects with contingency used with written justification': 'contingencyJustification',
-                        'No. of projects with contingency duly approved and used': 'contingencyApproved'
-                    };
-
-                    // Build the row object
-                    const row = {};
-
-                    updatedContingencyIndicators.forEach(ind => {
-                        const key = indicatorToFieldMap[ind.indicator];
-                        if (key) {
-                            row[key] = ind.value;
-                        }
-                    });
-
-                    setContingengy([row])
-
-                    // if(row.contingencyProvision > 0 && row.contingencyUse > 0){
-                    //     setScoreI(3)
-                    // }
-
-                }
-
-            }).catch(err => console.log(err));
-    }
 
     return (
         <Comment
-            data={projects}
+            data={projectList}
             year={year}
             districtId={district}
             tableCommentedId={`pi1.0-1.3-${year}`}
@@ -198,10 +165,10 @@ function ContractManagementAndAdmins({ year, district }) {
                         From the DCD, obtain information on contract management and administration:<br /><br />
                         <ol>
                             <li type="i">
-                                If final completion reports (signed off) on all completed projects are available 
+                                If final completion reports (signed off) on all completed projects are available
                                 and all completed projects are in use, score 3, else score 0
                             </li>
-                            
+
                         </ol>
                     </Content>
 
@@ -209,7 +176,7 @@ function ContractManagementAndAdmins({ year, district }) {
                         Maximum Score <strong>3</strong>
                     </Title>
 
-                    
+
                     <Row align="middle">
                         <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
                             PI 1.0-1.3 Actual Score: <strong>{scoreI}</strong>
@@ -218,21 +185,11 @@ function ContractManagementAndAdmins({ year, district }) {
                     </Row>
 
                     <Title level={5} style={{ marginTop: "20px" }}>
-                        Evidence of project completion and use
+                         Evidence of project completion and use
                     </Title>
                     <Table
-                        columns={contractManagementAndAdminsColumns}
-                        dataSource={projects || []}
-                        pagination={false}
-                        bordered
-                    />
-
-                    <Title level={5} style={{ marginTop: "20px" }}>
-                        Evidence of use of contingency
-                    </Title>
-                    <Table
-                        columns={contingencyColumns}
-                        dataSource={contingency || []}
+                        columns={projectColumns}
+                        dataSource={projectList}
                         pagination={false}
                         bordered
                     />

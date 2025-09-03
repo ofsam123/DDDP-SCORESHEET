@@ -4,15 +4,21 @@ import axios from "../api/axios";
 import { calculatePercentage } from "../utils/utils";
 import Comment from "../components/Comments";
 
-function AAPImplementation({ year, district }) {
+function AAPImplementation({ year, district, data }) {
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
     const [aapImplementation, setAapImplementation] = useState([]);
     const [score, setScore] = useState(0);
-    useEffect(()=>{
+    const [document, setDocument] = useState(data);
+
+    useEffect(() => {
         getIndicatorsData();
     }, [year, district]);
+
+    // useEffect(()=>{
+
+    // },[data]);
 
     const aapImplementationColumns = [
         { title: `No. of activities in approved ${year} Annual Action Plan`, dataIndex: "aapApproved", key: "aapApproved" },
@@ -20,29 +26,34 @@ function AAPImplementation({ year, district }) {
         { title: "% of implementation of activities in approved Annual Action Plan", dataIndex: "percentage", key: "percentage" }
     ];
 
-    const getIndicatorsData = ()=>{
+    const aapDocumentColumns = [
+        { title: "Title", dataIndex: "title", key: "title" },
+        { title: "Document", dataIndex: "link", key: "link" }
+    ];
+
+    const getIndicatorsData = () => {
         axios.get(`/analytics.json?dimension=dx:fqixUP5VIxv;fqixUP5VIxv&dimension=ou:LEVEL-3;${district}&filter=pe:${year}-01-01;${year}-12-31`)
-        .then(res=>{
-            // console.log("AAP Implemented Diallo: ",res.data?.rows);
-            const data = res.data?.rows;
-            
-            if(data?.length > 0){
-                const percentage = calculatePercentage(data[1][2], data[0][2]);
+            .then(res => {
+                // console.log("AAP Implemented Diallo: ",res.data?.rows);
+                const data = res.data?.rows;
 
-                setAapImplementation([{
-                    aapApproved: data[0][2] || 0,
-                    aapImplented:data[1][2] || 0,
-                    percentage: percentage
-                }]);
+                if (data?.length > 0) {
+                    const percentage = calculatePercentage(data[1][2], data[0][2]);
 
-                if(percentage >= 90){
-                    setScore(2);
+                    setAapImplementation([{
+                        aapApproved: parseInt(data[0][2]) || 0,
+                        aapImplented: parseInt(data[1][2]) || 0,
+                        percentage: percentage
+                    }]);
+
+                    if (percentage >= 90) {
+                        setScore(2);
+                    }
+
                 }
 
-            }
 
-            
-        }).catch(err=>console.log(err));
+            }).catch(err => console.log(err));
     }
 
     return (
@@ -69,7 +80,7 @@ function AAPImplementation({ year, district }) {
                         Maximum Score <strong>2</strong>
                     </Title>
 
-                    
+
                     <Row align="middle">
                         <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
                             PI 1.0-1.1 Actual Score: <strong>{score}</strong>
@@ -77,9 +88,18 @@ function AAPImplementation({ year, district }) {
                         {renderCommentInput()}
                     </Row>
 
+                    <Title level={4} style={{ marginTop: "20px" }}>I- Evidence of Annual Action Plan Implemented </Title>
                     <Table
                         columns={aapImplementationColumns}
                         dataSource={aapImplementation || []}
+                        pagination={false}
+                        bordered
+                    />
+
+                     <Title level={4} style={{ marginTop: "20px" }}>II- Evidence Attached Documents </Title>
+                    <Table
+                        columns={aapDocumentColumns}
+                        dataSource={document || []}
                         pagination={false}
                         bordered
                     />

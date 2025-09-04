@@ -1,13 +1,13 @@
 import { Layout, Table, Typography, Row } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import axios from "../api/axios";
 import { calculatePercentage, countApplicationsForEachDomain, formatDataGeneral, getAttributeValue } from "../utils/utils";
 import Comment from "../components/Comments";
 
-function WaterServices({
+const WaterServices = forwardRef(({
   year,
   districtId,hideComment
-}) {
+}, ref) => {
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
   const [scorei, setScoreI] = useState(0);
@@ -15,6 +15,15 @@ function WaterServices({
   const [waterProvidersData, setWaterProvidersData] = useState([]);
   const [waterImprovement, setWaterImpovement] = useState([]);
   const [firstPercentage, setFirstPercentage] = useState(0.00);
+
+  useImperativeHandle(ref, () => ({
+      getData: () => ({
+        waterProvidersData,
+        waterImprovement,
+        scorei, scoreii,
+        firstPercentage
+      }),
+    }));
 
   const serviceProvidersColumn = [
     { title: "No", dataIndex: "no", key: "no" },
@@ -147,6 +156,6 @@ function WaterServices({
       )}
     </Comment>
   );
-}
+})
 
 export default WaterServices;

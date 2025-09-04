@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { Layout, Typography, Table, Row } from "antd";
 import Comment from "../components/Comments";
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
 
-function SubStructureMeeting({ data, columns, establishment, establishmentColumns, revenueSharing, revenuSharingColumns, districtId, year, hideComment }) {
+const SubStructureMeeting = forwardRef(({ data, columns, establishment, establishmentColumns, revenueSharing, revenuSharingColumns, districtId, year, hideComment }, ref) => {
   const [fulfillment, setFulfillment] = useState(data?.fulfillment);
 
   // Transform link fields (firstLink, secondLink, thirdLink) into JSX elements
@@ -126,6 +126,15 @@ function SubStructureMeeting({ data, columns, establishment, establishmentColumn
     setFulfillment(computedFulfillment);
   }, [data, establishment, revenueSharing]);
 
+   useImperativeHandle(ref, () => ({
+      getData: () => ({
+        data,
+        establishment,
+        revenueSharing,
+        fulfillment
+      }),
+    }));
+
   return (
     <Comment
       data={data}
@@ -205,6 +214,6 @@ function SubStructureMeeting({ data, columns, establishment, establishmentColumn
       )}
     </Comment>
   );
-}
+})
 
 export default SubStructureMeeting;

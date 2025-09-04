@@ -1,17 +1,23 @@
 import { Layout, Table, Typography, Row } from "antd";
-import React from "react";
+import React, { forwardRef, useImperativeHandle } from "react";
 import Comment from "../components/Comments";
 
-function StreetNaming({
+const StreetNaming = forwardRef(({
   year,
   streets,
   districtId,
   columns,
   counterColumns,
   hideComment
-}) {
+}, ref) => {
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
+
+  useImperativeHandle(ref, () => ({
+      getData: () => ({
+        streets
+      }),
+    }));
 
   return (
     <Comment
@@ -71,6 +77,6 @@ function StreetNaming({
       )}
     </Comment>
   );
-}
+})
 
 export default StreetNaming;

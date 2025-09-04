@@ -1,12 +1,12 @@
 import { Layout, Table, Typography, Row } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import axios from "../api/axios";
 import Comment from "../components/Comments";
 
-function DumpingSite({
+const DumpingSite = forwardRef(({
   year,
   districtId, hideComment
-}) {
+}, ref) => {
   const [scorei, setScorei] = useState(0);
   const [scoreii, setScoreii] = useState(0);
   const [data, setData] = useState([]);
@@ -14,6 +14,15 @@ function DumpingSite({
 
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
+
+  useImperativeHandle(ref, () => ({
+      getData: () => ({
+        data,
+        siteList,
+        scorei,
+        scoreii
+      }),
+    }));
 
   useEffect(() => {
     getDumpingSite();
@@ -154,6 +163,6 @@ function DumpingSite({
       )}
     </Comment>
   );
-}
+})
 
 export default DumpingSite;

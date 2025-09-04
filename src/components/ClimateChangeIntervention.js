@@ -1,13 +1,13 @@
 import { Layout, Table, Typography, Row } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import axios from "../api/axios";
 import Comment from "../components/Comments";
 
-function ClimateChangeIntervention({
+const ClimateChangeIntervention = forwardRef(({
   year,
   districtId,
   hideComment
-}) {
+}, ref) => {
   const [climateChangePlan, setClimateChangePlan] = useState([]);
   const [treePlan, setTreePlan] = useState([]);
   const [scorei, setScorei] = useState(0);
@@ -19,6 +19,15 @@ function ClimateChangeIntervention({
   useEffect(() => {
     getAnnualActionPlan();
   }, [year, districtId]);
+
+   useImperativeHandle(ref, () => ({
+      getData: () => ({
+        climateChangePlan,
+        treePlan,
+        scorei,
+        scoreii
+      }),
+    }));
 
   function getAnnualActionPlan() {
     axios
@@ -208,6 +217,6 @@ function ClimateChangeIntervention({
       )}
     </Comment>
   );
-}
+})
 
 export default ClimateChangeIntervention;

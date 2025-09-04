@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { Layout, Typography, Table, Row } from "antd";
 import Comment from "../components/Comments";
-import { each } from "chart.js/helpers";
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
@@ -13,7 +12,7 @@ const columns = [
   { "title": "Minutes Link", "dataIndex": "minutes", "key": "minutes" }
 ]
 
-function AuditorGeneralGAMeeting({ gaMeetings, ecaMeeting, year, districtId,hideComment }) {
+const AuditorGeneralGAMeeting = forwardRef(({ gaMeetings, ecaMeeting, year, districtId,hideComment }, ref) => {
 
   const [fulfillment, seFulfillment] = useState("Not Fulfilled");
   const [data, setData] = useState(null);
@@ -59,6 +58,12 @@ function AuditorGeneralGAMeeting({ gaMeetings, ecaMeeting, year, districtId,hide
   setData(temp);
 }, [districtId, year, gaMeetings, ecaMeeting])
 
+useImperativeHandle(ref, () => ({
+    getData: () => ({
+      data, fulfillment
+    }),
+  }));
+
   return (
     <Comment
       data={gaMeetings}
@@ -103,6 +108,6 @@ function AuditorGeneralGAMeeting({ gaMeetings, ecaMeeting, year, districtId,hide
       )}
     </Comment>
   );
-}
+})
 
 export default AuditorGeneralGAMeeting;

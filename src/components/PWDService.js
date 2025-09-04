@@ -1,13 +1,13 @@
 import { Layout, Table, Typography, Row } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import axios from "../api/axios";
 import Comment from "../components/Comments";
 import { getAttributeValue, getFileLinkIfExist } from "../utils/utils";
 
-function PWDService({
+const PWDService = forwardRef(({
   year,
   districtId,hideComment
-}) {
+}, ref) => {
   const [scorei, setScorei] = useState(0);
   const [scoreii, setScoreii] = useState(0);
   const [scoreiii, setScoreiii] = useState(0);
@@ -20,6 +20,16 @@ function PWDService({
   useEffect(() => {
     getPWDs();
   }, [year, districtId]);
+
+   useImperativeHandle(ref, () => ({
+      getData: () => ({
+        pwdData,
+        pwdList,
+        scorei,
+        scoreii,
+        scoreiii
+      }),
+    }));
 
   const calculatePercentage = (total, value) => {
     const totalNum = parseFloat(total);
@@ -231,6 +241,6 @@ function PWDService({
       )}
     </Comment>
   );
-}
+})
 
 export default PWDService;

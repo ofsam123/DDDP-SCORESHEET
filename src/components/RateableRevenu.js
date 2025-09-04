@@ -1,10 +1,10 @@
 import { Layout, Table, Typography, Row } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import axios from "../api/axios";
 import { formatDataGeneral, getAttributeValue, getFileLinkIfExist } from "../utils/utils";
 import Comment from "../components/Comments";
 
-function RateableRevenu({ year, district,hideComment }) {
+const RateableRevenu = forwardRef(({ year, district,hideComment }, ref) => {
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
@@ -15,6 +15,17 @@ function RateableRevenu({ year, district,hideComment }) {
     const [scoreI, setScoreI] = useState(0);
     const [scoreII, setScoreII] = useState(0);
     const [scoreIII, setScoreIII] = useState(0);
+
+     useImperativeHandle(ref, () => ({
+        getData: () => ({
+          software,
+          issuance,
+          followup,
+          scoreI,
+          scoreII,
+          scoreIII
+        }),
+      }));
 
     useEffect(() => {
         getBillingDetails();
@@ -309,6 +320,6 @@ function RateableRevenu({ year, district,hideComment }) {
             )}
         </Comment>
     );
-}
+})
 
 export default RateableRevenu;

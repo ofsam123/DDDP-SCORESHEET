@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { Layout, Typography, Table, Row } from "antd";
 import Comment from "../components/Comments";
 import { calculatePercentage } from "../utils/utils";
@@ -6,8 +6,16 @@ import { calculatePercentage } from "../utils/utils";
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
 
-function GeneralAssemblyDecision({ data, year, columns, decisionDeliveryData, serviceDeliveryDecisionColumns, districtId,hideComment }) {
+const GeneralAssemblyDecision = forwardRef(({
+   data, year, columns, decisionDeliveryData, serviceDeliveryDecisionColumns, districtId,hideComment 
+  }, ref) => {
   const [gaDecisionScore, setGaDecisionScore] = useState(0);
+
+  useImperativeHandle(ref, () => ({
+      getData: () => ({
+        data, decisionDeliveryData, gaDecisionScore
+      }),
+    }));
 
   return (
     <Comment
@@ -91,6 +99,6 @@ function GeneralAssemblyDecision({ data, year, columns, decisionDeliveryData, se
       )}
     </Comment>
   );
-}
+})
 
 export default GeneralAssemblyDecision;

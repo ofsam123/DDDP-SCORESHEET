@@ -18,6 +18,7 @@ function GAMeeting({ data, year, columns, districtId, hideComment }) {
         setError("District ID or year is missing");
         return;
       }
+      
       setLoading(true);
       try {
         const response = await instance.get(`comments/tables/${districtId}/${year}/DPAT`);

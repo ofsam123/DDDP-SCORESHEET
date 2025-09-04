@@ -46,11 +46,13 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
     const fetchComments = async () => {
       if (!districtId || !year) return;
       try {
-        const response = await instance.get(`comments/tables/${districtId}/${year}/DPAT`);
+        const response = await instance.get(`comments/table/${districtId}/${year}/DPAT/${tableCommentedId}`);
+        console.log("Tables =", response.data)
         const filteredComments = response.data.filter(
           (comment) =>
-            comment.tableCommented === tableCommentedId &&
-            comment.districtId === districtId &&
+            // comment.tableCommented === tableCommentedId &&
+            // comment.districtId === districtId &&
+
             (comment.userRole === "DPAT_TECHNICAL TEAM" || comment.userRole === "DPAT_QUALITY_ASSURANCE")
         );
         setComments(filteredComments);
@@ -361,58 +363,34 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
         
         {!hideComment && !isReviewer && (
           <>
+          
           <span>
           ADD COMMENT
           </span>
           <CommentOutlined
-            style={{ cursor: "pointer", fontSize: "30px", flexShrink: 0, marginTop: "50px" }}
+            style={{ cursor: "pointer", fontSize: "30px", flexShrink: 0,  }}
             onClick={handleCommentButtonClick}
           />
           </>
           
         )}
       </div>
-      {!hideComment && showCommentInput && canShowCommentInput() && (
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <Avatar
-            src={
-              user?.image ||
-              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTL_JlCFnIGX5omgjEjgV9F3sBRq14eTERK9w&s"
-            }
-            style={{ marginRight: "10px", borderRadius: "50%", flexShrink: 0 }}
-            size={32}
-          />
-          <Input.TextArea
-            value={commentText}
-            onChange={(e) => setCommentText(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder="Add a comment..."
-            autoSize={{ minRows: 3, maxRows: 5 }}
-            bordered={false}
-            style={{
-              flex: 1,
-              borderRadius: "10px",
-              padding: "8px 12px",
-              background: "#f0f2f5",
-              width: "700px",
-            }}
-          />
-          {commentText.trim() && (
-            <SendOutlined
-              className="text-blue-500 cursor-pointer"
-              style={{ fontSize: "20px", marginLeft: "8px", flexShrink: 0 }}
-              onClick={() => handleCommentSubmit()}
-            />
-          )}
-        </div>
-      )}
+     
       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-        <h5 style={{ marginLeft: "-10px", fontSize: "" }}>ADD GAPS</h5>
+       
         {!hideComment && !isReviewer && (
-          <PlusCircleOutlined
+          <>
+           <span style={{ marginLeft: "-10px", fontSize: "" }}>ADD GAPS</span>
+            <PlusCircleOutlined
             style={{ cursor: "pointer", fontSize: "25px", flexShrink: 0 }}
             onClick={handleGapsButtonClick}
-          />
+            >
+
+            </PlusCircleOutlined>
+          
+          </>
+         
+          
         )}
       </div>
       {!hideComment && showGapsInput && (

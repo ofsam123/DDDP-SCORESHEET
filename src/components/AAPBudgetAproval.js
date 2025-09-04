@@ -31,8 +31,8 @@ function AAPBudgetAproval({ data, year, columns, districtId, hideComment }) {
           setError(null);
           console.log("Fetched meetingDataGroup:", relevantComment.dddpData.tables.meetingDataGroup); // For debugging
         } else {
-          setEndpointData(null);
-          setError("No meetingDataGroup found in assessment_start_DAPT comment");
+          // setEndpointData(null);
+          // setError("No meetingDataGroup found in assessment_start_DAPT comment");
         }
       } catch (error) {
         console.error("Failed to fetch endpoint data:", {
@@ -147,9 +147,9 @@ function AAPBudgetAproval({ data, year, columns, districtId, hideComment }) {
             </>
           ) : data?.data && data.data.length > 0 ? (
             <>
-              <Title level={5} style={{ marginTop: "20px" }}>
+              {/* <Title level={5} style={{ marginTop: "20px" }}>
                 Data from Prop Data
-              </Title>
+              </Title> */}
               <Table
                 columns={columns}
                 dataSource={transformData(data.data)}

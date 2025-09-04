@@ -1,15 +1,15 @@
 import { Layout, Table, Typography, Row } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import axios from "../api/axios";
 import Comment from "../components/Comments";
 import { documentsColumn } from "../utils/tableColums";
 
-function TransportationNetworkService({
+const TransportationNetworkService = forwardRef(({
   year,
   transportors,
   districtId,
   hideComment
-}) {
+}, ref) => {
   const [transportations, setTransportations] = useState([]);
   const [scorei, setScorei] = useState(0);
   const [scoreii, setScoreii] = useState(0);
@@ -26,6 +26,17 @@ function TransportationNetworkService({
     }
     getIndicatorsData();
   }, [year, districtId, transportors]);
+
+  useImperativeHandle(ref, () => ({
+      getData: () => ({
+        transportations,
+        transportations,
+        scorei,
+        scoreii,
+        scoreiii
+        
+      }),
+    }));
 
   const transportationNetworkColumn = [
     { title: "Evidence of Road Safety Issues/activities in the MTDP", dataIndex: "mtdp", key: "mtdp" },
@@ -144,6 +155,6 @@ function TransportationNetworkService({
       )}
     </Comment>
   );
-}
+})
 
 export default TransportationNetworkService;

@@ -1,10 +1,10 @@
 import { Layout, Table, Typography, Row } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import axios from "../api/axios";
 import { calculatePercentage, formatDataGeneral, getAttributeValue, getFirstFileLinkIfExist } from "../utils/utils";
 import Comment from "../components/Comments";
 
-function EducationServiceSupport({ year, districtId, hideComment }) {
+const EducationServiceSupport = forwardRef(({ year, districtId, hideComment }, ref) => {
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
 
@@ -12,6 +12,14 @@ function EducationServiceSupport({ year, districtId, hideComment }) {
   const [educationSupport, setEducationSupport] = useState([]);
   const [score, setScore] = useState(0);
   const [percentage, setPercentage] = useState(0);
+
+   useImperativeHandle(ref, () => ({
+      getData: () => ({
+        educationSupport,
+        score,
+        percentage
+      }),
+    }));
 
   useEffect(() => {
     getData();
@@ -211,6 +219,6 @@ function EducationServiceSupport({ year, districtId, hideComment }) {
       )}
     </Comment>
   );
-}
+})
 
 export default EducationServiceSupport;

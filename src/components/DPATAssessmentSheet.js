@@ -142,7 +142,62 @@ const DPATAssessmentSheet = ({ props }) => {
     const [cededRevenueUtilisationScore, setCededRevenueUtilisationScore] = useState(0);
     const [assessmentStatus, setAssessmentStatus] = useState(null); // New state for assessment status
     const [progressLoad, setProgressLoad] = useState(false); // New state for loading
-    const hotlineRef = useRef();
+
+    const gaMeetingRef = useRef();
+    const aapBudgetApprovalRef = useRef();
+    const subStructureMeetingRef = useRef();
+    const executiveCommitteeMemberRef = useRef();
+    const subStructureCommitteeMeetingRef = useRef();
+    const managementMeetingRef = useRef();
+    const prccMeetingRef = useRef();
+    const entityTenderCommitteeMeetingRef = useRef();
+    const spcEntityTenderCommitteeRef = useRef();
+    const internalAuditUnitFunctionalityRef = useRef();
+    const auditCommitteeMeetingRef = useRef();
+    const clientServiceFunctionalityRef = useRef();
+    const aapPublicationRef = useRef();
+    const auditorGeneralGAMeetingRef = useRef();
+    const townHallMeetingRef = useRef();
+    const generalAssemblyDecisionRef = useRef();
+    const generalAssemblyManagementActionsRef = useRef();
+    const gaSupportRef = useRef();
+    const waterServicesRef = useRef();
+    const electricityServicesRef = useRef();
+    const sanitationServicesRef = useRef();
+    const maintenanceInfrastructureRef = useRef();
+    const clientServiceCharterRef = useRef();
+    const transportationNetworkServiceRef = useRef();
+    const buildingInspectorateUnitRef = useRef();
+    const permitProcessingIssuanceRef = useRef();
+    const streetNamingRef = useRef();
+    const socialProtectionServicesRef = useRef();
+    const shelterTransactionalHousingRef = useRef();
+    const districtHotlineNumberRef = useRef();
+    const pwdServiceRef = useRef();
+    const deepeningGenderMainstreamingRef = useRef();
+    const nutritionInterventionRef = useRef();
+    const sanitationServiceProvidersRef = useRef();
+    const dumpingSiteRef = useRef();
+    const foodVendorsRef = useRef();
+    const publicSchoolFacilityRef = useRef();
+    const climateChangeInterventionRef = useRef();
+    const districtLEDActivityPlanRef = useRef();
+    const businessAndJobPromotionRef = useRef();
+    const agroProcessingFacilitySupportRef = useRef();
+    const businessCommunityEngagementRef = useRef();
+    const aapImplementationRef = useRef();
+    const monitoringProjectAndActivityRef = useRef();
+    const contractManagementAndAdminsRef = useRef();
+    const followUpDeductionRef = useRef();
+    const environmentalAndSocialSafeGuardRef = useRef();
+    const capacityBuildingImplementationRef = useRef();
+    const postTrainingEvaluationRef = useRef();
+    const rateableRevenueRef = useRef();
+    const auditCommitteeResponsivenessRef = useRef();
+    const auditInfractionsRef = useRef();
+    const educationServiceSupportRef = useRef();
+    const healthServiceSupportRef = useRef();
+    const agricultureSupportRef = useRef();
 
     const currentUserRole = user?.user?.userRoles?.find(
         (role) => role.name === "DPAT TECHNICAL TEAM" || role.name === "DPAT QUALITY ASSURANCE"
@@ -499,7 +554,7 @@ const DPATAssessmentSheet = ({ props }) => {
 
     }
 
-    const sanitationServiceData = ()=>{
+    const sanitationServiceData = () => {
         const temp = getAAPAndMTDPLinks("Sanitation");
         setSanitationServiceList(temp);
     }
@@ -1826,7 +1881,7 @@ const DPATAssessmentSheet = ({ props }) => {
         setSubStatutoryData({ data: formattedData, fulfillment: fulfillment });
     };
 
-   
+
     const getDecisionRank = (index) => {
         switch (index) {
             case 0: return "1st";
@@ -1839,300 +1894,335 @@ const DPATAssessmentSheet = ({ props }) => {
     const assessmentStartDate = new Date().toISOString().split("T")[0].split("-").map(Number);
 
 
-const handleStartAssessmentSubmit = async () => {
-  setProgressLoad(true);
-  const payload = {
-    id: 0,
-    username: user?.user?.username,
-    fullName: user?.user?.fullName,
-    userRole: normalizedUserRole,
-    type: "DPAT",
-    districtId: district?.value,
-    year: year,
-    status: "Start",
-    assessmentStartDate: assessmentStartDate,
-    assessmentEndDate: null,
-    reviewStartDate: null,
-    reviewEndDate: null,
-    closedDate: null,
-  };
+    const handleStartAssessmentSubmit = async () => {
+        setProgressLoad(true);
+        const payload = {
+            id: 0,
+            username: user?.user?.username,
+            fullName: user?.user?.fullName,
+            userRole: normalizedUserRole,
+            type: "DPAT",
+            districtId: district?.value,
+            year: year,
+            status: "Start",
+            assessmentStartDate: assessmentStartDate,
+            assessmentEndDate: null,
+            reviewStartDate: null,
+            reviewEndDate: null,
+            closedDate: null,
+        };
 
-  try {
-    // Step 1: Post to assessments endpoint
-    const assessmentResponse = await instance.post(`assessments`, payload);
-    setAssessmentStatus(assessmentResponse.data);
-    message.success({
-      content: (
-        <div>
-          <p>Assessment started successfully (Status: 201)</p>
-        </div>
-      ),
-      duration: 3,
-    });
+        const dddpData = {
+            gaMeeting: gaMeetingRef.current?.getData(),
+            aapBudgetApproval: aapBudgetApprovalRef.current?.getData(),
+            subStructureMeeting: subStructureMeetingRef.current?.getData(),
+            executiveCommitteeMember: executiveCommitteeMemberRef.current?.getData(),
+            subStructureCommitteeMeeting: subStructureCommitteeMeetingRef.current?.getData(),
+            managementMeeting: managementMeetingRef.current?.getData(),
+            prccMeeting: prccMeetingRef.current?.getData(),
+            entityTenderCommitteeMeeting: entityTenderCommitteeMeetingRef.current?.getData(),
+            spcEntityTenderCommittee: spcEntityTenderCommitteeRef.current?.getData(),
+            internalAuditUnitFunctionality: internalAuditUnitFunctionalityRef.current?.getData(),
+            auditCommitteeMeeting: auditCommitteeMeetingRef.current?.getData(),
+            clientServiceFunctionality: clientServiceFunctionalityRef.current?.getData(),
+            aapPublication: aapPublicationRef.current?.getData(),
+            auditorGeneralGAMeeting: auditorGeneralGAMeetingRef.current?.getData(),
+            townHallMeeting: townHallMeetingRef.current?.getData(),
+            generalAssemblyDecision: generalAssemblyDecisionRef.current?.getData(),
+            generalAssemblyManagementActions: generalAssemblyManagementActionsRef.current?.getData(),
+            gaSupport: gaSupportRef.current?.getData(),
+            waterServices: waterServicesRef.current?.getData(),
+            electricityServices: electricityServicesRef.current?.getData(),
+            sanitationServices: sanitationServicesRef.current?.getData(),
+            maintenanceInfrastructure: maintenanceInfrastructureRef.current?.getData(),
+            clientServiceCharter: clientServiceCharterRef.current?.getData(),
+            transportationNetworkService: transportationNetworkServiceRef.current?.getData(),
+            buildingInspectorateUnit: buildingInspectorateUnitRef.current?.getData(),
+            permitProcessingIssuance: permitProcessingIssuanceRef.current?.getData(),
+            streetNaming: streetNamingRef.current?.getData(),
+            socialProtectionServices: socialProtectionServicesRef.current?.getData(),
+            shelterTransactionalHousing: shelterTransactionalHousingRef.current?.getData(),
+            districtHotlineNumber: districtHotlineNumberRef.current?.getData(),
+            pwdService: pwdServiceRef.current?.getData(),
+            deepeningGenderMainstreaming: deepeningGenderMainstreamingRef.current?.getData(),
+            nutritionIntervention: nutritionInterventionRef.current?.getData(),
+            sanitationServiceProviders: sanitationServiceProvidersRef.current?.getData(),
+            dumpingSite: dumpingSiteRef.current?.getData(),
+            foodVendors: foodVendorsRef.current?.getData(),
+            publicSchoolFacility: publicSchoolFacilityRef.current?.getData(),
+            climateChangeIntervention: climateChangeInterventionRef.current?.getData(),
+            districtLEDActivityPlan: districtLEDActivityPlanRef.current?.getData(),
+            businessAndJobPromotion: businessAndJobPromotionRef.current?.getData(),
+            agroProcessingFacilitySupport: agroProcessingFacilitySupportRef.current?.getData(),
+            businessCommunityEngagement: businessCommunityEngagementRef.current?.getData(),
+            aapImplementation: aapImplementationRef.current?.getData(),
+            monitoringProjectAndActivity: monitoringProjectAndActivityRef.current?.getData(),
+            contractManagementAndAdmins: contractManagementAndAdminsRef.current?.getData(),
+            followUpDeduction: followUpDeductionRef.current?.getData(),
+            environmentalAndSocialSafeGuard: environmentalAndSocialSafeGuardRef.current?.getData(),
+            capacityBuildingImplementation: capacityBuildingImplementationRef.current?.getData(),
+            postTrainingEvaluation: postTrainingEvaluationRef.current?.getData(),
+            rateableRevenue: rateableRevenueRef.current?.getData(),
+            auditCommitteeResponsiveness: auditCommitteeResponsivenessRef.current?.getData(),
+            auditInfractions: auditInfractionsRef.current?.getData(),
+            educationServiceSupport: educationServiceSupportRef.current?.getData(),
+            healthServiceSupport: healthServiceSupportRef.current?.getData(),
+            agricultureSupport: agricultureSupportRef.current?.getData(),
+        };
 
-    // Step 2: Fetch assessment status from the provided endpoint
-    const assessmentStatusResponse = await instance.get(
-      `assessments/dpat/${district?.value}/${year}/DPAT`
-    );
-    const fetchedStatus = assessmentStatusResponse.data?.status; // Adjust based on actual response structure
-    setAssessmentStatus(assessmentStatusResponse.data); // Update state with the fetched assessment data
+        console.log("dddp: ", dddpData);
 
-    // Step 3: Post to comments endpoint
-    const commentDate = new Date().toISOString().split("T")[0];
-    const commentPayload = {
-      id: 0,
-      username: user?.user?.username,
-      fullName: user?.user?.fullName,
-      userRole: normalizedUserRole,
-      type: "DPAT",
-      districtId: district?.value,
-      year: year,
-      tableCommented: "assessment_start_DAPT", // Using a generic identifier; adjust as needed
-      comments: `Assessment started automatically with status: ${fetchedStatus || "Start"}`,
-      gaps: "",
-      commentDate: commentDate,
-      updateDate: commentDate,
-      dddpDataDate: commentDate,
-      dddpData: {
-        indicator: "assessment_start_DAPT",
-        tables: {
-          gaMeetingData,
-          meetingDataGroup,
-           subStructures: [
-      subStructuresMeetingData,
-      subStructureData,
-      subReportData,
-    ],
-          ecaMeetingData,
-          subStatutoryData,
-          managementMeetingsData,
-          prccMeetingData,
-          etcMeetingData,
-          spcMeetingData,
-          internalAuditData,
-          internalAuditMeetingData,
-          towHallMeetingData,
-          decisionServiceData,
-          decisionDeliveryListData,
-          managementActionServiceDeliveryData,
-          cededRevenueUtilisationData,
-          subStructureActivityData,
-          substructureExpendatureData,
-          sanitationProvidersData,
+        try {
+            // Step 1: Post to assessments endpoint
+            const assessmentResponse = await instance.post(`assessments`, payload);
+            setAssessmentStatus(assessmentResponse.data);
+            message.success({
+                content: (
+                    <div>
+                        <p>Assessment started successfully (Status: 201)</p>
+                    </div>
+                ),
+                duration: 3,
+            });
 
-        },
-      },
+            // Step 2: Fetch assessment status from the provided endpoint
+            const assessmentStatusResponse = await instance.get(
+                `assessments/dpat/${district?.value}/${year}/DPAT`
+            );
+            const fetchedStatus = assessmentStatusResponse.data?.status; // Adjust based on actual response structure
+            setAssessmentStatus(assessmentStatusResponse.data); // Update state with the fetched assessment data
+
+            // Step 3: Post to comments endpoint
+            const commentDate = new Date().toISOString().split("T")[0];
+            const commentPayload = {
+                id: 0,
+                username: user?.user?.username,
+                fullName: user?.user?.fullName,
+                userRole: normalizedUserRole,
+                type: "DPAT",
+                districtId: district?.value,
+                year: year,
+                tableCommented: "assessment_start_DAPT", // Using a generic identifier; adjust as needed
+                comments: `Assessment started automatically with status: ${fetchedStatus || "Start"}`,
+                gaps: "",
+                commentDate: commentDate,
+                updateDate: commentDate,
+                dddpDataDate: commentDate,
+                dddpData: {
+                    indicator: "assessment_start_DAPT",
+                    tables: dddpData
+                },
+            };
+
+            const commentResponse = await instance.post(`comments`, commentPayload);
+            message.success({
+                content: (
+                    <div>
+                        <p>Comment added successfully (Status: 201)</p>
+                    </div>
+                ),
+                duration: 3,
+            });
+        } catch (error) {
+            console.error("Failed to process assessment or comment:", {
+                message: error.message,
+                response: error.response?.data,
+                status: error.response?.status,
+            });
+            message.error(`Failed to process: ${error.response?.data?.message || error.message}`);
+        } finally {
+            setProgressLoad(false);
+        }
     };
 
-    const commentResponse = await instance.post(`comments`, commentPayload);
-    message.success({
-      content: (
-        <div>
-          <p>Comment added successfully (Status: 201)</p>
-        </div>
-      ),
-      duration: 3,
-    });
-  } catch (error) {
-    console.error("Failed to process assessment or comment:", {
-      message: error.message,
-      response: error.response?.data,
-      status: error.response?.status,
-    });
-    message.error(`Failed to process: ${error.response?.data?.message || error.message}`);
-  } finally {
-    setProgressLoad(false);
-  }
-};
+    const handlePendingAssessmentSubmit = async () => {
+        setProgressLoad(true);
+        const assessmentEndDate = new Date().toISOString().split("T")[0];
+        const assessmentStartDate = assessmentStatus?.assessmentStartDate || new Date().toISOString().split("T")[0]; // Use existing start date or fallback to today
 
-const handlePendingAssessmentSubmit = async () => {
-  setProgressLoad(true);
-  const assessmentEndDate = new Date().toISOString().split("T")[0];
-  const assessmentStartDate = assessmentStatus?.assessmentStartDate || new Date().toISOString().split("T")[0]; // Use existing start date or fallback to today
+        // Ensure assessmentStatus has an ID
+        if (!assessmentStatus?.id) {
+            message.error("No assessment ID found. Please start the assessment first.");
+            setProgressLoad(false);
+            return;
+        }
 
-  // Ensure assessmentStatus has an ID
-  if (!assessmentStatus?.id) {
-    message.error("No assessment ID found. Please start the assessment first.");
-    setProgressLoad(false);
-    return;
-  }
+        const payload = {
+            id: assessmentStatus.id, // Use dynamic ID from assessmentStatus
+            username: user?.user?.username,
+            fullName: user?.user?.fullName,
+            userRole: normalizedUserRole,
+            type: "DPAT",
+            districtId: district?.value,
+            year: year,
+            status: "Pending",
+            assessmentStartDate: assessmentStartDate,
+            assessmentEndDate: assessmentEndDate,
+            reviewStartDate: assessmentEndDate,
+            reviewEndDate: null,
+            closedDate: null,
+        };
 
-  const payload = {
-    id: assessmentStatus.id, // Use dynamic ID from assessmentStatus
-    username: user?.user?.username,
-    fullName: user?.user?.fullName,
-    userRole: normalizedUserRole,
-    type: "DPAT",
-    districtId: district?.value,
-    year: year,
-    status: "Pending",
-    assessmentStartDate: assessmentStartDate,
-    assessmentEndDate: assessmentEndDate,
-    reviewStartDate: assessmentEndDate,
-    reviewEndDate: null,
-    closedDate: null,
-  };
+        try {
+            // Step 1: Update assessment with PUT request
+            const response = await instance.put(`assessments/${payload.id}`, payload);
+            setAssessmentStatus(response.data);
+            message.success({
+                content: (
+                    <div>
+                        <p>Assessment completed successfully (Status: 200)</p>
+                    </div>
+                ),
+                duration: 3,
+            });
 
-  try {
-    // Step 1: Update assessment with PUT request
-    const response = await instance.put(`assessments/${payload.id}`, payload);
-    setAssessmentStatus(response.data);
-    message.success({
-      content: (
-        <div>
-          <p>Assessment completed successfully (Status: 200)</p>
-        </div>
-      ),
-      duration: 3,
-    });
+            // Step 2: Fetch assessment status from the provided endpoint
+            const assessmentStatusResponse = await instance.get(
+                `assessments/dpat/${district?.value}/${year}/DPAT`
+            );
+            const fetchedStatus = assessmentStatusResponse.data?.status; // Adjust based on actual response structure
+            setAssessmentStatus(assessmentStatusResponse.data); // Update state with the fetched assessment data
 
-    // Step 2: Fetch assessment status from the provided endpoint
-    const assessmentStatusResponse = await instance.get(
-      `assessments/dpat/${district?.value}/${year}/DPAT`
-    );
-    const fetchedStatus = assessmentStatusResponse.data?.status; // Adjust based on actual response structure
-    setAssessmentStatus(assessmentStatusResponse.data); // Update state with the fetched assessment data
 
-   
 
-   
-  } catch (error) {
-    console.error("Failed to complete assessment or comment:", {
-      message: error.message,
-      response: error.response?.data,
-      status: error.response?.status,
-    });
-    message.error(`Failed to complete assessment: ${error.response?.data?.message || error.message}`);
-  } finally {
-    setProgressLoad(false);
-  }
-};
 
-const handleCompleteReviewSubmit = async () => {
-  setProgressLoad(true);
-  const reviewEndDate = new Date().toISOString().split("T")[0];
-  const assessmentStartDate = assessmentStatus?.assessmentStartDate || new Date().toISOString().split("T")[0]; // Use existing start date or fallback to today
-  const assessmentEndDate = assessmentStatus?.assessmentEndDate || new Date().toISOString().split("T")[0]; // Use existing end date or fallback to today
+        } catch (error) {
+            console.error("Failed to complete assessment or comment:", {
+                message: error.message,
+                response: error.response?.data,
+                status: error.response?.status,
+            });
+            message.error(`Failed to complete assessment: ${error.response?.data?.message || error.message}`);
+        } finally {
+            setProgressLoad(false);
+        }
+    };
 
-  // Ensure assessmentStatus has an ID
-  if (!assessmentStatus?.id) {
-    message.error("No assessment ID found. Please start the assessment first.");
-    setProgressLoad(false);
-    return;
-  }
+    const handleCompleteReviewSubmit = async () => {
+        setProgressLoad(true);
+        const reviewEndDate = new Date().toISOString().split("T")[0];
+        const assessmentStartDate = assessmentStatus?.assessmentStartDate || new Date().toISOString().split("T")[0]; // Use existing start date or fallback to today
+        const assessmentEndDate = assessmentStatus?.assessmentEndDate || new Date().toISOString().split("T")[0]; // Use existing end date or fallback to today
 
-  const payload = {
-    id: assessmentStatus.id, // Use dynamic ID from assessmentStatus
-    username: user?.user?.username,
-    fullName: user?.user?.fullName,
-    userRole: "DAQ",
-    type: "DPAT",
-    districtId: district?.value,
-    year: year,
-    status: "Completed",
-    assessmentStartDate: assessmentStartDate,
-    assessmentEndDate: assessmentEndDate,
-    reviewStartDate: assessmentStatus?.reviewStartDate || assessmentEndDate, // Use existing review start date or fallback to assessmentEndDate
-    reviewEndDate: reviewEndDate,
-    closedDate: null,
-  };
+        // Ensure assessmentStatus has an ID
+        if (!assessmentStatus?.id) {
+            message.error("No assessment ID found. Please start the assessment first.");
+            setProgressLoad(false);
+            return;
+        }
 
-  try {
-    // Step 1: Update assessment with PUT request
-    const response = await instance.put(`assessments/${payload.id}`, payload);
-    setAssessmentStatus(response.data);
-    message.success({
-      content: (
-        <div>
-          <p>Review completed successfully (Status: 200)</p>
-        </div>
-      ),
-      duration: 3,
-    });
+        const payload = {
+            id: assessmentStatus.id, // Use dynamic ID from assessmentStatus
+            username: user?.user?.username,
+            fullName: user?.user?.fullName,
+            userRole: "DAQ",
+            type: "DPAT",
+            districtId: district?.value,
+            year: year,
+            status: "Completed",
+            assessmentStartDate: assessmentStartDate,
+            assessmentEndDate: assessmentEndDate,
+            reviewStartDate: assessmentStatus?.reviewStartDate || assessmentEndDate, // Use existing review start date or fallback to assessmentEndDate
+            reviewEndDate: reviewEndDate,
+            closedDate: null,
+        };
 
-    // Step 2: Fetch assessment status from the provided endpoint
-    const assessmentStatusResponse = await instance.get(
-      `assessments/dpat/${district?.value}/${year}/DPAT`
-    );
-    const fetchedStatus = assessmentStatusResponse.data?.status; // Adjust based on actual response structure
-    setAssessmentStatus(assessmentStatusResponse.data); // Update state with the fetched assessment data
+        try {
+            // Step 1: Update assessment with PUT request
+            const response = await instance.put(`assessments/${payload.id}`, payload);
+            setAssessmentStatus(response.data);
+            message.success({
+                content: (
+                    <div>
+                        <p>Review completed successfully (Status: 200)</p>
+                    </div>
+                ),
+                duration: 3,
+            });
 
-   
+            // Step 2: Fetch assessment status from the provided endpoint
+            const assessmentStatusResponse = await instance.get(
+                `assessments/dpat/${district?.value}/${year}/DPAT`
+            );
+            const fetchedStatus = assessmentStatusResponse.data?.status; // Adjust based on actual response structure
+            setAssessmentStatus(assessmentStatusResponse.data); // Update state with the fetched assessment data
 
-  
-  } catch (error) {
-    console.error("Failed to complete review or comment:", {
-      message: error.message,
-      response: error.response?.data,
-      status: error.response?.status,
-    });
-    message.error(`Failed to complete review: ${error.response?.data?.message || error.message}`);
-  } finally {
-    setProgressLoad(false);
-  }
-};
 
-const handleCloseReviewSubmit = async () => {
-  setProgressLoad(true);
-  const reviewEndDate = new Date().toISOString().split("T")[0];
-  const assessmentStartDate = assessmentStatus?.assessmentStartDate || new Date().toISOString().split("T")[0]; // Use existing start date or fallback to today
-  const assessmentEndDate = assessmentStatus?.assessmentEndDate || new Date().toISOString().split("T")[0]; // Use existing end date or fallback to today
 
-  // Ensure assessmentStatus has an ID
-  if (!assessmentStatus?.id) {
-    message.error("No assessment ID found. Please start the assessment first.");
-    setProgressLoad(false);
-    return;
-  }
 
-  const payload = {
-    id: assessmentStatus.id, // Use dynamic ID from assessmentStatus
-    username: user?.user?.username,
-    fullName: user?.user?.fullName,
-    userRole: "DQA",
-    type: "DPAT",
-    districtId: district?.value,
-    year: year,
-    status: "Closed",
-    assessmentStartDate: assessmentStartDate,
-    assessmentEndDate: assessmentEndDate,
-    reviewStartDate: assessmentStatus?.reviewStartDate || assessmentEndDate, // Use existing review start date or fallback to assessmentEndDate
-    reviewEndDate: reviewEndDate,
-    closedDate: null,
-  };
+        } catch (error) {
+            console.error("Failed to complete review or comment:", {
+                message: error.message,
+                response: error.response?.data,
+                status: error.response?.status,
+            });
+            message.error(`Failed to complete review: ${error.response?.data?.message || error.message}`);
+        } finally {
+            setProgressLoad(false);
+        }
+    };
 
-  try {
-    // Step 1: Update assessment with PUT request
-    const response = await instance.put(`assessments/${payload.id}`, payload);
-    setAssessmentStatus(response.data);
-    message.success({
-      content: (
-        <div>
-          <p>Review completed successfully (Status: 200)</p>
-        </div>
-      ),
-      duration: 3,
-    });
+    const handleCloseReviewSubmit = async () => {
+        setProgressLoad(true);
+        const reviewEndDate = new Date().toISOString().split("T")[0];
+        const assessmentStartDate = assessmentStatus?.assessmentStartDate || new Date().toISOString().split("T")[0]; // Use existing start date or fallback to today
+        const assessmentEndDate = assessmentStatus?.assessmentEndDate || new Date().toISOString().split("T")[0]; // Use existing end date or fallback to today
 
-    // Step 2: Fetch assessment status from the provided endpoint
-    const assessmentStatusResponse = await instance.get(
-      `assessments/dpat/${district?.value}/${year}/DPAT`
-    );
-    const fetchedStatus = assessmentStatusResponse.data?.status; // Adjust based on actual response structure
-    setAssessmentStatus(assessmentStatusResponse.data); // Update state with the fetched assessment data
-   
+        // Ensure assessmentStatus has an ID
+        if (!assessmentStatus?.id) {
+            message.error("No assessment ID found. Please start the assessment first.");
+            setProgressLoad(false);
+            return;
+        }
 
-  } catch (error) {
-    console.error("Failed to complete review or comment:", {
-      message: error.message,
-      response: error.response?.data,
-      status: error.response?.status,
-    });
-    message.error(`Failed to complete review: ${error.response?.data?.message || error.message}`);
-  } finally {
-    setProgressLoad(false);
-  }
-};
+        const payload = {
+            id: assessmentStatus.id, // Use dynamic ID from assessmentStatus
+            username: user?.user?.username,
+            fullName: user?.user?.fullName,
+            userRole: "DQA",
+            type: "DPAT",
+            districtId: district?.value,
+            year: year,
+            status: "Closed",
+            assessmentStartDate: assessmentStartDate,
+            assessmentEndDate: assessmentEndDate,
+            reviewStartDate: assessmentStatus?.reviewStartDate || assessmentEndDate, // Use existing review start date or fallback to assessmentEndDate
+            reviewEndDate: reviewEndDate,
+            closedDate: null,
+        };
+
+        try {
+            // Step 1: Update assessment with PUT request
+            const response = await instance.put(`assessments/${payload.id}`, payload);
+            setAssessmentStatus(response.data);
+            message.success({
+                content: (
+                    <div>
+                        <p>Review completed successfully (Status: 200)</p>
+                    </div>
+                ),
+                duration: 3,
+            });
+
+            // Step 2: Fetch assessment status from the provided endpoint
+            const assessmentStatusResponse = await instance.get(
+                `assessments/dpat/${district?.value}/${year}/DPAT`
+            );
+            const fetchedStatus = assessmentStatusResponse.data?.status; // Adjust based on actual response structure
+            setAssessmentStatus(assessmentStatusResponse.data); // Update state with the fetched assessment data
+
+
+        } catch (error) {
+            console.error("Failed to complete review or comment:", {
+                message: error.message,
+                response: error.response?.data,
+                status: error.response?.status,
+            });
+            message.error(`Failed to complete review: ${error.response?.data?.message || error.message}`);
+        } finally {
+            setProgressLoad(false);
+        }
+    };
     const hideComment = !assessmentStatus || assessmentStatus?.status === "Pending" || assessmentStatus?.status === "Completed" || assessmentStatus?.status === "Closed";
 
     return (
@@ -2155,77 +2245,55 @@ const handleCloseReviewSubmit = async () => {
                         <Col span={8} className="gutter-row">
                             <Text strong>Date of Assessment: </Text> <Text>{moment().format('MMMM Do YYYY, h:mm:ss A')}</Text>
                         </Col>
-                        
+
                         <Col span={10} className="gutter-row">
-                          {(!assessmentStatus || ![null, "Start", "Pending", "Completed", "Closed"].includes(assessmentStatus?.status)) && 
-                            normalizedUserRole !== "DPAT_QUALITY ASSURANCE" && (
-                            <Button
-                                type="primary"
-                          onClick={handleStartAssessmentSubmit}
-                             style={{
-                                backgroundColor: "#1890ff",
-                               borderColor: "#1890ff",
-                              }}
-                             loading={progressLoad}
-                              >
-                      <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>
-                             START
-                            </span>
-                        </Button>
-                        )}
+                            {(!assessmentStatus || ![null, "Start", "Pending", "Completed", "Closed"].includes(assessmentStatus?.status)) &&
+                                normalizedUserRole !== "DPAT_QUALITY ASSURANCE" && (
+                                    <Button
+                                        type="primary"
+                                        onClick={handleStartAssessmentSubmit}
+                                        style={{
+                                            backgroundColor: "#1890ff",
+                                            borderColor: "#1890ff",
+                                        }}
+                                        loading={progressLoad}
+                                    >
+                                        <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>
+                                            START
+                                        </span>
+                                    </Button>
+                                )}
                         </Col>
                     </Row>
                     <h3 style={{ textAlign: "center", padding: "10px" }}>
                         Annex 1: SECTION A - COMPLIANCE INDICATORS
                     </h3>
-                    
-                {/* 
-                     <Button
-                                type="primary"
-                          onClick={()=>{
-                            console.log(hotlineRef.current?.getData())
-                          }}
-                             style={{
-                                backgroundColor: "#1890ff",
-                               borderColor: "#1890ff",
-                              }}
-                             loading={progressLoad}
-                              >
-                      <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>
-                             Hotline
-                            </span>
-                        </Button> */}
-                    
 
-                    {/* General Assembly Meetings and Decision End */}
-
-                    {/* {JSON.stringify(gaMeetingData)} */}
-
+                    {/* General Assembly Meetings and Decision Start */}
                     {gaMeetingData && <GAMeeting
+                        ref={gaMeetingRef}
                         data={gaMeetingData}
                         year={year}
                         columns={gaMeetingColumns}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                     />}
-                    {/* General Assembly Meetings and Decision End */}
                     <hr />
 
                     {/* Approval of Annual Action Plan Budget Start */}
-
                     {meetingDataGroup && <AAPBudgetAproval
+                        ref={aapBudgetApprovalRef}
                         data={meetingDataGroup}
                         year={year}
                         columns={budgetApprovalColumns}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                     />}
-                    {/* Approval of Annual Action Plan Budget End */}
                     <hr />
 
                     {/* Sub-Structures Meetings Start */}
-
                     {subStructuresMeetingData && subStructureData && subReportData && <SubStructureMeeting
+                        ref={subStructureMeetingRef}
                         data={subStructuresMeetingData}
                         year={year}
                         columns={subStructureColumns}
@@ -2234,174 +2302,166 @@ const handleCloseReviewSubmit = async () => {
                         revenueSharing={subReportData}
                         revenuSharingColumns={revenueSharingColumns}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                     />}
-                    {/* Sub-Structures Meetings End */}
                     <hr />
 
                     {/* ECA Meeting Start */}
                     {ecaMeetingData && <ExecutiveCommitteeMember
+                        ref={executiveCommitteeMemberRef}
                         data={ecaMeetingData}
                         year={year}
                         columns={ECAMeetingColumns}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                     />}
-                    {/* ECA Meeting End */}
                     <hr />
 
-                    {/* Sub Statutory Committe Meeting and Members section Start*/}
-
+                    {/* Sub Statutory Committee Meeting and Members section Start */}
                     {subStatutoryData && <SubStructureCommiteeMeeting
+                        ref={subStructureCommitteeMeetingRef}
                         data={subStatutoryData}
                         meetingColumns={subStatutoryMeetingsColumns}
                         columns={subCommitteeCompositionColumns}
                         memberColumns={membersColumns}
                         districtId={district?.value}
                         year={year}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                     />}
-                    {/* Sub Committe Meeting and Members section End*/}
                     <hr />
 
-
                     {managementMeetingsData && <ManagementMeeting
+                        ref={managementMeetingRef}
                         data={managementMeetingsData}
                         year={year}
                         columns={managementMeetingColumns}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                     />}
                     <hr />
 
-
                     {prccMeetingData && <PRCCMeeting
+                        ref={prccMeetingRef}
                         data={prccMeetingData}
                         year={year}
                         columns={PRCCMeetingColumns}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                     />}
-
                     <hr />
 
                     {/* Special Committee Meeting (SPC) Meeting Start */}
                     {etcMeetingData && <EntityTenderCommitteeMeeting
+                        ref={entityTenderCommitteeMeetingRef}
                         data={etcMeetingData}
                         year={year}
                         columns={spcMeetingColumns}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                     />}
-                    {/* Special Committee Meeting (SPC) Meeting End*/}
                     <hr />
 
-                    {/* Entity Tender Committee (ETC) Meeting Start*/}
-                    {/* Sow to make sure there's one meeting each quater */}
-
+                    {/* Entity Tender Committee (ETC) Meeting Start */}
                     {spcMeetingData && <SPCEntityTenderCommittee
+                        ref={spcEntityTenderCommitteeRef}
                         data={spcMeetingData}
                         year={year}
                         columns={ETCMeetingColumns}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                     />}
-
                     <hr />
 
                     {internalAuditData && <InternalAuditUnitFunctionality
+                        ref={internalAuditUnitFunctionalityRef}
                         data={internalAuditData}
                         district={district?.value}
                         year={year}
                         columns={internalAuditColumns}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                     />}
-
                     <hr />
 
                     {internalAuditMeetingData && <AuditCommiteeMeeting
+                        ref={auditCommitteeMeetingRef}
                         meetings={internalAuditMeetingData}
                         meetingColumns={internalAuditMeetingColumns}
                         district={district?.value}
                         year={year}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                     />}
-
                     <hr />
 
                     <ClientServiceFunctionality
+                        ref={clientServiceFunctionalityRef}
                         year={year}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                     />
-
                     <hr />
 
                     <AAPPublication
+                        ref={aapPublicationRef}
                         year={year}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                     />
-
                     <hr />
 
-
                     {<AuditorGeneralGAMeeting
+                        ref={auditorGeneralGAMeetingRef}
                         gaMeetings={gaMeetingData || []}
                         ecaMeeting={ecaMeetingData || []}
                         year={year}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                     />}
-
                     <hr />
-                    {/* {towHallMeetingData} sow */}
 
                     {<TownHollMeeting
+                        ref={townHallMeetingRef}
                         meetings={towHallMeetingData}
                         columns={townHallMeetingColumns}
                         year={year}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                     />}
-
                     <hr />
 
-
-                    {/* <hr /> */}
                     <div style={{ height: '4px', backgroundColor: '#000', width: '100%', margin: '20px 0' }} />
 
                     <h3 style={{ textAlign: "center", padding: "10px" }}>
                         Annex 2: SECTION B – SERVICE DELIVERY INDICATORS
                     </h3>
-                    {/* SDI- General Assembly Decisions Start*/}
+
+                    {/* SDI- General Assembly Decisions Start */}
                     {decisionServiceData && <GeneralAssemblyDecision
+                        ref={generalAssemblyDecisionRef}
                         data={decisionServiceData}
                         year={year}
                         columns={serviceDecisionColumns}
                         decisionDeliveryData={decisionDeliveryData}
                         serviceDeliveryDecisionColumns={serviceDeliveryDecisionColumns}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                     />}
-                    {/* SDI- General Assembly Decisions End */}
-
                     <hr />
 
-
                     <GeneralAssemblyManagementActions
+                        ref={generalAssemblyManagementActionsRef}
                         year={year}
                         decisions={decisionDeliveryListData}
                         managementActionServiceDeliveryData={managementActionServiceDeliveryData}
                         district={district?.value}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                     />
                     <hr />
 
-                    {/* 1.3 Assembly Support to Substructures Evidence of utilization of ceded revenue */}
-                    <GASupport year={year}
+                    <GASupport
+                        ref={gaSupportRef}
+                        year={year}
                         cededRevenueUtilisationData={cededRevenueUtilisationData}
                         subStructureActivityData={subStructureActivityData}
                         cededRevenueUtilisationScore={cededRevenueUtilisationScore}
@@ -2409,223 +2469,221 @@ const handleCloseReviewSubmit = async () => {
                         districtId={district?.value}
                         hideComment={hideComment}
                     />
-
                     <hr />
 
-                    {/* Water Services */}
                     <WaterServices
+                        ref={waterServicesRef}
                         year={year}
-
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                     />
                     <hr />
 
-                    {/* Electricity Services */}
                     <ElectricityServices
+                        ref={electricityServicesRef}
                         year={year}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                     />
                     <hr />
 
-                    {/* Sanitation Services */}
-                    <SanitationServices year={year}
+                    <SanitationServices
+                        ref={sanitationServicesRef}
+                        year={year}
                         sanitationProvidersData={sanitationProvidersData}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                     />
                     <hr />
 
-                    {/* Evidence of establishment of Planning & Building Inspectorate Unit
-                  */}
-                    {/* {JSON.stringify(buildingInspectorate)} */}
-                    <MaintenanceInfrastructure year={year}
+                    <MaintenanceInfrastructure
+                        ref={maintenanceInfrastructureRef}
+                        year={year}
                         buildingInspectorateData={buildingInspectorateData}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                     />
                     <hr />
 
                     <ClientServiceCharter
+                        ref={clientServiceCharterRef}
                         year={year}
                         districtId={district?.value}
                         publications={props.publications}
                     />
                     <hr />
 
-                    {/* 2.6 Services on the Transportation network */}
                     <TransportationNetworkService
+                        ref={transportationNetworkServiceRef}
                         year={year}
                         transportors={transportorsData}
                         districtId={district?.value}
-                         hideComment={hideComment}
-                        district={district?.value} />
+                        hideComment={hideComment}
+                        district={district?.value}
+                    />
                     <hr />
 
-                    {/* 3.1 Establishment of Planning and Building Inspectorate Unit */}
                     <BuildingInspectorateUnit
+                        ref={buildingInspectorateUnitRef}
                         year={year}
                         units={inspectorateUnitData}
                         districtId={district?.value}
-                         hideComment={hideComment}
-                        district={district?.value} />
+                        hideComment={hideComment}
+                        district={district?.value}
+                    />
                     <hr />
 
-                    {/* 3.2 Planning and Development Permit Processing & Issuance */}
                     <PermitProcessingIssuance
+                        ref={permitProcessingIssuanceRef}
                         year={year}
                         districtId={district?.value}
-                         hideComment={hideComment}
-                        district={district?.value} />
+                        hideComment={hideComment}
+                        district={district?.value}
+                    />
                     <hr />
-                    {/* 3.3 Street Naming Database and Property Addressing */}
 
                     <StreetNaming
+                        ref={streetNamingRef}
                         year={year}
                         district={district?.value}
                         counterColumns={streetNamingInstallationColumn}
                         streets={streetNamingData}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                         columns={streetNamingColumn}
                     />
                     <hr />
 
-                    {/* 4.1 Social Protection Services available in the District */}
-
                     <SocialProtectionServices
+                        ref={socialProtectionServicesRef}
                         year={year}
                         district={district?.value}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                         services={socialServicesData}
                     />
                     <hr />
 
-                    {/* 4.2 Availability of Shelters (Transitional Housing) in the District */}
-
                     <ShelterTransactionalHousing
+                        ref={shelterTransactionalHousingRef}
                         year={year}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                         district={district?.value}
                     />
                     <hr />
 
-                    {/* Dedicated Hotline Number for the District Start */}
                     <DistrictHotlineNumber
+                        ref={districtHotlineNumberRef}
                         year={year}
                         districtId={district?.value}
                     />
                     <hr />
 
-                    
-
-                    {/* Service to People Living with Disabilities (PWDs) */}
                     <PWDService
+                        ref={pwdServiceRef}
                         year={year}
                         district={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                         districtId={district?.value}
                     />
                     <hr />
 
-                     {/* Deepening Gender Meanstreaming Start */}
                     <DeepeningGenderMainstreaming
+                        ref={deepeningGenderMainstreamingRef}
                         year={year}
                         districtId={district?.value}
                         data={deepGenderData}
                     />
                     <hr />
-                    
-                    {/*  Nutrition Services */}
+
                     {nutritionServcieData && <NutritionIntervention
+                        ref={nutritionInterventionRef}
                         year={year}
                         district={district?.value}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                         data={nutritionServcieData}
                     />}
                     <hr />
 
-                    {/*  Availability of Sanitation Service Providers */}
                     <SanitationServiceProviders
+                        ref={sanitationServiceProvidersRef}
                         year={year}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                         district={district?.value}
                         document={sanitationServiceList}
                     />
                     <hr />
 
-                    {/*  Availability of Well-Maintained Dumping Site or Engineered Landfills */}
                     <DumpingSite
+                        ref={dumpingSiteRef}
                         year={year}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                         district={district?.value}
                     />
                     <hr />
 
-                    {/*  Monitoring and Issuance of Certificates to Food and Beverage Vendors */}
                     <FoodVendors
+                        ref={foodVendorsRef}
                         year={year}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                         district={district?.value}
                     />
                     <hr />
 
-                    {/*  Availability of Institutional Toilet Facilities and Water in Public Schools */}
                     <PublicSchoolFacility
+                        ref={publicSchoolFacilityRef}
                         year={year}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                         district={district?.value}
                     />
                     <hr />
 
-                    {/*  Climate Change Interventions */}
                     <ClimateChangeIntervention
+                        ref={climateChangeInterventionRef}
                         year={year}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                         district={district?.value}
                     />
                     <hr />
 
-                    {/*  Availability of District LED Activities in the AAP */}
                     <DistrictLEDActivityPlan
+                        ref={districtLEDActivityPlanRef}
                         year={year}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                         district={district?.value}
                     />
                     <hr />
 
-                    {/*  Promotion of new businesses and of new jobs */}
                     <BusinessAndJobPromotion
+                        ref={businessAndJobPromotionRef}
                         year={year}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                         district={district?.value}
                     />
                     <hr />
 
-                    {/*  Facilitate and support small-scale agro-processing and manufacturing industries */}
                     <AgroProcessingFacilitySupport
+                        ref={agroProcessingFacilitySupportRef}
                         year={year}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                         district={district?.value}
                     />
                     <hr />
 
-                    {/*  Engagement with the Business Community */}
                     <BusinessCommunityEngagement
+                        ref={businessCommunityEngagementRef}
                         year={year}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                         district={district?.value}
                     />
                     <hr />
@@ -2637,41 +2695,46 @@ const handleCloseReviewSubmit = async () => {
                     </h3>
 
                     <AAPImplementation
+                        ref={aapImplementationRef}
                         year={year}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                         district={district?.value}
                         data={aapDocuments}
                     />
                     <hr />
 
                     <MonitoringProjectAndActivity
+                        ref={monitoringProjectAndActivityRef}
                         year={year}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                         district={district?.value}
                     />
                     <hr />
 
                     <ContractManagementAndAdmins
+                        ref={contractManagementAndAdminsRef}
                         year={year}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                         district={district?.value}
                         data={pAndP}
                     />
                     <hr />
 
                     <FollowUpDeduction
+                        ref={followUpDeductionRef}
                         year={year}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                         district={district?.value}
                         data={pAndP}
                     />
                     <hr />
 
                     <EnvironmentalAndSocialSafeGuard
+                        ref={environmentalAndSocialSafeGuardRef}
                         year={year}
                         districtId={district?.value}
                         guards={guards}
@@ -2679,74 +2742,73 @@ const handleCloseReviewSubmit = async () => {
                     <hr />
 
                     <CapacityBuildingImplementation
+                        ref={capacityBuildingImplementationRef}
                         year={year}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                         district={district?.value}
                     />
                     <hr />
 
                     <PostTrainingEvaluation
+                        ref={postTrainingEvaluationRef}
                         year={year}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                         district={district?.value}
                     />
                     <hr />
-
-                    {/* <PaymentPoints
-                        year={year}
-                        districtId={district?.value}
-                         hideComment={hideComment}
-                        district={district?.value}
-                    />
-                    <hr /> */}
 
                     <RateableRevenu
+                        ref={rateableRevenueRef}
                         year={year}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                         district={district?.value}
                     />
                     <hr />
 
-                    {/* The rest of the tables need to be clarified by Fosu */}
                     <AuditCommitteeResponsiveness
+                        ref={auditCommitteeResponsivenessRef}
                         year={year}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                         audits={auditCommitteeMeetingData}
                     />
                     <hr />
 
                     <AuditInfractions
+                        ref={auditInfractionsRef}
                         year={year}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                         district={district?.value}
                     />
                     <hr />
 
                     <EducationServiceSupport
+                        ref={educationServiceSupportRef}
                         year={year}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                         district={district?.value}
                     />
                     <hr />
 
                     <HealthServiceSupport
+                        ref={healthServiceSupportRef}
                         year={year}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                         district={district?.value}
                     />
                     <hr />
 
                     <AgricultureSupport
+                        ref={agricultureSupportRef}
                         year={year}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                         district={district?.value}
                     />
                     <hr />
@@ -2754,7 +2816,7 @@ const handleCloseReviewSubmit = async () => {
                     <QualityAssuranceEditor
                         year={year}
                         districtId={district?.value}
-                         hideComment={hideComment}
+                        hideComment={hideComment}
                         district={district?.value}
                     />
 
@@ -2764,9 +2826,9 @@ const handleCloseReviewSubmit = async () => {
                 </Content>
             </div>
             <div style={{ textAlign: "right" }}>
-                  {/* <Col span={10} className="gutter-row"> */}
-                         
-                        {/* </Col> */}
+                {/* <Col span={10} className="gutter-row"> */}
+
+                {/* </Col> */}
                 <Button
                     type="primary"
                     icon={<FilePdfOutlined style={{ fontSize: "20px", color: "white", fontWeight: "bold" }} />}
@@ -2788,59 +2850,59 @@ const handleCloseReviewSubmit = async () => {
                     <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>Download Report</span>
                 </Button>
                 {assessmentStatus?.status === "Start" && (
-                                <Button
-                                    type="primary"
-                                    onClick={handlePendingAssessmentSubmit}
-                                    style={{
-                                        backgroundColor: "#2e7f05ff",
-                                        borderColor: "#2e7f05ff",
-                                         marginLeft: "30px"
-                                    }}
-                                    loading={progressLoad}
-                                >
-                                    <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>
-                                        COMPLETE ASSESSMENT
-                                    </span>
-                                </Button>
-                            )}
-                            
-                              {normalizedUserRole === "DPAT_QUALITY ASSURANCE" && assessmentStatus?.status === "Pending" &&  (
-                                <Button
-                                    type="primary"
-                                    onClick={handleCompleteReviewSubmit}
-                                    style={{
-                                        backgroundColor: "#338e06ff",
-                                        borderColor: "#338e06ff",
-                                        marginLeft: "30px"
-                                    }}
-                                    loading={progressLoad}
-                                >
-                                    <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>
-                                        COMPLETE REVIEW
-                                    </span>
-                                </Button>
-                            )}
+                    <Button
+                        type="primary"
+                        onClick={handlePendingAssessmentSubmit}
+                        style={{
+                            backgroundColor: "#2e7f05ff",
+                            borderColor: "#2e7f05ff",
+                            marginLeft: "30px"
+                        }}
+                        loading={progressLoad}
+                    >
+                        <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>
+                            COMPLETE ASSESSMENT
+                        </span>
+                    </Button>
+                )}
 
-                             {normalizedUserRole === "DPAT_QUALITY ASSURANCE" && assessmentStatus?.status === "Completed" && (
-                                <Button
-                                    type="primary"
-                                    onClick={handleCloseReviewSubmit}
-                                    style={{
-                                        backgroundColor: "#a00000ff",
-                                        borderColor: "#a00000ff",
-                                        marginLeft: "30px"
-                                    }}
-                                    loading={progressLoad}
-                                >
-                                    <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>
-                                        CLOSE REVIEW
-                                    </span>
-                                </Button>
-                            )}
+                {normalizedUserRole === "DPAT_QUALITY ASSURANCE" && assessmentStatus?.status === "Pending" && (
+                    <Button
+                        type="primary"
+                        onClick={handleCompleteReviewSubmit}
+                        style={{
+                            backgroundColor: "#338e06ff",
+                            borderColor: "#338e06ff",
+                            marginLeft: "30px"
+                        }}
+                        loading={progressLoad}
+                    >
+                        <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>
+                            COMPLETE REVIEW
+                        </span>
+                    </Button>
+                )}
+
+                {normalizedUserRole === "DPAT_QUALITY ASSURANCE" && assessmentStatus?.status === "Completed" && (
+                    <Button
+                        type="primary"
+                        onClick={handleCloseReviewSubmit}
+                        style={{
+                            backgroundColor: "#a00000ff",
+                            borderColor: "#a00000ff",
+                            marginLeft: "30px"
+                        }}
+                        loading={progressLoad}
+                    >
+                        <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>
+                            CLOSE REVIEW
+                        </span>
+                    </Button>
+                )}
 
 
 
-                            
+
             </div>
 
 

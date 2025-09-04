@@ -1,14 +1,14 @@
 import { Layout, Table, Typography, Row } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import axios from "../api/axios";
 import Comment from "../components/Comments";
 
-function NutritionIntervention({
+const NutritionIntervention = forwardRef(({
   year,
   districtId,
   data,
   hideComment
-}) {
+}, ref) => {
   const [scorei, setScorei] = useState(0);
 
   const { Header, Content } = Layout;
@@ -20,6 +20,13 @@ function NutritionIntervention({
       setScorei(2);
     }
   }, [year, districtId, data]);
+
+   useImperativeHandle(ref, () => ({
+      getData: () => ({
+        data,
+        scorei
+      }),
+    }));
 
   const aapColumn = [
     { title: "No. of Activities in the AAP of the Assembly", dataIndex: "aapTotal", key: "aapTotal" },
@@ -102,6 +109,6 @@ function NutritionIntervention({
       )}
     </Comment>
   );
-}
+})
 
 export default NutritionIntervention;

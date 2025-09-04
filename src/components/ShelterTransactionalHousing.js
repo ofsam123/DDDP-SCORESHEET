@@ -1,13 +1,13 @@
 import { Layout, Table, Typography, Row } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import axios from "../api/axios";
 import Comment from "../components/Comments";
-import { getFileLinkIfExist } from "../utils/utils";
+import { getAttributeValue, getFileLinkIfExist } from "../utils/utils";
 
-function ShelterTransactionalHousing({
+const ShelterTransactionalHousing = forwardRef(({
   year,
   districtId,hideComment
-}) {
+}, ref) => {
   const [score, setScore] = useState(0);
   const [services, setServices] = useState([]);
 
@@ -18,10 +18,13 @@ function ShelterTransactionalHousing({
     getResidentialHomeCentre()
   }, [year, districtId]);
 
-  const getAttributeValue = (key, val) => {
-    const attr = val?.attributes.find(attr => attr.displayName === key);
-    return attr ? attr.value : "N/A";
-  };
+   useImperativeHandle(ref, () => ({
+      getData: () => ({
+        services,
+        score
+      }),
+    }));
+
 
   function getResidentialHomeCentre() {
     axios
@@ -141,6 +144,6 @@ function ShelterTransactionalHousing({
       )}
     </Comment>
   );
-}
+})
 
 export default ShelterTransactionalHousing;

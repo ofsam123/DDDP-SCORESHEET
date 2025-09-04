@@ -1,17 +1,15 @@
 import { Layout, Table, Typography, Row } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import Comment from "../components/Comments";
 import axios from "../api/axios";
 import { formatDataGeneral, getAttributeValue, getFileLinkIfExist } from "../utils/utils";
 
-function ClientServiceCharter({
+const ClientServiceCharter = forwardRef(({
   year,
-
   districtId,
-  publications,
   hideComment
 
-}) {
+}, ref) => {
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
   const [clientServiceCharter, setClientServiceCharter] = useState([]);
@@ -19,8 +17,13 @@ function ClientServiceCharter({
 
   useEffect(() => {
     getData();
-    // console.log("Djiba publications: ", publications)
   }, [year, districtId]);
+
+  useImperativeHandle(ref, () => ({
+      getData: () => ({
+        clientServiceCharter, score
+      }),
+    }));
 
   const permitRequestColumn = [
     { title: "Client Service Charter Availability (YES/NO)", dataIndex: "availability", key: "availability" },
@@ -135,6 +138,6 @@ function ClientServiceCharter({
       )}
     </Comment>
   );
-}
+})
 
 export default ClientServiceCharter;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { Layout, Typography, Table, Row } from "antd";
 import Comment from "../components/Comments";
 import instance from "../api/cmsapi";
@@ -6,7 +6,7 @@ import instance from "../api/cmsapi";
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
 
-function PRCCMeeting({ data, year, columns, districtId, hideComment }) {
+const PRCCMeeting = forwardRef(({ data, year, columns, districtId, hideComment }, ref) =>{
   const [endpointData, setEndpointData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -90,6 +90,12 @@ function PRCCMeeting({ data, year, columns, districtId, hideComment }) {
     }));
   };
 
+  useImperativeHandle(ref, () => ({
+      getData: () => ({
+        data
+      }),
+    }));
+
   return (
     <Comment
       data={data}
@@ -171,6 +177,6 @@ function PRCCMeeting({ data, year, columns, districtId, hideComment }) {
       )}
     </Comment>
   );
-}
+})
 
 export default PRCCMeeting;

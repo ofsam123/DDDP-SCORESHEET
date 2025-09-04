@@ -1,11 +1,11 @@
 import { Layout, Table, Typography, Row } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import axios from "../api/axios";
 import { calculatePercentage, formatDataGeneral, getDataRank, getQuarterDate } from "../utils/utils";
 import moment from "moment/moment";
 import Comment from "../components/Comments";
 
-function CapacityBuildingImplementation({ year, district,hideComment }) {
+const CapacityBuildingImplementation = forwardRef(({ year, district,hideComment }, ref) => {
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
@@ -15,6 +15,16 @@ function CapacityBuildingImplementation({ year, district,hideComment }) {
     const [scorei, setScorei] = useState(0);
     const [scoreii, setScoreii] = useState(0);
     const [percentage, setPercentage] = useState(0);
+
+    useImperativeHandle(ref, () => ({
+        getData: () => ({
+          data,
+          report,
+          scorei,
+          scoreii,
+          percentage
+        }),
+      }));
 
     const CapacityBuildingImplementationColumns = [
         { title: "Availability of TNA & Capacity Building Plan", dataIndex: "tnaAvaillability", key: "tnaAvaillability" },
@@ -208,6 +218,6 @@ function CapacityBuildingImplementation({ year, district,hideComment }) {
             )}
         </Comment>
     );
-}
+})
 
 export default CapacityBuildingImplementation;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { Layout, Typography, Table, Row } from "antd";
 import Comment from "../components/Comments";
 import { each } from "chart.js/helpers";
@@ -6,7 +6,13 @@ import { each } from "chart.js/helpers";
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
 
-function TownHollMeeting({ meetings,year, columns, districtId,hideComment }) {
+const TownHollMeeting = forwardRef(({ meetings,year, columns, districtId,hideComment }, ref) => {
+
+  useImperativeHandle(ref, () => ({
+      getData: () => ({
+        meetings
+      }),
+  }));
 
   return (
     <Comment
@@ -59,6 +65,6 @@ function TownHollMeeting({ meetings,year, columns, districtId,hideComment }) {
       )}
     </Comment>
   );
-}
+})
 
 export default TownHollMeeting;

@@ -1,17 +1,24 @@
 import { Layout, Table, Typography, Row } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import axios from "../api/axios";
 import { formatDataGeneral, getAttributeValue, getFileLinkIfExist } from "../utils/utils";
 import Comment from "../components/Comments";
 
-function AgroProcessingFacilitySupport({
+const AgroProcessingFacilitySupport = forwardRef(({
     year, district,hideComment
-}) {
+}, ref) => {
 
     const [data, setData] = useState([]);
     const [scorei, setScorei] = useState(0);
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
+
+     useImperativeHandle(ref, () => ({
+        getData: () => ({
+          data,
+          scorei
+        }),
+      }));
 
     useEffect(() => {
         getData();
@@ -170,6 +177,6 @@ function AgroProcessingFacilitySupport({
             )}
         </Comment>
     );
-}
+})
 
 export default AgroProcessingFacilitySupport;

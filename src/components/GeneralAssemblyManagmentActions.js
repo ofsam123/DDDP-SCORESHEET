@@ -1,16 +1,26 @@
 import { Layout, Table, Typography, Row } from "antd";
-import React from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import Comment from "../components/Comments";
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
 
-function GeneralAssemblyManagementActions({
+const GeneralAssemblyManagementActions = forwardRef(({
   year,
   decisions,
   managementActionServiceDeliveryData,
   districtId,hideComment
-}) {
+}, ref) => {
+
+
+ useImperativeHandle(ref, () => ({
+     getData: () => ({
+      decisions,
+      managementActionServiceDeliveryData,
+      score: managementActionServiceDeliveryData[0]?.percentage >= 70 ? 2 : 0
+     }),
+   }));
+
   const managementServiceDeliveryActionColumns = [
     { title: "No. of decisions on service delivery improvement", dataIndex: "no", key: "no" },
     { title: "No. of actions taken on social service improvement decisions", dataIndex: "service", key: "service" },
@@ -78,6 +88,6 @@ function GeneralAssemblyManagementActions({
       )}
     </Comment>
   );
-}
+})
 
 export default GeneralAssemblyManagementActions;

@@ -1,11 +1,17 @@
 import { Layout, Typography, Table } from "antd";
-import { useEffect, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 
 const { Content } = Layout;
 const { Title } = Typography;
 
 
-function AuditCommiteeMeeting({ meetings, meetingColumns, district, year }) {
+const AuditCommiteeMeeting = forwardRef(({ meetings, meetingColumns, district, year }, ref) => {
+
+     useImperativeHandle(ref, () => ({
+        getData: () => ({
+          meetings
+        }),
+      }));
    
     return (
         <>
@@ -39,6 +45,6 @@ function AuditCommiteeMeeting({ meetings, meetingColumns, district, year }) {
 
         </>
     );
-}
+})
 
 export default AuditCommiteeMeeting;

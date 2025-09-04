@@ -1,10 +1,10 @@
 import { Layout, Table, Typography, Row } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import axios from "../api/axios";
 import { calculatePercentage } from "../utils/utils";
 import Comment from "../components/Comments";
 
-function AAPImplementation({ year, district, data, hideComment }) {
+const AAPImplementation = forwardRef(({ year, district, data, hideComment }, ref) => {
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
@@ -16,9 +16,13 @@ function AAPImplementation({ year, district, data, hideComment }) {
         getIndicatorsData();
     }, [year, district]);
 
-    // useEffect(()=>{
-
-    // },[data]);
+   useImperativeHandle(ref, () => ({
+       getData: () => ({
+        document,
+         aapImplementation,
+        score
+       }),
+     }));
 
     const aapImplementationColumns = [
         { title: `No. of activities in approved ${year} Annual Action Plan`, dataIndex: "aapApproved", key: "aapApproved" },
@@ -115,6 +119,6 @@ function AAPImplementation({ year, district, data, hideComment }) {
             )}
         </Comment>
     );
-}
+})
 
 export default AAPImplementation;

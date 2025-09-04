@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { Layout, Typography, Table, Row } from "antd";
 import axios from "../api/axios";
 import Comment from "../components/Comments";
@@ -7,7 +7,7 @@ import { formatDataGeneral, getAttributeValue, getFileLinkIfExist } from "../uti
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
 
-function AAPPublication({ year, districtId,hideComment }) {
+const AAPPublication = forwardRef(({ year, districtId,hideComment }, ref) => {
   const [publication, setPublication] = useState(null);
 
   const publicationColumn = [
@@ -20,6 +20,12 @@ function AAPPublication({ year, districtId,hideComment }) {
   useEffect(() => {
     getData();
   }, [year, districtId]);
+
+  useImperativeHandle(ref, () => ({
+      getData: () => ({
+        publication
+      }),
+    }));
 
 
   const setDataDisplay = (data, reports) => {
@@ -131,6 +137,6 @@ function AAPPublication({ year, districtId,hideComment }) {
       )}
     </Comment>
   );
-}
+})
 
 export default AAPPublication;

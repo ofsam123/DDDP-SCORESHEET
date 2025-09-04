@@ -1,6 +1,6 @@
 import { Layout, Typography, Table } from "antd";
 import axios from "../api/axios";
-import { useEffect, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { getAttributeValue, getFileLinkIfExist } from "../utils/utils";
 
 const { Content } = Layout;
@@ -11,7 +11,7 @@ const columnsReport = [
     { title: "Report Link", dataIndex: "reports", key: "reports" }
 ];
 
-function InternalAuditUnitFunctionality({ data, year, columns, district }) {
+const InternalAuditUnitFunctionality = forwardRef(({ data, year, columns, district }, ref) => {
 
     const [report, setReport] = useState([]);
     const [fulfillment, seFulfillment] = useState(data?.fulfillment);
@@ -19,6 +19,12 @@ function InternalAuditUnitFunctionality({ data, year, columns, district }) {
     useEffect(() => {
         getAuditCommitteeReport();
     }, [district, year]);
+
+    useImperativeHandle(ref, () => ({
+        getData: () => ({
+          data, report, fulfillment
+        }),
+      }));
 
     const getAuditCommitteeReport = () => {
         axios.get(`/tracker/trackedEntities?orgUnit=${district}&program=Z3qMezPtpEb&startDate=${year}-01-01&endDate=${year}-12-31`)
@@ -141,6 +147,6 @@ function InternalAuditUnitFunctionality({ data, year, columns, district }) {
 
         </>
     );
-}
+})
 
 export default InternalAuditUnitFunctionality;

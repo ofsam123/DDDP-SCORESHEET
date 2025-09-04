@@ -1,9 +1,9 @@
 import { Layout, Table, Typography, Row } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import axios from "../api/axios";
 import Comment from "../components/Comments";
 
-function AgricultureSupport({ year, districtId,hideComment }) {
+const AgricultureSupport = forwardRef(({ year, districtId,hideComment }, ref) => {
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
 
@@ -13,6 +13,13 @@ function AgricultureSupport({ year, districtId,hideComment }) {
   useEffect(() => {
     getData();
   }, []);
+
+  useImperativeHandle(ref, () => ({
+      getData: () => ({
+        agricultureSupport,
+        score
+      }),
+    }));
 
   const agricultureSupportColumns = [
     { title: "No. of AEAs", dataIndex: "noOfAEAs", key: "noOfAEAs" },
@@ -91,6 +98,6 @@ function AgricultureSupport({ year, districtId,hideComment }) {
       )}
     </Comment>
   );
-}
+})
 
 export default AgricultureSupport;

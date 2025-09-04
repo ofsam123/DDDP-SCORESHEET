@@ -18,7 +18,7 @@ const SubStructureCommiteeMeeting = forwardRef (({ data, year, columns, memberCo
 
   useImperativeHandle(ref , ()=> ({
     getData: () => ({
-       data
+       data, departments, members
     })
   }))
 

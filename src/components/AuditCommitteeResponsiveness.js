@@ -1,11 +1,18 @@
 import { Layout, Table, Typography, Row } from "antd";
-import React from "react";
+import React, { forwardRef, useImperativeHandle } from "react";
 import Comment from "../components/Comments";
 
-function AuditCommitteeResponsiveness({ year, audits, actions, managementLetters,hideComment}) {
+const AuditCommitteeResponsiveness = forwardRef(({ year, audits, actions, managementLetters,hideComment}, ref) => {
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
+
+    useImperativeHandle(ref, () => ({
+        getData: () => ({
+          audits,
+
+        }),
+      }));
 
     const auditReportColumns = [
         { title: "Qtr", dataIndex: "meeting", key: "meeting" },
@@ -100,6 +107,6 @@ function AuditCommitteeResponsiveness({ year, audits, actions, managementLetters
             )}
         </Comment>
     );
-}
+})
 
 export default AuditCommitteeResponsiveness;

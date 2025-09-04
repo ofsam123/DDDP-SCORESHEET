@@ -1,18 +1,26 @@
 import { Layout, Table, Typography, Row } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import axios from "../api/axios";
 import Comment from "../components/Comments";
 
-function PublicSchoolFacility({
+const PublicSchoolFacility = forwardRef(({
   year,
   districtId,hideComment
-}) {
+}, ref) => {
   const [score, setScore] = useState(0);
   const [data, setData] = useState([]);
   const [percentageData, setPercentageData] = useState(0);
 
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
+
+  useImperativeHandle(ref, () => ({
+      getData: () => ({
+        data,
+        score,
+        percentageData
+      }),
+    }));
 
   useEffect(() => {
     getSchools();
@@ -159,6 +167,6 @@ function PublicSchoolFacility({
       )}
     </Comment>
   );
-}
+})
 
 export default PublicSchoolFacility;

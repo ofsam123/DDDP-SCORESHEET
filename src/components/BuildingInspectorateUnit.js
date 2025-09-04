@@ -1,13 +1,13 @@
 import { Layout, Table, Typography, Row } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import Comment from "../components/Comments";
 
-function BuildingInspectorateUnit({
+const BuildingInspectorateUnit = forwardRef(({
   year,
   units,
   districtId,
   hideComment
-}) {
+}, ref) => {
   const [scorei, setScorei] = useState(0);
   const [scoreii, setScoreii] = useState(0);
 
@@ -23,6 +23,14 @@ function BuildingInspectorateUnit({
       setScoreii(2);
     }
   }, [year, districtId, units]);
+
+  useImperativeHandle(ref, () => ({
+      getData: () => ({
+        units,
+        scorei,
+        scoreii
+      }),
+    }));
 
   const buildingInspectorateUnitColumn = [
     { title: "Date Established", dataIndex: "date", key: "date" },
@@ -96,6 +104,6 @@ function BuildingInspectorateUnit({
       )}
     </Comment>
   );
-}
+})
 
 export default BuildingInspectorateUnit;

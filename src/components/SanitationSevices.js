@@ -1,13 +1,13 @@
 import { Layout, Table, Typography, Row } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import Comment from "../components/Comments";
 
-function SanitationServices({
+const SanitationServices = forwardRef(({
   year,
   sanitationProvidersData,
   districtId,
 hideComment
-}) {
+}, ref) => {
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
   const [score, setScore] = useState(0);
@@ -22,6 +22,14 @@ hideComment
       }
     }
   }, [sanitationProvidersData, year]);
+
+   useImperativeHandle(ref, () => ({
+      getData: () => ({
+        sanitationProvidersData,
+        score,
+        percentage
+      }),
+    }));
 
   const serviceProvidersColumn = [
     { title: `Total IGF collected for the ${year} (A)`, dataIndex: "ifgCollected", key: "ifgCollected" },
@@ -87,6 +95,6 @@ hideComment
       )}
     </Comment>
   );
-}
+})
 
 export default SanitationServices;

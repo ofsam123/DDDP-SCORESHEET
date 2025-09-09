@@ -2,12 +2,12 @@ import React, { forwardRef, useEffect, useImperativeHandle, useState } from "rea
 import { Layout, Typography, Table, Row } from "antd";
 import axios from "../api/axios";
 import Comment from "../components/Comments";
-import { getFileLinkIfExist } from "../utils/utils";
+import { getAttributeValue, getFileLinkIfExist } from "../utils/utils";
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
 
-const ClientServiceFunctionality = forwardRef(({ year, districtId,hideComment }, ref) => {
+const ClientServiceFunctionality = forwardRef(({ year, districtId, hideComment }, ref) => {
   const [clientService, setClientService] = useState(null);
 
   const clienServiceColumn = [
@@ -30,15 +30,14 @@ const ClientServiceFunctionality = forwardRef(({ year, districtId,hideComment },
   }, [year, districtId]);
 
   useImperativeHandle(ref, () => ({
-      getData: () => ({
-        clientService
-      }),
+    getData: () => ({
+      indicator: "CI4",
+      area: "Transparency, Accountability & Participation",
+      clientService
+    }),
   }));
 
-  const getAttributeValue = (key, val) => {
-    const attr = val?.attributes.find(attr => attr.displayName === key);
-    return attr ? attr.value : "N/A";
-  };
+
 
   const setClientServiceDataDisplay = (data, reports) => {
     const clientServiceTemp = [];
@@ -93,24 +92,24 @@ const ClientServiceFunctionality = forwardRef(({ year, districtId,hideComment },
             report: "",
             date: "",
             attachments: reportLink ? (
-            <a
-              className="px-2 text-primary fw-bold text-decoration-underline"
-              href={`https://dddp.gov.gh/api/events/files?eventUid=${reportLink}&dataElementUid=TH0o7vTWcAy`} target="_blank"
-              rel="noopener noreferrer"
-              title="Click here to see the uploaded document"
-            >
-              View Report
-            </a>
-          ) : (
-            "Not Uploaded"
-          )
+              <a
+                className="px-2 text-primary fw-bold text-decoration-underline"
+                href={`https://dddp.gov.gh/api/events/files?eventUid=${reportLink}&dataElementUid=TH0o7vTWcAy`} target="_blank"
+                rel="noopener noreferrer"
+                title="Click here to see the uploaded document"
+              >
+                View Report
+              </a>
+            ) : (
+              "Not Uploaded"
+            )
           }
 
           currentReport.dataValues.forEach(rep => {
 
             if (rep.dataElement === "EXpYmoD23TM") {
               dataReportSet.report = rep.value;
-            }else if (rep.dataElement === "ISuGmawTpiF") {
+            } else if (rep.dataElement === "ISuGmawTpiF") {
               dataReportSet.date = rep.value;
             }
           });
@@ -150,7 +149,7 @@ const ClientServiceFunctionality = forwardRef(({ year, districtId,hideComment },
       year={year}
       districtId={districtId}
       tableCommentedId={`c4.0-4.1-${year}`}
-       hideComment={hideComment}
+      hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>

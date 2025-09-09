@@ -3,12 +3,13 @@ import React, { forwardRef, useEffect, useImperativeHandle, useState } from "rea
 import axios from "../api/axios";
 import Comment from "../components/Comments";
 
-const DistrictLEDActivityPlan= forwardRef(({
+const DistrictLEDActivityPlan = forwardRef(({
   year,
-  districtId,hideComment
+  districtId, hideComment
 }, ref) => {
   const [data, setData] = useState([]);
   const [scorei, setScorei] = useState(0);
+  const [maxScore, setMaxScore] = useState(2);
 
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
@@ -18,11 +19,14 @@ const DistrictLEDActivityPlan= forwardRef(({
   }, [year, districtId]);
 
   useImperativeHandle(ref, () => ({
-      getData: () => ({
-        data,
-        scorei
-      }),
-    }));
+    getData: () => ({
+      indicator: "SDI6",
+      area: "Local Economic Development (LED)",
+      maxScore,
+      data,
+      scorei
+    }),
+  }));
 
   function getAnnualActionPlan() {
     axios
@@ -66,7 +70,7 @@ const DistrictLEDActivityPlan= forwardRef(({
                 setScorei(2);
               }
 
-          
+
             })
             .catch(err => console.log(err))
         }
@@ -122,7 +126,7 @@ const DistrictLEDActivityPlan= forwardRef(({
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi6.0-6.1-${year}`}
-       hideComment={hideComment}
+      hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -131,7 +135,7 @@ const DistrictLEDActivityPlan= forwardRef(({
           <Content>
             From the DCD, receive information on LED activities:<br /><br />
             <ol>
-              
+
               <li type="i" className="py-1">
                 If the District has implemented at least 60% of the LED activities
                 in the Annual Action Plan (AAP), score 2.
@@ -139,8 +143,8 @@ const DistrictLEDActivityPlan= forwardRef(({
             </ol>
           </Content>
 
-          <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>2</strong></Title>
-          
+          <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>{maxScore}</strong></Title>
+
           <Row align="middle">
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               SDI 6.0-6.1 Actual Score: <strong>{scorei}</strong>

@@ -11,6 +11,7 @@ const BusinessAndJobPromotion = forwardRef(({
     const [data, setData] = useState([]);
     const [summary, setSummamry] = useState([]);
     const [scorei, setScorei] = useState(0);
+    const [maxScore, setMaxScore] = useState(1);
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
 
@@ -20,11 +21,14 @@ const BusinessAndJobPromotion = forwardRef(({
 
     useImperativeHandle(ref, () => ({
         getData: () => ({
-          data,
-          summary,
-          scorei
+            indicator: "SDI6",
+            area: "Local Economic Development (LED)",
+            maxScore,
+            data,
+            summary,
+            scorei
         }),
-      }));
+    }));
 
     function getData() {
         axios
@@ -39,7 +43,7 @@ const BusinessAndJobPromotion = forwardRef(({
                             const reports = resp.data.instances;
                             const temp = [];
                             const businessSupportedByDistrict = formatDataGeneral(business, "Has the district contributed to the creation of this business", "true") || [];
-                            
+
 
                             businessSupportedByDistrict.forEach(business => {
 
@@ -49,14 +53,14 @@ const BusinessAndJobPromotion = forwardRef(({
                                     scale: getAttributeValue("DCACT | Scale of Operation", business),
                                     jobsCreated: getAttributeValue("Number of Jobs Created", business)
                                 };
-                                
+
                                 temp.push(tempDataSet);
-                                
+
                             });
 
                             setData(temp);
                             setSummamry([{
-                                no:1,
+                                no: 1,
                                 noOfBusinessCreated: temp.length
                             }])
 
@@ -114,7 +118,7 @@ const BusinessAndJobPromotion = forwardRef(({
             year={year}
             districtId={district}
             tableCommentedId={`sdi6.0-6.2-${year}`}
-             hideComment={hideComment}
+            hideComment={hideComment}
         >
             {({ renderCommentInput, renderCommentList }) => (
                 <>
@@ -130,8 +134,8 @@ const BusinessAndJobPromotion = forwardRef(({
                         </ol>
                     </Content>
 
-                    <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>1</strong></Title>
-                    
+                    <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>{maxScore}</strong></Title>
+
                     <Row align="middle">
                         <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
                             SDI 6.0-6.2 Actual Score: <strong>{scorei}</strong>

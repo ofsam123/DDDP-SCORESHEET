@@ -13,6 +13,7 @@ const DeepeningGenderMainstreaming = forwardRef(({ data, year, districtId }, ref
     const [percentage, setPercentage] = useState(0);
     const [scorei, setScorei] = useState(0);
     const [scoreii, setScoreii] = useState(0);
+    const [maxScore, setMaxScore] = useState(3);
 
     useEffect(() => {
         getMemebers();
@@ -20,6 +21,9 @@ const DeepeningGenderMainstreaming = forwardRef(({ data, year, districtId }, ref
 
     useImperativeHandle(ref, () => ({
         getData: () => ({
+            indicator: "SDI4",
+            area: "Social Protection, Gender and Nutrition",
+            maxScore,
             data,
             members,
             scorei,
@@ -141,7 +145,7 @@ const DeepeningGenderMainstreaming = forwardRef(({ data, year, districtId }, ref
                         </ol>
                     </Content>
 
-                    <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>3</strong></Title>
+                    <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>{maxScore}</strong></Title>
                     <Title level={5} style={{ marginTop: "20px" }}>
                         SDI 4.0-4.5i Actual Score: <strong>{scorei}</strong>
                     </Title>

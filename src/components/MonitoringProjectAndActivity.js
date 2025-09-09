@@ -4,7 +4,7 @@ import axios from "../api/axios";
 import { calculatePercentage, formatDataGeneral, getAttributeValue, getFileLinkIfExist } from "../utils/utils";
 import Comment from "../components/Comments";
 
-const MonitoringProjectAndActivity = forwardRef(({ year, district,hideComment }, ref) => {
+const MonitoringProjectAndActivity = forwardRef(({ year, district, hideComment }, ref) => {
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
@@ -13,16 +13,20 @@ const MonitoringProjectAndActivity = forwardRef(({ year, district,hideComment },
     const [scorei, setScorei] = useState(0);
     const [scoreii, setScoreii] = useState(0);
     const [percentage, setPercentage] = useState(0);
+    const [maxScore, setMaxScore] = useState(3);
 
     useImperativeHandle(ref, () => ({
         getData: () => ({
-          data,
-          monitoring,
-          scorei,
-          scoreii,
-          percentage
+            indicator: "PI1",
+            area: "Annual Action Plan Implementation",
+            maxScore,
+            data,
+            monitoring,
+            scorei,
+            scoreii,
+            percentage
         }),
-      }));
+    }));
 
     const activityColumns = [
         {
@@ -97,17 +101,17 @@ const MonitoringProjectAndActivity = forwardRef(({ year, district,hideComment },
                                 const currentReport = reports.find(rep => rep.trackedEntity === budget.trackedEntity);
                                 const reportLink = getFileLinkIfExist(reports, "hM6AUNKRbKB", budget.trackedEntity);
 
-                                if(reportLink){
+                                if (reportLink) {
                                     report = (
-                                    <a
-                                        className="px-2 text-primary fw-bold text-decoration-underline"
-                                        href={`https://dddp.gov.gh/api/events/files?eventUid=${reportLink}&dataElementUid=hM6AUNKRbKB`} target="_blank"
-                                        rel="noopener noreferrer"
-                                        title="Click here to see the uploaded document"
-                                    >
-                                        View Report
-                                    </a>
-                                )
+                                        <a
+                                            className="px-2 text-primary fw-bold text-decoration-underline"
+                                            href={`https://dddp.gov.gh/api/events/files?eventUid=${reportLink}&dataElementUid=hM6AUNKRbKB`} target="_blank"
+                                            rel="noopener noreferrer"
+                                            title="Click here to see the uploaded document"
+                                        >
+                                            View Report
+                                        </a>
+                                    )
                                 }
                                 allocatedAmount = getAttributeValue("Allocated Budget", budget);
                                 if (currentReport) {
@@ -197,7 +201,7 @@ const MonitoringProjectAndActivity = forwardRef(({ year, district,hideComment },
             year={year}
             districtId={district}
             tableCommentedId={`pi1.0-1.2-${year}`}
-             hideComment={hideComment}
+            hideComment={hideComment}
         >
             {({ renderCommentInput, renderCommentList }) => (
                 <>
@@ -217,7 +221,7 @@ const MonitoringProjectAndActivity = forwardRef(({ year, district,hideComment },
                     </Content>
 
                     <Title level={5} style={{ marginTop: "20px" }}>
-                        Maximum Score <strong>3</strong>
+                        Maximum Score <strong>{maxScore}</strong>
                     </Title>
 
                     <Title level={5} style={{ marginTop: "20px" }}>

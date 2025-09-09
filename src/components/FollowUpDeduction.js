@@ -11,19 +11,23 @@ const FollowUpDeduction = forwardRef(({ year, district, data, hideComment }, ref
     const [scorei, setScorei] = useState(0);
     const [scoreii, setScoreii] = useState(0);
     const [scoreiii, setScoreiii] = useState(0);
+    const [maxScore, setMaxScore] = useState(3);
 
     useEffect(() => {
         getData();
     }, [year, district, data]);
 
-     useImperativeHandle(ref, () => ({
+    useImperativeHandle(ref, () => ({
         getData: () => ({
-          projectList,
-          scorei,
-          scoreii,
-          scoreiii
+            indicator: "PI1",
+            area: "Annual Action Plan Implementation",
+            maxScore,
+            projectList,
+            scorei,
+            scoreii,
+            scoreiii
         }),
-      }));
+    }));
 
 
     const projectColumns = [
@@ -109,7 +113,7 @@ const FollowUpDeduction = forwardRef(({ year, district, data, hideComment }, ref
                 score2 = 0;
             }
 
-             if (project.status === "YES") {
+            if (project.status === "YES") {
                 score3 = 0;
             }
         }
@@ -133,7 +137,7 @@ const FollowUpDeduction = forwardRef(({ year, district, data, hideComment }, ref
             year={year}
             districtId={district}
             tableCommentedId={`pi1.0-1.4-${year}`}
-             hideComment={hideComment}
+            hideComment={hideComment}
         >
             {({ renderCommentInput, renderCommentList }) => (
                 <>
@@ -155,7 +159,7 @@ const FollowUpDeduction = forwardRef(({ year, district, data, hideComment }, ref
                     </Content>
 
                     <Title level={5} style={{ marginTop: "20px" }}>
-                        Maximum Score <strong>3</strong>
+                        Maximum Score <strong>{maxScore}</strong>
                     </Title>
 
                     <Title level={5} style={{ marginTop: "20px" }}>

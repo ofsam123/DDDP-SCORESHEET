@@ -3,26 +3,25 @@ import React, { useEffect, useState } from "react";
 import axios from "../../api/axios";
 import { filterTrackedEntitiesByCreatedAt, formatDataGeneral, getAttributeValue } from "../../utils/utils";
 
-const AppendixTwoTable = ({ year, district }) => {
+const AppendixTwoTable = ({ year, district, period }) => {
   const [tableData, setTableData] = useState([]);
 
   useEffect(() => {
     getProjectsPrograms();
-  }, [year, district]);
+  }, [year, district, period]);
 
   function getProjectsPrograms() {
     axios
-      .get(`/tracker/trackedEntities?orgUnit=${district}&program=g3wMUKEMmH3&startDate=${year}-01-01&endDate=${year}-12-31`)
+      .get(`/tracker/trackedEntities?orgUnit=${district}&program=g3wMUKEMmH3&startDate=${year}-01-01&endDate=${year}-12-31&pageSize=5000`)
       .then(result => {
         if (result.data.instances.length > 0) {
-          const startDate = `${year}-01-01`;
-          const endDate = `${year}-12-31`;
+          
 
           axios
-            .get(`/tracker/events?program=g3wMUKEMmH3&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
+            .get(`/tracker/events?program=g3wMUKEMmH3&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31&pageSize=5000`)
             .then(resp => {
-              const data = filterTrackedEntitiesByCreatedAt(result.data.instances, startDate, endDate);
-              const reports = filterTrackedEntitiesByCreatedAt(resp.data.instances, startDate, endDate);
+              const data = filterTrackedEntitiesByCreatedAt(result.data.instances, year, period);
+              const reports = filterTrackedEntitiesByCreatedAt(resp.data.instances, year, period);
 
               const temps = [];
               data.forEach((project, idx) => {

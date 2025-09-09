@@ -22,9 +22,11 @@ const InternalAuditUnitFunctionality = forwardRef(({ data, year, columns, distri
 
     useImperativeHandle(ref, () => ({
         getData: () => ({
-          data, report, fulfillment
+            indicator: "CI3",
+            area: "Public Financial Management and Auditing",
+            data, report, fulfillment
         }),
-      }));
+    }));
 
     const getAuditCommitteeReport = () => {
         axios.get(`/tracker/trackedEntities?orgUnit=${district}&program=Z3qMezPtpEb&startDate=${year}-01-01&endDate=${year}-12-31`)
@@ -51,40 +53,40 @@ const InternalAuditUnitFunctionality = forwardRef(({ data, year, columns, distri
                                 const temp = [];
 
                                 if (currentReportData.length > 0) {
-                                    currentReportData.forEach((currentReport, idx)=>{
+                                    currentReportData.forEach((currentReport, idx) => {
                                         currentReport.dataValues.forEach((val, index) => {
-                                        // console.log("yearly: ", val);
-                                        const minuteLink = getFileLinkIfExist(report, "hM6AUNKRbKB", currentYearData[0].trackedEntity);
+                                            // console.log("yearly: ", val);
+                                            const minuteLink = getFileLinkIfExist(report, "hM6AUNKRbKB", currentYearData[0].trackedEntity);
 
-                                        if (val.dataElement == "hM6AUNKRbKB") {
-                                            temp.push({
-                                                quarter: `Quarter ${idx + 1}`,
-                                                reports: minuteLink ? (
-                                                    <a
-                                                        className="px-2 text-primary fw-bold text-decoration-underline"
-                                                        href={`https://dddp.gov.gh/api/events/files?eventUid=${minuteLink}&dataElementUid=hM6AUNKRbKB`} target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        title="Click here to see the uploaded report"
-                                                    >
-                                                        View Report
-                                                    </a>
-                                                ) : (
-                                                    "Not Uploaded"
-                                                )
-                                            });
-                                        }
-                                    })
+                                            if (val.dataElement == "hM6AUNKRbKB") {
+                                                temp.push({
+                                                    quarter: `Quarter ${idx + 1}`,
+                                                    reports: minuteLink ? (
+                                                        <a
+                                                            className="px-2 text-primary fw-bold text-decoration-underline"
+                                                            href={`https://dddp.gov.gh/api/events/files?eventUid=${minuteLink}&dataElementUid=hM6AUNKRbKB`} target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            title="Click here to see the uploaded report"
+                                                        >
+                                                            View Report
+                                                        </a>
+                                                    ) : (
+                                                        "Not Uploaded"
+                                                    )
+                                                });
+                                            }
+                                        })
                                     })
                                 }
 
                                 setReport(temp);
 
-                                if(temp.length < 4){
+                                if (temp.length < 4) {
                                     seFulfillment("Not Fulfilled");
                                 }
 
-                                temp.forEach(rep=>{
-                                    if(rep.reports == "Not Uploaded"){
+                                temp.forEach(rep => {
+                                    if (rep.reports == "Not Uploaded") {
                                         seFulfillment("Not Fulfilled")
                                     }
                                 })

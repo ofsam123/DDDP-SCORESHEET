@@ -3,35 +3,32 @@ import React, { useEffect, useState } from "react";
 import axios from "../../api/axios";
 import { filterTrackedEntitiesByCreatedAt, formatDataGeneral, getAttributeValue } from "../../utils/utils";
 
-const Table2_7 = ({ year, district }) => {
+const Table2_7 = ({ year, district, period }) => {
   const [tableData, setTableData] = useState([]);
   const [showChart, setShowChart] = useState(true);
   const [total, setTotal] = useState(null);
 
   useEffect(() => {
     getData();
-  }, [year, district]);
+  }, [year, district, period]);
 
   function getData() {
     axios
-      .get(`/tracker/trackedEntities?orgUnit=${district}&program=g27TeeehRQC&startDate=${year}-01-01&endDate=${year}-12-31`)
+      .get(`/tracker/trackedEntities?orgUnit=${district}&program=g27TeeehRQC&startDate=${year}-01-01&endDate=${year}-12-31&pageSize=5000`)
       .then(result => {
 
         if (result.data.instances.length > 0) {
-          const startDate = `${year}-01-01`;
-          const endDate = `${year}-12-31`;
+         
 
           axios
-            .get(`/tracker/events?program=g27TeeehRQC&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
+            .get(`/tracker/events?program=g27TeeehRQC&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31&pageSize=5000`)
             .then(resp => {
 
-              // const reports = filterTrackedEntitiesByCreatedAt(resp.data.instances, startDate, endDate);
+              // const resultConverted = filterTrackedEntitiesByCreatedAt(resp.data.instances, startDate, endDate);
 
               const data = formatDataGeneral(result.data.instances, "Type", "Public") || [];
-              const reports = resp.data.instances;
+              const reports = filterTrackedEntitiesByCreatedAt(resp.data.instances, year, period);
               const enrolmentReports = reports.filter(rep => rep.programStage === "aZJXKk3l5Jv");
-
-              // console.log("Djiba key schools: ", { data, enrolmentReports })
 
               const temps = [];
 
@@ -41,7 +38,7 @@ const Table2_7 = ({ year, district }) => {
                 let boysEnrolment = 0;
                 let girlsEnrolment = 0;
                 let caterer = "";
-                
+
                 if (currentReport) {
 
                   currentReport.dataValues.forEach(rep => {
@@ -67,8 +64,6 @@ const Table2_7 = ({ year, district }) => {
                 temps.push(dataSetTemp);
               });
 
-              // console.log("Djiba schools: ", temps)
-
               setTableData(temps);
 
 
@@ -88,16 +83,16 @@ const Table2_7 = ({ year, district }) => {
       <div className="card">
 
         <div className="card-header"></div>
-     
+
         <div className="card-body">
-            <h5> Ghana School Feeding Programme</h5>
-The School Feeding programme is also operating effectively in the Municipality. Thirtyfour (34) schools in the municipality are benefiting from the programme. The total 
-enrolment for the programme currently stands at 12,401 made up of 6,318 boys and 
-6,005 girls. The programme has improved retention rate hence contributing to the SDG4. 
-It however has the challenge of delay payment of caterers which in effect has resulted in 
-non-cooking of meals. Table 2.7 shows details of beneficiary schools and corresponding 
-enrolment figures.
-          <div className="table-responsive"style={{marginTop: '20px'}}>
+          <h5> Ghana School Feeding Programme</h5>
+          The School Feeding programme is also operating effectively in the Municipality. Thirtyfour (34) schools in the municipality are benefiting from the programme. The total
+          enrolment for the programme currently stands at 12,401 made up of 6,318 boys and
+          6,005 girls. The programme has improved retention rate hence contributing to the SDG4.
+          It however has the challenge of delay payment of caterers which in effect has resulted in
+          non-cooking of meals. Table 2.7 shows details of beneficiary schools and corresponding
+          enrolment figures.
+          <div className="table-responsive" style={{ marginTop: '20px' }}>
             <table className="table table-bordered">
               <thead style={{ backgroundColor: '#d4edda', fontWeight: 'bold', border: '1px solid #000' }}>
                 <tr>
@@ -117,7 +112,7 @@ enrolment figures.
                     <td style={{ border: '1px solid #000' }}>{row.caterer}</td>
                     <td style={{ border: '1px solid #000' }}>{row.boysEnrolment}</td>
                     <td style={{ border: '1px solid #000' }}>{row.girlsEnrolment}</td>
-                    <td style={{ border: '1px solid #000' }}>{parseInt(row.boysEnrolment) + parseInt(row.girlsEnrolment) }</td>
+                    <td style={{ border: '1px solid #000' }}>{parseInt(row.boysEnrolment) + parseInt(row.girlsEnrolment)}</td>
                   </tr>
                 ))}
               </tbody>}

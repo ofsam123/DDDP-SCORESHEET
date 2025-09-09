@@ -62,9 +62,10 @@ import { checkECANDGAMeetingFulfillment, formatSubStatutoryMeetings, formatSubSt
 import AuditCommiteeMeeting from "./AuditCommiteeMetting";
 import AuditorGeneralGAMeeting from "./AuditorGeneralGAMeeting";
 import TownHollMeeting from "./TownHollMeeting";
-import { budgetApprovalColumns, districtHotlineNumberColumn, ECAMeetingColumns, ETCMeetingColumns, gaMeetingColumns, internalAuditColumns, internalAuditMeetingColumns, managementMeetingColumns, membersColumns, PRCCMeetingColumns, revenueSharingColumns, serviceDecisionColumns, serviceDeliveryDecisionColumns, spcMeetingColumns, subCommitteeCompositionColumns, subStatutoryMeetingsColumns, subStructureColumns, subStructureEstablishmentColumns, townHallMeetingColumns } from "../utils/tableColums";
+import { budgetApprovalColumns, ECAMeetingColumns, ETCMeetingColumns, gaMeetingColumns, internalAuditColumns, internalAuditMeetingColumns, managementMeetingColumns, membersColumns, PRCCMeetingColumns, revenueSharingColumns, serviceDecisionColumns, serviceDeliveryDecisionColumns, spcMeetingColumns, subCommitteeCompositionColumns, subStatutoryMeetingsColumns, subStructureColumns, subStructureEstablishmentColumns, townHallMeetingColumns } from "../utils/tableColums";
 import DeepeningGenderMainstreaming from "./DeepeningGenderMainstreaming";
 import instance from "../api/cmsapi";
+import ScoreSheetSummary from "./ScoreSheetSummary";
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
@@ -1900,7 +1901,8 @@ const DPATAssessmentSheet = ({ props }) => {
             id: 0,
             username: user?.user?.username,
             fullName: user?.user?.fullName,
-            userRole: normalizedUserRole,
+            // userRole: normalizedUserRole,
+            userRole: "DDDP_USER",
             type: "DPAT",
             districtId: district?.value,
             year: year,
@@ -1998,7 +2000,8 @@ const DPATAssessmentSheet = ({ props }) => {
                 id: 0,
                 username: user?.user?.username,
                 fullName: user?.user?.fullName,
-                userRole: normalizedUserRole,
+                // userRole: normalizedUserRole,
+                userRole: "DDDP_USER",
                 type: "DPAT",
                 districtId: district?.value,
                 year: year,
@@ -2247,8 +2250,8 @@ const DPATAssessmentSheet = ({ props }) => {
                         </Col>
 
                         <Col span={10} className="gutter-row">
-                            {(!assessmentStatus || ![null, "Start", "Pending", "Completed", "Closed"].includes(assessmentStatus?.status)) &&
-                                normalizedUserRole !== "DPAT_QUALITY ASSURANCE" && (
+                            {(!assessmentStatus || ![null, "Starts", "Pending", "Completed", "Closed"].includes(assessmentStatus?.status)) &&
+                                normalizedUserRole !== "DPAT_QUALITY ASSURANCEs" && (
                                     <Button
                                         type="primary"
                                         onClick={handleStartAssessmentSubmit}
@@ -2812,6 +2815,22 @@ const DPATAssessmentSheet = ({ props }) => {
                         district={district?.value}
                     />
                     <hr />
+                    <div style={{ height: '4px', backgroundColor: '#000', width: '100%', margin: '20px 0' }} />
+
+                    <h3 style={{ textAlign: "center", padding: "10px" }}>
+                        ANNEX 4 SUMMARY SCORING SHEET FOR DPAT INDICATORS
+                    </h3>
+                    <ScoreSheetSummary
+                        districtId={district?.value}
+                        year={year} />
+
+                    <hr />
+
+                    <div style={{ height: '4px', backgroundColor: '#000', width: '100%', margin: '20px 0' }} />
+
+                    <h3 style={{ textAlign: "center", padding: "10px" }}>
+                        MEMO SECTION
+                    </h3>
 
                     <QualityAssuranceEditor
                         year={year}

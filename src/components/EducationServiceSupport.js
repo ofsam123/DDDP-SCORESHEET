@@ -12,14 +12,18 @@ const EducationServiceSupport = forwardRef(({ year, districtId, hideComment }, r
   const [educationSupport, setEducationSupport] = useState([]);
   const [score, setScore] = useState(0);
   const [percentage, setPercentage] = useState(0);
+  const [maxScore, setMaxScore] = useState(1);
 
-   useImperativeHandle(ref, () => ({
-      getData: () => ({
-        educationSupport,
-        score,
-        percentage
-      }),
-    }));
+  useImperativeHandle(ref, () => ({
+    getData: () => ({
+      indicator: "PI5",
+      area: "Access to Social Services",
+      maxScore,
+      educationSupport,
+      score,
+      percentage
+    }),
+  }));
 
   useEffect(() => {
     getData();
@@ -92,8 +96,8 @@ const EducationServiceSupport = forwardRef(({ year, districtId, hideComment }, r
 
               publicSchools.forEach((school, idx) => {
                 const currentReport = reports.find(rep => (rep.trackedEntity === school.trackedEntity)
-                 && rep.programStage === "z6mWkIfypaw");
-                 const reportLink = getFirstFileLinkIfExist(reports, "E6mSis1p8NG", school.trackedEntity, "z6mWkIfypaw");
+                  && rep.programStage === "z6mWkIfypaw");
+                const reportLink = getFirstFileLinkIfExist(reports, "E6mSis1p8NG", school.trackedEntity, "z6mWkIfypaw");
                 let support = "";
 
                 if (currentReport) {
@@ -112,16 +116,16 @@ const EducationServiceSupport = forwardRef(({ year, districtId, hideComment }, r
                   support,
                   report: reportLink ? (
                     <a
-                        className="px-2 text-primary fw-bold text-decoration-underline"
-                        href={`https://dddp.gov.gh/api/events/files?eventUid=${reportLink}&dataElementUid=E6mSis1p8NG`} target="_blank"
-                        rel="noopener noreferrer"
-                        title="Click here to see the uploaded document"
+                      className="px-2 text-primary fw-bold text-decoration-underline"
+                      href={`https://dddp.gov.gh/api/events/files?eventUid=${reportLink}&dataElementUid=E6mSis1p8NG`} target="_blank"
+                      rel="noopener noreferrer"
+                      title="Click here to see the uploaded document"
                     >
-                        View Evidence
+                      View Evidence
                     </a>
-                ) : (
+                  ) : (
                     "Not Uploaded"
-                ),
+                  ),
                 };
 
                 temp.push(tempDataSet);
@@ -139,7 +143,7 @@ const EducationServiceSupport = forwardRef(({ year, districtId, hideComment }, r
 
               const percentage = calculatePercentage(schoolSupported, temp.length);
 
-              if(percentage >= 15){
+              if (percentage >= 15) {
                 setScore(1)
               }
 
@@ -151,7 +155,7 @@ const EducationServiceSupport = forwardRef(({ year, districtId, hideComment }, r
                 percentage: percentage.toFixed(2)
               }]);
 
-            
+
             })
             .catch(err => console.log(err))
         }
@@ -165,7 +169,7 @@ const EducationServiceSupport = forwardRef(({ year, districtId, hideComment }, r
       year={year}
       districtId={districtId}
       tableCommentedId={`pi5.0-5.1-${year}`}
-       hideComment={hideComment}
+      hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -183,7 +187,7 @@ const EducationServiceSupport = forwardRef(({ year, districtId, hideComment }, r
           </Content>
 
           <Title level={5} style={{ marginTop: "20px" }}>
-            Maximum Score <strong>1</strong>
+            Maximum Score <strong>{maxScore}</strong>
           </Title>
 
           <Row align="middle">

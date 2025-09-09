@@ -16,9 +16,13 @@ const ElectricityServices = forwardRef(({
   const [waterProvidersData, setWaterProvidersData] = useState([]);
   const [waterImprovement, setWaterImpovement] = useState([]);
   const [firstPercentage, setFirstPercentage] = useState(0.00);
+  const [maxScore, setMaxScore] = useState(3);
 
   useImperativeHandle(ref, () => ({
       getData: () => ({
+        indicator: "SDI2",
+        area: "Basic/ Social Services",
+        maxScore,
         waterProvidersData,
         waterImprovement,
         scorei,
@@ -120,14 +124,14 @@ const ElectricityServices = forwardRef(({
             <br />
           </Content>
 
-          <Title level={5} style={{ marginTop: "30px" }}>Maximum Score <strong>3</strong></Title>
+          <Title level={5} style={{ marginTop: "30px" }}>Maximum Score <strong>{maxScore}</strong></Title>
 
           <Title level={5} style={{ marginTop: "20px" }}>
-            SDI 1.0-2.2i Actual Score: <strong>{scorei}</strong>
+            SDI 2.0-2.2i Actual Score: <strong>{scorei}</strong>
           </Title>
           <Row align="middle">
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
-              SDI 1.0-2.2ii Actual Score: <strong>{scoreii}</strong>
+              SDI 2.0-2.2ii Actual Score: <strong>{scoreii}</strong>
             </Title>
             {!hideComment && renderCommentInput()}
           </Row>

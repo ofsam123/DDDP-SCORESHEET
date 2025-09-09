@@ -7,7 +7,7 @@ import { formatDataGeneral, getAttributeValue, getFileLinkIfExist } from "../uti
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
 
-const AAPPublication = forwardRef(({ year, districtId,hideComment }, ref) => {
+const AAPPublication = forwardRef(({ year, districtId, hideComment }, ref) => {
   const [publication, setPublication] = useState(null);
 
   const publicationColumn = [
@@ -22,10 +22,12 @@ const AAPPublication = forwardRef(({ year, districtId,hideComment }, ref) => {
   }, [year, districtId]);
 
   useImperativeHandle(ref, () => ({
-      getData: () => ({
-        publication
-      }),
-    }));
+    getData: () => ({
+      indicator: "CI4",
+      area: "Transparency, Accountability & Participation",
+      publication
+    }),
+  }));
 
 
   const setDataDisplay = (data, reports) => {
@@ -35,7 +37,7 @@ const AAPPublication = forwardRef(({ year, districtId,hideComment }, ref) => {
 
     if (data?.length > 0) {
       data.forEach((val, idx) => {
-         const supportLink = getFileLinkIfExist(reports, "xjRCTFFiMA3", val.trackedEntity);
+        const supportLink = getFileLinkIfExist(reports, "xjRCTFFiMA3", val.trackedEntity);
         temp.push({
           key: idx,
           date: getAttributeValue("Published Date", val),
@@ -54,15 +56,15 @@ const AAPPublication = forwardRef(({ year, districtId,hideComment }, ref) => {
           )
         });
 
-        if(!supportLink){
-          fulfillment = "Not Fulfilled"; 
+        if (!supportLink) {
+          fulfillment = "Not Fulfilled";
         }
-        
+
       });
     }
 
     if (reports.length === 0 || temp.length == 0) {
-      fulfillment = "Not Fulfilled"; 
+      fulfillment = "Not Fulfilled";
     }
 
     setPublication({ data: temp, fulfillment, report: [] });
@@ -72,7 +74,7 @@ const AAPPublication = forwardRef(({ year, districtId,hideComment }, ref) => {
     axios
       .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=X5kGqVpbGoN`)
       .then(result => {
-       
+
         if (result.data.instances.length > 0) {
           axios
             .get(`/tracker/events?program=X5kGqVpbGoN&orgUnit=${districtId}`)
@@ -80,7 +82,7 @@ const AAPPublication = forwardRef(({ year, districtId,hideComment }, ref) => {
 
               const data = formatDataGeneral(result.data.instances, "Document Published", "Annual Budget & Workplan") || [];
               const reports = resp.data.instances;
-              
+
               setDataDisplay(data, reports);
             })
             .catch(err => console.log(err));
@@ -95,7 +97,7 @@ const AAPPublication = forwardRef(({ year, districtId,hideComment }, ref) => {
       year={year}
       districtId={districtId}
       tableCommentedId={`c4.0-4.2-${year}`}
-       hideComment={hideComment}
+      hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -105,11 +107,11 @@ const AAPPublication = forwardRef(({ year, districtId,hideComment }, ref) => {
             From the DCD receive copies of the approved {year} Annual Action Plan and Composite Budget:<br /><br />
             <ol>
               <li type="i">
-                If the approved Annual Action Plan and Composite Budget were 
+                If the approved Annual Action Plan and Composite Budget were
                 published on the Assembly’s website and
               </li>
               <li type="i" className="py-1">
-                If the approved Annual Action Plan and Composite Budget were distributed 
+                If the approved Annual Action Plan and Composite Budget were distributed
                 to members of the DPCU, Assembly Members, and Sub-Structures
               </li>
             </ol>
@@ -128,7 +130,7 @@ const AAPPublication = forwardRef(({ year, districtId,hideComment }, ref) => {
 
           <Title level={4} style={{ marginTop: "20px" }}>Evidence of publication of Annual Budget & Workplan</Title>
           {publication && <Table columns={publicationColumn} dataSource={publication?.data} pagination={false} bordered />}
-          <br/>
+          <br />
           {/* <Title level={4} style={{ marginTop: "20px" }}>Evidence of establishment of sub-structures</Title> */}
           {/* {clientService && <Table columns={clienServiceReportColumn} dataSource={clientService?.report} pagination={false} bordered />} */}
 

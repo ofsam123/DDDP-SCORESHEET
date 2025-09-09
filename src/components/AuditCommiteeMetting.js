@@ -7,12 +7,14 @@ const { Title } = Typography;
 
 const AuditCommiteeMeeting = forwardRef(({ meetings, meetingColumns, district, year }, ref) => {
 
-     useImperativeHandle(ref, () => ({
+    useImperativeHandle(ref, () => ({
         getData: () => ({
-          meetings
+            indicator: "CI3",
+            area: "Public Financial Management and Auditing",
+            meetings
         }),
-      }));
-   
+    }));
+
     return (
         <>
             <Title level={3}>CI 3.0 Public Financial Management and Auditing -
@@ -23,13 +25,13 @@ const AuditCommiteeMeeting = forwardRef(({ meetings, meetingColumns, district, y
                 <ol>
                     <li type="i">
                         If the Audit Committee is duly constituted and met at least four times during 2024,
-                         with Minutes of Meeting duly signed by the Secretary and Chairperson; and
+                        with Minutes of Meeting duly signed by the Secretary and Chairperson; and
                     </li>
                     <li type="i">
-                        If Management has submitted responses to both Internal Audit reports and Management Letter within 10 
+                        If Management has submitted responses to both Internal Audit reports and Management Letter within 10
                         days and 30 days respectively as stipulated by law, and has taken action on all audit recommendations
                     </li>
-                   
+
 
                 </ol>
 

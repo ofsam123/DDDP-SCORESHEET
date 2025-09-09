@@ -6,7 +6,7 @@ import Comment from "../components/Comments";
 
 const WaterServices = forwardRef(({
   year,
-  districtId,hideComment
+  districtId, hideComment
 }, ref) => {
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
@@ -15,15 +15,19 @@ const WaterServices = forwardRef(({
   const [waterProvidersData, setWaterProvidersData] = useState([]);
   const [waterImprovement, setWaterImpovement] = useState([]);
   const [firstPercentage, setFirstPercentage] = useState(0.00);
+  const [maxScore, setMaxScore] = useState(3);
 
   useImperativeHandle(ref, () => ({
-      getData: () => ({
-        waterProvidersData,
-        waterImprovement,
-        scorei, scoreii,
-        firstPercentage
-      }),
-    }));
+    getData: () => ({
+      indicator: "SDI2",
+      area: "Basic/ Social Services",
+      maxScore,
+      waterProvidersData,
+      waterImprovement,
+      scorei, scoreii,
+      firstPercentage
+    }),
+  }));
 
   const serviceProvidersColumn = [
     { title: "No", dataIndex: "no", key: "no" },
@@ -102,7 +106,7 @@ const WaterServices = forwardRef(({
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi2.0-2.1-${year}`}
-       hideComment={hideComment}
+      hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -117,14 +121,14 @@ const WaterServices = forwardRef(({
             <br /><br /><i>Local Governance Act, 2016 ( Act 936) Section 12 (Sub Sections 4 b, d & e, Sub-Section 5, Sub-Section 7); Goal 6 of the Sustainable Development Goals, the 2030 Agenda)</i>
           </Content>
 
-          <Title level={5} style={{ marginTop: "30px" }}>Maximum Score <strong>3</strong></Title>
+          <Title level={5} style={{ marginTop: "30px" }}>Maximum Score <strong>{maxScore}</strong></Title>
 
           <Title level={5} style={{ marginTop: "20px" }}>
-            SDI 1.0-2.1i Actual Score: <strong>{scorei}</strong>
+            SDI 2.0-2.1i Actual Score: <strong>{scorei}</strong>
           </Title>
           <Row align="middle">
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
-              SDI 1.0-2.1ii Actual Score: <strong>{scoreii}</strong>
+              SDI 2.0-2.1ii Actual Score: <strong>{scoreii}</strong>
             </Title>
             {!hideComment && renderCommentInput()}
           </Row>

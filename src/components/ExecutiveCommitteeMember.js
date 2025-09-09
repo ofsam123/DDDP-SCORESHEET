@@ -105,6 +105,8 @@ const ExecutiveCommitteeMember = forwardRef(({ data, year, columns, districtId, 
 
   useImperativeHandle(ref, () => ({
       getData: () => ({
+        indicator: "CI2",
+        area: "Other Statutory Meetings / Requirements",
         data
       }),
     }));

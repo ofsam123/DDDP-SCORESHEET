@@ -12,6 +12,7 @@ const ClimateChangeIntervention = forwardRef(({
   const [treePlan, setTreePlan] = useState([]);
   const [scorei, setScorei] = useState(0);
   const [scoreii, setScoreii] = useState(0);
+  const [maxScore, setMaxScore] = useState(2);
 
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
@@ -20,14 +21,17 @@ const ClimateChangeIntervention = forwardRef(({
     getAnnualActionPlan();
   }, [year, districtId]);
 
-   useImperativeHandle(ref, () => ({
-      getData: () => ({
-        climateChangePlan,
-        treePlan,
-        scorei,
-        scoreii
-      }),
-    }));
+  useImperativeHandle(ref, () => ({
+    getData: () => ({
+      indicator: "SDI5",
+      area: "Environmental Health, Sanitation and Climate Action",
+      maxScore,
+      climateChangePlan,
+      treePlan,
+      scorei,
+      scoreii
+    }),
+  }));
 
   function getAnnualActionPlan() {
     axios
@@ -169,7 +173,7 @@ const ClimateChangeIntervention = forwardRef(({
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi5.0-5.5-${year}`}
-       hideComment={hideComment}
+      hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -189,7 +193,7 @@ const ClimateChangeIntervention = forwardRef(({
             </ol>
           </Content>
 
-          <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>2</strong></Title>
+          <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>{maxScore}</strong></Title>
           <Title level={5} style={{ marginTop: "20px" }}>
             SDI 5.0-5.5i Actual Score: <strong>{scorei}</strong>
           </Title>

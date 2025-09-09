@@ -11,18 +11,22 @@ const DumpingSite = forwardRef(({
   const [scoreii, setScoreii] = useState(0);
   const [data, setData] = useState([]);
   const [siteList, setSiteList] = useState([]);
+  const [maxScore, setMaxScore] = useState(3);
 
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
 
   useImperativeHandle(ref, () => ({
-      getData: () => ({
-        data,
-        siteList,
-        scorei,
-        scoreii
-      }),
-    }));
+    getData: () => ({
+      indicator: "SDI5",
+      area: "Environmental Health, Sanitation and Climate Action",
+      maxScore,
+      data,
+      siteList,
+      scorei,
+      scoreii
+    }),
+  }));
 
   useEffect(() => {
     getDumpingSite();
@@ -115,7 +119,7 @@ const DumpingSite = forwardRef(({
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi5.0-5.2-${year}`}
-       hideComment={hideComment}
+      hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -130,12 +134,12 @@ const DumpingSite = forwardRef(({
                 Engineered Landfills according to Environmental Health Standards, score 1.
               </li>
               <li type="i" className="py-1">
-                If the District has a functional final disposal site or co-ownership for Solid/liquid waste with documentary evidence, score 2. 
+                If the District has a functional final disposal site or co-ownership for Solid/liquid waste with documentary evidence, score 2.
               </li>
             </ol>
           </Content>
 
-          <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>3</strong></Title>
+          <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>{maxScore}</strong></Title>
           <Title level={5} style={{ marginTop: "20px" }}>
             SDI 5.0-5.2i Actual Score: <strong>{scorei}</strong>
           </Title>

@@ -7,13 +7,13 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const Table2_3 = ({ year, district }) => {
+const Table2_3 = ({ year, district, period }) => {
   const [tableData, setTableData] = useState([]);
   const [total, setTotal] = useState(null);
 
   useEffect(() => {
     getProjects();
-  }, [year, district]);
+  }, [year, district, period]);
 
   const mapRevenueData = (data, report) => {
     const revenueNames = [
@@ -90,9 +90,9 @@ const Table2_3 = ({ year, district }) => {
           axios
             .get(`/tracker/events?program=SY8TpfPgzr9&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
             .then(resp => {
-              const data = filterTrackedEntitiesByCreatedAt(result.data.instances, startDate, endDate);
-              const revenues = formatDataGeneral(data, "Years", "2025") || [];
-              const reports = filterTrackedEntitiesByCreatedAt(resp.data.instances, startDate, endDate);
+              const data = filterTrackedEntitiesByCreatedAt(result.data.instances, year, period);
+              const revenues = formatDataGeneral(result.data.instances, "Years", "2025") || [];
+              const reports = filterTrackedEntitiesByCreatedAt(resp.data.instances, year, period);
               const revenuMapped = mapRevenueData(revenues, reports);
 
               const cleanNumber = (val) => parseFloat((val || "0").toString().replace(/,/g, ''));

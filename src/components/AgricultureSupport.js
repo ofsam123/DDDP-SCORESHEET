@@ -3,23 +3,27 @@ import React, { forwardRef, useEffect, useImperativeHandle, useState } from "rea
 import axios from "../api/axios";
 import Comment from "../components/Comments";
 
-const AgricultureSupport = forwardRef(({ year, districtId,hideComment }, ref) => {
+const AgricultureSupport = forwardRef(({ year, districtId, hideComment }, ref) => {
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
 
   const [agricultureSupport, setAgricultureSupport] = useState([]);
   const [score, setScore] = useState(0);
+  const [maxScore, setMaxScore] = useState(1);
 
   useEffect(() => {
     getData();
   }, []);
 
   useImperativeHandle(ref, () => ({
-      getData: () => ({
-        agricultureSupport,
-        score
-      }),
-    }));
+    getData: () => ({
+      indicator: "PI5",
+      area: "Access to Social Services",
+      maxScore,
+      agricultureSupport,
+      score
+    }),
+  }));
 
   const agricultureSupportColumns = [
     { title: "No. of AEAs", dataIndex: "noOfAEAs", key: "noOfAEAs" },
@@ -58,7 +62,7 @@ const AgricultureSupport = forwardRef(({ year, districtId,hideComment }, ref) =>
       year={year}
       districtId={districtId}
       tableCommentedId={`pi5.0-5.3-${year}`}
-       hideComment={hideComment}
+      hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -75,7 +79,7 @@ const AgricultureSupport = forwardRef(({ year, districtId,hideComment }, ref) =>
           </Content>
 
           <Title level={5} style={{ marginTop: "20px" }}>
-            Maximum Score <strong>1</strong>
+            Maximum Score <strong>{maxScore}</strong>
           </Title>
 
           <Row align="middle">

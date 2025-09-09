@@ -92,6 +92,8 @@ const PRCCMeeting = forwardRef(({ data, year, columns, districtId, hideComment }
 
   useImperativeHandle(ref, () => ({
       getData: () => ({
+        indicator: "CI2",
+        area: "Other Statutory Meetings / Requirements",
         data
       }),
     }));

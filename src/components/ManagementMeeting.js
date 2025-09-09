@@ -13,6 +13,8 @@ const ManagementMeeting = forwardRef(({ data, year, columns, districtId, hideCom
 
   useImperativeHandle(ref, () => ({
       getData: () => ({
+        indicator: "CI2",
+        area: "Other Statutory Meetings / Requirements",
         data
       }),
     }));

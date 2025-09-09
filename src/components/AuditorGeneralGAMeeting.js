@@ -60,6 +60,8 @@ const AuditorGeneralGAMeeting = forwardRef(({ gaMeetings, ecaMeeting, year, dist
 
 useImperativeHandle(ref, () => ({
     getData: () => ({
+      indicator: "CI4",
+      area: "Transparency, Accountability & Participation",
       data, fulfillment
     }),
   }));

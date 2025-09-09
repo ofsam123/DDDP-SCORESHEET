@@ -4,7 +4,7 @@ import axios from "../api/axios";
 import { formatDataGeneral, getAttributeValue, getFileLinkIfExist } from "../utils/utils";
 import Comment from "../components/Comments";
 
-const RateableRevenu = forwardRef(({ year, district,hideComment }, ref) => {
+const RateableRevenu = forwardRef(({ year, district, hideComment }, ref) => {
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
@@ -12,20 +12,24 @@ const RateableRevenu = forwardRef(({ year, district,hideComment }, ref) => {
     const [software, setSoftware] = useState([]);
     const [issuance, setIssuance] = useState([]);
     const [followup, setFollowup] = useState([]);
-    const [scoreI, setScoreI] = useState(0);
-    const [scoreII, setScoreII] = useState(0);
-    const [scoreIII, setScoreIII] = useState(0);
+    const [scorei, setScoreI] = useState(0);
+    const [scoreii, setScoreII] = useState(0);
+    const [scoreiii, setScoreIII] = useState(0);
+    const [maxScore, setMaxScore] = useState(5);
 
-     useImperativeHandle(ref, () => ({
+    useImperativeHandle(ref, () => ({
         getData: () => ({
-          software,
-          issuance,
-          followup,
-          scoreI,
-          scoreII,
-          scoreIII
+            indicator: "PI3",
+            area: "Revenue Generation",
+            maxScore,
+            software,
+            issuance,
+            followup,
+            scorei,
+            scoreii,
+            scoreiii
         }),
-      }));
+    }));
 
     useEffect(() => {
         getBillingDetails();
@@ -64,10 +68,10 @@ const RateableRevenu = forwardRef(({ year, district,hideComment }, ref) => {
                                 };
 
                                 temp.push(tempDataSet);
-    
+
                             });
 
-                            if(temp.length > 0){
+                            if (temp.length > 0) {
                                 setScoreI(1)
                             }
 
@@ -245,7 +249,7 @@ const RateableRevenu = forwardRef(({ year, district,hideComment }, ref) => {
             year={year}
             districtId={district}
             tableCommentedId={`pi3.0-3.2-${year}`}
-             hideComment={hideComment}
+            hideComment={hideComment}
         >
             {({ renderCommentInput, renderCommentList }) => (
                 <>
@@ -269,18 +273,18 @@ const RateableRevenu = forwardRef(({ year, district,hideComment }, ref) => {
                     </Content>
 
                     <Title level={5} style={{ marginTop: "20px" }}>
-                        Maximum Score <strong>5</strong>
+                        Maximum Score <strong>{maxScore}</strong>
                     </Title>
 
                     <Title level={5} style={{ marginTop: "20px" }}>
-                        PI 3.0-3.1i Actual Score: <strong>{scoreI}</strong>
+                        PI 3.0-3.1i Actual Score: <strong>{scorei}</strong>
                     </Title>
                     <Title level={5} style={{ marginTop: "20px" }}>
-                        PI 3.0-3.1ii Actual Score: <strong>{scoreII}</strong>
+                        PI 3.0-3.1ii Actual Score: <strong>{scoreii}</strong>
                     </Title>
                     <Row align="middle">
                         <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
-                            PI 3.0-3.1iii Actual Score: <strong>{scoreIII}</strong>
+                            PI 3.0-3.1iii Actual Score: <strong>{scoreiii}</strong>
                         </Title>
                         {!hideComment && renderCommentInput()}
                     </Row>

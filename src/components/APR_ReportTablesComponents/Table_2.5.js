@@ -263,7 +263,10 @@ const nhisData = [
 
 
 
-const Table2_5 = ({ year, district, dataElements, categories, districtWideConstant, economicDataElements, socialDataElements }) => {
+const Table2_5 = ({
+   year, district, dataElements, categories,
+    districtWideConstant, economicDataElements,
+     socialDataElements, period }) => {
 
   const [tableData, setTableData] = useState([]);
   const [showChart, setShowChart] = useState(true);
@@ -291,7 +294,7 @@ const Table2_5 = ({ year, district, dataElements, categories, districtWideConsta
     getGovernance();
     getEmergencyPlanning();
     getImplementationMonitoring();
-  }, [year, district]);
+  }, [year, district, period]);
 
 
   function populateEconomicDevelopmentData(economicData, constantsData) {

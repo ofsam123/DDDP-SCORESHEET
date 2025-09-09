@@ -5,7 +5,7 @@ import { calculatePercentage, formatDataGeneral, getDataRank, getQuarterDate } f
 import moment from "moment/moment";
 import Comment from "../components/Comments";
 
-const CapacityBuildingImplementation = forwardRef(({ year, district,hideComment }, ref) => {
+const CapacityBuildingImplementation = forwardRef(({ year, district, hideComment }, ref) => {
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
@@ -15,16 +15,20 @@ const CapacityBuildingImplementation = forwardRef(({ year, district,hideComment 
     const [scorei, setScorei] = useState(0);
     const [scoreii, setScoreii] = useState(0);
     const [percentage, setPercentage] = useState(0);
+    const [maxScore, setMaxScore] = useState(2);
 
     useImperativeHandle(ref, () => ({
         getData: () => ({
-          data,
-          report,
-          scorei,
-          scoreii,
-          percentage
+            indicator: "PI2",
+            area: "Capacity Building",
+            maxScore,
+            data,
+            report,
+            scorei,
+            scoreii,
+            percentage
         }),
-      }));
+    }));
 
     const CapacityBuildingImplementationColumns = [
         { title: "Availability of TNA & Capacity Building Plan", dataIndex: "tnaAvaillability", key: "tnaAvaillability" },
@@ -40,10 +44,10 @@ const CapacityBuildingImplementation = forwardRef(({ year, district,hideComment 
         { title: "Total of Male Participants", dataIndex: "totalM", key: "totalM" }
     ];
 
-    useEffect(()=>{
+    useEffect(() => {
         getData();
         getCapacityBuilding();
-    },[year, district])
+    }, [year, district])
 
     function getData() {
         axios
@@ -114,12 +118,12 @@ const CapacityBuildingImplementation = forwardRef(({ year, district,hideComment 
                                 let femaleParticipant = 0;
                                 let maleParticipant = 0;
                                 if (currentReport) {
-                                    
+
                                     currentReport.dataValues.forEach(rep => {
                                         if (rep.dataElement === "cZPy5ukNcow") {
                                             femaleParticipant = rep.value;
-                                        }else if(rep.dataElement === "web76YpF4uK") {
-                                           maleParticipant = rep.value; 
+                                        } else if (rep.dataElement === "web76YpF4uK") {
+                                            maleParticipant = rep.value;
                                         }
                                     });
                                 }
@@ -155,7 +159,7 @@ const CapacityBuildingImplementation = forwardRef(({ year, district,hideComment 
             year={year}
             districtId={district}
             tableCommentedId={`pi2.0-2.1-${year}`}
-             hideComment={hideComment}
+            hideComment={hideComment}
         >
             {({ renderCommentInput, renderCommentList }) => (
                 <>
@@ -175,7 +179,7 @@ const CapacityBuildingImplementation = forwardRef(({ year, district,hideComment 
                     </Content>
 
                     <Title level={5} style={{ marginTop: "20px" }}>
-                        Maximum Score <strong>2</strong>
+                        Maximum Score <strong>{maxScore}</strong>
                     </Title>
 
                     <Title level={5} style={{ marginTop: "20px" }}>

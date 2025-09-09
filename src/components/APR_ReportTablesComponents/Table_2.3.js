@@ -3,6 +3,7 @@ import axios from "../../api/axios";
 import { filterTrackedEntitiesByCreatedAt, formatDataGeneral, getAttributeValue } from "../../utils/utils";
 import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
+import APRComment from "../APR_ReportTablesComponents/APRComments";
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -161,76 +162,84 @@ const Table2_3 = ({ year, district }) => {
       <div className="card">
         <div className="card-header"></div>
         <div className="card-body">
-          
           <div className="table-responsive">
-
             <h6>The funding sources of the Assembly, over the years have been the Central Government 
 transfers to MMDAs (GOG Grants), the District Assembly Common Fund (DACF), the 
 District Assembly Common Fund-Responsive Factor Grant (DACF-RFG), the Minerals 
 Development Fund, Donor Grants and the Assembly’s own Internally Generated Funds 
 (IGF). Others are the Member of Parliament’s Common Fund (MP’sCF). </h6>
-<h7>
-During the year under review, funds received included the Internally Generated Funds;
+            <h7>During the year under review, funds received included the Internally Generated Funds;
 District Assembly’s Common Fund; Persons with Disability Common Fund; Member of 
 Parliament’s Common Fund and the District Assemblies Common Fund-Responsive Factor 
 Grant. Table 2.3 shows the updates from the various sources and their targets.</h7>
-
-
-           <table
-  className="table table-bordered"
-  style={{
-    marginTop: 20,
-    border: '1px solid #000',
-    borderCollapse: 'collapse',
-    width: '100%',
-  }}
->
-  <thead
-    style={{
-      backgroundColor: '#d4edda',
-      fontWeight: 'bold',
-    }}
-  >
-    <tr>
-      <th style={{ border: '1px solid #000' }}>Revenue Item</th>
-      <th style={{ border: '1px solid #000' }}>Baseline (GH¢)</th>
-      <th style={{ border: '1px solid #000' }}>Target (GH¢)</th>
-      <th style={{ border: '1px solid #000' }}>Actual (GH¢)</th>
-    </tr>
-  </thead>
-  {tableData && (
-    <tbody>
-      {tableData.map((row, index) => (
-        <tr key={index}>
-          <td style={{ border: '1px solid #000' }}>{row.name}</td>
-          <td style={{ border: '1px solid #000' }}>{row.baseline.toLocaleString()}</td>
-          <td style={{ border: '1px solid #000' }}>{row.target.toLocaleString()}</td>
-          <td style={{ border: '1px solid #000' }}>{row.actual.toLocaleString()}</td>
-        </tr>
-      ))}
-      {total && (
-        <tr style={{ fontWeight: 'bold', backgroundColor: '#f0f0f0' }}>
-          <td style={{ border: '1px solid #000' }}>{total.name}</td>
-          <td style={{ border: '1px solid #000' }}>{total.baseline.toLocaleString()}</td>
-          <td style={{ border: '1px solid #000' }}>{total.target.toLocaleString()}</td>
-          <td style={{ border: '1px solid #000' }}>{total.actual.toLocaleString()}</td>
-        </tr>
-      )}
-    </tbody>
-  )}
-</table>
-
+            <table
+              className="table table-bordered"
+              style={{
+                marginTop: 20,
+                border: '1px solid #000',
+                borderCollapse: 'collapse',
+                width: '100%',
+              }}
+            >
+              <thead
+                style={{
+                  backgroundColor: '#d4edda',
+                  fontWeight: 'bold',
+                }}
+              >
+                <tr>
+                  <th style={{ border: '1px solid #000' }}>Revenue Item</th>
+                  <th style={{ border: '1px solid #000' }}>Baseline (GH¢)</th>
+                  <th style={{ border: '1px solid #000' }}>Target (GH¢)</th>
+                  <th style={{ border: '1px solid #000' }}>Actual (GH¢)</th>
+                </tr>
+              </thead>
+              {tableData && (
+                <tbody>
+                  {tableData.map((row, index) => (
+                    <tr key={index}>
+                      <td style={{ border: '1px solid #000' }}>{row.name}</td>
+                      <td style={{ border: '1px solid #000' }}>{row.baseline.toLocaleString()}</td>
+                      <td style={{ border: '1px solid #000' }}>{row.target.toLocaleString()}</td>
+                      <td style={{ border: '1px solid #000' }}>{row.actual.toLocaleString()}</td>
+                    </tr>
+                  ))}
+                  {total && (
+                    <tr style={{ fontWeight: 'bold', backgroundColor: '#f0f0f0' }}>
+                      <td style={{ border: '1px solid #000' }}>{total.name}</td>
+                      <td style={{ border: '1px solid #000' }}>{total.baseline.toLocaleString()}</td>
+                      <td style={{ border: '1px solid #000' }}>{total.target.toLocaleString()}</td>
+                      <td style={{ border: '1px solid #000' }}>{total.actual.toLocaleString()}</td>
+                    </tr>
+                  )}
+                </tbody>
+              )}
+            </table>
           </div>
-
           <h6>
             Figure 2.1 further shows the revenue trends of {year - 1} baseline and actual receipts for {year}. It can be realized that the major source of funding for implementation of projects during the period remained the IGF which includes receipts from mineral revenue.
           </h6>
-          <div className="mt-10" style={{ height: "700px",}}>
+          <div className="mt-10" style={{ height: "700px" }}>
             <Bar data={chartData} options={chartOptions} />
           </div>
           <p className="mt-2">
             <small>Source: MPCU</small>
           </p>
+          {/* Integrate APRComment component */}
+          <APRComment
+            data={tableData}
+            year={year}
+            districtId={district}
+            tableCommentedId="Table2_3"
+            hideComment={false}
+          >
+            {({ renderCommentInput, renderCommentList }) => (
+              <div className="mt-4">
+                {renderCommentInput()}
+                {renderCommentList()}
+              </div>
+            )}
+          </APRComment>
         </div>
       </div>
     </div>

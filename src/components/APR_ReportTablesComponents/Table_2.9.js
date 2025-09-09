@@ -1,70 +1,60 @@
-
 import React, { useEffect, useState } from "react";
 import { formatDataGeneral, getAttributeValue } from "../../utils/utils";
 import axios from "../../api/axios";
 
-const Table2_9 = ({ year, district }) => {
-  
-  const [tableData, setTableData] = useState([]);
-    const [showChart, setShowChart] = useState(true);
-    const [total, setTotal] = useState(null);
-  
-    useEffect(() => {
-      getData();
-    }, [year, district]);
-  
-    function getData() {
-      axios
-        .get(`/tracker/trackedEntities?orgUnit=${district}&program=UfMl96n7nnX&startDate=${year}-01-01&endDate=${year}-12-31`)
-        .then(result => {
-          // console.log("Djiba key evaluation: ", result.data.instances)
-  
-          if (result.data.instances.length > 0) {
-            const startDate = `${year}-01-01`;
-            const endDate = `${year}-12-31`;
-  
-            axios
-              .get(`/tracker/events?program=UfMl96n7nnX&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
-              .then(resp => {
-    
-                const data = formatDataGeneral(result.data.instances, "Evaluation Type", "Evaluation") || [];
-               
-                const temps = [];
-  
-                data.forEach((item, idx) => {
+import APRComment from "../APR_ReportTablesComponents/APRComments";
 
-                  const findings = `${getAttributeValue("RELEVANCE", item)}
-                                     ${getAttributeValue("EFFICIENCY", item)}
-                                     ${getAttributeValue("EFFECTIVENESS", item)}
-                                     ${getAttributeValue("IMPACT", item)}
-                                     ${getAttributeValue("SUSTAINABILITY", item)}`;
-                  
-                  const dataSetTemp = {
-                    no: idx + 1,
-                    name: getAttributeValue("Evaluation Name", item),
-                    policy: getAttributeValue("Policy/Programme/ project involved", item),
-                    consultant: getAttributeValue("Consultant or resource persons involved", item),
-                    methodology: getAttributeValue("Methodology used", item),
-                    findings,
-                    recommendations: getAttributeValue("Recommendations", item)
-                  };
-  
-                  temps.push(dataSetTemp);
-                });
-  
-                // console.log("Djiba schools: ", temps)
-  
-                setTableData(temps);
-  
-  
-              })
-              .catch(err => console.log(err))
-          }
-  
-        })
-        .catch(err => console.log(err))
-    }
-  
+const Table2_9 = ({ year, district }) => {
+  const [tableData, setTableData] = useState([]);
+  const [showChart, setShowChart] = useState(true);
+  const [total, setTotal] = useState(null);
+
+  useEffect(() => {
+    getData();
+  }, [year, district]);
+
+  function getData() {
+    axios
+      .get(`/tracker/trackedEntities?orgUnit=${district}&program=UfMl96n7nnX&startDate=${year}-01-01&endDate=${year}-12-31`)
+      .then(result => {
+        if (result.data.instances.length > 0) {
+          const startDate = `${year}-01-01`;
+          const endDate = `${year}-12-31`;
+
+          axios
+            .get(`/tracker/events?program=UfMl96n7nnX&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
+            .then(resp => {
+              const data = formatDataGeneral(result.data.instances, "Evaluation Type", "Evaluation") || [];
+
+              const temps = [];
+
+              data.forEach((item, idx) => {
+                const findings = `${getAttributeValue("RELEVANCE", item)}
+                                 ${getAttributeValue("EFFICIENCY", item)}
+                                 ${getAttributeValue("EFFECTIVENESS", item)}
+                                 ${getAttributeValue("IMPACT", item)}
+                                 ${getAttributeValue("SUSTAINABILITY", item)}`;
+
+                const dataSetTemp = {
+                  no: idx + 1,
+                  name: getAttributeValue("Evaluation Name", item),
+                  policy: getAttributeValue("Policy/Programme/ project involved", item),
+                  consultant: getAttributeValue("Consultant or resource persons involved", item),
+                  methodology: getAttributeValue("Methodology used", item),
+                  findings,
+                  recommendations: getAttributeValue("Recommendations", item)
+                };
+
+                temps.push(dataSetTemp);
+              });
+
+              setTableData(temps);
+            })
+            .catch(err => console.log(err));
+        }
+      })
+      .catch(err => console.log(err));
+  }
 
   return (
     <div className="col-12">
@@ -101,6 +91,21 @@ const Table2_9 = ({ year, district }) => {
           <p className="mt-2">
             <small>Source: MPCU</small>
           </p>
+          {/* Integrate APRComment component */}
+          <APRComment
+            data={tableData}
+            year={year}
+            districtId={district}
+            tableCommentedId="Table2_9"
+            hideComment={false}
+          >
+            {({ renderCommentInput, renderCommentList }) => (
+              <div className="mt-4">
+                {renderCommentInput()}
+                {renderCommentList()}
+              </div>
+            )}
+          </APRComment>
         </div>
       </div>
     </div>

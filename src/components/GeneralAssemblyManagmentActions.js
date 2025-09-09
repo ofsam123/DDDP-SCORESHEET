@@ -17,7 +17,7 @@ const GeneralAssemblyManagementActions = forwardRef(({
      getData: () => ({
       decisions,
       managementActionServiceDeliveryData,
-      score: managementActionServiceDeliveryData[0]?.percentage >= 70 ? 2 : 0
+      // score: managementActionServiceDeliveryData[0]?.percentage >= 70 ? 2 : 0
      }),
    }));
 

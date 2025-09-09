@@ -1970,7 +1970,7 @@ const DPATAssessmentSheet = ({ props }) => {
             agricultureSupport: agricultureSupportRef.current?.getData(),
         };
 
-        console.log("dddp: ", dddpData);
+        // console.log("dddp: ", dddpData);
 
         try {
             // Step 1: Post to assessments endpoint
@@ -2227,6 +2227,24 @@ const DPATAssessmentSheet = ({ props }) => {
 
     return (
         <Layout style={{ padding: "20px", background: "#fff" }}>
+             <Col span={10} className="gutter-row">
+                            {(!assessmentStatus || ![null, "Start", "Pending", "Completed", "Closed"].includes(assessmentStatus?.status)) &&
+                                normalizedUserRole !== "DPAT_QUALITY ASSURANCE" && (
+                                    <Button
+                                        type="primary"
+                                        onClick={handleStartAssessmentSubmit}
+                                        style={{
+                                            backgroundColor: "#1890ff",
+                                            borderColor: "#1890ff",
+                                        }}
+                                        loading={progressLoad}
+                                    >
+                                        <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>
+                                            CLICK TO START ASSESMENT FOR {year}
+                                        </span>
+                                    </Button>
+                                )}
+                        </Col>
             <div ref={contentToPrint} className="p-2">
                 <Header style={{ background: "#1890ff", color: "#fff", textAlign: "center", padding: "10px", height: 'auto' }}>
                     <Title level={2} style={{ color: "#fff", margin: 0 }}>
@@ -2246,24 +2264,7 @@ const DPATAssessmentSheet = ({ props }) => {
                             <Text strong>Date of Assessment: </Text> <Text>{moment().format('MMMM Do YYYY, h:mm:ss A')}</Text>
                         </Col>
 
-                        <Col span={10} className="gutter-row">
-                            {(!assessmentStatus || ![null, "Start", "Pending", "Completed", "Closed"].includes(assessmentStatus?.status)) &&
-                                normalizedUserRole !== "DPAT_QUALITY ASSURANCE" && (
-                                    <Button
-                                        type="primary"
-                                        onClick={handleStartAssessmentSubmit}
-                                        style={{
-                                            backgroundColor: "#1890ff",
-                                            borderColor: "#1890ff",
-                                        }}
-                                        loading={progressLoad}
-                                    >
-                                        <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>
-                                            START
-                                        </span>
-                                    </Button>
-                                )}
-                        </Col>
+                       
                     </Row>
                     <h3 style={{ textAlign: "center", padding: "10px" }}>
                         Annex 1: SECTION A - COMPLIANCE INDICATORS

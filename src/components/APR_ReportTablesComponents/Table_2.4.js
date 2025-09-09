@@ -12,6 +12,7 @@ import {
 } from "chart.js";
 import axios from "../../api/axios";
 import { filterTrackedEntitiesByCreatedAt, formatDataGeneral } from "../../utils/utils";
+import APRComment from "../APR_ReportTablesComponents/APRComments";
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, Title, Tooltip, Legend);
@@ -187,7 +188,6 @@ const Table2_4 = ({ year, district }) => {
             <table
               className="table table-bordered"
               style={{
-
                 border: '1px solid #000',
                 borderCollapse: 'collapse',
                 width: '100%',
@@ -226,7 +226,6 @@ const Table2_4 = ({ year, district }) => {
                 </tbody>
               )}
             </table>
-
           </div>
           <p className="mt-2">
             <small>Source: MPCU</small>
@@ -244,6 +243,21 @@ const Table2_4 = ({ year, district }) => {
               <Line data={chartData} options={chartOptions} />
             </div>
           )}
+          {/* Integrate APRComment component */}
+          <APRComment
+            data={tableData}
+            year={year}
+            districtId={district}
+            tableCommentedId="Table2_4"
+            hideComment={false}
+          >
+            {({ renderCommentInput, renderCommentList }) => (
+              <div className="mt-4">
+                {renderCommentInput()}
+                {renderCommentList()}
+              </div>
+            )}
+          </APRComment>
         </div>
       </div>
     </div>

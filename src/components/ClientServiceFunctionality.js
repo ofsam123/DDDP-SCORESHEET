@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { Layout, Typography, Table, Row } from "antd";
 import axios from "../api/axios";
 import Comment from "../components/Comments";
@@ -7,7 +7,7 @@ import { getFileLinkIfExist } from "../utils/utils";
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
 
-function ClientServiceFunctionality({ year, districtId,hideComment }) {
+const ClientServiceFunctionality = forwardRef(({ year, districtId,hideComment }, ref) => {
   const [clientService, setClientService] = useState(null);
 
   const clienServiceColumn = [
@@ -28,6 +28,12 @@ function ClientServiceFunctionality({ year, districtId,hideComment }) {
   useEffect(() => {
     getClientServiceData();
   }, [year, districtId]);
+
+  useImperativeHandle(ref, () => ({
+      getData: () => ({
+        clientService
+      }),
+  }));
 
   const getAttributeValue = (key, val) => {
     const attr = val?.attributes.find(attr => attr.displayName === key);
@@ -185,6 +191,6 @@ function ClientServiceFunctionality({ year, districtId,hideComment }) {
       )}
     </Comment>
   );
-}
+})
 
 export default ClientServiceFunctionality;

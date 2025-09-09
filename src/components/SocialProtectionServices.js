@@ -1,15 +1,15 @@
 import { Layout, Table, Typography, Row } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import axios from "../api/axios";
 import Comment from "../components/Comments";
 import { documentsColumn } from "../utils/tableColums";
 
-function SocialProtectionServices({
+const SocialProtectionServices = forwardRef(({
   year,
   services,
   districtId,
   hideComment
-}) {
+}, ref) => {
   const [scorei, setScorei] = useState(0);
   const [scoreii, setScoreii] = useState(0);
   const [scoreiii, setScoreiii] = useState(0);
@@ -32,6 +32,16 @@ function SocialProtectionServices({
       setScorei(1);
     }
   }, [year, districtId, services]);
+
+   useImperativeHandle(ref, () => ({
+      getData: () => ({
+        services,
+        scorei,
+        scoreii,
+        scoreiii,
+        percentage
+      }),
+    }));
 
   const aapColumn = [
     { title: "a. Number of activities in AAP", dataIndex: "aapTotal", key: "aapTotal" },
@@ -115,6 +125,6 @@ function SocialProtectionServices({
       )}
     </Comment>
   );
-}
+})
 
 export default SocialProtectionServices;

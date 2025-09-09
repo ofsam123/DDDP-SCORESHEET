@@ -1,8 +1,8 @@
 import { Layout, Table, Typography, Row } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import Comment from "../components/Comments";
 
-function GASupport({
+const GASupport = forwardRef(({
   year,
   cededRevenueUtilisationData,
   subStructureActivityData,
@@ -10,7 +10,7 @@ function GASupport({
   substructureExpendature,
   districtId,
   hideComment
-}) {
+}, ref) => {
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
 
@@ -23,7 +23,7 @@ function GASupport({
     { title: "Amount of Ceded Revenue utilized for Community Activities (GHS)", dataIndex: "ceded", key: "ceded" },
     { title: "% of Amount utilized for Community Activities ", dataIndex: "percentage", key: "percentage" }
   ];
-  
+
   const subStructureActivityColumns = [
     { title: "No", dataIndex: "no", key: "no" },
     { title: "Activities ", dataIndex: "activities", key: "collected" },
@@ -42,7 +42,7 @@ function GASupport({
 
   useEffect(() => {
     const subs = substructureExpendature?.data?.length > 0 ? substructureExpendature?.data[0] : 0;
-    
+
     const amountNinety = calculateNinetyPercentOfAmount(subs?.twoPercentReleased);
     const amountSpendOnSub = calculateSubExpendature();
 
@@ -76,13 +76,22 @@ function GASupport({
     return ((totalAmount * 90) / 100).toFixed(2);
   };
 
+  useImperativeHandle(ref, () => ({
+    getData: () => ({
+      cededRevenueUtilisationData,
+      subStructureActivityData,
+      cededRevenueUtilisationScore,
+      substructureExpendature,
+    }),
+  }));
+
   return (
     <Comment
       data={cededRevenueUtilisationData}
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi1.0-1.3-${year}`}
-       hideComment={hideComment}
+      hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -93,11 +102,11 @@ function GASupport({
               the Assembly and Assembly’s DACF allocation to Sub-structures:</div>
             <ol>
               <li type="i">If all the sub-structures utilized at least 50% of their ceded revenue to support activities that benefit the
-                 community and align with the sub-district action plan, score 2, else score 0
+                community and align with the sub-district action plan, score 2, else score 0
 
- </li>
+              </li>
               <li type="i" className="py-1">
-                If the Assembly has spent at least 90% of up to 2% of the DACF release to its 
+                If the Assembly has spent at least 90% of up to 2% of the DACF release to its
                 sub-structures to support the sub-structures, score 2, else score 0
               </li>
             </ol>
@@ -131,7 +140,7 @@ function GASupport({
             columns={cededAmountUtilizationColumns}
             dataSource={cededRevenueUtilisationData}
             pagination={false} bordered />}
-          
+
           <Title level={5} style={{ marginTop: "30px" }}>II. Selected Activities that Benefit the Community</Title>
           {subStructureActivityData && <Table
             columns={subStructureActivityColumns}
@@ -149,6 +158,6 @@ function GASupport({
       )}
     </Comment>
   );
-}
+})
 
 export default GASupport;

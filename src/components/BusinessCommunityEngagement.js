@@ -1,12 +1,12 @@
 import { Layout, Table, Typography, Row } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import axios from "../api/axios";
 import { formatDataGeneral, getAttributeValue, getFileLinkIfExist } from "../utils/utils";
 import Comment from "../components/Comments";
 
-function BusinessCommunityEngagement({
+const BusinessCommunityEngagement = forwardRef(({
     year, district,hideComment
-}) {
+}, ref) => {
 
     const [data, setData] = useState([]);
     const [report, setReport] = useState([]);
@@ -14,6 +14,15 @@ function BusinessCommunityEngagement({
     const [scoreii, setScoreii] = useState(0);
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
+
+     useImperativeHandle(ref, () => ({
+        getData: () => ({
+          data,
+          report,
+          scorei,
+          scoreii
+        }),
+      }));
 
     useEffect(() => {
         getData();
@@ -213,6 +222,6 @@ function BusinessCommunityEngagement({
             )}
         </Comment>
     );
-}
+})
 
 export default BusinessCommunityEngagement;

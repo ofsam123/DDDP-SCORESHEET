@@ -1,17 +1,24 @@
 import { Layout, Table, Typography, Row } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import axios from "../api/axios";
 import { getAttributeValue, getFileLinkIfExist } from "../utils/utils";
 import moment from "moment/moment";
 import Comment from "../components/Comments";
 
-function PostTrainingEvaluation({ year, district,hideComment }) {
+const PostTrainingEvaluation = forwardRef(({ year, district,hideComment }, ref) => {
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
 
     const [data, setData] = useState([]);
     const [scorei, setScorei] = useState(0);
+
+    useImperativeHandle(ref, () => ({
+        getData: () => ({
+          data,
+          scorei
+        }),
+      }));
 
     const postTrainingEvaluationColumns = [
         { title: "Training Topic", dataIndex: "topic", key: "topic" },
@@ -144,6 +151,6 @@ function PostTrainingEvaluation({ year, district,hideComment }) {
             )}
         </Comment>
     );
-}
+})
 
 export default PostTrainingEvaluation;

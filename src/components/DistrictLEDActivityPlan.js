@@ -1,12 +1,12 @@
 import { Layout, Table, Typography, Row } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import axios from "../api/axios";
 import Comment from "../components/Comments";
 
-function DistrictLEDActivityPlan({
+const DistrictLEDActivityPlan= forwardRef(({
   year,
   districtId,hideComment
-}) {
+}, ref) => {
   const [data, setData] = useState([]);
   const [scorei, setScorei] = useState(0);
 
@@ -16,6 +16,13 @@ function DistrictLEDActivityPlan({
   useEffect(() => {
     getAnnualActionPlan();
   }, [year, districtId]);
+
+  useImperativeHandle(ref, () => ({
+      getData: () => ({
+        data,
+        scorei
+      }),
+    }));
 
   function getAnnualActionPlan() {
     axios
@@ -152,6 +159,6 @@ function DistrictLEDActivityPlan({
       )}
     </Comment>
   );
-}
+})
 
 export default DistrictLEDActivityPlan;

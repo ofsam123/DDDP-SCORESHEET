@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { Layout, Typography, Table, Row } from "antd";
 import Comment from "../components/Comments";
 import instance from "../api/cmsapi";
@@ -6,10 +6,16 @@ import instance from "../api/cmsapi";
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
 
-function ManagementMeeting({ data, year, columns, districtId, hideComment }) {
+const ManagementMeeting = forwardRef(({ data, year, columns, districtId, hideComment }, ref) => {
   const [endpointData, setEndpointData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  useImperativeHandle(ref, () => ({
+      getData: () => ({
+        data
+      }),
+    }));
 
   // Fetch data from the endpoint
   useEffect(() => {
@@ -166,6 +172,6 @@ function ManagementMeeting({ data, year, columns, districtId, hideComment }) {
       )}
     </Comment>
   );
-}
+})
 
 export default ManagementMeeting;

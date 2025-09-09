@@ -1,5 +1,5 @@
 import { Layout, Table, Typography, Row } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import axios from "../api/axios";
 import Comment from "../components/Comments";
 
@@ -27,7 +27,7 @@ const dataElementsAuditReport = [
   { id: 'eElDNWrVib7', name: 'IGF - Under Procurement & Stores' },
 ];
 
-function AuditInfractions({ year, districtId, hideComment }) {
+const AuditInfractions = forwardRef(({ year, districtId, hideComment }, ref) => {
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
   const [irregularities, setIrregularities] = useState([]);
@@ -37,6 +37,14 @@ function AuditInfractions({ year, districtId, hideComment }) {
   useEffect(() => {
     getAuditCommitteeReport();
   }, [year, districtId])
+
+  useImperativeHandle(ref, () => ({
+      getData: () => ({
+        irregularities,
+        scoreI,
+        scoreII
+      }),
+    }));
 
   const irregularityColumns = [
     {
@@ -217,6 +225,6 @@ function AuditInfractions({ year, districtId, hideComment }) {
       )}
     </Comment>
   );
-}
+})
 
 export default AuditInfractions;

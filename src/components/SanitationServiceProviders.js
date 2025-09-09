@@ -1,15 +1,15 @@
 import { Layout, Table, Typography, Row } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import axios from "../api/axios";
 import Comment from "../components/Comments";
 
-function SanitationServiceProviders({
+const SanitationServiceProviders  = forwardRef(({
   year,
   districtId,
   document,
   hideComment
 
-}) {
+}, ref) => {
   const [scorei, setScorei] = useState(0);
   const [scoreii, setScoreii] = useState(0);
   const [data, setData] = useState([]);
@@ -25,6 +25,16 @@ function SanitationServiceProviders({
   useEffect(() => {
     getServiceProviders();
   }, [year, districtId]);
+
+  useImperativeHandle(ref, () => ({
+      getData: () => ({
+        data,
+        monitoring,
+        document,
+        scorei,
+        scoreii
+      }),
+    }));
 
   function formatDataGeneral(data, property, value) {
     return data?.filter(item =>
@@ -162,6 +172,6 @@ function SanitationServiceProviders({
       )}
     </Comment>
   );
-}
+})
 
 export default SanitationServiceProviders;

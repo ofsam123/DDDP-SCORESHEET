@@ -1,15 +1,21 @@
 import { Layout, Table, Typography, Row, Space, Text } from "antd";
-import React from "react";
+import React, { forwardRef, useImperativeHandle } from "react";
 import Comment from "../components/Comments";
 
-function MaintenanceInfrastructure({
+const MaintenanceInfrastructure = forwardRef(({
   year,
   buildingInspectorateData,
   districtId,
   hideComment
-}) {
+}, ref) => {
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
+
+  useImperativeHandle(ref, () => ({
+      getData: () => ({
+        buildingInspectorateData
+      }),
+    }));
 
   const buildingInspectorateColumn = [
     { title: "Date Established", dataIndex: "date", key: "date" },
@@ -86,6 +92,6 @@ function MaintenanceInfrastructure({
       )}
     </Comment>
   );
-}
+})
 
 export default MaintenanceInfrastructure;

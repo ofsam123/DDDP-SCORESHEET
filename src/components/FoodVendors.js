@@ -1,14 +1,14 @@
 import { Layout, Table, Typography, Row } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import axios from "../api/axios";
 import Comment from "../components/Comments";
-import { getFileLinkIfExist } from "../utils/utils";
+import { getAttributeValue, getFileLinkIfExist } from "../utils/utils";
 
-function FoodVendors({
+const FoodVendors = forwardRef(({
   year,
   districtId,
   hideComment
-}) {
+}, ref) => {
   const [scorei, setScorei] = useState(0);
   const [scoreii, setScoreii] = useState(0);
   const [scoreiii, setScoreiii] = useState(0);
@@ -19,14 +19,21 @@ function FoodVendors({
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
 
+  useImperativeHandle(ref, () => ({
+      getData: () => ({
+        data,
+        foodVendors,
+        scorei,
+        scoreii,
+        scoreiii,
+        percentage
+      }),
+    }));
+
   useEffect(() => {
     getFoodVendors();
   }, [year, districtId]);
 
-  const getAttributeValue = (key, val) => {
-    const attr = val?.attributes.find(attr => attr.displayName === key);
-    return attr ? attr.value : "N/A";
-  };
 
   const calculatePercentage = (total, value) => {
     const totalNum = parseFloat(total);
@@ -230,6 +237,6 @@ function FoodVendors({
       )}
     </Comment>
   );
-}
+})
 
 export default FoodVendors;

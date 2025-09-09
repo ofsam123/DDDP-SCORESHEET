@@ -1,13 +1,13 @@
 import { Layout, Typography, Table, Row } from "antd";
 import Comment from "../components/Comments";
 import axios from "../api/axios";
-import { useEffect, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { calculatePercentage, getAttributeValue, getFileLinkIfExist } from "../utils/utils";
 
 const { Header, Content } = Layout;
 const { Title } = Typography;
 
-function DeepeningGenderMainstreaming({ data, year, districtId }) {
+const DeepeningGenderMainstreaming = forwardRef(({ data, year, districtId }, ref) => {
 
     const [members, setMembers] = useState(null);
     const [percentage, setPercentage] = useState(0);
@@ -18,21 +18,31 @@ function DeepeningGenderMainstreaming({ data, year, districtId }) {
         getMemebers();
     }, [year, districtId]);
 
-    const membersColumns = [
-    { title: "No", dataIndex: "no", key: "no" },
-    { title: "Member", dataIndex: "name", key: "name" },
-    { title: "Elected/Appointed ", dataIndex: "type", key: "type" },
-    { title: "Department", dataIndex: "department", key: "department" },
-    { title: "Appointment", dataIndex: "document", key: "document" }
-];
+    useImperativeHandle(ref, () => ({
+        getData: () => ({
+            data,
+            members,
+            scorei,
+            scoreii,
+            percentage
+        }),
+    }));
 
-const columns = [
-    { title: "Title", dataIndex: "title", key: "title" },
-    { title: "Document", dataIndex: "link", key: "link" }
-];
+    const membersColumns = [
+        { title: "No", dataIndex: "no", key: "no" },
+        { title: "Member", dataIndex: "name", key: "name" },
+        { title: "Elected/Appointed ", dataIndex: "type", key: "type" },
+        { title: "Department", dataIndex: "department", key: "department" },
+        { title: "Appointment", dataIndex: "document", key: "document" }
+    ];
+
+    const columns = [
+        { title: "Title", dataIndex: "title", key: "title" },
+        { title: "Document", dataIndex: "link", key: "link" }
+    ];
 
     function getMemebers() {
-        
+
         axios
             .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=NdogHaFyDuI`)
             .then(result => {
@@ -46,7 +56,7 @@ const columns = [
 
                             const reports = resp.data.instances;
                             const temp = [];
-                        
+
                             let femaleCount = 0;
 
                             data.forEach((item, index) => {
@@ -54,7 +64,7 @@ const columns = [
                                 const reportLink = getFileLinkIfExist(reports, "cIM3xSMA44J", item.trackedEntity);
                                 const gender = getAttributeValue("Sex", item);
 
-                                if(gender === "Female"){
+                                if (gender === "Female") {
                                     femaleCount++;
                                 }
 
@@ -82,13 +92,13 @@ const columns = [
 
                             });
 
-                            
+
 
                             // setScore(tempScore);
 
                             const percentageState = calculatePercentage(femaleCount, temp.length);
 
-                            if(percentageState >= 20){
+                            if (percentageState >= 20) {
                                 setScorei(2);
                             }
 
@@ -148,17 +158,17 @@ const columns = [
                     <Title level={4} style={{ marginTop: "20px" }}>II- Evidence of Uploaded Documets</Title>
                     {data && <Table columns={columns} dataSource={data} pagination={false} bordered />}
 
-                     <Title level={5} style={{ marginTop: "20px" }}>Conclusion</Title>
-          <Content>
-            {`${percentage}% of the statutory members are Female`} 
-              And the district supported 82% of gender activities            
-          </Content>
+                    <Title level={5} style={{ marginTop: "20px" }}>Conclusion</Title>
+                    <Content>
+                        {`${percentage}% of the statutory members are Female`}
+                        And the district supported 82% of gender activities
+                    </Content>
 
                     {renderCommentList()}
                 </>
             )}
         </Comment>
     );
-}
+})
 
 export default DeepeningGenderMainstreaming;

@@ -8,12 +8,12 @@ const { Header, Content } = Layout;
 const { Title, Text } = Typography;
 
 const DistrictHotlineNumber = forwardRef(({ year, districtId, hideComment }, ref) => {
-  const [dataSet, setDataSet] = useState([]);
   const [dataTable, setDataTable] = useState([]);
   const [score, setScore] = useState(0);
+
 useImperativeHandle(ref , ()=> ({
     getData: () => ({
-      score, dataSet
+      score, dataTable
     })
   }))
 

@@ -1,11 +1,11 @@
 import { Layout, Table, Typography, Row } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { formatDataGeneral, getAttributeValue, getFirstFileLinkIfExist } from "../utils/utils";
 import Comment from "../components/Comments";
 
 
 
-function ContractManagementAndAdmins({ year, district, data, hideComment}) {
+const ContractManagementAndAdmins  = forwardRef(({ year, district, data, hideComment}, ref) => {
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
@@ -16,6 +16,12 @@ function ContractManagementAndAdmins({ year, district, data, hideComment}) {
     useEffect(() => {
         getData(); 
     }, [year, district, data]);
+
+    useImperativeHandle(ref, () => ({
+        getData: () => ({
+          data, projectList, scoreI
+        }),
+      }));
 
 
     const projectColumns = [
@@ -156,6 +162,6 @@ function ContractManagementAndAdmins({ year, district, data, hideComment}) {
             )}
         </Comment>
     );
-}
+})
 
 export default ContractManagementAndAdmins;

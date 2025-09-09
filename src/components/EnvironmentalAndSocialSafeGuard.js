@@ -1,9 +1,9 @@
 import { Layout, Table, Typography, Row } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import Comment from "../components/Comments";
 import { formatDataGeneral, getAttributeValue, getFirstFileLinkIfExist } from "../utils/utils";
 
-function EnvironmentalAndSocialSafeGuard({ year, data, districtId, hideComment  }) {
+const EnvironmentalAndSocialSafeGuard = forwardRef(({ year, data, districtId, hideComment  }, ref) => {
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
@@ -16,6 +16,15 @@ function EnvironmentalAndSocialSafeGuard({ year, data, districtId, hideComment  
     useEffect(() => {
         getData();
     }, [year, districtId, data]);
+
+     useImperativeHandle(ref, () => ({
+        getData: () => ({
+          projectList,
+          scorei,
+          scoreii,
+          scoreiii
+        }),
+      }));
 
 
     const projectColumns = [
@@ -86,7 +95,7 @@ function EnvironmentalAndSocialSafeGuard({ year, data, districtId, hideComment  
         });
 
         let score1 = 1;
-        let score2 = 1;
+        let score2 = 2;
         let score3 = 1;
 
         for (let project of temp) {
@@ -174,6 +183,6 @@ function EnvironmentalAndSocialSafeGuard({ year, data, districtId, hideComment  
             )}
         </Comment>
     );
-}
+})
 
 export default EnvironmentalAndSocialSafeGuard;

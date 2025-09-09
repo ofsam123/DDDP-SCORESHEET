@@ -1,12 +1,12 @@
 import { Layout, Space, Table, Typography, Row } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import axios from "../api/axios";
 import { formatDataGeneral, getAttributeValue } from "../utils/utils";
 import Comment from "../components/Comments";
 
-function BusinessAndJobPromotion({
+const BusinessAndJobPromotion = forwardRef(({
     year, district, hideComment
-}) {
+}, ref) => {
 
     const [data, setData] = useState([]);
     const [summary, setSummamry] = useState([]);
@@ -17,6 +17,14 @@ function BusinessAndJobPromotion({
     useEffect(() => {
         getData();
     }, [year, district]);
+
+    useImperativeHandle(ref, () => ({
+        getData: () => ({
+          data,
+          summary,
+          scorei
+        }),
+      }));
 
     function getData() {
         axios
@@ -152,6 +160,6 @@ function BusinessAndJobPromotion({
             )}
         </Comment>
     );
-}
+})
 
 export default BusinessAndJobPromotion;

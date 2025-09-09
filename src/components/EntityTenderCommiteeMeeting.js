@@ -1,11 +1,17 @@
-import React from "react";
+import React, { forwardRef, useImperativeHandle } from "react";
 import { Layout, Typography, Table, Row } from "antd";
 import Comment from "../components/Comments";
 
 const { Header, Content } = Layout;
 const { Title } = Typography;
 
-function EntityTenderCommitteeMeeting({ data, year, columns, districtId,hideComment }) {
+const EntityTenderCommitteeMeeting = forwardRef(({ data, year, columns, districtId,hideComment }, ref) => {
+
+  useImperativeHandle(ref, () => ({
+      getData: () => ({
+        data
+      }),
+    }));
   return (
     <Comment
       data={data}
@@ -49,6 +55,6 @@ function EntityTenderCommitteeMeeting({ data, year, columns, districtId,hideComm
       )}
     </Comment>
   );
-}
+})
 
 export default EntityTenderCommitteeMeeting;

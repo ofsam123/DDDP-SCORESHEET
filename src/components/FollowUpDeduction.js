@@ -1,9 +1,9 @@
 import { Layout, Table, Typography, Row } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { formatDataGeneral, getAttributeValue, getFirstFileLinkIfExist } from "../utils/utils";
 import Comment from "../components/Comments";
 
-function FollowUpDeduction({ year, district, data, hideComment }) {
+const FollowUpDeduction = forwardRef(({ year, district, data, hideComment }, ref) => {
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
@@ -15,6 +15,15 @@ function FollowUpDeduction({ year, district, data, hideComment }) {
     useEffect(() => {
         getData();
     }, [year, district, data]);
+
+     useImperativeHandle(ref, () => ({
+        getData: () => ({
+          projectList,
+          scorei,
+          scoreii,
+          scoreiii
+        }),
+      }));
 
 
     const projectColumns = [
@@ -178,6 +187,6 @@ function FollowUpDeduction({ year, district, data, hideComment }) {
             )}
         </Comment>
     );
-}
+})
 
 export default FollowUpDeduction;

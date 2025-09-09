@@ -10,6 +10,7 @@ const BuildingInspectorateUnit = forwardRef(({
 }, ref) => {
   const [scorei, setScorei] = useState(0);
   const [scoreii, setScoreii] = useState(0);
+  const [maxScore, setMaxScore] = useState(3);
 
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
@@ -25,12 +26,15 @@ const BuildingInspectorateUnit = forwardRef(({
   }, [year, districtId, units]);
 
   useImperativeHandle(ref, () => ({
-      getData: () => ({
-        units,
-        scorei,
-        scoreii
-      }),
-    }));
+    getData: () => ({
+      indicator: "SDI3",
+      area: "Physical and Spatial Planning Services",
+      maxScore,
+      units,
+      scorei,
+      scoreii
+    }),
+  }));
 
   const buildingInspectorateUnitColumn = [
     { title: "Date Established", dataIndex: "date", key: "date" },
@@ -51,27 +55,27 @@ const BuildingInspectorateUnit = forwardRef(({
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi3.0-3.1-${year}`}
-       hideComment={hideComment}
+      hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
           <Title level={3} style={{ marginTop: "30px" }}>SDI 3.0 - 3.1 Establishment of Planning and Building Inspectorate Unit</Title>
           <Title level={4} style={{ marginTop: "30px" }}>Assessment Guide/ Requirement</Title>
           <Content>
-            From the DCD receive information on the Planning and Building 
+            From the DCD receive information on the Planning and Building
             Inspectorate Unit of the Assembly:<br /><br />
             <ol>
-              <li type="i"> If the Building Inspectorate Unit has been established with 
-                Office and Staff or if the function has been 
+              <li type="i"> If the Building Inspectorate Unit has been established with
+                Office and Staff or if the function has been
                 performed by the Assembly’s Physical Planning and Works Department, score 1, and
               </li>
-              <li type="i" className="py-1"> If there is a detailed report on the activities of the Unit 
+              <li type="i" className="py-1"> If there is a detailed report on the activities of the Unit
                 with actions taken on all recommendations, score 2 else score 0
               </li>
             </ol>
           </Content>
 
-          <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>3</strong></Title>
+          <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>{maxScore}</strong></Title>
           <Title level={5} style={{ marginTop: "20px" }}>
             SDI 3.0-3.1i Actual Score: <strong>{scorei}</strong>
           </Title>
@@ -81,7 +85,7 @@ const BuildingInspectorateUnit = forwardRef(({
             </Title>
             {!hideComment && renderCommentInput()}
           </Row>
-          
+
           <Title level={4} style={{ marginTop: "20px" }}>Evidence of establishment of Planning & Building Inspectorate Unit</Title>
           {<Table
             columns={buildingInspectorateUnitColumn}

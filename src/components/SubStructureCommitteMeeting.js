@@ -7,7 +7,7 @@ import { getAttributeValue } from "../utils/utils";
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
 
-const SubStructureCommiteeMeeting = forwardRef (({ data, year, columns, memberColumns, districtId, meetingColumns, hideComment }, ref )=> {
+const SubStructureCommiteeMeeting = forwardRef(({ data, year, columns, memberColumns, districtId, meetingColumns, hideComment }, ref) => {
   const [departments, setDepartments] = useState([]);
   const [members, setMembers] = useState(null);
   const [endpointData, setEndpointData] = useState(null);
@@ -16,9 +16,11 @@ const SubStructureCommiteeMeeting = forwardRef (({ data, year, columns, memberCo
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  useImperativeHandle(ref , ()=> ({
+  useImperativeHandle(ref, () => ({
     getData: () => ({
-       data, departments, members
+      indicator: "CI2",
+      area: "Other Statutory Meetings / Requirements",
+      data, departments, members
     })
   }))
 
@@ -106,7 +108,7 @@ const SubStructureCommiteeMeeting = forwardRef (({ data, year, columns, memberCo
 
         setDepartments(departmentCounts);
         setMembers(temp);
-     
+
       })
       .catch((err) => {
         // console.error("Failed to fetch members:", err);
@@ -206,7 +208,7 @@ const SubStructureCommiteeMeeting = forwardRef (({ data, year, columns, memberCo
           {error && <Text type="danger">{error}</Text>}
 
           <Title level={4} style={{ marginTop: "20px" }}>Evidence of Sub-Committee Meetings Held Prior to EC/A Meetings</Title>
-          
+
           {endpointData?.data && endpointData.data.length > 0 ? (
             <>
               <Title level={5} style={{ marginTop: "20px" }}>
@@ -242,7 +244,7 @@ const SubStructureCommiteeMeeting = forwardRef (({ data, year, columns, memberCo
           )}
 
           <Title level={4} style={{ marginTop: "20px" }}>Evidence of Composition of Sub-Committees – Summary</Title>
-          
+
           {endpointDepartments && endpointDepartments.length > 0 ? (
             <>
               <Title level={5} style={{ marginTop: "20px" }}>
@@ -278,7 +280,7 @@ const SubStructureCommiteeMeeting = forwardRef (({ data, year, columns, memberCo
           )}
 
           <Title level={4} style={{ marginTop: "20px" }}>Membership of Statutory Sub-Committees</Title>
-          
+
           {endpointMembers && endpointMembers.length > 0 ? (
             <>
               <Title level={5} style={{ marginTop: "20px" }}>

@@ -1,5 +1,5 @@
 import { Layout, Table, Typography, Row, Space, Text } from "antd";
-import React, { forwardRef, useImperativeHandle } from "react";
+import React, { forwardRef, useImperativeHandle, useState } from "react";
 import Comment from "../components/Comments";
 
 const MaintenanceInfrastructure = forwardRef(({
@@ -10,12 +10,16 @@ const MaintenanceInfrastructure = forwardRef(({
 }, ref) => {
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
+  const [maxScore, setMaxScore] = useState(3);
 
   useImperativeHandle(ref, () => ({
-      getData: () => ({
-        buildingInspectorateData
-      }),
-    }));
+    getData: () => ({
+      indicator: "SDI2",
+      area: "Basic/ Social Services",
+      maxScore,
+      buildingInspectorateData
+    }),
+  }));
 
   const buildingInspectorateColumn = [
     { title: "Date Established", dataIndex: "date", key: "date" },
@@ -31,7 +35,7 @@ const MaintenanceInfrastructure = forwardRef(({
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi2.0-2.4-${year}`}
-       hideComment={hideComment}
+      hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -48,12 +52,12 @@ const MaintenanceInfrastructure = forwardRef(({
             <br />
           </Content>
 
-           <Row align="middle">
+          <Row align="middle">
 
-          <Title level={5} style={{ marginTop: "30px", marginRight:"10px"}}>Maximum Score <strong>3</strong></Title>
+            <Title level={5} style={{ marginTop: "30px", marginRight: "10px" }}>Maximum Score <strong>{maxScore}</strong></Title>
 
             {!hideComment && renderCommentInput()}
-</Row>
+          </Row>
           <Title level={5} style={{ marginTop: "30px" }}>I. Evidence of O&M Plan in existence</Title>
           <Space><Text strong>Actual Score: </Text> <Text>{!true ? '1' : '0'}</Text></Space>
           {buildingInspectorateData && <Table
@@ -61,7 +65,7 @@ const MaintenanceInfrastructure = forwardRef(({
             dataSource={buildingInspectorateData}
             pagination={false} bordered />}
 
-            
+
 
           <Title level={5} style={{ marginTop: "30px" }}>II. O&M Budget to Capital Budget</Title>
           <Space><Text strong>Actual Score: </Text> <Text>{!true ? '1' : '0'}</Text></Space>
@@ -76,7 +80,7 @@ const MaintenanceInfrastructure = forwardRef(({
               <Text strong>Actual Score: </Text>
               <Text>{!true ? '1' : '0'}</Text>
             </Space>
-         
+
           </Row>
           {buildingInspectorateData && <Table
             columns={buildingInspectorateColumn}

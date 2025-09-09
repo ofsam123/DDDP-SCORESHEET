@@ -5,11 +5,12 @@ import Comment from "../components/Comments";
 
 const PermitProcessingIssuance = forwardRef(({
   year,
-  districtId,hideComment
+  districtId, hideComment
 }, ref) => {
   const [data, setData] = useState([]);
   const [scorei, setScorei] = useState(0);
   const [scoreii, setScoreii] = useState(0);
+  const [maxScore, setMaxScore] = useState(3);
 
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
@@ -18,13 +19,16 @@ const PermitProcessingIssuance = forwardRef(({
     getIndicatorsData();
   }, [year, districtId]);
 
-   useImperativeHandle(ref, () => ({
-      getData: () => ({
-        data,
-        scorei,
-        scoreii
-      }),
-    }));
+  useImperativeHandle(ref, () => ({
+    getData: () => ({
+      indicator: "SDI3",
+      area: "Physical and Spatial Planning Services",
+      maxScore,
+      data,
+      scorei,
+      scoreii
+    }),
+  }));
 
   const dataColumn = [
     { title: `No. of Building Permit Requests Received in ${year} (A)`, dataIndex: "permitRequest", key: "permitRequest" },
@@ -68,7 +72,7 @@ const PermitProcessingIssuance = forwardRef(({
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi3.0-3.2-${year}`}
-       hideComment={hideComment}
+      hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -90,7 +94,7 @@ const PermitProcessingIssuance = forwardRef(({
             </ol>
           </Content>
 
-          <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>3</strong></Title>
+          <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>{maxScore}</strong></Title>
           <Title level={5} style={{ marginTop: "20px" }}>
             SDI 3.0-3.2i Actual Score: <strong>{scorei}</strong>
           </Title>

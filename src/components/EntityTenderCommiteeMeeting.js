@@ -9,6 +9,8 @@ const EntityTenderCommitteeMeeting = forwardRef(({ data, year, columns, district
 
   useImperativeHandle(ref, () => ({
       getData: () => ({
+        indicator: "CI2",
+        area: "Other Statutory Meetings / Requirements",
         data
       }),
     }));

@@ -7,7 +7,7 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 
-const Table1_2 = ({ year, district }) => {
+const Table1_2 = ({ year, district, period }) => {
   const [tableData, setTableData] = useState([]);
   const [allData, setAllData] = useState([]);
   const [chartData, setChartData] = useState({});
@@ -15,7 +15,7 @@ const Table1_2 = ({ year, district }) => {
 
   useEffect(() => {
     getAnnualActionPlan();
-  }, [year, district]);
+  }, [year, district, period]);
 
   async function getAnnualActionPlan() {
     try {
@@ -26,16 +26,15 @@ const Table1_2 = ({ year, district }) => {
 
       for (const yr of years) {
         const result = await axios.get(
-          `/tracker/trackedEntities?orgUnit=${district}&program=ArLnAxhykoz&startDate=${yr}-01-01&endDate=${yr}-12-31`
+          `/tracker/trackedEntities?orgUnit=${district}&program=ArLnAxhykoz&startDate=${yr}-01-01&endDate=${yr}-12-31&pageSize=5000`
         );
         const resp = await axios.get(
-          `/tracker/events?program=ArLnAxhykoz&orgUnit=${district}&startDate=${yr}-01-01&endDate=${yr}-12-31`
+          `/tracker/events?program=ArLnAxhykoz&orgUnit=${district}&startDate=${yr}-01-01&endDate=${yr}-12-31&pageSize=5000`
         );
 
         if (result.data.instances.length > 0) {
-          const startDate = `${yr}-01-01`;
-          const endDate = `${yr}-12-31`;
-          const aap = filterTrackedEntitiesByCreatedAt(result.data.instances, startDate, endDate);
+         
+          const aap = filterTrackedEntitiesByCreatedAt(result.data.instances, year, period);
           const reports = resp.data.instances;
           const formattedPlans = [];
 

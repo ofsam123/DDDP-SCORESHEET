@@ -5,23 +5,27 @@ import Comment from "../components/Comments";
 
 
 
-const ContractManagementAndAdmins  = forwardRef(({ year, district, data, hideComment}, ref) => {
+const ContractManagementAndAdmins = forwardRef(({ year, district, data, hideComment }, ref) => {
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
     const [projectList, setProjectList] = useState([]);
-    const [scoreI, setScoreI] = useState(0);
+    const [scorei, setScoreI] = useState(0);
+    const [maxScore, setMaxScore] = useState(3);
 
 
     useEffect(() => {
-        getData(); 
+        getData();
     }, [year, district, data]);
 
     useImperativeHandle(ref, () => ({
         getData: () => ({
-          data, projectList, scoreI
+            indicator: "PI1",
+            area: "Annual Action Plan Implementation",
+            maxScore,
+            data, projectList, scorei
         }),
-      }));
+    }));
 
 
     const projectColumns = [
@@ -91,18 +95,18 @@ const ContractManagementAndAdmins  = forwardRef(({ year, district, data, hideCom
 
             temp.push(tempDataSet);
 
-            
+
         });
 
         let score = 3;
 
-        for(let project of temp){
-            if(project.report === "Not Uplaoded" || project.status !== "Completed and in-use"){
+        for (let project of temp) {
+            if (project.report === "Not Uplaoded" || project.status !== "Completed and in-use") {
                 score = 0;
             }
         }
 
-        if(temp.length === 0){
+        if (temp.length === 0) {
             score = 0;
         }
 
@@ -118,7 +122,7 @@ const ContractManagementAndAdmins  = forwardRef(({ year, district, data, hideCom
             year={year}
             districtId={district}
             tableCommentedId={`pi1.0-1.3-${year}`}
-             hideComment={hideComment}
+            hideComment={hideComment}
         >
             {({ renderCommentInput, renderCommentList }) => (
                 <>
@@ -136,19 +140,19 @@ const ContractManagementAndAdmins  = forwardRef(({ year, district, data, hideCom
                     </Content>
 
                     <Title level={5} style={{ marginTop: "20px" }}>
-                        Maximum Score <strong>3</strong>
+                        Maximum Score <strong>{maxScore}</strong>
                     </Title>
 
 
                     <Row align="middle">
                         <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
-                            PI 1.0-1.3 Actual Score: <strong>{scoreI}</strong>
+                            PI 1.0-1.3 Actual Score: <strong>{scorei}</strong>
                         </Title>
                         {!hideComment && renderCommentInput()}
                     </Row>
 
                     <Title level={5} style={{ marginTop: "20px" }}>
-                         Evidence of project completion and use
+                        Evidence of project completion and use
                     </Title>
                     <Table
                         columns={projectColumns}

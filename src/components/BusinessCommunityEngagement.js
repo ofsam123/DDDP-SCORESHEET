@@ -5,24 +5,28 @@ import { formatDataGeneral, getAttributeValue, getFileLinkIfExist } from "../uti
 import Comment from "../components/Comments";
 
 const BusinessCommunityEngagement = forwardRef(({
-    year, district,hideComment
+    year, district, hideComment
 }, ref) => {
 
     const [data, setData] = useState([]);
     const [report, setReport] = useState([]);
     const [scorei, setScorei] = useState(0);
     const [scoreii, setScoreii] = useState(0);
+    const [maxScore, setMaxScore] = useState(2);
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
 
-     useImperativeHandle(ref, () => ({
+    useImperativeHandle(ref, () => ({
         getData: () => ({
-          data,
-          report,
-          scorei,
-          scoreii
+            indicator: "SDI6",
+            area: "Local Economic Development (LED)",
+            maxScore,
+            data,
+            report,
+            scorei,
+            scoreii
         }),
-      }));
+    }));
 
     useEffect(() => {
         getData();
@@ -169,7 +173,7 @@ const BusinessCommunityEngagement = forwardRef(({
             year={year}
             districtId={district}
             tableCommentedId={`sdi6.0-6.4-${year}`}
-             hideComment={hideComment}
+            hideComment={hideComment}
         >
             {({ renderCommentInput, renderCommentList }) => (
                 <>
@@ -188,7 +192,7 @@ const BusinessCommunityEngagement = forwardRef(({
                         </ol>
                     </Content>
 
-                    <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>2</strong></Title>
+                    <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>{maxScore}</strong></Title>
                     <Title level={5} style={{ marginTop: "20px" }}>
                         SDI 6.0-6.4 Actual Score: <strong>{scorei}</strong>
                     </Title>

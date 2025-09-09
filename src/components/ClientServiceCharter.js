@@ -14,16 +14,20 @@ const ClientServiceCharter = forwardRef(({
   const { Title, Text } = Typography;
   const [clientServiceCharter, setClientServiceCharter] = useState([]);
   const [score, setScore] = useState(0);
+  const [maxScore, setMaxScore] = useState(1);
 
   useEffect(() => {
     getData();
   }, [year, districtId]);
 
   useImperativeHandle(ref, () => ({
-      getData: () => ({
-        clientServiceCharter, score
-      }),
-    }));
+    getData: () => ({
+      indicator: "SDI2",
+      area: "Basic/ Social Services",
+      maxScore,
+      clientServiceCharter, score
+    }),
+  }));
 
   const permitRequestColumn = [
     { title: "Client Service Charter Availability (YES/NO)", dataIndex: "availability", key: "availability" },
@@ -100,7 +104,7 @@ const ClientServiceCharter = forwardRef(({
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi2.0-2.5-${year}`}
-       hideComment={hideComment}
+      hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -114,7 +118,7 @@ const ClientServiceCharter = forwardRef(({
             </ol>
           </Content>
 
-          <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>1</strong></Title>
+          <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>{maxScore}</strong></Title>
           <Row align="middle">
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               SDI 2.0-2.5 Actual Score: <strong>{score}</strong>

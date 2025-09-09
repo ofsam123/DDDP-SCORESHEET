@@ -31,20 +31,24 @@ const AuditInfractions = forwardRef(({ year, districtId, hideComment }, ref) => 
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
   const [irregularities, setIrregularities] = useState([]);
-  const [scoreI, setScoreI] = useState(0);
-  const [scoreII, setScoreII] = useState(0);
+  const [scorei, setScoreI] = useState(0);
+  const [scoreii, setScoreII] = useState(0);
+  const [maxScore, setMaxScore] = useState(6);
 
   useEffect(() => {
     getAuditCommitteeReport();
   }, [year, districtId])
 
   useImperativeHandle(ref, () => ({
-      getData: () => ({
-        irregularities,
-        scoreI,
-        scoreII
-      }),
-    }));
+    getData: () => ({
+      indicator: "PI4",
+      area: "Audit Performance",
+      maxScore,
+      irregularities,
+      scorei,
+      scoreii
+    }),
+  }));
 
   const irregularityColumns = [
     {
@@ -134,7 +138,7 @@ const AuditInfractions = forwardRef(({ year, districtId, hideComment }, ref) => 
             name: <strong>Total Contract Management irregularities (x)</strong>,
             value: totalContract,
           },
-          { key: 'procurement-header', name: <strong>Procurement & Stores Irregularities</strong> , value: '' },
+          { key: 'procurement-header', name: <strong>Procurement & Stores Irregularities</strong>, value: '' },
           ...procurementIrregularities.map((item, index) => ({
             key: `proc-${index}`,
             name: item.name,
@@ -167,7 +171,7 @@ const AuditInfractions = forwardRef(({ year, districtId, hideComment }, ref) => 
       year={year}
       districtId={districtId}
       tableCommentedId={`pi4.0-4.2-${year}`}
-       hideComment={hideComment}
+      hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -188,16 +192,16 @@ const AuditInfractions = forwardRef(({ year, districtId, hideComment }, ref) => 
           </Content>
 
           <Title level={5} style={{ marginTop: "20px" }}>
-            Maximum Score <strong>6</strong>
+            Maximum Score <strong>{maxScore}</strong>
           </Title>
 
           <Title level={5} style={{ marginTop: "20px" }}>
-            PI 4.0-4.2i Actual Score: <strong>{scoreI}</strong>
+            PI 4.0-4.2i Actual Score: <strong>{scorei}</strong>
           </Title>
 
           <Row align="middle">
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
-              PI 4.0-4.2ii Actual Score: <strong>{scoreII}</strong>
+              PI 4.0-4.2ii Actual Score: <strong>{scoreii}</strong>
             </Title>
             {!hideComment && renderCommentInput()}
           </Row>

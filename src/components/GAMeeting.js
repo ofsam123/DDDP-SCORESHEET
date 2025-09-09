@@ -13,6 +13,8 @@ const GAMeeting = forwardRef(({ data, year, columns, districtId, hideComment }, 
 
   useImperativeHandle(ref, () => ({
     getData: () => ({
+      indicator: "CI1",
+      area: "General Assembly Meetings and Approvals",
       data
     }),
   }));

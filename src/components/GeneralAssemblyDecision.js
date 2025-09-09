@@ -7,15 +7,19 @@ const { Header, Content } = Layout;
 const { Title, Text } = Typography;
 
 const GeneralAssemblyDecision = forwardRef(({
-   data, year, columns, decisionDeliveryData, serviceDeliveryDecisionColumns, districtId,hideComment 
-  }, ref) => {
+  data, year, columns, decisionDeliveryData, serviceDeliveryDecisionColumns, districtId, hideComment
+}, ref) => {
   const [gaDecisionScore, setGaDecisionScore] = useState(0);
+  const [maxScore, setMaxScore] = useState(1);
 
   useImperativeHandle(ref, () => ({
-      getData: () => ({
-        data, decisionDeliveryData, gaDecisionScore
-      }),
-    }));
+    getData: () => ({
+      indicator: "SDI1",
+      area: "Management Coordination – Implementation of Service Delivery Decisions",
+      maxScore,
+      data, decisionDeliveryData, gaDecisionScore
+    }),
+  }));
 
   return (
     <Comment
@@ -23,7 +27,7 @@ const GeneralAssemblyDecision = forwardRef(({
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi1.0-1.1-${year}`}
-       hideComment={hideComment}
+      hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -43,7 +47,7 @@ const GeneralAssemblyDecision = forwardRef(({
             </i>
           </Content>
           <Title level={5} style={{ marginTop: "20px" }}>
-            Maximum Score <strong>1</strong>
+            Maximum Score <strong>{maxScore}</strong>
           </Title>
 
           <Row align="middle">
@@ -54,7 +58,7 @@ const GeneralAssemblyDecision = forwardRef(({
           </Row>
 
           <Title level={4} style={{ marginTop: "20px" }}>Evidence of Quarterly Management Meetings</Title>
-          
+
           {data && <Table columns={columns} dataSource={data} pagination={false} bordered
             summary={pageData => {
               let totalDecision = 0, totalDelivered = 0, totalPercent = 0;
@@ -88,7 +92,7 @@ const GeneralAssemblyDecision = forwardRef(({
           />}
           <Title level={5} style={{ marginTop: "20px" }}>Service Delivery Decisions</Title>
           {decisionDeliveryData && <Table columns={serviceDeliveryDecisionColumns} dataSource={decisionDeliveryData} pagination={false} bordered />}
-          
+
           <Title level={5} style={{ marginTop: "20px" }}>Conclusion</Title>
           <Content>
             The decisions that were on improving service delivery was {`${gaDecisionScore}%`} of the total no. of decisions made at GA Meetings in {year}.

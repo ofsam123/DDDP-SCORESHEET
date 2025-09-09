@@ -3,7 +3,7 @@ import React, { forwardRef, useEffect, useImperativeHandle, useState } from "rea
 import axios from "../api/axios";
 import Comment from "../components/Comments";
 
-const SanitationServiceProviders  = forwardRef(({
+const SanitationServiceProviders = forwardRef(({
   year,
   districtId,
   document,
@@ -21,20 +21,24 @@ const SanitationServiceProviders  = forwardRef(({
 
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
+  const [maxScore, setMaxScore] = useState(2);
 
   useEffect(() => {
     getServiceProviders();
   }, [year, districtId]);
 
   useImperativeHandle(ref, () => ({
-      getData: () => ({
-        data,
-        monitoring,
-        document,
-        scorei,
-        scoreii
-      }),
-    }));
+    getData: () => ({
+      indicator: "SDI5",
+      area: "Environmental Health, Sanitation and Climate Action",
+      maxScore,
+      data,
+      monitoring,
+      document,
+      scorei,
+      scoreii
+    }),
+  }));
 
   function formatDataGeneral(data, property, value) {
     return data?.filter(item =>
@@ -118,7 +122,7 @@ const SanitationServiceProviders  = forwardRef(({
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi5.0-5.1-${year}`}
-       hideComment={hideComment}
+      hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -138,7 +142,7 @@ const SanitationServiceProviders  = forwardRef(({
             </ol>
           </Content>
 
-          <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>2</strong></Title>
+          <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>{maxScore}</strong></Title>
           <Title level={5} style={{ marginTop: "20px" }}>
             SDI 5.0-5.1i Actual Score: <strong>{scorei}</strong>
           </Title>

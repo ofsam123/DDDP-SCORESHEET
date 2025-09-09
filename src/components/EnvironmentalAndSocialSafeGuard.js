@@ -3,7 +3,7 @@ import React, { forwardRef, useEffect, useImperativeHandle, useState } from "rea
 import Comment from "../components/Comments";
 import { formatDataGeneral, getAttributeValue, getFirstFileLinkIfExist } from "../utils/utils";
 
-const EnvironmentalAndSocialSafeGuard = forwardRef(({ year, data, districtId, hideComment  }, ref) => {
+const EnvironmentalAndSocialSafeGuard = forwardRef(({ year, data, districtId, hideComment }, ref) => {
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
@@ -12,19 +12,23 @@ const EnvironmentalAndSocialSafeGuard = forwardRef(({ year, data, districtId, hi
     const [scorei, setScorei] = useState(0);
     const [scoreii, setScoreii] = useState(0);
     const [scoreiii, setScoreiii] = useState(0);
+    const [maxScore, setMaxScore] = useState(4);
 
     useEffect(() => {
         getData();
     }, [year, districtId, data]);
 
-     useImperativeHandle(ref, () => ({
+    useImperativeHandle(ref, () => ({
         getData: () => ({
-          projectList,
-          scorei,
-          scoreii,
-          scoreiii
+            indicator: "PI1",
+            area: "Annual Action Plan Implementation",
+            maxScore,
+            projectList,
+            scorei,
+            scoreii,
+            scoreiii
         }),
-      }));
+    }));
 
 
     const projectColumns = [
@@ -32,7 +36,7 @@ const EnvironmentalAndSocialSafeGuard = forwardRef(({ year, data, districtId, hi
         { title: "Projects", dataIndex: "project", key: "project" },
         { title: "Screeming Froms", dataIndex: "screeming", key: "screeming" },
         { title: "EPA Permits", dataIndex: "permit", key: "permit" },
-         { title: "Report", dataIndex: "report", key: "report" },
+        { title: "Report", dataIndex: "report", key: "report" },
     ];
 
     function getData() {
@@ -130,7 +134,7 @@ const EnvironmentalAndSocialSafeGuard = forwardRef(({ year, data, districtId, hi
             year={year}
             districtId={districtId}
             tableCommentedId={`pi1.0-1.5-${year}`}
-             hideComment={hideComment}
+            hideComment={hideComment}
         >
             {({ renderCommentInput, renderCommentList }) => (
                 <>
@@ -152,7 +156,7 @@ const EnvironmentalAndSocialSafeGuard = forwardRef(({ year, data, districtId, hi
                     </Content>
 
                     <Title level={5} style={{ marginTop: "20px" }}>
-                        Maximum Score <strong>4</strong>
+                        Maximum Score <strong>{maxScore}</strong>
                     </Title>
 
                     <Title level={5} style={{ marginTop: "20px" }}>

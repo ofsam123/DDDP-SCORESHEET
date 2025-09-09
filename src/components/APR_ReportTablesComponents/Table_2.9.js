@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { formatDataGeneral, getAttributeValue } from "../../utils/utils";
 import axios from "../../api/axios";
 
-const Table2_9 = ({ year, district }) => {
+const Table2_9 = ({ year, district , period}) => {
   
   const [tableData, setTableData] = useState([]);
     const [showChart, setShowChart] = useState(true);
@@ -11,13 +11,12 @@ const Table2_9 = ({ year, district }) => {
   
     useEffect(() => {
       getData();
-    }, [year, district]);
+    }, [year, district, period]);
   
     function getData() {
       axios
         .get(`/tracker/trackedEntities?orgUnit=${district}&program=UfMl96n7nnX&startDate=${year}-01-01&endDate=${year}-12-31`)
         .then(result => {
-          // console.log("Djiba key evaluation: ", result.data.instances)
   
           if (result.data.instances.length > 0) {
             const startDate = `${year}-01-01`;

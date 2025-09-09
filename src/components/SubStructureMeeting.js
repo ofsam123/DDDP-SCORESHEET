@@ -128,6 +128,8 @@ const SubStructureMeeting = forwardRef(({ data, columns, establishment, establis
 
    useImperativeHandle(ref, () => ({
       getData: () => ({
+        indicator: "CI1",
+        area: "General Assembly Meetings and Approvals",
         data,
         establishment,
         revenueSharing,

@@ -10,6 +10,7 @@ const NutritionIntervention = forwardRef(({
   hideComment
 }, ref) => {
   const [scorei, setScorei] = useState(0);
+  const [maxScore, setMaxScore] = useState(2);
 
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
@@ -21,12 +22,15 @@ const NutritionIntervention = forwardRef(({
     }
   }, [year, districtId, data]);
 
-   useImperativeHandle(ref, () => ({
-      getData: () => ({
-        data,
-        scorei
-      }),
-    }));
+  useImperativeHandle(ref, () => ({
+    getData: () => ({
+      indicator: "SDI4",
+      area: "Social Protection, Gender and Nutrition",
+      maxScore,
+      data,
+      scorei
+    }),
+  }));
 
   const aapColumn = [
     { title: "No. of Activities in the AAP of the Assembly", dataIndex: "aapTotal", key: "aapTotal" },
@@ -75,7 +79,7 @@ const NutritionIntervention = forwardRef(({
             </ol>
           </Content>
 
-          <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>2</strong></Title>
+          <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>{maxScore}</strong></Title>
 
           <Row align="middle">
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
@@ -102,7 +106,7 @@ const NutritionIntervention = forwardRef(({
             dataSource={data?.publications || []}
             pagination={false} bordered />
 
-          
+
 
           {renderCommentList()}
         </>

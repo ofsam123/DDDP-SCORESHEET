@@ -90,6 +90,8 @@ const AAPBudgetAproval = forwardRef(({ data, year, columns, districtId, hideComm
 
    useImperativeHandle(ref, () => ({
       getData: () => ({
+        indicator: "CI1",
+        area: "General Assembly Meetings and Approvals",
         data
       }),
     }));

@@ -12,12 +12,17 @@ const GeneralAssemblyManagementActions = forwardRef(({
   districtId,hideComment
 }, ref) => {
 
+  const [maxScore, setMaxScore] = useState(2);
+
 
  useImperativeHandle(ref, () => ({
      getData: () => ({
+      indicator: "SDI1",
+      area: "Management Coordination – Implementation of Service Delivery Decisions",
+      maxScore,
       decisions,
       managementActionServiceDeliveryData,
-      score: managementActionServiceDeliveryData[0]?.percentage >= 70 ? 2 : 0
+      // score: managementActionServiceDeliveryData[0]?.percentage >= 70 ? 2 : 0
      }),
    }));
 
@@ -58,7 +63,7 @@ const GeneralAssemblyManagementActions = forwardRef(({
           </Content>
         
           <Title level={5} style={{ marginTop: "20px" }}>
-            Maximum Score <strong>2</strong>
+            Maximum Score <strong>{maxScore}</strong>
           </Title>
 
           <Row align="middle">

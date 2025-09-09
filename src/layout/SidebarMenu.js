@@ -49,7 +49,7 @@ function SideBarMenu(){
 							<li>
 								<Link to="/apr-report">
 									<i className="icon-view_stream"></i>
-									<span className="menu-text">APR Report</span>
+									<span className="menu-text">Progress Report</span>
 								</Link>
 							</li>
 							

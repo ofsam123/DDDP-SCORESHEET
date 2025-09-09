@@ -3,12 +3,12 @@ import React, { useEffect, useState } from "react";
 import axios from "../../api/axios";
 import { formatDataGeneral, getFileLinkIfExist } from "../../utils/utils";
 
-const Appendix1 = ({ year, district }) => {
+const Appendix1 = ({ year, district, period }) => {
     const [tableData, setTableData] = useState("");
 
     useEffect(() => {
         getData();
-    }, [year, district]);
+    }, [year, district, period]);
 
 
     function getData() {

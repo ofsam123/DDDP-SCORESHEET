@@ -15,20 +15,24 @@ const FoodVendors = forwardRef(({
   const [percentage, setPercentage] = useState(0);
   const [data, setData] = useState([]);
   const [foodVendors, setFoodVendors] = useState([]);
+  const [maxScore, setMaxScore] = useState(3);
 
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
 
   useImperativeHandle(ref, () => ({
-      getData: () => ({
-        data,
-        foodVendors,
-        scorei,
-        scoreii,
-        scoreiii,
-        percentage
-      }),
-    }));
+    getData: () => ({
+      indicator: "SDI5",
+      area: "Environmental Health, Sanitation and Climate Action",
+      maxScore,
+      data,
+      foodVendors,
+      scorei,
+      scoreii,
+      scoreiii,
+      percentage
+    }),
+  }));
 
   useEffect(() => {
     getFoodVendors();
@@ -178,7 +182,7 @@ const FoodVendors = forwardRef(({
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi5.0-5.3-${year}`}
-       hideComment={hideComment}
+      hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -201,7 +205,7 @@ const FoodVendors = forwardRef(({
             </ol>
           </Content>
 
-          <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>3</strong></Title>
+          <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>{maxScore}</strong></Title>
           <Title level={5} style={{ marginTop: "20px" }}>
             SDI 5.0-5.3i Actual Score: <strong>{scorei}</strong>
           </Title>

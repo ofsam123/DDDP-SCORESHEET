@@ -1,5 +1,5 @@
 import { Layout, Table, Typography, Row } from "antd";
-import React, { forwardRef, useImperativeHandle } from "react";
+import React, { forwardRef, useImperativeHandle, useState } from "react";
 import Comment from "../components/Comments";
 
 const StreetNaming = forwardRef(({
@@ -12,12 +12,16 @@ const StreetNaming = forwardRef(({
 }, ref) => {
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
+  const [maxScore, setMaxScore] = useState(3);
 
   useImperativeHandle(ref, () => ({
-      getData: () => ({
-        streets
-      }),
-    }));
+    getData: () => ({
+      indicator: "SDI3",
+      area: "Physical and Spatial Planning Services",
+      maxScore,
+      streets
+    }),
+  }));
 
   return (
     <Comment
@@ -25,7 +29,7 @@ const StreetNaming = forwardRef(({
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi3.0-3.3-${year}`}
-       hideComment={hideComment}
+      hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -35,14 +39,14 @@ const StreetNaming = forwardRef(({
             From the DCD obtain detailed information on street naming and property addressing database.
             <ol>
               <li type="i">If the Assembly has a functional street naming and property addressing database, score 1</li>
-             
+
               <li type="i">If the Assembly has installed at least 70% of its named streets, score 2; if less than 70%, score 0</li>
             </ol>
 
             <br />
           </Content>
 
-          <Title level={5} style={{ marginTop: "30px" }}>Maximum Score <strong>3</strong></Title>
+          <Title level={5} style={{ marginTop: "30px" }}>Maximum Score <strong>{maxScore}</strong></Title>
 
           <Title level={5} style={{ marginTop: "20px" }}>
             SDI 3.0-3.3i Actual Score:{" "}
@@ -51,7 +55,7 @@ const StreetNaming = forwardRef(({
             </strong>
           </Title>
 
-          
+
           <Row align="middle">
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               SDI 3.0-3.3ii Actual Score:{" "}

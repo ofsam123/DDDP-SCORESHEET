@@ -28,10 +28,8 @@ const ExecutiveCommitteeMember = forwardRef(({ data, year, columns, districtId, 
           (comment) => comment.tableCommented === "assessment_start_DAPT"
         );
         if (!relevantComment) {
-      
           setEndpointData(null);
         } else if (!relevantComment.dddpData?.tables?.ecaMeetingData) {
-         
           setEndpointData(null);
         } else {
           setEndpointData(relevantComment.dddpData.tables.ecaMeetingData);
@@ -55,7 +53,7 @@ const ExecutiveCommitteeMember = forwardRef(({ data, year, columns, districtId, 
 
   // Transform data to handle React element objects (e.g., docs, attendance, recommendation)
   const transformData = (dataArray) => {
-    if (!dataArray) return [];
+    if (!dataArray || !Array.isArray(dataArray)) return [];
     return dataArray.map((item) => ({
       ...item,
       docs: item.docs && typeof item.docs === "object" && item.docs?.props?.href ? (
@@ -104,12 +102,12 @@ const ExecutiveCommitteeMember = forwardRef(({ data, year, columns, districtId, 
   };
 
   useImperativeHandle(ref, () => ({
-      getData: () => ({
-        indicator: "CI2",
-        area: "Other Statutory Meetings / Requirements",
-        data
-      }),
-    }));
+    getData: () => ({
+      indicator: "CI2",
+      area: "Other Statutory Meetings / Requirements",
+      data
+    }),
+  }));
 
   return (
     <Comment
@@ -147,41 +145,20 @@ const ExecutiveCommitteeMember = forwardRef(({ data, year, columns, districtId, 
           {loading && <Text>Loading data from endpoint...</Text>}
           {error && <Text type="danger">{error}</Text>}
 
-          {endpointData?.data && endpointData.data.length > 0 ? (
-            <>
-              <Title level={5} style={{ marginTop: "20px" }}>
-                {/* Data from Endpoint (ecaMeetingData) */}
-              </Title>
-              <Table
-                columns={columns}
-                dataSource={transformData(endpointData.data)}
-                pagination={false}
-                bordered
-                rowKey={(record, index) => `${record.key || index}`}
-              />
-            </>
-          ) : data?.data && data.data.length > 0 ? (
-            <>
-              <Title level={5} style={{ marginTop: "20px" }}>
-                {/* Data from Prop Data */}
-              </Title>
-              <Table
-                columns={columns}
-                dataSource={transformData(data.data)}
-                pagination={false}
-                bordered
-                rowKey={(record, index) => `${record.key || index}`}
-              />
-            </>
-          ) : (
-            <Text>No Executive Committee meeting data available</Text>
-          )}
+          {/* Always render the table, prioritizing endpointData over prop data */}
+          <Table
+            columns={columns}
+            dataSource={transformData(endpointData?.data || data?.data || [])}
+            pagination={false}
+            bordered
+            rowKey={(record, index) => `${record.key || index}`}
+          />
 
           {renderCommentList()}
         </>
       )}
     </Comment>
   );
-})
+});
 
 export default ExecutiveCommitteeMember;

@@ -155,8 +155,8 @@ function QualityAssuranceEditor({ year, districtId,assessmentStatus }) {
           borderTop: "1px solid #e8e8e8",
           padding: "8px",
           background: "#fff",
-          maxWidth: "1000px",
-          width: "800px",
+          // maxWidth: "1000px",
+          width: "100%",
           marginTop: "20px",
         }}
       >
@@ -165,23 +165,30 @@ function QualityAssuranceEditor({ year, districtId,assessmentStatus }) {
             padding: "10px",
             border: "1px solid #f0f0f0",
             borderRadius: "6px",
-            width: "900px",
+            // width: "900px",
           }}
         >
           <div style={{ display: "flex", marginBottom: "10px" }}>
+            {comment.username === currentUsername && isQualityAssurance && assessmentStatus && (
             <Col>
+
               <Avatar
                 src={comment.userImage || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTL_JlCFnIGX5omgjEjgV9F3sBRq14eTERK9w&s"}
                 style={{ marginRight: "10px", borderRadius: "50%" }}
                 size={32}
               />
             </Col>
+            )}
             <div style={{ flex: 1 }}>
               <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", width: "800px" }}>
+                {comment.username === currentUsername && isQualityAssurance && assessmentStatus && (
                 <h4 style={{ margin: 0, fontSize: "13px" }}>
                   {comment.fullName} (DPAT QUALITY ASSURANCE)
+
                 </h4>
-                <h11 style={{ marginLeft: "8px" }}>{comment.commentDate.join("/")}</h11>
+                )}
+               
+               
                 {comment.username === currentUsername && isQualityAssurance && assessmentStatus && (
 
                   <EditOutlined
@@ -195,6 +202,9 @@ function QualityAssuranceEditor({ year, districtId,assessmentStatus }) {
                 style={{ fontSize: "16px", marginTop: "8px" }}
                 dangerouslySetInnerHTML={{ __html: comment.comments }}
               />
+               <Col align="end">
+                 <h11 style={{ marginLeft: "8px",  }}>{comment.commentDate.join("/")}</h11>
+                </Col>
             </div>
           </div>
         </div>

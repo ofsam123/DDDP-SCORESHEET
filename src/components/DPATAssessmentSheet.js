@@ -2235,7 +2235,7 @@ const DPATAssessmentSheet = ({ props }) => {
         }
     };
     const hideComment = !assessmentStatus || assessmentStatus?.status === "Pending" || assessmentStatus?.status === "Completed" || assessmentStatus?.status === "Closed";
-
+const shouldRenderQualityAssuranceEditor = assessmentStatus?.status && !["Closed", "null", "Start", ].includes(assessmentStatus.status);
     return (
         <Layout style={{ padding: "20px", background: "#fff" }}>
              <Col span={10} className="gutter-row">
@@ -2277,6 +2277,24 @@ const DPATAssessmentSheet = ({ props }) => {
 
                       
                     </Row>
+                      {assessmentStatus?.status === "Closed" && (
+
+                      <h3 style={{ textAlign: "center", padding: "10px" }}>
+                        MEMO SECTION
+                    </h3>
+                      )}
+
+                    {assessmentStatus?.status === "Closed" && (
+ 
+
+                    <QualityAssuranceEditor
+                        year={year}
+                        districtId={district?.value}
+                        hideComment={hideComment}
+                        assessmentStatus = {assessmentStatus?.status !== "Closed" }
+                        district={district?.value}
+                    />
+                    )}
                     <h3 style={{ textAlign: "center", padding: "10px" }}>
                         Annex 1: SECTION A - COMPLIANCE INDICATORS
                     </h3>
@@ -2838,11 +2856,17 @@ const DPATAssessmentSheet = ({ props }) => {
                     <div style={{ height: '4px', backgroundColor: '#000', width: '100%', margin: '20px 0' }} />
 
 
+ {shouldRenderQualityAssuranceEditor&& (
+ 
+
                     <h3 style={{ textAlign: "center", padding: "10px" }}>
                         MEMO SECTION
                     </h3>
+)}
+
+                    {shouldRenderQualityAssuranceEditor && (
  
- {assessmentStatus?.status !== "Pending" || assessmentStatus?.status !== "Completed" &&  (
+
                     <QualityAssuranceEditor
                         year={year}
                         districtId={district?.value}
@@ -2850,7 +2874,8 @@ const DPATAssessmentSheet = ({ props }) => {
                         assessmentStatus = {assessmentStatus?.status !== "Closed" }
                         district={district?.value}
                     />
-)}
+                    )}
+
                     {/* Print Button */}
 
 
@@ -2880,7 +2905,7 @@ const DPATAssessmentSheet = ({ props }) => {
                 >
                     <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>Download Report</span>
                 </Button>
-                {assessmentStatus?.status === "Start" && (
+                {normalizedUserRole === "DPAT_TECHNICAL TEAM" && assessmentStatus?.status === "Start" && (
                     <Button
                         type="primary"
                         onClick={handlePendingAssessmentSubmit}

@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
-import { Layout, Typography, Table, Row, Spin, message, Avatar, Button,Col } from "antd";
+import { Layout, Typography, Table, Row, Spin, message, Avatar, Button, Col } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import Comment from "../components/Comments";
 import instance from "../api/cmsapi";
@@ -23,13 +23,14 @@ const GAMeeting = forwardRef(({ data, year, columns, districtId, hideComment }, 
   const currentFullName = user?.user?.fullName || "";
   const isReviewer = currentUserRole === "DPAT QUALITY ASSURANCE";
 
- useImperativeHandle(ref, () => ({
+  useImperativeHandle(ref, () => ({
     getData: () => ({
       indicator: "CI1",
       area: "General Assembly Meetings and Approvals",
       data
     }),
   }));
+
   // Fetch CMS data and comments
   useEffect(() => {
     const fetchEndpointData = async () => {
@@ -51,7 +52,6 @@ const GAMeeting = forwardRef(({ data, year, columns, districtId, hideComment }, 
           console.log("Fetched gaMeeting data:", relevantComment.dddpData.tables.gaMeeting.data);
         } else {
           setEndpointData(null);
-        
         }
 
         // Find comments and gaps for this indicator
@@ -298,35 +298,14 @@ const GAMeeting = forwardRef(({ data, year, columns, districtId, hideComment }, 
 
             {error && <Text type="danger">{error}</Text>}
 
-            {/* Conditionally render endpoint data table if available, otherwise prop data table */}
-            {endpointData?.meetings && endpointData.meetings.length > 0 ? (
-              <>
-                <Table
-                  columns={columns}
-                  dataSource={transformMeetings(endpointData.meetings)}
-                  pagination={false}
-                  bordered
-                  rowKey="key"
-                />
-              </>
-            ) : data?.meetings && data.meetings.length > 0 ? (
-              <>
-                <Title level={5} style={{ marginTop: "20px" }}>
-                  Meetings from Prop Data
-                </Title>
-                <Table
-                  columns={columns}
-                  dataSource={transformMeetings(data.meetings)}
-                  pagination={false}
-                  bordered
-                  rowKey="key"
-                />
-              </>
-            ) : (
-              <Text>No meetings data available</Text>
-            )}
-
-           
+            {/* Always render the table, prioritizing endpointData over prop data */}
+            <Table
+              columns={columns}
+              dataSource={transformMeetings(endpointData?.meetings || data?.meetings || [])}
+              pagination={false}
+              bordered
+              rowKey="key"
+            />
 
             {renderCommentList()}
           </>

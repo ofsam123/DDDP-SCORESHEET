@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
-import { Layout, Typography, Table, Row } from "antd";
+import { Layout, Typography, Table, Col } from "antd";
 import Comment from "../components/Comments";
 
 const { Header, Content } = Layout;
@@ -92,12 +92,12 @@ useImperativeHandle(ref, () => ({
             <i>Then the CI is fulfilled</i>
           </Content>
 
-          <Row align="middle">
+          <Col align="start">
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               CI Result: <strong style={{ color: fulfillment === "Fulfilled" ? "green" : "red" }}>{fulfillment}</strong>
             </Title>
             {!hideComment&& renderCommentInput()}
-          </Row>
+          </Col>
 
           <Title level={4} style={{ marginTop: "20px" }}>
             Auditor General Report to the General Assembly

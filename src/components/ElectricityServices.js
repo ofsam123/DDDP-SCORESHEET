@@ -1,4 +1,4 @@
-import { Layout, Table, Typography, Row } from "antd";
+import { Layout, Table, Typography, Col } from "antd";
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import axios from "../api/axios";
 import { calculatePercentage, countApplicationsForEachDomain, formatDataGeneral, getAttributeValue } from "../utils/utils";
@@ -129,12 +129,12 @@ const ElectricityServices = forwardRef(({
           <Title level={5} style={{ marginTop: "20px" }}>
             SDI 2.0-2.2i Actual Score: <strong>{scorei}</strong>
           </Title>
-          <Row align="middle">
-            <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
+          <Col align="start">
+            <Title level={5} style={{ marginTop: "20px", marginRight: "0px", marginLeft: "0px" }}>
               SDI 2.0-2.2ii Actual Score: <strong>{scoreii}</strong>
             </Title>
             {!hideComment && renderCommentInput()}
-          </Row>
+          </Col>
 
           <Title level={5} style={{ marginTop: "30px" }}>I. Evidence of existing collaboration/facilitation electricity service providers</Title>
           <Table

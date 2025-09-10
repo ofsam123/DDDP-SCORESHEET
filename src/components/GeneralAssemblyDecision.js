@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
-import { Layout, Typography, Table, Row } from "antd";
+import { Layout, Typography, Table, Col } from "antd";
 import Comment from "../components/Comments";
 import { calculatePercentage } from "../utils/utils";
 
@@ -50,12 +50,12 @@ const GeneralAssemblyDecision = forwardRef(({
             Maximum Score <strong>{maxScore}</strong>
           </Title>
 
-          <Row align="middle">
+          <Col align="start">
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               SDI 1.0-1.1 Actual Score: <strong>{gaDecisionScore > 70 ? '1' : '0'}</strong>
             </Title>
             {!hideComment && renderCommentInput()}
-          </Row>
+          </Col>
 
           <Title level={4} style={{ marginTop: "20px" }}>Evidence of Quarterly Management Meetings</Title>
 

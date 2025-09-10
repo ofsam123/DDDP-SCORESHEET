@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
-import { Layout, Typography, Table, Row } from "antd";
+import { Layout, Typography, Table, Col } from "antd";
 import axios from "../api/axios";
 import Comment from "../components/Comments";
 import { formatDataGeneral, getAttributeValue, getFileLinkIfExist } from "../utils/utils";
@@ -119,12 +119,12 @@ const AAPPublication = forwardRef(({ year, districtId, hideComment }, ref) => {
             <i>Then the CI is fulfilled</i>
           </Content>
 
-          <Row align="middle">
+          <Col align="start">
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               CI Result: <strong style={{ color: publication?.fulfillment === "Fulfilled" ? "green" : "red" }}>{publication?.fulfillment}</strong>
             </Title>
             {!hideComment && renderCommentInput()}
-          </Row>
+          </Col>
 
           {/* {JSON.stringify(clientService)} */}
 

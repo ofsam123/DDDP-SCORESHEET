@@ -51,7 +51,7 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
           (comment) =>
             comment.tableCommented === tableCommentedId &&
             comment.districtId === districtId &&
-            (comment.userRole === "DPAT_TECHNICAL TEAM" || comment.userRole === "DPAT_QUALITY_ASSURANCE")
+            (comment.userRole === "DPAT_TECHNICAL TEAM" || comment.userRole === "DPAT_QUALITY ASSURANCE")
         );
         setComments(filteredComments);
       } catch (error) {
@@ -312,6 +312,7 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
         comment.tableCommented === tableCommentedId &&
         comment.userRole === normalizedUserRole &&
         comment.districtId === districtId &&
+        comment.username === currentUsername &&
         comment.comments
     );
   };
@@ -338,7 +339,7 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
     if (canShowCommentInput()) {
       setShowCommentInput(!showCommentInput);
     } else {
-      message.info("You cannot add a new comment as your role has already commented for this district.");
+      message.info("You have already added a comment for this indicator.");
     }
   };
 
@@ -351,7 +352,7 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
       setShowGapsInput(!showGapsInput);
       setGapsText("");
     } else {
-      message.info("You cannot add a new comment as your role has already commented for this district.");
+      message.info("You have already added gaps for this indicator.");
     }
   };
 
@@ -361,18 +362,20 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
         
         {!hideComment && !isReviewer && (
           <>
+          
           <span>
           ADD COMMENT
           </span>
           <CommentOutlined
-            style={{ cursor: "pointer", fontSize: "30px", flexShrink: 0, marginTop: "50px" }}
+            style={{ cursor: "pointer", fontSize: "30px", flexShrink: 0,  }}
             onClick={handleCommentButtonClick}
           />
           </>
           
         )}
       </div>
-      {!hideComment && showCommentInput && canShowCommentInput() && (
+
+      {!hideComment && showCommentInput && (
         <div style={{ display: "flex", alignItems: "center" }}>
           <Avatar
             src={
@@ -406,13 +409,22 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
           )}
         </div>
       )}
+     
       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-        <h5 style={{ marginLeft: "-10px", fontSize: "" }}>ADD GAPS</h5>
+       
         {!hideComment && !isReviewer && (
-          <PlusCircleOutlined
+          <>
+           <span style={{ marginLeft: "0", fontSize: "" }}>ADD GAPS</span>
+            <PlusCircleOutlined
             style={{ cursor: "pointer", fontSize: "25px", flexShrink: 0 }}
             onClick={handleGapsButtonClick}
-          />
+            >
+
+            </PlusCircleOutlined>
+          
+          </>
+         
+          
         )}
       </div>
       {!hideComment && showGapsInput && (
@@ -458,8 +470,8 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
         borderTop: "1px solid #e8e8e8",
         padding: "8px",
         background: "#fff",
-        maxWidth: "800px",
-        width: "100%",
+        // maxWidth: "800px",
+        width: "90%",
       }}
     >
       {comments.length > 0 && (
@@ -479,7 +491,7 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
                 padding: "10px",
                 border: "1px solid #f0f0f0",
                 borderRadius: "6px",
-                maxWidth: "700px",
+                // maxWidth: "700px",
               }}
             >
               <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
@@ -521,10 +533,10 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
                                 style={{ cursor: "pointer", color: "#000000ff" }}
                                 onClick={() => handleEditComment(comment)}
                               />
-                              <DeleteOutlined
+                              {/* <DeleteOutlined
                                 style={{ cursor: "pointer", color: "#ff0000" }}
                                 onClick={() => handleDeleteComment(comment.id)}
-                              />
+                              /> */}
                             </div>
                           )}
                         </div>
@@ -597,10 +609,10 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
                                 style={{ cursor: "pointer", color: "#000000ff" }}
                                 onClick={() => handleEditGaps(comment)}
                               />
-                              <DeleteOutlined
+                              {/* <DeleteOutlined
                                 style={{ cursor: "pointer", color: "#ff0000" }}
                                 onClick={() => handleDeleteComment(comment.id)}
-                              />
+                              /> */}
                             </div>
                           )}
                         </div>

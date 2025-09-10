@@ -1,4 +1,4 @@
-import { Layout, Table, Typography, Row } from "antd";
+import { Layout, Table, Typography, Col } from "antd";
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import Comment from "../components/Comments";
 
@@ -123,12 +123,12 @@ const GASupport = forwardRef(({
           <Title level={5} style={{ marginTop: "20px" }}>
             SDI 1.0-1.3i Actual Score: <strong>{cededRevenueUtilisationScore >= 50 ? '2' : '0'}</strong>
           </Title>
-          <Row align="middle">
-            <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
+          <Col align="start">
+            <Title level={5} style={{ marginTop: "20px", marginRight: "0px", marginLeft: "0px" }}>
               SDI 1.0-1.3ii Actual Score: <strong>{score}</strong>
             </Title>
             {!hideComment && renderCommentInput()}
-          </Row>
+          </Col>
 
           <p level={5} style={{ marginTop: "10px" }}>
             {conclusion}

@@ -1901,8 +1901,8 @@ const DPATAssessmentSheet = ({ props }) => {
             id: 0,
             username: user?.user?.username,
             fullName: user?.user?.fullName,
-            // userRole: normalizedUserRole,
-            userRole: "DDDP_USER",
+            userRole: normalizedUserRole,
+            // userRole: "DDDP_USER",
             type: "DPAT",
             districtId: district?.value,
             year: year,
@@ -1988,11 +1988,13 @@ const DPATAssessmentSheet = ({ props }) => {
             });
 
             // Step 2: Fetch assessment status from the provided endpoint
+            
             const assessmentStatusResponse = await instance.get(
                 `assessments/dpat/${district?.value}/${year}/DPAT`
             );
             const fetchedStatus = assessmentStatusResponse.data?.status; // Adjust based on actual response structure
-            setAssessmentStatus(assessmentStatusResponse.data); // Update state with the fetched assessment data
+            setAssessmentStatus(assessmentStatusResponse.data); 
+            // Update state with the fetched assessment data
 
             // Step 3: Post to comments endpoint
             const commentDate = new Date().toISOString().split("T")[0];
@@ -2000,8 +2002,8 @@ const DPATAssessmentSheet = ({ props }) => {
                 id: 0,
                 username: user?.user?.username,
                 fullName: user?.user?.fullName,
-                // userRole: normalizedUserRole,
-                userRole: "DDDP_USER",
+                userRole: normalizedUserRole,
+                // userRole: "DDDP_USER",
                 type: "DPAT",
                 districtId: district?.value,
                 year: year,
@@ -2018,6 +2020,9 @@ const DPATAssessmentSheet = ({ props }) => {
             };
 
             const commentResponse = await instance.post(`comments`, commentPayload);
+
+            
+            
             message.success({
                 content: (
                     <div>
@@ -2025,7 +2030,10 @@ const DPATAssessmentSheet = ({ props }) => {
                     </div>
                 ),
                 duration: 3,
+                
             });
+            
+           
         } catch (error) {
             console.error("Failed to process assessment or comment:", {
                 message: error.message,
@@ -2230,6 +2238,24 @@ const DPATAssessmentSheet = ({ props }) => {
 
     return (
         <Layout style={{ padding: "20px", background: "#fff" }}>
+             <Col span={10} className="gutter-row">
+                            {(!assessmentStatus || ![null, "Start", "Pending", "Completed", "Closed"].includes(assessmentStatus?.status)) &&
+                                normalizedUserRole !== "DPAT_QUALITY ASSURANCE" && (
+                                    <Button
+                                        type="primary"
+                                        onClick={handleStartAssessmentSubmit}
+                                        style={{
+                                            backgroundColor: "#1890ff",
+                                            borderColor: "#1890ff",
+                                        }}
+                                        loading={progressLoad}
+                                    >
+                                        <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>
+                                            CLICK TO START ASSESMENT FOR {year}
+                                        </span>
+                                    </Button>
+                                )}
+                        </Col>
             <div ref={contentToPrint} className="p-2">
                 <Header style={{ background: "#1890ff", color: "#fff", textAlign: "center", padding: "10px", height: 'auto' }}>
                     <Title level={2} style={{ color: "#fff", margin: 0 }}>
@@ -2249,24 +2275,7 @@ const DPATAssessmentSheet = ({ props }) => {
                             <Text strong>Date of Assessment: </Text> <Text>{moment().format('MMMM Do YYYY, h:mm:ss A')}</Text>
                         </Col>
 
-                        <Col span={10} className="gutter-row">
-                            {(!assessmentStatus || ![null, "Starts", "Pending", "Completed", "Closed"].includes(assessmentStatus?.status)) &&
-                                normalizedUserRole !== "DPAT_QUALITY ASSURANCEs" && (
-                                    <Button
-                                        type="primary"
-                                        onClick={handleStartAssessmentSubmit}
-                                        style={{
-                                            backgroundColor: "#1890ff",
-                                            borderColor: "#1890ff",
-                                        }}
-                                        loading={progressLoad}
-                                    >
-                                        <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>
-                                            START
-                                        </span>
-                                    </Button>
-                                )}
-                        </Col>
+                      
                     </Row>
                     <h3 style={{ textAlign: "center", padding: "10px" }}>
                         Annex 1: SECTION A - COMPLIANCE INDICATORS
@@ -2828,17 +2837,20 @@ const DPATAssessmentSheet = ({ props }) => {
 
                     <div style={{ height: '4px', backgroundColor: '#000', width: '100%', margin: '20px 0' }} />
 
+
                     <h3 style={{ textAlign: "center", padding: "10px" }}>
                         MEMO SECTION
                     </h3>
-
+ 
+ {assessmentStatus?.status !== "Pending" || assessmentStatus?.status !== "Completed" &&  (
                     <QualityAssuranceEditor
                         year={year}
                         districtId={district?.value}
                         hideComment={hideComment}
+                        assessmentStatus = {assessmentStatus?.status !== "Closed" }
                         district={district?.value}
                     />
-
+)}
                     {/* Print Button */}
 
 

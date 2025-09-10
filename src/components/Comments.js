@@ -414,7 +414,7 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
        
         {!hideComment && !isReviewer && (
           <>
-           <span style={{ marginLeft: "0", fontSize: "" }}>ADD GAPS</span>
+           <span style={{ marginLeft: "0", fontSize: "" }}>ADD CAPACITY GAPS</span>
             <PlusCircleOutlined
             style={{ cursor: "pointer", fontSize: "25px", flexShrink: 0 }}
             onClick={handleGapsButtonClick}
@@ -528,11 +528,14 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
                                 }}
                               >
                                 {comment.commentDate.join("/")}
+
                               </h11>
+                              {!hideComment && !isReviewer && (
                               <EditOutlined
                                 style={{ cursor: "pointer", color: "#000000ff" }}
                                 onClick={() => handleEditComment(comment)}
                               />
+                              )}
                               {/* <DeleteOutlined
                                 style={{ cursor: "pointer", color: "#ff0000" }}
                                 onClick={() => handleDeleteComment(comment.id)}
@@ -604,11 +607,15 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
                                 }}
                               >
                                 {comment.updateDate.join("/")}
+
+                                
                               </h11>
+                              {!hideComment && !isReviewer && (
                               <EditOutlined
                                 style={{ cursor: "pointer", color: "#000000ff" }}
                                 onClick={() => handleEditGaps(comment)}
                               />
+                              )}
                               {/* <DeleteOutlined
                                 style={{ cursor: "pointer", color: "#ff0000" }}
                                 onClick={() => handleDeleteComment(comment.id)}

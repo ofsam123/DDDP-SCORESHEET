@@ -1,4 +1,4 @@
-import { Layout, Table, Typography, Row } from "antd";
+import { Layout, Table, Typography, Col } from "antd";
 import React, { forwardRef, useImperativeHandle, useState } from "react";
 import Comment from "../components/Comments";
 
@@ -56,13 +56,13 @@ const StreetNaming = forwardRef(({
           </Title>
 
 
-          <Row align="middle">
-            <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
+          <Col align="start">
+            <Title level={5} style={{ marginTop: "20px", marginRight: "0px", marginLeft: "0px" }}>
               SDI 3.0-3.3ii Actual Score:{" "}
               <strong>{streets?.percentage >= 70 ? 2 : 0}</strong>
             </Title>
             {!hideComment && renderCommentInput()}
-          </Row>
+          </Col>
 
           <Title level={5} style={{ marginTop: "20px" }}>Evidence of Street Naming Database</Title>
           <Table

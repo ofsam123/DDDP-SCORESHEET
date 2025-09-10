@@ -1,4 +1,4 @@
-import { Layout, Table, Typography, Row } from "antd";
+import { Layout, Table, Typography, Col } from "antd";
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import axios from "../api/axios";
 import { formatDataGeneral, getAttributeValue, getFileLinkIfExist } from "../utils/utils";
@@ -282,12 +282,12 @@ const RateableRevenu = forwardRef(({ year, district, hideComment }, ref) => {
                     <Title level={5} style={{ marginTop: "20px" }}>
                         PI 3.0-3.1ii Actual Score: <strong>{scoreii}</strong>
                     </Title>
-                    <Row align="middle">
-                        <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
+                    <Col align="start">
+                        <Title level={5} style={{ marginTop: "20px", marginRight: "0px", marginLeft: "0px" }}>
                             PI 3.0-3.1iii Actual Score: <strong>{scoreiii}</strong>
                         </Title>
                         {!hideComment && renderCommentInput()}
-                    </Row>
+                    </Col>
 
                     <Title level={5} style={{ marginTop: "20px" }}>
                         I- Evidence of Computerized Billing System & Utilisation

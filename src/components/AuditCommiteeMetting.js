@@ -1,11 +1,12 @@
-import { Layout, Typography, Table } from "antd";
+import { Layout, Typography, Table,Col } from "antd";
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
+import Comment from "../components/Comments";
 
 const { Content } = Layout;
 const { Title } = Typography;
 
 
-const AuditCommiteeMeeting = forwardRef(({ meetings, meetingColumns, district, year }, ref) => {
+const AuditCommiteeMeeting = forwardRef(({ meetings, meetingColumns, district, year, hideComment }, ref) => {
 
     useImperativeHandle(ref, () => ({
         getData: () => ({
@@ -16,6 +17,14 @@ const AuditCommiteeMeeting = forwardRef(({ meetings, meetingColumns, district, y
     }));
 
     return (
+         <Comment
+        data={meetings} // Use CMS data if available, else DHIS2 data
+        year={year}
+        districtId={district}
+        tableCommentedId={`c3.0-3.3-${year}`}
+        hideComment={hideComment}
+      >
+        {({ renderCommentInput, renderCommentList }) => (
         <>
             <Title level={3}>CI 3.0 Public Financial Management and Auditing -
                 3.3 Functionality of the Audit Committee </Title>
@@ -38,14 +47,23 @@ const AuditCommiteeMeeting = forwardRef(({ meetings, meetingColumns, district, y
                 <i>Then the CI is fulfilled</i>
             </Content>
 
+            <Col align="start">
+          
+
             <Title level={5} style={{ marginTop: "20px" }}>CI Result: <strong style={{ color: meetings?.fulfillment === "Fulfilled" ? "green" : "red", }}>
                 {meetings?.fulfillment}</strong>
             </Title>
+             {!hideComment && renderCommentInput()}
+               </Col>
 
             <Title level={4} style={{ marginTop: "20px" }}>Evidence of Audit Committee Meetings</Title>
             {meetings && <Table columns={meetingColumns} dataSource={meetings?.data} pagination={false} bordered />}
 
+              {renderCommentList()}
+
         </>
+        )}
+        </Comment>
     );
 })
 

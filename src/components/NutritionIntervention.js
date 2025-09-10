@@ -1,4 +1,4 @@
-import { Layout, Table, Typography, Row } from "antd";
+import { Layout, Table, Typography, Col } from "antd";
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import axios from "../api/axios";
 import Comment from "../components/Comments";
@@ -81,12 +81,12 @@ const NutritionIntervention = forwardRef(({
 
           <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>{maxScore}</strong></Title>
 
-          <Row align="middle">
-            <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
+          <Col align="start">
+            <Title level={5} style={{ marginTop: "20px", marginRight: "0px", marginLeft: "0px" }}>
               SDI 4.0-4.6 Actual Score: <strong>{scorei}</strong>
             </Title>
             {!hideComment && renderCommentInput()}
-          </Row>
+          </Col>
 
           <Title level={4} style={{ marginTop: "20px" }}>I- Evidence of Nutrition-Oriented Activities in the Assembly</Title>
           <Table

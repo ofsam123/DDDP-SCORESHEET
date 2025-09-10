@@ -1,4 +1,4 @@
-import { Layout, Table, Typography, Row } from "antd";
+import { Layout, Table, Typography, Col } from "antd";
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import Comment from "../components/Comments";
 import { formatDataGeneral, getAttributeValue, getFirstFileLinkIfExist } from "../utils/utils";
@@ -165,12 +165,12 @@ const EnvironmentalAndSocialSafeGuard = forwardRef(({ year, data, districtId, hi
                     <Title level={5} style={{ marginTop: "20px" }}>
                         PI 1.0-1.5ii Actual Score: <strong>{scoreii}</strong>
                     </Title>
-                    <Row align="middle">
-                        <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
+                    <Col align="start">
+                        <Title level={5} style={{ marginTop: "20px", marginRight: "0px", marginLeft: "0px" }}>
                             PI 1.0-1.5iii Actual Score: <strong>{scoreiii}</strong>
                         </Title>
                         {!hideComment && renderCommentInput()}
-                    </Row>
+                    </Col>
 
                     <Title level={5} style={{ marginTop: "20px" }}>
                         Evidence of environmental & social safeguards on projects

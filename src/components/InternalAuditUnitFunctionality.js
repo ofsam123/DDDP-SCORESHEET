@@ -1,7 +1,10 @@
-import { Layout, Typography, Table } from "antd";
+import { Layout, Typography, Table,Col } from "antd";
 import axios from "../api/axios";
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { getAttributeValue, getFileLinkIfExist } from "../utils/utils";
+import Comment from "../components/Comments";
+import instance from "../api/cmsapi";
+import useAuth from "../hooks/useAuth";
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -11,7 +14,7 @@ const columnsReport = [
     { title: "Report Link", dataIndex: "reports", key: "reports" }
 ];
 
-const InternalAuditUnitFunctionality = forwardRef(({ data, year, columns, district }, ref) => {
+const InternalAuditUnitFunctionality = forwardRef(({ data, year, columns, district, hideComment }, ref) => {
 
     const [report, setReport] = useState([]);
     const [fulfillment, seFulfillment] = useState(data?.fulfillment);
@@ -106,6 +109,14 @@ const InternalAuditUnitFunctionality = forwardRef(({ data, year, columns, distri
     }
 
     return (
+       <Comment
+        data={data} // Use CMS data if available, else DHIS2 data
+        year={year}
+        districtId={district}
+        tableCommentedId={`c3.0-3.2-${year}`}
+        hideComment={hideComment}
+      >
+        {({ renderCommentInput, renderCommentList }) => (
         <>
             <Title level={3}>CI 3.0 Public Financial Management and Auditing -
                 3.2 Functionality of the Internal Audit Unit </Title>
@@ -136,10 +147,18 @@ const InternalAuditUnitFunctionality = forwardRef(({ data, year, columns, distri
                 <i>Then the CI is fulfilled</i>
             </Content>
 
-            <Title level={5} style={{ marginTop: "20px" }}>CI Result: <strong style={{ color: fulfillment === "Fulfilled" ? "green" : "red", }}>
-                {data?.fulfillment}</strong>
-            </Title>
+            <Col align="start">
+            <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
+                CI Result: <strong style={{ color: (data?.fulfillment) === "Fulfilled" ? "green" : "red" }}>
+                  { data?.fulfillment || "N/A"}
+                </strong>
+              </Title>
+              {!hideComment && renderCommentInput()}
 
+
+            </Col>
+
+             
             <Title level={4} style={{ marginTop: "20px" }}>Evidence of Internal Audit Committee Records</Title>
             {data && <Table columns={columns} dataSource={data?.data} pagination={false} bordered />}
 
@@ -147,7 +166,11 @@ const InternalAuditUnitFunctionality = forwardRef(({ data, year, columns, distri
             <Title level={4} style={{ marginTop: "20px" }}>Evidence of Quarterly Report</Title>
             <Table columns={columnsReport} dataSource={report} pagination={false} bordered />
 
+              {renderCommentList()}
+
         </>
+        )}
+        </Comment>
     );
 })
 

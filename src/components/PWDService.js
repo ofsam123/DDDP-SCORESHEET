@@ -1,4 +1,4 @@
-import { Layout, Table, Typography, Row } from "antd";
+import { Layout, Table, Typography, Col } from "antd";
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import axios from "../api/axios";
 import Comment from "../components/Comments";
@@ -209,12 +209,12 @@ const PWDService = forwardRef(({
           <Title level={5} style={{ marginTop: "20px" }}>
             SDI 4.0-4.4ii Actual Score: <strong>{scoreii}</strong>
           </Title>
-          <Row align="middle">
-            <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
+          <Col align="start">
+            <Title level={5} style={{ marginTop: "20px", marginRight: "0px", marginLeft: "0px" }}>
               SDI 4.0-4.4iii Actual Score: <strong>{scoreiii}</strong>
             </Title>
             {!hideComment && renderCommentInput()}
-          </Row>
+          </Col>
 
           <Title level={4} style={{ marginTop: "20px" }}>List of Registered PWD</Title>
           <Table

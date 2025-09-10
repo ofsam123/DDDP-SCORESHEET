@@ -1,4 +1,4 @@
-import { Layout, Typography, Table, Row } from "antd";
+import { Layout, Typography, Table, Col } from "antd";
 import Comment from "../components/Comments";
 import axios from "../api/axios";
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
@@ -149,12 +149,12 @@ const DeepeningGenderMainstreaming = forwardRef(({ data, year, districtId }, ref
                     <Title level={5} style={{ marginTop: "20px" }}>
                         SDI 4.0-4.5i Actual Score: <strong>{scorei}</strong>
                     </Title>
-                    <Row align="middle">
-                        <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
+                    <Col align="start">
+                        <Title level={5} style={{ marginTop: "20px", marginRight: "0px", marginLeft: "0px" }}>
                             SDI 4.0-4.5ii Actual Score: <strong>{scoreii}</strong>
                         </Title>
                         {renderCommentInput()}
-                    </Row>
+                    </Col>
 
                     <Title level={4} style={{ marginTop: "20px" }}>I- Membership of  Statutory Sub-Committees</Title>
                     {members && <Table columns={membersColumns} dataSource={members} pagination={false} bordered />}

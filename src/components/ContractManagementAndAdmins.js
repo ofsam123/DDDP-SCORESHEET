@@ -1,4 +1,4 @@
-import { Layout, Table, Typography, Row } from "antd";
+import { Layout, Table, Typography, Col } from "antd";
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { formatDataGeneral, getAttributeValue, getFirstFileLinkIfExist } from "../utils/utils";
 import Comment from "../components/Comments";
@@ -144,12 +144,12 @@ const ContractManagementAndAdmins = forwardRef(({ year, district, data, hideComm
                     </Title>
 
 
-                    <Row align="middle">
-                        <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
+                    <Col align="start">
+                        <Title level={5} style={{ marginTop: "20px", marginRight: "0px", marginLeft: "0px" }}>
                             PI 1.0-1.3 Actual Score: <strong>{scorei}</strong>
                         </Title>
                         {!hideComment && renderCommentInput()}
-                    </Row>
+                    </Col>
 
                     <Title level={5} style={{ marginTop: "20px" }}>
                         Evidence of project completion and use

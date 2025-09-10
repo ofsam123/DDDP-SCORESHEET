@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
-import { Layout, Typography, Table, Row } from "antd";
+import { Layout, Typography, Table, Col } from "antd";
 import Comment from "../components/Comments";
 import axios from "../api/axios";
 import { getAttributeValue, getFileLinkIfExist } from "../utils/utils";
@@ -113,12 +113,12 @@ const DistrictHotlineNumber = forwardRef(({ year, districtId, hideComment }, ref
             </ol>
           </Content>
           <Title level={5} style={{ marginTop: "20px" }}>Maximum Score <strong>{maxScore}</strong></Title>
-          <Row align="middle">
-            <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
+          <Col align="start">
+            <Title level={5} style={{ marginTop: "20px", marginRight: "0px", marginLeft: "0px" }}>
               SDI 4.0-4.3 Actual Score: <strong>{score}</strong>
             </Title>
             {!hideComment && renderCommentInput()}
-          </Row>
+          </Col>
           <Title level={4} style={{ marginTop: "20px" }}>Evidence of Dedicated Functional Hotline for Vulnerable Groups</Title>
           {/* {data && <Table columns={columns} dataSource={data?.data} pagination={false} bordered />} */}
 

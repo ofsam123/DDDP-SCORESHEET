@@ -1,4 +1,4 @@
-import { Layout, Table, Typography, Row } from "antd";
+import { Layout, Table, Typography, Col } from "antd";
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import axios from "../api/axios";
 import Comment from "../components/Comments";
@@ -212,12 +212,12 @@ const FoodVendors = forwardRef(({
           <Title level={5} style={{ marginTop: "20px" }}>
             SDI 5.0-5.3ii Actual Score: <strong>{scoreii}</strong>
           </Title>
-          <Row align="middle">
-            <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
+          <Col align="start">
+            <Title level={5} style={{ marginTop: "20px", marginRight: "0px", marginLeft: "0px" }}>
               SDI 5.0-5.3iii Actual Score: <strong>{scoreiii}</strong>
             </Title>
             {!hideComment && renderCommentInput()}
-          </Row>
+          </Col>
 
           <Title level={4} style={{ marginTop: "20px" }}>Evidence of Registration & Screening of Food Vendors</Title>
           <Table

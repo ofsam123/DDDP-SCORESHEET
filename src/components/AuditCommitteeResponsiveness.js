@@ -1,4 +1,4 @@
-import { Layout, Table, Typography, Row } from "antd";
+import { Layout, Table, Typography, Col } from "antd";
 import React, { forwardRef, useImperativeHandle, useState } from "react";
 import Comment from "../components/Comments";
 
@@ -68,12 +68,12 @@ const AuditCommitteeResponsiveness = forwardRef(({ year, audits, actions, manage
                     </Title>
 
 
-                    <Row align="middle">
-                        <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
+                    <Col align="start">
+                        <Title level={5} style={{ marginTop: "20px", marginRight: "0px", marginLeft: "0px" }}>
                             PI 4.0-4.1 Actual Score: <strong>{audits?.score || 0}</strong>
                         </Title>
                         {!hideComment && renderCommentInput()}
-                    </Row>
+                    </Col>
 
                     <Title level={5} style={{ marginTop: "20px" }}>
                         Audit Observations in Quarterly Internal Audit Reports

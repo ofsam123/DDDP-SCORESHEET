@@ -1,4 +1,4 @@
-import { Layout, Table, Typography, Row } from "antd";
+import { Layout, Table, Typography, Col } from "antd";
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import axios from "../api/axios";
 import { calculatePercentage, formatDataGeneral, getAttributeValue, getFirstFileLinkIfExist } from "../utils/utils";
@@ -190,12 +190,12 @@ const EducationServiceSupport = forwardRef(({ year, districtId, hideComment }, r
             Maximum Score <strong>{maxScore}</strong>
           </Title>
 
-          <Row align="middle">
-            <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
+          <Col align="start">
+            <Title level={5} style={{ marginTop: "20px", marginRight: "0px", marginLeft: "0px" }}>
               PI 5.0-5.1 Actual Score: <strong>{score}</strong>
             </Title>
             {!hideComment && renderCommentInput()}
-          </Row>
+          </Col>
 
           <Title level={5} style={{ marginTop: "20px" }}>
             Evidence of DA support to Public Schools

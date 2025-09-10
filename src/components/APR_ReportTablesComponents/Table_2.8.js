@@ -1,6 +1,6 @@
+
 import React, { useEffect, useState } from "react";
 import axios from "../../api/axios";
-import APRComment from "../APR_ReportTablesComponents/APRComments";
 
 const Table2_8 = ({ year = "2025", district = "EmVZbr0kApz", period }) => {
   const [activityData, setActivityData] = useState([]);
@@ -94,21 +94,6 @@ const Table2_8 = ({ year = "2025", district = "EmVZbr0kApz", period }) => {
           <p className="mt-2">
             <small>Source: MPCU</small>
           </p>
-          {/* Integrate APRComment component */}
-          <APRComment
-            data={activityData}
-            year={year}
-            districtId={district}
-            tableCommentedId="Table2_8"
-            hideComment={false}
-          >
-            {({ renderCommentInput, renderCommentList }) => (
-              <div className="mt-4">
-                {renderCommentInput()}
-                {renderCommentList()}
-              </div>
-            )}
-          </APRComment>
         </div>
       </div>
     </div>

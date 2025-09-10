@@ -3,78 +3,90 @@ import axios from "../../api/axios";
 import { filterTrackedEntitiesByCreatedAt, formatDataGeneral, getAttributeValue } from "../../utils/utils";
 import APRComment from "../APR_ReportTablesComponents/APRComments";
 
-const Table2_2 = ({ year, district }) => {
-  const [tableData, setTableData] = useState([]);
-
-  useEffect(() => {
-    getProjects();
-  }, [year, district]);
-
-  function getProjects() {
-    axios
-      .get(`/tracker/trackedEntities?orgUnit=${district}&program=g3wMUKEMmH3&startDate=${year}-01-01&endDate=${year}-12-31`)
-      .then(result => {
-        if (result.data.instances.length > 0) {
-          const startDate = `${year}-01-01`;
-          const endDate = `${year}-12-31`;
-
-          axios
-            .get(`/tracker/events?program=g3wMUKEMmH3&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
-            .then(resp => {
-              const data = filterTrackedEntitiesByCreatedAt(result.data.instances, startDate, endDate);
-              const projects = formatDataGeneral(data, "Project & Programme Type", "Programme") || [];
-
-              const reports = filterTrackedEntitiesByCreatedAt(resp.data.instances, startDate, endDate);
-
-              const temps = [];
-
-              projects.forEach((project, idx) => {
-                const currentReport = reports.find(rep => rep.trackedEntity === project.trackedEntity);
-                let expendature = 0.00;
-                let percentage = 0;
-
-                if (currentReport) {
-                  currentReport.dataValues.forEach(rep => {
-                    if (rep.dataElement === "jr8gk707kAw") {
-                      expendature = rep.value;
-                    }
-
-                    if (rep.dataElement === "f1T48vHfJc1") {
-                      percentage = rep.value;
-                    }
-                  });
-                }
-
-                const sumTotal = getAttributeValue("Contract Sum", project);
-
-                const dataSetTemp = {
-                  no: idx + 1,
-                  description: getAttributeValue("Description", project),
-                  dimension: getAttributeValue("Development Dimension", project),
-                  contractSum: sumTotal,
-                  fundingSource: getAttributeValue("Primary Funding Source", project),
-                  dateStarted: getAttributeValue("Start Date", project),
-                  expectedCompletion: getAttributeValue("Expected Completion Date", project),
-                  expenditure: expendature,
-                  outstanding: parseFloat(sumTotal) - parseFloat(expendature),
-                  implementationStatus: percentage,
-                  beneficiariesMale: getAttributeValue("Total Male Beneficiary", project),
-                  beneficiariesFemale: getAttributeValue("Total Female Beneficiary", project),
-                  remarks: getAttributeValue("Remarks", project)
-                };
-
-                temps.push(dataSetTemp);
-              });
-
-              setTableData(temps);
-            })
-            .catch(err => console.log(err))
-        }
-      })
-      .catch(err => console.log(err))
-  }
-
-  // Pictorial evidence data
+const Table2_2 = ({ year, district, period }) => {
+  
+   const [tableData, setTableData] = useState([]);
+  
+    useEffect(() => {
+      getProjects();
+    }, [year, district, period]);
+  
+    function getProjects() {
+      axios
+        .get(`/tracker/trackedEntities?orgUnit=${district}&program=g3wMUKEMmH3&startDate=${year}-01-01&endDate=${year}-12-31`)
+        .then(result => {
+  
+          if (result.data.instances.length > 0) {
+            const startDate = `${year}-01-01`;
+            const endDate = `${year}-12-31`;
+  
+            axios
+              .get(`/tracker/events?program=g3wMUKEMmH3&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
+              .then(resp => {
+                const data = filterTrackedEntitiesByCreatedAt(result.data.instances, startDate, endDate);
+                const projects = formatDataGeneral(data, "Project & Programme Type", "Programme") || [];
+  
+                const reports = filterTrackedEntitiesByCreatedAt(resp.data.instances, startDate, endDate);
+  
+                // console.log("djiba reports 1: ", reports);
+                const temps = [];
+  
+                projects.forEach((project, idx) => {
+  
+                  const currentReport = reports.find(rep => rep.trackedEntity === project.trackedEntity);
+                  let expendature = 0.00;
+                  let percentage = 0;
+  
+                  if (currentReport) {
+  
+                    currentReport.dataValues.forEach(rep => {
+                      if (rep.dataElement === "jr8gk707kAw") {
+                        // console.log("expendature: ",rep.value)
+                        expendature = rep.value;
+                      }
+  
+                      if(rep.dataElement === "f1T48vHfJc1"){
+                        console.log("percentage: ",rep.value)
+                          percentage = rep.value;
+                      }
+                    });
+  
+                  }
+  
+                  const sumTotal = getAttributeValue("Contract Sum", project);
+  
+                  const dataSetTemp = {
+                    no: idx + 1,
+                    description: getAttributeValue("Description", project),
+                    dimension: getAttributeValue("Development Dimension", project),
+                    contractSum: sumTotal ,
+                    fundingSource: getAttributeValue("Primary Funding Source", project),
+                    dateStarted: getAttributeValue("Start Date", project),
+                    expectedCompletion: getAttributeValue("Expected Completion Date", project),
+                    expenditure: expendature,
+                    outstanding: parseFloat(sumTotal) - parseFloat(expendature),
+                    implementationStatus: percentage,
+                    beneficiariesMale: getAttributeValue("Total Male Beneficiary", project),
+                    beneficiariesFemale: getAttributeValue("Total Female Beneficiary", project),
+                    remarks: getAttributeValue("Remarks", project)
+                  };
+ 
+                  temps.push(dataSetTemp);
+                });
+  
+  
+                setTableData(temps);
+  
+  
+              })
+              .catch(err => console.log(err))
+          }
+  
+  
+        })
+        .catch(err => console.log(err))
+    }
+    // Pictorial evidence data
   const pictorialEvidence = [
     {
       url: "https://cdn1.img.sputniknews.africa/img/07e7/07/02/1060284138_451:0:3134:2012_1920x0_80_0_0_43d738a714a35edc0190c43cbaa47b86.jpg",

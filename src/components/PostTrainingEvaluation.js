@@ -5,20 +5,24 @@ import { getAttributeValue, getFileLinkIfExist } from "../utils/utils";
 import moment from "moment/moment";
 import Comment from "../components/Comments";
 
-const PostTrainingEvaluation = forwardRef(({ year, district,hideComment }, ref) => {
+const PostTrainingEvaluation = forwardRef(({ year, district, hideComment }, ref) => {
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
 
     const [data, setData] = useState([]);
     const [scorei, setScorei] = useState(0);
+    const [maxScore, setMaxScore] = useState(2);
 
     useImperativeHandle(ref, () => ({
         getData: () => ({
-          data,
-          scorei
+            indicator: "PI2",
+            area: "Capacity Building",
+            maxScore,
+            data,
+            scorei
         }),
-      }));
+    }));
 
     const postTrainingEvaluationColumns = [
         { title: "Training Topic", dataIndex: "topic", key: "topic" },
@@ -108,7 +112,7 @@ const PostTrainingEvaluation = forwardRef(({ year, district,hideComment }, ref) 
             year={year}
             districtId={district}
             tableCommentedId={`pi2.0-2.2-${year}`}
-             hideComment={hideComment}
+            hideComment={hideComment}
         >
             {({ renderCommentInput, renderCommentList }) => (
                 <>
@@ -125,10 +129,10 @@ const PostTrainingEvaluation = forwardRef(({ year, district,hideComment }, ref) 
                     </Content>
 
                     <Title level={5} style={{ marginTop: "20px" }}>
-                        Maximum Score <strong>2</strong>
+                        Maximum Score <strong>{maxScore}</strong>
                     </Title>
 
-                    
+
                     <Row align="middle">
                         <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
                             PI 2.0-2.2 Actual Score: <strong>{scorei}</strong>

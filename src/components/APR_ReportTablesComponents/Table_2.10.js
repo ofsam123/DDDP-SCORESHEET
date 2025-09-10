@@ -2,28 +2,31 @@ import React, { useEffect, useState } from "react";
 import axios from "../../api/axios";
 import { formatDataGeneral, getAttributeValue } from "../../utils/utils";
 import APRComment from "../APR_ReportTablesComponents/APRComments";
+import { filterTrackedEntitiesByCreatedAt, formatDataGeneral, getAttributeValue } from "../../utils/utils";
 
-const Table2_10 = ({ year, district }) => {
+const Table2_10 = ({ year, district, period }) => {
   const [tableData, setTableData] = useState([]);
   const [showChart, setShowChart] = useState(true);
   const [total, setTotal] = useState(null);
 
   useEffect(() => {
     getData();
-  }, [year, district]);
+  }, [year, district, period]);
 
   function getData() {
     axios
       .get(`/tracker/trackedEntities?orgUnit=${district}&program=UfMl96n7nnX&startDate=${year}-01-01&endDate=${year}-12-31`)
       .then(result => {
         if (result.data.instances.length > 0) {
-          const startDate = `${year}-01-01`;
-          const endDate = `${year}-12-31`;
+          
 
           axios
             .get(`/tracker/events?program=UfMl96n7nnX&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
             .then(resp => {
-              const data = formatDataGeneral(result.data.instances, "Evaluation Type", "Participatory Monitoring Evaluation") || [];
+
+              const dataProcessed = filterTrackedEntitiesByCreatedAt(result.data.instances, year, period);
+
+              const data = formatDataGeneral(dataProcessed, "Evaluation Type", "Participatory Monitoring Evaluation") || [];
               const reports = resp.data.instances;
 
               const temps = [];

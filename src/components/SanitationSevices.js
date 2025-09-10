@@ -6,11 +6,12 @@ const SanitationServices = forwardRef(({
   year,
   sanitationProvidersData,
   districtId,
-hideComment
+  hideComment
 }, ref) => {
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
   const [score, setScore] = useState(0);
+  const [maxScore, setMaxScore] = useState(3);
   const [percentage, setPercentage] = useState(
     sanitationProvidersData.length > 0 ? sanitationProvidersData[0].percentage : 0
   );
@@ -23,13 +24,16 @@ hideComment
     }
   }, [sanitationProvidersData, year]);
 
-   useImperativeHandle(ref, () => ({
-      getData: () => ({
-        sanitationProvidersData,
-        score,
-        percentage
-      }),
-    }));
+  useImperativeHandle(ref, () => ({
+    getData: () => ({
+      indicator: "SDI2",
+      area: "Basic/ Social Services",
+      maxScore,
+      sanitationProvidersData,
+      score,
+      percentage
+    }),
+  }));
 
   const serviceProvidersColumn = [
     { title: `Total IGF collected for the ${year} (A)`, dataIndex: "ifgCollected", key: "ifgCollected" },
@@ -43,7 +47,7 @@ hideComment
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi2.0-2.3-${year}`}
-       hideComment={hideComment}
+      hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -65,12 +69,12 @@ hideComment
             </ul>
           </Content>
 
-          <Title level={5} style={{ marginTop: "30px" }}>Maximum Score <strong>3</strong></Title>
+          <Title level={5} style={{ marginTop: "30px" }}>Maximum Score <strong>{maxScore}</strong></Title>
           {/* {JSON.stringify(sanitationProvidersData)} */}
 
           <Row align="middle">
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
-              SDI 1.0-2.2i Actual Score: <strong>{score}</strong>
+              SDI 2.0-2.2i Actual Score: <strong>{score}</strong>
             </Title>
             {!hideComment && renderCommentInput()}
           </Row>

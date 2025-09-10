@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Layout, Typography, Table, Button, Row, Space, Col } from "antd";
 import axios from "../api/axios";
+import { getAttributeValue } from "../utils/utils";
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
@@ -23,13 +24,7 @@ function AuditorGeneralReport({ year, district }) {
 
     useEffect(() => {
         getData();
-        console.log("Jallo: ");
     },[year, district]);
-
-    const getAttributeValue = (key, val) => {
-        const attr = val?.attributes.find(attr => attr.displayName === key);
-        return attr ? attr.value : "N/A";
-    };
 
     const setDataDisplay = (data, reports) => {
         

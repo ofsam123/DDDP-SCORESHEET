@@ -1,18 +1,23 @@
 import { Layout, Table, Typography, Row } from "antd";
-import React, { forwardRef, useImperativeHandle } from "react";
+import React, { forwardRef, useImperativeHandle, useState } from "react";
 import Comment from "../components/Comments";
 
-const AuditCommitteeResponsiveness = forwardRef(({ year, audits, actions, managementLetters,hideComment}, ref) => {
+const AuditCommitteeResponsiveness = forwardRef(({ year, audits, actions, managementLetters, hideComment }, ref) => {
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
+    const [maxScore, setMaxScore] = useState(3);
 
     useImperativeHandle(ref, () => ({
         getData: () => ({
-          audits,
+            indicator: "PI4",
+            area: "Audit Performance",
+            maxScore,
+            maxScore,
+            audits,
 
         }),
-      }));
+    }));
 
     const auditReportColumns = [
         { title: "Qtr", dataIndex: "meeting", key: "meeting" },
@@ -42,7 +47,7 @@ const AuditCommitteeResponsiveness = forwardRef(({ year, audits, actions, manage
             year={year}
             districtId={null}
             tableCommentedId={`pi4.0-4.1-${year}`}
-             hideComment={hideComment}
+            hideComment={hideComment}
         >
             {({ renderCommentInput, renderCommentList }) => (
                 <>
@@ -52,17 +57,17 @@ const AuditCommitteeResponsiveness = forwardRef(({ year, audits, actions, manage
                         From the District Coordinating Director (DCD) receive information on the Audit Committee of the Assembly:<br /><br />
                         <ol>
                             <li type="i">
-                                If the Audit Committee has received and reviewed responses to all Audit Observations 
+                                If the Audit Committee has received and reviewed responses to all Audit Observations
                                 in Quarterly Internal Audit Reports and the Management Letter for {year}, score 3 or else 0;
                             </li>
                         </ol>
                     </Content>
 
                     <Title level={5} style={{ marginTop: "20px" }}>
-                        Maximum Score <strong>3</strong>
+                        Maximum Score <strong>{maxScore}</strong>
                     </Title>
 
-                   
+
                     <Row align="middle">
                         <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
                             PI 4.0-4.1 Actual Score: <strong>{audits?.score || 0}</strong>

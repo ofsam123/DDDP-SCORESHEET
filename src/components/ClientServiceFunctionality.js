@@ -3,7 +3,7 @@ import { Layout, Typography, Table, Row, Spin, message, Avatar } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import axios from "../api/axios";
 import Comment from "../components/Comments";
-import { getFileLinkIfExist } from "../utils/utils";
+import { getFileLinkIfExist,getAttributeValue } from "../utils/utils";
 import useAuth from "../hooks/useAuth";
 import instance from "../api/cmsapi";
 

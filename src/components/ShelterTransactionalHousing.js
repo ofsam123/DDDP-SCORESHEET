@@ -6,10 +6,11 @@ import { getAttributeValue, getFileLinkIfExist } from "../utils/utils";
 
 const ShelterTransactionalHousing = forwardRef(({
   year,
-  districtId,hideComment
+  districtId, hideComment
 }, ref) => {
   const [score, setScore] = useState(0);
   const [services, setServices] = useState([]);
+  const [maxScore, setMaxScore] = useState(1);
 
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
@@ -18,12 +19,14 @@ const ShelterTransactionalHousing = forwardRef(({
     getResidentialHomeCentre()
   }, [year, districtId]);
 
-   useImperativeHandle(ref, () => ({
-      getData: () => ({
-        services,
-        score
-      }),
-    }));
+  useImperativeHandle(ref, () => ({
+    getData: () => ({
+      indicator: "SDI4",
+      area: "Social Protection, Gender and Nutrition",
+      services,
+      score
+    }),
+  }));
 
 
   function getResidentialHomeCentre() {
@@ -102,7 +105,7 @@ const ShelterTransactionalHousing = forwardRef(({
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi4.0-4.2-${year}`}
-       hideComment={hideComment}
+      hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -118,7 +121,7 @@ const ShelterTransactionalHousing = forwardRef(({
             </ol>
           </Content>
 
-          <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>1</strong></Title>
+          <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>{maxScore}</strong></Title>
           <Row align="middle">
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               SDI 4.0-4.2 Actual Score: <strong>{score}</strong>

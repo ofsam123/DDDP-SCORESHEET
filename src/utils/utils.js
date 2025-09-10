@@ -61,7 +61,33 @@ export function getDataRank(index) {
 
 }
 
-export function filterTrackedEntitiesByCreatedAt(entities, start, end) {
+export function filterTrackedEntitiesByCreatedAt(entities, year, period) {
+  let start, end;
+
+  switch (period) {
+    case "Q1":
+      start = `${year}-01-01`;
+      end = `${year}-03-31`;
+      break;
+    case "Q2":
+      start = `${year}-04-01`;
+      end = `${year}-06-30`;
+      break;
+    case "Q3":
+      start = `${year}-07-01`;
+      end = `${year}-09-30`;
+      break;
+    case "Q4":
+      start = `${year}-10-01`;
+      end = `${year}-12-31`;
+      break;
+    case "yearly":
+    default:
+      start = `${year}-01-01`;
+      end = `${year}-12-31`;
+      break;
+  }
+
   const startDate = new Date(start);
   const endDate = new Date(end);
 
@@ -70,6 +96,7 @@ export function filterTrackedEntitiesByCreatedAt(entities, start, end) {
     return created >= startDate && created <= endDate;
   });
 }
+
 
 export function getPlanExecutionStats(formatedPlans, reports) {
   const counts = {};
@@ -279,40 +306,53 @@ export function formatSubStatutoryMeetings(data) {
   return Object.values(grouped);
 }
 
-export  const getMeetingRank = (index, type) => {
-        if (type === 'GA') {
-            switch (index) {
-                case 0: return "1st Ordinary Meeting";
-                case 1: return "2nd Ordinary Meeting";
-                case 2: return "3rd Ordinary Meeting";
-                default: return "Bonus Ordinary Meeting";
-            }
-        }
-        else if (type === 'EC') {
-            switch (index) {
-                case 0: return "1st";
-                case 1: return "2nd";
-                case 2: return "3rd";
-                default: return "Other";
-            }
-        } else if (type === 'Management Meetings') {
-            switch (index) {
-                case 0: return "1st";
-                case 1: return "2nd";
-                case 2: return "3rd";
-                case 3: return "4th";
-                default: return "Other";
-            }
-        } else if ((type === 'Entity Tender Committee (ETC)') || (type === 'Audit Committee')) {
-            switch (index) {
-                case 0: return "1st Quarter";
-                case 1: return "2nd Quarter";
-                case 2: return "3rd Quarter";
-                case 3: return "4th Quarter";
-                default: return "Other";
-            }
-        }
-    };
+export const getMeetingRank = (index, type) => {
+  if (type === 'GA') {
+    switch (index) {
+      case 0: return "1st Ordinary Meeting";
+      case 1: return "2nd Ordinary Meeting";
+      case 2: return "3rd Ordinary Meeting";
+      default: return "Bonus Ordinary Meeting";
+    }
+  }
+  else if (type === 'EC') {
+    switch (index) {
+      case 0: return "1st";
+      case 1: return "2nd";
+      case 2: return "3rd";
+      default: return "Other";
+    }
+  } else if (type === 'Management Meetings') {
+    switch (index) {
+      case 0: return "1st";
+      case 1: return "2nd";
+      case 2: return "3rd";
+      case 3: return "4th";
+      default: return "Other";
+    }
+  } else if ((type === 'Entity Tender Committee (ETC)') || (type === 'Audit Committee')) {
+    switch (index) {
+      case 0: return "1st Quarter";
+      case 1: return "2nd Quarter";
+      case 2: return "3rd Quarter";
+      case 3: return "4th Quarter";
+      default: return "Other";
+    }
+  }
+};
+
+
+export const getStageValue = (currentReport, uuid) => {
+
+    for (let rep of currentReport.dataValues) {
+      if (rep.dataElement === uuid) {
+          return parseFloat(rep.value);
+      }
+    }
+
+  }
+
+
 
 
 

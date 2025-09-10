@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import axios from "../../api/axios";
 import APRComment from "../APR_ReportTablesComponents/APRComments";
 
-const Table2_8 = ({ year = "2025", district = "EmVZbr0kApz" }) => {
+const Table2_8 = ({ year = "2025", district = "EmVZbr0kApz", period }) => {
   const [activityData, setActivityData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetchActivityData();
-  }, [year, district]);
+  }, [year, district, period]);
 
   async function fetchActivityData() {
     try {

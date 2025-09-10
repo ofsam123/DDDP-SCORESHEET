@@ -6,12 +6,14 @@ import { each } from "chart.js/helpers";
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
 
-const TownHollMeeting = forwardRef(({ meetings,year, columns, districtId,hideComment }, ref) => {
+const TownHollMeeting = forwardRef(({ meetings, year, columns, districtId, hideComment }, ref) => {
 
   useImperativeHandle(ref, () => ({
-      getData: () => ({
-        meetings
-      }),
+    getData: () => ({
+      indicator: "CI4",
+      area: "Transparency, Accountability & Participation",
+      meetings
+    }),
   }));
 
   return (
@@ -20,7 +22,7 @@ const TownHollMeeting = forwardRef(({ meetings,year, columns, districtId,hideCom
       year={year}
       districtId={districtId}
       tableCommentedId={`c1.0-1.1-${year}`}
-       hideComment={hideComment}
+      hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -28,20 +30,20 @@ const TownHollMeeting = forwardRef(({ meetings,year, columns, districtId,hideCom
           <Title level={4} style={{ marginTop: "10px" }}>Assessment Guide/ Requirement</Title>
 
           <Content>
-           From the DCD, receive reports on Town Hall Meetings and MMDCEs engagements with communities. <strong>{year}</strong>:<br /><br />
+            From the DCD, receive reports on Town Hall Meetings and MMDCEs engagements with communities. <strong>{year}</strong>:<br /><br />
             <ol>
               <li type="i">
-                    If the Assembly organized at least two (2) Town Hall Meetings on the 
-                    implementation of Annual Budget and Work Plans (in the first quarter) 
-                    and preparation of the Annual Budget and Work Plans (in the third quarter) respectively,
-                     using PFM templates; and.</li>
+                If the Assembly organized at least two (2) Town Hall Meetings on the
+                implementation of Annual Budget and Work Plans (in the first quarter)
+                and preparation of the Annual Budget and Work Plans (in the third quarter) respectively,
+                using PFM templates; and.</li>
 
-                     <li type="i">
-                   If the MMDCE held Community Durbars in at least 20% of communities in District Assemblies, 
-                   30% in Municipal Assemblies, and 50% in Metropolitan Assemblies, addressing grievances of 
-                   the communities.
-                     </li>
-              </ol>
+              <li type="i">
+                If the MMDCE held Community Durbars in at least 20% of communities in District Assemblies,
+                30% in Municipal Assemblies, and 50% in Metropolitan Assemblies, addressing grievances of
+                the communities.
+              </li>
+            </ol>
 
             <i>Then the CI is fulfilled</i>
           </Content>
@@ -57,8 +59,8 @@ const TownHollMeeting = forwardRef(({ meetings,year, columns, districtId,hideCom
             Town Hall Meeting Evidence with Reports
           </Title>
 
-          {meetings?.data &&  <Table columns={columns} dataSource={meetings?.data} pagination={false} bordered />}
-        
+          {meetings?.data && <Table columns={columns} dataSource={meetings?.data} pagination={false} bordered />}
+
 
           {renderCommentList()}
         </>

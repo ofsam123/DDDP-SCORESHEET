@@ -6,13 +6,14 @@ import { getAttributeValue, getFileLinkIfExist } from "../utils/utils";
 
 const PWDService = forwardRef(({
   year,
-  districtId,hideComment
+  districtId, hideComment
 }, ref) => {
   const [scorei, setScorei] = useState(0);
   const [scoreii, setScoreii] = useState(0);
   const [scoreiii, setScoreiii] = useState(0);
   const [pwdData, setPwdData] = useState({ pwd: [], iga: [], cb: [] });
   const [pwdList, setPwdList] = useState([]);
+  const [maxScore, setMaxScore] = useState(4);
 
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
@@ -21,15 +22,18 @@ const PWDService = forwardRef(({
     getPWDs();
   }, [year, districtId]);
 
-   useImperativeHandle(ref, () => ({
-      getData: () => ({
-        pwdData,
-        pwdList,
-        scorei,
-        scoreii,
-        scoreiii
-      }),
-    }));
+  useImperativeHandle(ref, () => ({
+    getData: () => ({
+      indicator: "SDI4",
+      area: "Social Protection, Gender and Nutrition",
+      maxScore,
+      pwdData,
+      pwdList,
+      scorei,
+      scoreii,
+      scoreiii
+    }),
+  }));
 
   const calculatePercentage = (total, value) => {
     const totalNum = parseFloat(total);
@@ -82,17 +86,17 @@ const PWDService = forwardRef(({
                   gender: getAttributeValue("Sex", pwd),
                   card: getAttributeValue("Ghana Card Number", pwd),
                   evidence: reportLink ? (
-                      <a
-                        className="px-2 text-primary fw-bold text-decoration-underline"
-                        href={`https://dddp.gov.gh/api/events/files?eventUid=${reportLink}&dataElementUid=TxE2hVHyNuG`} target="_blank"
-                        rel="noopener noreferrer"
-                        title="Click here to see the uploaded document"
-                      >
-                        View Evidence
-                      </a>
-                    ) : (
-                      "Not Uploaded"
-                    ),
+                    <a
+                      className="px-2 text-primary fw-bold text-decoration-underline"
+                      href={`https://dddp.gov.gh/api/events/files?eventUid=${reportLink}&dataElementUid=TxE2hVHyNuG`} target="_blank"
+                      rel="noopener noreferrer"
+                      title="Click here to see the uploaded document"
+                    >
+                      View Evidence
+                    </a>
+                  ) : (
+                    "Not Uploaded"
+                  ),
                 };
 
                 temp.push(dataSet);
@@ -173,14 +177,14 @@ const PWDService = forwardRef(({
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi4.0-4.4-${year}`}
-       hideComment={hideComment}
+      hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
           <Title level={3} style={{ marginTop: "30px" }}>SDI 4.0 - 4.4 Service to Persons Who are Differently Abled  (PWDAs) </Title>
           <Title level={4} style={{ marginTop: "30px" }}>Assessment Guide/ Requirement</Title>
           <Content>
-            From the DCD and Head of Department of Social Welfare and Community Development 
+            From the DCD and Head of Department of Social Welfare and Community Development
             receive information on the management of Persons Who are Differently Abled (PWDAs):<br /><br />
             <ol>
               <li type="i">
@@ -188,7 +192,7 @@ const PWDService = forwardRef(({
                 District on the National Health Insurance Scheme, score 1;
               </li>
               <li type="i" className="py-1">
-                If the District has provided resources and engaged at least 80% of the registered PWDAs on 
+                If the District has provided resources and engaged at least 80% of the registered PWDAs on
                 Productive Inclusive / Income Generating Activities (IGAs), score 2; and
               </li>
               <li type="i">
@@ -198,7 +202,7 @@ const PWDService = forwardRef(({
             </ol>
           </Content>
 
-          <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>4</strong></Title>
+          <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>{maxScore}</strong></Title>
           <Title level={5} style={{ marginTop: "20px" }}>
             SDI 4.0-4.4i Actual Score: <strong>{scorei}</strong>
           </Title>

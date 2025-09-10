@@ -15,6 +15,7 @@ const GASupport = forwardRef(({
   const { Title, Text } = Typography;
 
   const [score, setScore] = useState(0);
+  const [maxScore, setMaxScore] = useState(4);
   const [conclusion, setConclusion] = useState("");
 
   const cededAmountUtilizationColumns = [
@@ -78,6 +79,9 @@ const GASupport = forwardRef(({
 
   useImperativeHandle(ref, () => ({
     getData: () => ({
+      indicator: "SDI1",
+      area: "Management Coordination – Implementation of Service Delivery Decisions",
+      maxScore,
       cededRevenueUtilisationData,
       subStructureActivityData,
       cededRevenueUtilisationScore,
@@ -113,7 +117,7 @@ const GASupport = forwardRef(({
           </Content>
 
           <Title level={5} style={{ marginTop: "20px" }}>
-            Maximum Score <strong>4</strong>
+            Maximum Score <strong>{maxScore}</strong>
           </Title>
 
           <Title level={5} style={{ marginTop: "20px" }}>

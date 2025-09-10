@@ -4,7 +4,8 @@ import axios from "../../api/axios";
 
 import APRComment from "../APR_ReportTablesComponents/APRComments";
 
-const Table2_9 = ({ year, district }) => {
+const Table2_9 = ({ year, district , period}) => {
+  
   const [tableData, setTableData] = useState([]);
   const [showChart, setShowChart] = useState(true);
   const [total, setTotal] = useState(null);

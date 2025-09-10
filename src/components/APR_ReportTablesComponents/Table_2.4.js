@@ -31,14 +31,14 @@ const getColor = (name) => {
   }
 };
 
-const Table2_4 = ({ year, district }) => {
+const Table2_4 = ({ year, district, period }) => {
   const [tableData, setTableData] = useState([]);
   const [showChart, setShowChart] = useState(true);
   const [total, setTotal] = useState(null);
 
   useEffect(() => {
     getData();
-  }, [year, district]);
+  }, [year, district, period]);
 
   const mapData = (data, report) => {
     const names = [
@@ -93,9 +93,9 @@ const Table2_4 = ({ year, district }) => {
           axios
             .get(`/tracker/events?program=WHILilRZRhT&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
             .then(resp => {
-              const data = filterTrackedEntitiesByCreatedAt(result.data.instances, startDate, endDate);
-              const disbursements = formatDataGeneral(data, "Years", "2025") || [];
-              const reports = filterTrackedEntitiesByCreatedAt(resp.data.instances, startDate, endDate);
+              const data = filterTrackedEntitiesByCreatedAt(result.data.instances, year, period);
+              const disbursements = formatDataGeneral(result.data.instances, "Years", "2025") || [];
+              const reports = filterTrackedEntitiesByCreatedAt(resp.data.instances, year, period);
               const disbursementMapped = mapData(disbursements, reports);
 
               const cleanNumber = (val) => parseFloat((val || "0").toString().replace(/,/g, ''));

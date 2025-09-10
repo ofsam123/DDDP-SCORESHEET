@@ -10,19 +10,23 @@ const AAPImplementation = forwardRef(({ year, district, data, hideComment }, ref
     const { Title, Text } = Typography;
     const [aapImplementation, setAapImplementation] = useState([]);
     const [score, setScore] = useState(0);
+    const [maxScore, setMaxScore] = useState(2);
     const [document, setDocument] = useState(data);
 
     useEffect(() => {
         getIndicatorsData();
     }, [year, district]);
 
-   useImperativeHandle(ref, () => ({
-       getData: () => ({
-        document,
-         aapImplementation,
-        score
-       }),
-     }));
+    useImperativeHandle(ref, () => ({
+        getData: () => ({
+            indicator: "PI1",
+            area: "Annual Action Plan Implementation",
+            maxScore,
+            document,
+            aapImplementation,
+            score
+        }),
+    }));
 
     const aapImplementationColumns = [
         { title: `No. of activities in approved ${year} Annual Action Plan`, dataIndex: "aapApproved", key: "aapApproved" },
@@ -66,7 +70,7 @@ const AAPImplementation = forwardRef(({ year, district, data, hideComment }, ref
             year={year}
             districtId={district}
             tableCommentedId={`pi1.0-1.1-${year}`}
-             hideComment={hideComment}
+            hideComment={hideComment}
         >
             {({ renderCommentInput, renderCommentList }) => (
                 <>
@@ -82,7 +86,7 @@ const AAPImplementation = forwardRef(({ year, district, data, hideComment }, ref
                     </Content>
 
                     <Title level={5} style={{ marginTop: "20px" }}>
-                        Maximum Score <strong>2</strong>
+                        Maximum Score <strong>{maxScore}</strong>
                     </Title>
 
 
@@ -101,7 +105,7 @@ const AAPImplementation = forwardRef(({ year, district, data, hideComment }, ref
                         bordered
                     />
 
-                     <Title level={4} style={{ marginTop: "20px" }}>II- Evidence Attached Documents </Title>
+                    <Title level={4} style={{ marginTop: "20px" }}>II- Evidence Attached Documents </Title>
                     <Table
                         columns={aapDocumentColumns}
                         dataSource={document || []}

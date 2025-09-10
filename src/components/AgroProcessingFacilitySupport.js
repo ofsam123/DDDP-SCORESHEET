@@ -5,20 +5,24 @@ import { formatDataGeneral, getAttributeValue, getFileLinkIfExist } from "../uti
 import Comment from "../components/Comments";
 
 const AgroProcessingFacilitySupport = forwardRef(({
-    year, district,hideComment
+    year, district, hideComment
 }, ref) => {
 
     const [data, setData] = useState([]);
     const [scorei, setScorei] = useState(0);
+    const [maxScore, setMaxScore] = useState(1);
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
 
-     useImperativeHandle(ref, () => ({
+    useImperativeHandle(ref, () => ({
         getData: () => ({
-          data,
-          scorei
+            indicator: "SDI6",
+            area: "Local Economic Development (LED)",
+            maxScore,
+            data,
+            scorei
         }),
-      }));
+    }));
 
     useEffect(() => {
         getData();
@@ -78,7 +82,7 @@ const AgroProcessingFacilitySupport = forwardRef(({
                                         ),
                                     };
 
-                                    if(!reportLink){
+                                    if (!reportLink) {
                                         isEvidenceAttached = false;
                                     }
 
@@ -135,7 +139,7 @@ const AgroProcessingFacilitySupport = forwardRef(({
             year={year}
             districtId={district}
             tableCommentedId={`sdi6.0-6.3-${year}`}
-             hideComment={hideComment}
+            hideComment={hideComment}
         >
             {({ renderCommentInput, renderCommentList }) => (
                 <>
@@ -154,7 +158,7 @@ const AgroProcessingFacilitySupport = forwardRef(({
                         </ol>
                     </Content>
 
-                    <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>1</strong></Title>
+                    <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>{maxScore}</strong></Title>
 
                     <Row align="middle">
                         <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>

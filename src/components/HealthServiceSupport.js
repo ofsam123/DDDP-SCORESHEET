@@ -4,26 +4,30 @@ import axios from "../api/axios";
 import { calculatePercentage, formatDataGeneral, getAttributeValue, getFileLinkIfExist } from "../utils/utils";
 import Comment from "../components/Comments";
 
-const HealthServiceSupport = forwardRef(({ year, districtId,hideComment }, ref) => {
+const HealthServiceSupport = forwardRef(({ year, districtId, hideComment }, ref) => {
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
   const [healthFacilities, setHealthFacilities] = useState([]);
   const [healthFacilitySupport, setHealthFacilitySupport] = useState([]);
   const [percentage, setPercentage] = useState(0);
   const [score, setScore] = useState(0);
+  const [maxScore, setMaxScore] = useState(1);
 
   useEffect(() => {
     getData();
   }, []);
 
   useImperativeHandle(ref, () => ({
-      getData: () => ({
-        healthFacilities,
-        healthFacilitySupport,
-        score,
-        percentage
-      }),
-    }));
+    getData: () => ({
+      indicator: "PI5",
+      area: "Access to Social Services",
+      maxScore,
+      healthFacilities,
+      healthFacilitySupport,
+      score,
+      percentage
+    }),
+  }));
 
   const healthColumns = [
     {
@@ -111,16 +115,16 @@ const HealthServiceSupport = forwardRef(({ year, districtId,hideComment }, ref) 
                   support,
                   report: reportLink ? (
                     <a
-                        className="px-2 text-primary fw-bold text-decoration-underline"
-                        href={`https://dddp.gov.gh/api/events/files?eventUid=${reportLink}&dataElementUid=E6mSis1p8NG`} target="_blank"
-                        rel="noopener noreferrer"
-                        title="Click here to see the uploaded document"
+                      className="px-2 text-primary fw-bold text-decoration-underline"
+                      href={`https://dddp.gov.gh/api/events/files?eventUid=${reportLink}&dataElementUid=E6mSis1p8NG`} target="_blank"
+                      rel="noopener noreferrer"
+                      title="Click here to see the uploaded document"
                     >
-                        View Evidence
+                      View Evidence
                     </a>
-                ) : (
+                  ) : (
                     "Not Uploaded"
-                )
+                  )
                 };
 
                 temp.push(tempDataSet);
@@ -162,7 +166,7 @@ const HealthServiceSupport = forwardRef(({ year, districtId,hideComment }, ref) 
       year={year}
       districtId={districtId}
       tableCommentedId={`pi5.0-5.2-${year}`}
-       hideComment={hideComment}
+      hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -172,7 +176,7 @@ const HealthServiceSupport = forwardRef(({ year, districtId,hideComment }, ref) 
             From the DCD and District Director of Health receive information on the list of public
             health facilities in the District and challenges faced by the centres:<br /><br />
             <ol>
-              
+
               <li type="i">
                 If the Assembly has supported at least 15% of the public health centres to address their challenges, score 1
               </li>
@@ -180,7 +184,7 @@ const HealthServiceSupport = forwardRef(({ year, districtId,hideComment }, ref) 
           </Content>
 
           <Title level={5} style={{ marginTop: "20px" }}>
-            Maximum Score <strong>1</strong>
+            Maximum Score <strong>{maxScore}</strong>
           </Title>
 
           <Row align="middle">

@@ -15,6 +15,7 @@ const TransportationNetworkService = forwardRef(({
   const [scoreii, setScoreii] = useState(0);
   const [scoreiii, setScoreiii] = useState(0);
   const [percentage, setPercentage] = useState(0);
+  const [maxScore, setMaxScore] = useState(3);
 
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
@@ -28,15 +29,18 @@ const TransportationNetworkService = forwardRef(({
   }, [year, districtId, transportors]);
 
   useImperativeHandle(ref, () => ({
-      getData: () => ({
-        transportations,
-        transportations,
-        scorei,
-        scoreii,
-        scoreiii
-        
-      }),
-    }));
+    getData: () => ({
+      indicator: "SDI2",
+      area: "Basic/ Social Services",
+      maxScore,
+      transportations,
+      transportations,
+      scorei,
+      scoreii,
+      scoreiii
+
+    }),
+  }));
 
   const transportationNetworkColumn = [
     { title: "Evidence of Road Safety Issues/activities in the MTDP", dataIndex: "mtdp", key: "mtdp" },
@@ -91,7 +95,7 @@ const TransportationNetworkService = forwardRef(({
       year={year}
       districtId={districtId}
       tableCommentedId={`sdi2.0-2.6-${year}`}
-       hideComment={hideComment}
+      hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
@@ -113,7 +117,7 @@ const TransportationNetworkService = forwardRef(({
             </ol>
           </Content>
 
-          <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>3</strong></Title>
+          <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>{maxScore}</strong></Title>
           <Title level={5} style={{ marginTop: "20px" }}>
             SDI 2.0-2.6i Actual Score: <strong>{scorei}</strong>
           </Title>
@@ -143,7 +147,7 @@ const TransportationNetworkService = forwardRef(({
           {<Table
             columns={documentsColumn}
             dataSource={transportors?.links}
-            pagination={false} bordered />}  
+            pagination={false} bordered />}
 
           <Title level={5} style={{ marginTop: "30px" }}>Conclusion</Title>
           <Content>

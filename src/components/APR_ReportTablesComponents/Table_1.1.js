@@ -1,56 +1,137 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
+import { filterTrackedEntitiesByCreatedAt, getStageValue } from "../../utils/utils";
+import axios from "../../api/axios";
 import APRComment from "../APR_ReportTablesComponents/APRComments";
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const Table1_1 = ({ year = "2022", district = "EmVZbr0kApz" }) => {
-  // Table 1.1 data with sample percentage values
-  const tableData = [
-    {
-      indicator: "Proportion of annual action plans implemented",
-      baseline2021: "85",
-      target2022: "90",
-      actual2022: "88",
-      target2023: "92",
-    },
-    {
-      indicator: "A. Percentage completed",
-      baseline2021: "70",
-      target2022: "80",
-      actual2022: "75",
-      target2023: "85",
-    },
-    {
-      indicator: "B. Percentage of on-going interventions",
-      baseline2021: "15",
-      target2022: "10",
-      actual2022: "12",
-      target2023: "8",
-    },
-    {
-      indicator: "C. Percentage of interventions abandoned",
-      baseline2021: "5",
-      target2022: "3",
-      actual2022: "4",
-      target2023: "2",
-    },
-    {
-      indicator: "D. Percentage of interventions yet to start",
-      baseline2021: "10",
-      target2022: "7",
-      actual2022: "9",
-      target2023: "5",
-    },
-    {
-      indicator: "Proportion of the overall medium-term development plan implemented",
-      baseline2021: "80",
-      target2022: "85",
-      actual2022: "82",
-      target2023: "88",
-    },
-  ];
+const Table1_1 = ({ year, district, period }) => {
+
+  const [tableData, setTableData] = useState([]);
+
+  useEffect(() => {
+    getBaselinesAndTargets();
+  }, [year, district, period]);
+
+  function getBaselinesAndTargets() {
+    axios
+      .get(`/tracker/trackedEntities?orgUnit=${district}&program=pcG18cDzLtf&startDate=${year}-01-01&endDate=${year}-12-31&pageSize=5000`)
+      .then(result => {
+
+        if (result.data.instances.length > 0) {
+
+          axios
+            .get(`/tracker/events?program=pcG18cDzLtf&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31&pageSize=5000`)
+            .then(resp => {
+              const data = filterTrackedEntitiesByCreatedAt(result.data.instances, year, period);
+
+              const reports = filterTrackedEntitiesByCreatedAt(resp.data.instances, year, period);
+              const temps = [];
+
+              // console.log("djiba aap data: ", { data, reports })
+
+              let completedBaseline = 0;
+              let completedTarget = 0;
+              let onGoingBaseline = 0;
+              let onGoingTarget = 0;
+              let abandonedBaseline = 0;
+              let abandonedTarget = 0;
+              let yetToStartBaseline = 0;
+              let yetToStartTarget = 0;
+
+              let mtdpBaseline = 0;
+              let mtdpTarget = 0;
+              let mtdpActual = 0;
+
+              data.forEach((item, idx) => {
+
+                const trackerReport = reports.filter(rep => rep.trackedEntity === item.trackedEntity);
+
+                if (trackerReport) {
+
+                  trackerReport.forEach(currentReport => {
+                    //Completed AAP
+                    completedBaseline += getStageValue(currentReport, "dxOHO0QnZsR");
+                    completedTarget += getStageValue(currentReport, "KNoWsIA6kze");
+
+                    //Ongoing AAP
+                    onGoingBaseline += getStageValue(currentReport, "ZVRR4ozm2od");
+                    onGoingTarget += getStageValue(currentReport, "lrVDQzE3hpM");
+
+                    //Abandoned AAP
+                    abandonedBaseline += getStageValue(currentReport, "WfyEAyQQlfr");
+                    abandonedTarget += getStageValue(currentReport, "xAw7tiaoQTm");
+
+                    //Yet to start AAP
+                    yetToStartBaseline += getStageValue(currentReport, "Z69ZIsB8TbP");
+                    yetToStartTarget += getStageValue(currentReport, "QZYgxnf7mP3");
+
+                    //MTDP
+                    mtdpBaseline += getStageValue(currentReport, "WrLpyyxA5pZ");
+                    mtdpTarget += getStageValue(currentReport, "U635zrF1mKK");
+                    mtdpActual += getStageValue(currentReport, "UMxVuTWkMrC");
+
+                  });
+
+
+                };
+
+                const dataSet = [
+                  {
+                    baseline: completedBaseline,
+                    target: completedTarget,
+                    indicator:"Percentage of activities completed",
+                    actual: 0
+
+                  },
+                  {
+                    baseline: onGoingBaseline,
+                    target: onGoingTarget,
+                    indicator:"Percentage of on-going activities ",
+                    actual: 0
+                  },
+                    {
+                    baseline: abandonedBaseline,
+                    target: abandonedTarget,
+                    indicator:"Percentage of activities abandoned",
+                    actual: 0
+                    },
+                    {
+                    baseline: yetToStartBaseline,
+                    target: yetToStartTarget,
+                    indicator:"Percentage of activities yet to start",
+                    actual: 0
+                    },
+                    {
+                    baseline: mtdpBaseline,
+                    target: mtdpTarget,
+                    actual: mtdpActual,
+                    indicator:"Proportion of the overall Medium-Term Development Plan implemented",
+                    
+                  }
+                ];
+
+                console.log("djiba aap data: ", dataSet)
+
+
+                temps.push(dataSet);
+                setTableData(dataSet);
+              });
+
+              
+
+
+            })
+            .catch(err => console.log(err))
+        }
+
+
+      })
+      .catch(err => console.log(err))
+  }
+
 
   // Pictorial evidence data
   const pictorialEvidence = [
@@ -70,7 +151,7 @@ const Table1_1 = ({ year = "2022", district = "EmVZbr0kApz" }) => {
 
   // Data for the bar graph
   const chartData = {
-    labels: tableData.map((row) => row.indicator.substring(0, 30) + (row.indicator.length > 30 ? "..." : "")), // Shorten labels for readability
+    labels: tableData.map((row) => row.indicator), // Shorten labels for readability
     datasets: [
       {
         label: "Baseline 2021 (%)",
@@ -126,27 +207,29 @@ const Table1_1 = ({ year = "2022", district = "EmVZbr0kApz" }) => {
 
   return (
     <div className="col-12">
-      <h3>Table 1.1 – Proportion of the AAP and the MTDP Implemented</h3>
       <div className="card">
         <div className="card-header">Table 1.1 – Proportion of the AAP and the MTDP Implemented</div>
         <div className="card-body">
-          <h5>1.1 Summary of Achievement of the Implementation of the District Medium Term Development Plan (DMTDP)</h5>
+          <h5>1.1 Summary of Achievement of the Implementation of the District
+            Medium Term Development Plan (DMTDP)</h5>
           <h7>
-            In assessing the implementation status of the MTDP 2022-2025 for the year under review, 
+            In assessing the implementation status of the MTDP 2022-2025 for the year under review,
             premium was placed on the analysis of the progress made in implementing the key
-            activities outlined in the 2022 Annual Action Plan and the Medium-Term Development 
-            Plan as a whole. The achievements in set indicators were used as the basis for the 
+            activities outlined in the 2022 Annual Action Plan and the Medium-Term Development
+            Plan as a whole. The achievements in set indicators were used as the basis for the
             assessment.
             The analysis further grouped proposed interventions into three categories. These are
-            “Fully implemented” which describes projects or programmes outlined in the Annual 
-            Action Plan that have been started and completed. “Ongoing” describes projects/ 
-            programmes that have been started but not yet completed and “Not Implemented” 
-            describes a project/programme that has not been started or yet to start. 
-            A total number of 137 activities were captured in the 2022 Annual Action Plan whilst the 
+            “Fully implemented” which describes projects or programmes outlined in the Annual
+            Action Plan that have been started and completed. “Ongoing” describes projects/
+            programmes that have been started but not yet completed and “Not Implemented”
+            describes a project/programme that has not been started or yet to start.
+            A total number of 137 activities were captured in the 2022 Annual Action Plan whilst the
             MTDP contained a total number of 528 interventions. By the end of the year 2022, 121
-            activities representing 88.32% projects were completed, 13 activities representing 9.49% 
+            activities representing 88.32% projects were completed, 13 activities representing 9.49%
             were ongoing and 3 activities representing 2.19% were yet to be started. In all 134
-            projects and programmes representing 97.81% of the Annual Action Plan for 2022 were 
+            2 | P a g e
+            3 | P a g e
+            projects and programmes representing 97.81% of the Annual Action Plan for 2022 were
             implemented.
             This so far translates into 25.4% achievement of the total 528 planned interventions of
             the 2022-2025 Medium-Term Development Plan as of December 2022. Table 1.1
@@ -167,12 +250,12 @@ const Table1_1 = ({ year = "2022", district = "EmVZbr0kApz" }) => {
                 backgroundColor: '#d4edda',
                 fontWeight: 'bold',
               }}>
+                {/* {JSON.stringify(tableData)} */}
                 <tr>
                   <th style={{ border: '1px solid #000' }}>Indicators</th>
-                  <th style={{ border: '1px solid #000' }}>Baseline 2021</th>
-                  <th style={{ border: '1px solid #000' }}>Target 2022</th>
-                  <th style={{ border: '1px solid #000' }}>Actual 2022</th>
-                  <th style={{ border: '1px solid #000' }}>Target 2023</th>
+                  <th style={{ border: '1px solid #000' }}>Baseline</th>
+                  <th style={{ border: '1px solid #000' }}>Target</th>
+                  <th style={{ border: '1px solid #000' }}>Actual</th>
                 </tr>
               </thead>
               <tbody>
@@ -180,21 +263,20 @@ const Table1_1 = ({ year = "2022", district = "EmVZbr0kApz" }) => {
                   <tr key={index}>
                     <td style={{ border: '1px solid #000' }}>{row.indicator}</td>
                     <td style={{ border: '1px solid #000' }}>
-                      {row.baseline2021 ? `${row.baseline2021}%` : 'N/A'}
+                      {row.baseline}
                     </td>
                     <td style={{ border: '1px solid #000' }}>
-                      {row.target2022 ? `${row.target2022}%` : 'N/A'}
+                      {row.target}
                     </td>
                     <td style={{ border: '1px solid #000' }}>
-                      {row.actual2022 ? `${row.actual2022}%` : 'N/A'}
+                      {row.actual}
                     </td>
-                    <td style={{ border: '1px solid #000' }}>
-                      {row.target2023 ? `${row.target2023}%` : 'N/A'}
-                    </td>
+                    
                   </tr>
                 ))}
               </tbody>
             </table>
+
           </div>
           <p className="mt-2">
             <small>Source: MPCU-TNMA</small>
@@ -225,7 +307,9 @@ const Table1_1 = ({ year = "2022", district = "EmVZbr0kApz" }) => {
           <hr />
           <h5>Comparison of Implementation Status: 2021 vs 2022</h5>
           <div className="mt-4">
-            <Bar data={chartData} options={chartOptions} />
+            <Bar data={chartData} options={chartOptions}
+
+            />
           </div>
           {/* Integrate APRComment component */}
           <APRComment

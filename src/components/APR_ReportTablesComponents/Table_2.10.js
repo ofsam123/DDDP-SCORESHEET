@@ -1,7 +1,7 @@
-
 import React, { useEffect, useState } from "react";
 import axios from "../../api/axios";
-import { filterTrackedEntitiesByCreatedAt, formatDataGeneral, getAttributeValue } from "../../utils/utils";
+import { formatDataGeneral, getAttributeValue } from "../../utils/utils";
+import APRComment from "../APR_ReportTablesComponents/APRComments";
 
 const Table2_10 = ({ year, district, period }) => {
   const [tableData, setTableData] = useState([]);
@@ -16,7 +16,6 @@ const Table2_10 = ({ year, district, period }) => {
     axios
       .get(`/tracker/trackedEntities?orgUnit=${district}&program=UfMl96n7nnX&startDate=${year}-01-01&endDate=${year}-12-31`)
       .then(result => {
-
         if (result.data.instances.length > 0) {
           
 
@@ -24,16 +23,16 @@ const Table2_10 = ({ year, district, period }) => {
             .get(`/tracker/events?program=UfMl96n7nnX&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
             .then(resp => {
 
-              const dataProcessed = filterTrackedEntitiesByCreatedAt(result.data.instances, year, period);
+              // const reports = filterTrackedEntitiesByCreatedAt(resp.data.instances, startDate, endDate);
 
-              const data = formatDataGeneral(dataProcessed, "Evaluation Type", "Participatory Monitoring Evaluation") || [];
+              // console.log("Djiba key evaluation: ", result.data.instances)
+
+              const data = formatDataGeneral(result.data.instances, "Evaluation Type", "Participatory Monitoring Evaluation") || [];
               const reports = resp.data.instances;
-
 
               const temps = [];
 
               data.forEach((item, idx) => {
-
                 const findings = `${getAttributeValue("Findings PME", item)}`;
 
                 const dataSetTemp = {
@@ -50,16 +49,12 @@ const Table2_10 = ({ year, district, period }) => {
               });
 
               setTableData(temps);
-
-
             })
-            .catch(err => console.log(err))
+            .catch(err => console.log(err));
         }
-
       })
-      .catch(err => console.log(err))
+      .catch(err => console.log(err));
   }
-
 
   return (
     <div className="col-12">
@@ -96,6 +91,21 @@ const Table2_10 = ({ year, district, period }) => {
           <p className="mt-2">
             <small>Source: MPCU</small>
           </p>
+          {/* Integrate APRComment component */}
+          <APRComment
+            data={tableData}
+            year={year}
+            districtId={district}
+            tableCommentedId="Table2_10"
+            hideComment={false}
+          >
+            {({ renderCommentInput, renderCommentList }) => (
+              <div className="mt-4">
+                {renderCommentInput()}
+                {renderCommentList()}
+              </div>
+            )}
+          </APRComment>
         </div>
       </div>
     </div>

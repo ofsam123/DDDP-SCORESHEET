@@ -1,6 +1,6 @@
-
 import React, { useEffect, useState } from "react";
 import axios from "../../api/axios";
+import APRComment from "../APR_ReportTablesComponents/APRComments";
 
 const agricultureData = [
   { indicator: "Maize", baseline: 0, target: 0, actual: 0, nextActual: 0 },
@@ -149,7 +149,6 @@ const emergencyData = [
   { indicator: "Female", id: "Female", baseline: 0, target: 0, actual: 0, nextActual: 0 },
   { indicator: "Percentage of communities affected by disaster (%)", id: "District", baseline: 0, target: 0, actual: 0, nextActual: 0 },
   { indicator: "No. of Climate change programmes organized", id: "District", baseline: 0, target: 0, actual: 0, nextActual: 0 }
-
 ];
 
 const electricityData = [
@@ -259,14 +258,7 @@ const nhisData = [
   }
 ];
 
-
-
-
-
-const Table2_5 = ({
-   year, district, dataElements, categories,
-    districtWideConstant, economicDataElements,
-     socialDataElements, period }) => {
+const Table2_5 = ({ year, district, dataElements, categories, districtWideConstant, economicDataElements, socialDataElements,period }) => {
 
   const [tableData, setTableData] = useState([]);
   const [showChart, setShowChart] = useState(true);
@@ -294,11 +286,10 @@ const Table2_5 = ({
     getGovernance();
     getEmergencyPlanning();
     getImplementationMonitoring();
-  }, [year, district, period]);
+  }, [year, district,period]);
 
 
   function populateEconomicDevelopmentData(economicData, constantsData) {
-
     const stappleCropActuals = economicData.filter(
       item => item.dataElementName.includes("Stapple Crops")
     );
@@ -330,22 +321,16 @@ const Table2_5 = ({
       item => item?.dataElementName?.includes("NDPC| Baseline Livestock & Poultry")
     );
 
-
     agricultureData.forEach(item => {
       const actual = stappleCropActuals.find(el => el.categoryOptionComboName.includes(item.indicator));
-
       if (actual) {
         item.actual = `${actual.value}MT`;
       }
-
       const baseline = stappleCropBaselineAndTarget.find(el => el.categoryOptionComboName.includes(`${item.indicator}, Baseline`));
-
       if (baseline) {
         item.baseline = `${baseline.value}MT`;
       }
-
       const target = stappleCropBaselineAndTarget.find(el => el.categoryOptionComboName.includes(`${item.indicator}, Target`));
-
       if (target) {
         item.target = `${target.value}MT`;
       }
@@ -353,19 +338,14 @@ const Table2_5 = ({
 
     establishmentData.forEach(item => {
       const actual = newEstablishmentActuals.find(el => el.categoryOptionComboName.includes(item.id));
-
       if (actual) {
         item.actual = actual.value;
       }
-
       const baseline = newEstablishmentBaselineAndTarget.find(el => el.categoryOptionComboName.includes(`${item.id}, Baseline`));
-
       if (baseline) {
         item.baseline = baseline.value;
       }
-
       const target = newEstablishmentBaselineAndTarget.find(el => el.categoryOptionComboName.includes(`${item.id}, Target`));
-
       if (target) {
         item.target = target.value;
       }
@@ -373,19 +353,14 @@ const Table2_5 = ({
 
     newJobsData.forEach(item => {
       const actual = newJobsActuals.find(el => el.categoryOptionComboName.includes(item.id));
-
       if (actual) {
         item.actual = actual.value;
       }
-
       const baseline = newJobsBaselineAndTarget.find(el => el.categoryOptionComboName.includes(`${item.id}, Baseline`));
-
       if (baseline) {
         item.baseline = baseline.value;
       }
-
       const target = newJobsBaselineAndTarget.find(el => el.categoryOptionComboName.includes(`${item.id}, Target`));
-
       if (target) {
         item.target = target.value;
       }
@@ -393,19 +368,14 @@ const Table2_5 = ({
 
     poultryData.forEach(item => {
       const actual = poultryActuals.find(el => el.categoryOptionComboName.includes(item.id));
-
       if (actual) {
         item.actual = actual.value;
       }
-
       const baseline = poultryBaselineAndTarget.find(el => el.categoryOptionComboName.includes(`${item.id}, Baseline`));
-
       if (baseline) {
         item.baseline = baseline.value;
       }
-
       const target = poultryBaselineAndTarget.find(el => el.categoryOptionComboName.includes(`${item.id}, Target`));
-
       if (target) {
         item.target = target.value;
       }
@@ -418,17 +388,14 @@ const Table2_5 = ({
   }
 
   function populateSocialDevelopmentData(socialData, constantsData) {
-
     const schoolEnrolmentActuals = socialData.filter(item =>
-    (item.dataElementName.includes("School Enrollment By Gender") ||
-      item.dataElementName.includes("School Enrolment By Gender")
-    )
-
+      (item.dataElementName.includes("School Enrollment By Gender") ||
+        item.dataElementName.includes("School Enrolment By Gender"))
     );
-    // setTableData(schoolEnrolmentActuals)
+
     const schoolEnrolmentBaselineAndTarget = constantsData.filter(item =>
-    (item?.dataElementName?.includes("School Enrollment By Gender") ||
-      item?.dataElementName?.includes("School Enrolment By Gender"))
+      (item?.dataElementName?.includes("School Enrollment By Gender") ||
+        item?.dataElementName?.includes("School Enrolment By Gender"))
     );
 
     const schoolGenderParityBaselineAndTarget = constantsData.filter(item =>
@@ -470,24 +437,18 @@ const Table2_5 = ({
       item?.dataElementName?.includes("valid NHIS")
     );
 
-    console.log("NHIS: ",{nhisActuals, nhisBaselineAndTarget});
-
+    console.log("NHIS: ", { nhisActuals, nhisBaselineAndTarget });
 
     schoolCompletionRateData.forEach(item => {
       const actual = schoolCompletionRateActuals.find(el => el.categoryOptionComboName.includes(item.id));
-
       if (actual) {
         item.actual = actual.value;
       }
-
       const baseline = schoolCompletionRateBaselineAndTarget.find(el => el.categoryOptionComboName.includes(`${item.id}, Baseline`));
-
       if (baseline) {
         item.baseline = baseline.value;
       }
-
       const target = schoolCompletionRateBaselineAndTarget.find(el => el.categoryOptionComboName.includes(`${item.id}, Target`));
-
       if (target) {
         item.target = target.value;
       }
@@ -495,19 +456,14 @@ const Table2_5 = ({
 
     schoolGenderParityData.forEach(item => {
       const actual = schoolGenderParityActuals.find(el => el.categoryOptionComboName.includes(item.id));
-
       if (actual) {
         item.actual = actual.value;
       }
-
       const baseline = schoolGenderParityBaselineAndTarget.find(el => el.categoryOptionComboName.includes(`${item.id}, Baseline`));
-
       if (baseline) {
         item.baseline = baseline.value;
       }
-
       const target = schoolGenderParityBaselineAndTarget.find(el => el.categoryOptionComboName.includes(`${item.id}, Target`));
-
       if (target) {
         item.target = target.value;
       }
@@ -515,19 +471,14 @@ const Table2_5 = ({
 
     schoolPassRateData.forEach(item => {
       const actual = schoolPassRateActuals.find(el => el.categoryOptionComboName.includes(item.id));
-
       if (actual) {
         item.actual = actual.value;
       }
-
       const baseline = schoolPassRateBaselineAndTarget.find(el => el.categoryOptionComboName.includes(`${item.id}, Baseline`));
-
       if (baseline) {
         item.baseline = baseline.value;
       }
-
       const target = schoolPassRateBaselineAndTarget.find(el => el.categoryOptionComboName.includes(`${item.id}, Target`));
-
       if (target) {
         item.target = target.value;
       }
@@ -535,75 +486,56 @@ const Table2_5 = ({
 
     healthFacilityData.forEach(item => {
       const actual = healthFacityActuals.find(el => el.categoryOptionComboName.includes(`${item.id}, Public`));
-
       if (actual) {
         item.actual = actual.value;
       }
-
       const baseline = healthFacityBaselineAndTarget.find(el => el.categoryOptionComboName.includes(`${item.id}, Baseline`));
-
       if (baseline) {
         item.baseline = baseline.value;
       }
-
       const target = healthFacityBaselineAndTarget.find(el => el.categoryOptionComboName.includes(`${item.id}, Target`));
-
       if (target) {
         item.target = target.value;
       }
     });
 
-     nhisData.forEach(item => {
+    nhisData.forEach(item => {
       const actualMale = nhisActuals.find(el => el.categoryOptionComboName.includes(`${item.id}, Actual, Male`));
-
       if (actualMale) {
         item.actualMale = actualMale.value;
       }
-
       const actualFemale = nhisActuals.find(el => el.categoryOptionComboName.includes(`${item.id}, Actual, Female`));
-
       if (actualFemale) {
         item.actualFemale = actualFemale.value;
       }
-
       const baselineMale = nhisBaselineAndTarget.find(el => el.categoryOptionComboName.includes(`${item.id}, Baseline, Male`));
-
       if (baselineMale) {
         item.baselineMale = baselineMale.value;
       }
-
       const baselineFemale = nhisBaselineAndTarget.find(el => el.categoryOptionComboName.includes(`${item.id}, Baseline, Female`));
-
       if (baselineFemale) {
         item.baselineFemale = baselineFemale.value;
       }
-
       const targetMale = nhisBaselineAndTarget.find(el => el.categoryOptionComboName.includes(`${item.id}, Target, Male`));
-
       if (targetMale) {
         item.targetMale = targetMale.value;
       }
-
       const targetFemale = nhisBaselineAndTarget.find(el => el.categoryOptionComboName.includes(`${item.id}, Target, Female`));
-
       if (targetFemale) {
         item.targetFemale = targetFemale.value;
       }
     });
 
     const schoolEnrollments = countSchoolEnrolment(schoolEnrolmentBaselineAndTarget, schoolEnrolmentActuals);
-
-    setSchoolEnrollment(schoolEnrollments)
+    setSchoolEnrollment(schoolEnrollments);
     setSchoolCompletionRate(schoolCompletionRateData);
     setSchoolGenderParity(schoolGenderParityData);
     setSchoolPassRate(schoolPassRateData);
     setHealthFacility(healthFacilityData);
     setNhis(nhisData);
-    // console.log("nhis: ", nhisData);
   }
 
   function countSchoolEnrolment(rawData, actuals) {
-
     const summary = {
       PreSchool: { baseline: 0, target: 0, actual: 0 },
       Primary: { baseline: 0, target: 0, actual: 0 },
@@ -611,7 +543,6 @@ const Table2_5 = ({
       SHS: { baseline: 0, target: 0, actual: 0 }
     };
 
-    //count baselines and targets
     rawData.forEach(item => {
       const name = item.dataElementName.toLowerCase();
       const category = item.categoryOptionComboName.toLowerCase();
@@ -636,7 +567,6 @@ const Table2_5 = ({
       }
     });
 
-    //count actuals
     actuals.forEach(item => {
       const name = item.dataElementName.toLowerCase();
       const value = parseFloat(item.value) || 0;
@@ -651,7 +581,6 @@ const Table2_5 = ({
         summary.SHS.actual += value;
       }
     });
-
 
     const finalResult = [
       {
@@ -685,15 +614,12 @@ const Table2_5 = ({
     ];
 
     return finalResult;
-
   }
 
   function populateEnvironmentalData(data, constantsData) {
-
     const networkBaselineAndTarget = constantsData.filter(
       item => item?.dataElementName?.includes("NDPC| Baseline & Target - Percentage Road Network in Good Condition")
     );
-
 
     const electricityBaselineAndTarget = constantsData.filter(
       item => item?.dataElementName?.includes("NDPC| Baseline & Target - Percentage of communities covered by electricity")
@@ -701,19 +627,14 @@ const Table2_5 = ({
 
     roadNetworkData.forEach(item => {
       const actual = data.find(el => el.categoryOptionComboName.includes(item.indicator));
-
       if (actual) {
         item.actual = actual.value;
       }
-
       const baseline = networkBaselineAndTarget.find(el => el.categoryOptionComboName.includes(`${item.id}, Baseline`));
-
       if (baseline) {
         item.baseline = baseline.value;
       }
-
       const target = networkBaselineAndTarget.find(el => el.categoryOptionComboName.includes(`${item.id}, Target`));
-
       if (target) {
         item.target = target.value;
       }
@@ -721,19 +642,14 @@ const Table2_5 = ({
 
     electricityData.forEach(item => {
       const actual = data.find(el => el.categoryOptionComboName.includes(item.indicator));
-
       if (actual) {
         item.actual = actual.value;
       }
-
       const baseline = electricityBaselineAndTarget.find(el => el.categoryOptionComboName.includes(`${item.id}, Baseline`));
-
       if (baseline) {
         item.baseline = baseline.value;
       }
-
       const target = electricityBaselineAndTarget.find(el => el.categoryOptionComboName.includes(`${item.id}, Target`));
-
       if (target) {
         item.target = target.value;
       }
@@ -745,49 +661,35 @@ const Table2_5 = ({
 
     setElectricity(electricityData);
     setNetwork(roadNetworkData);
-
-    // console.log("environment: ", { electricityData, roadNetworkData });
   }
 
   function populateGovernanceData(data, constantsData) {
-
     const governanceBaselineAndTarget = constantsData.filter(
       item => item?.dataElementName?.includes("NDPC| Baseline & Target - Reported Crime cases by gender")
     );
 
     governanceData.forEach(item => {
       const actualMale = data.find(el => el.categoryOptionComboName.includes(`${item.id}, Actual, Male`));
-
       if (actualMale) {
         item.actualMale = actualMale.value;
       }
-
       const actualFemale = data.find(el => el.categoryOptionComboName.includes(`${item.id}, Actual, Female`));
-
       if (actualFemale) {
         item.actualFemale = actualFemale.value;
       }
-
       const baselineMale = governanceBaselineAndTarget.find(el => el.categoryOptionComboName.includes(`${item.id}, Baseline, Male`));
-
       if (baselineMale) {
         item.baselineMale = baselineMale.value;
       }
-
       const baselineFemale = governanceBaselineAndTarget.find(el => el.categoryOptionComboName.includes(`${item.id}, Baseline, Female`));
-
       if (baselineFemale) {
         item.baselineFemale = baselineFemale.value;
       }
-
       const targetMale = governanceBaselineAndTarget.find(el => el.categoryOptionComboName.includes(`${item.id}, Target, Male`));
-
       if (targetMale) {
         item.targetMale = targetMale.value;
       }
-
       const targetFemale = governanceBaselineAndTarget.find(el => el.categoryOptionComboName.includes(`${item.id}, Target, Female`));
-
       if (targetFemale) {
         item.targetFemale = targetFemale.value;
       }
@@ -804,23 +706,17 @@ const Table2_5 = ({
       item?.dataElementName?.includes("NDPC| Baseline & Target - Proportion of population who have tested positive for Covid-19")
     );
 
-    // console.log("emergency: ", { data, emergencyBaselineAndTarget });
-
     emergencyData.forEach(item => {
       const actual = data.find(el => el.categoryOptionComboName.includes(item.id));
-
       if (actual) {
         item.actual = actual.value;
       }
-
       const baseline = emergencyBaselineAndTarget.find(el =>
         el.categoryOptionComboName.includes(`${item.id}, Baseline`)
       );
-
       if (baseline) {
         item.baseline = baseline.value;
       }
-
       const target = emergencyBaselineAndTarget.find(el =>
         el.categoryOptionComboName.includes(`${item.id}, Target`)
       );
@@ -829,13 +725,10 @@ const Table2_5 = ({
       }
     });
 
-    // console.log("emergency process: ", emergencyData);
     setEmergency(emergencyData);
-
   }
 
   function populateImplementationData(data, constantsData) {
-
     const implementationBaselineAndTarget = constantsData.filter(item =>
       item?.dataElementName?.includes("NDPC| Baseline & Target - Tele-density penetration") ||
       item?.dataElementName?.includes("NDPC| Baseline & Target - Percentage change in access to information")
@@ -843,20 +736,16 @@ const Table2_5 = ({
 
     implementationData.forEach(item => {
       const actual = data.find(el => el.dataElement.includes(item.id));
-
       if (actual) {
         item.actual = actual.value;
       }
-
       const baseline = implementationBaselineAndTarget.find(el =>
         el.categoryOptionComboName.includes('District, Baseline') &&
         el.dataElementName?.includes(item.indicator)
       );
-
       if (baseline) {
         item.baseline = baseline.value;
       }
-
       const target = implementationBaselineAndTarget.find(el =>
         el.categoryOptionComboName.includes('District, Target') &&
         el.dataElementName?.includes(item.indicator)
@@ -870,7 +759,6 @@ const Table2_5 = ({
   }
 
   function enrichData(mainData, element) {
-
     const dataElementMap = {};
     const comboMap = {};
 
@@ -882,7 +770,6 @@ const Table2_5 = ({
       comboMap[item.id] = item.name;
     });
 
-    // Enrich each record
     return mainData.map(item => ({
       ...item,
       dataElementName: dataElementMap[item.dataElement] || 'Unknown',
@@ -890,9 +777,7 @@ const Table2_5 = ({
     }));
   }
 
-
   function getEconomicDevelopment() {
-
     axios
       .get(`/dataValueSets?dataSet=Xj0f6QZwYeO&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
       .then(result => {
@@ -906,14 +791,12 @@ const Table2_5 = ({
   }
 
   function getSocialDevelopment() {
-
     axios
       .get(`/dataValueSets?dataSet=cfMIscR3rdL&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
       .then(result => {
         const socialDevelopment = enrichData(result.data.dataValues, socialDataElements);
         const constants = enrichData(districtWideConstant, dataElements);
         populateSocialDevelopmentData(socialDevelopment, constants);
-
       })
       .catch(err => {
         console.log(err);
@@ -921,14 +804,12 @@ const Table2_5 = ({
   }
 
   function getEnvironmental() {
-
     axios
       .get(`/dataValueSets?dataSet=xGhMYfP13Yh&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
       .then(result => {
         const environmental = enrichData(result.data.dataValues, economicDataElements);
         const constants = enrichData(districtWideConstant, dataElements);
         populateEnvironmentalData(environmental, constants);
-
       })
       .catch(err => {
         console.log(err);
@@ -936,14 +817,12 @@ const Table2_5 = ({
   }
 
   function getGovernance() {
-
     axios
       .get(`/dataValueSets?dataSet=AsSyAiD5keB&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
       .then(result => {
         const governance = enrichData(result.data.dataValues, economicDataElements);
         const constants = enrichData(districtWideConstant, dataElements);
         populateGovernanceData(governance, constants);
-
       })
       .catch(err => {
         console.log(err);
@@ -951,14 +830,12 @@ const Table2_5 = ({
   }
 
   function getEmergencyPlanning() {
-
     axios
       .get(`/dataValueSets?dataSet=j4M7F8pcrH0&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
       .then(result => {
         const emergency = enrichData(result.data.dataValues, economicDataElements);
         const constants = enrichData(districtWideConstant, dataElements);
         populateEmergencyData(emergency, constants);
-
       })
       .catch(err => {
         console.log(err);
@@ -966,19 +843,36 @@ const Table2_5 = ({
   }
 
   function getImplementationMonitoring() {
-
     axios
       .get(`/dataValueSets?dataSet=rfew5qLb2ec&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
       .then(result => {
         const implementation = enrichData(result.data.dataValues, economicDataElements);
         const constants = enrichData(districtWideConstant, dataElements);
         populateImplementationData(implementation, constants);
-
       })
       .catch(err => {
         console.log(err);
       });
   }
+
+  // Combine all datasets for APRComment
+  const combinedData = [
+    ...agriculture,
+    ...newEstablishment,
+    ...newJobs,
+    ...poultry,
+    ...schoolEnrollment,
+    ...schoolCompletionRate,
+    ...schoolGenderParity,
+    ...schoolPassRate,
+    ...healthFacility,
+    ...nhis,
+    ...implmentation,
+    ...emergency,
+    ...network,
+    ...electricity,
+    ...governance
+  ];
 
   return (
     <div className="col-12">
@@ -998,11 +892,9 @@ const Table2_5 = ({
           various sectors has been presented below based on the development dimensions.
           <br />
           <br />
-          {/* {JSON.stringify(tableData)} */}
           <div className="table-responsive">
             <table className="table table-bordered">
               <thead style={{
-
                 border: '1px solid #000',
                 borderCollapse: 'collapse',
                 width: '100%',
@@ -1023,7 +915,6 @@ const Table2_5 = ({
                 <tr style={{ border: '1px solid #000' }}>
                   <td style={{ border: 'none' }}></td>
                   <td style={{ border: 'none' }}></td>
-
                   <td style={{ border: 'none', fontWeight: 'bold' }}> ECONOMIC DEVELOPMENT</td>
                   <td style={{ border: 'none' }}></td>
                   <td style={{ border: 'none' }}></td>
@@ -1041,19 +932,13 @@ const Table2_5 = ({
                       borderRight: '1px solid #000',
                       borderTop: 'none',
                       borderBottom: 'none'
-                    }}>
-
-                    </td>
+                    }}></td>
                     <td style={{ border: '1px solid #000' }}>{row.indicator}</td>
                     <td style={{ border: '1px solid #000' }}>{row.baseline}</td>
                     <td style={{ border: '1px solid #000' }}>{row.target}</td>
                     <td style={{ border: '1px solid #000' }}>{row.actual}</td>
                     <td style={{ border: '1px solid #000' }}>{row.nextActual}</td>
-                    <td style={{ border: '1px solid #000' }}>
-                      <p>
-
-                      </p>
-                    </td>
+                    <td style={{ border: '1px solid #000' }}><p></p></td>
                   </tr>
                 ))}
                 <tr style={{ border: '1px solid #000' }}>
@@ -1071,26 +956,19 @@ const Table2_5 = ({
                       borderRight: '1px solid #000',
                       borderTop: 'none',
                       borderBottom: 'none'
-                    }}>
-
-                    </td>
+                    }}></td>
                     <td style={{ border: '1px solid #000' }}>{row.indicator}</td>
                     <td style={{ border: '1px solid #000' }}>{row.baseline}</td>
                     <td style={{ border: '1px solid #000' }}>{row.target}</td>
                     <td style={{ border: '1px solid #000' }}>{row.actual}</td>
                     <td style={{ border: '1px solid #000' }}>{row.nextActual}</td>
-                    <td style={{ border: '1px solid #000' }}>
-                      <p>
-
-                      </p>
-                    </td>
+                    <td style={{ border: '1px solid #000' }}><p></p></td>
                   </tr>
                 ))}
                 <tr style={{ border: '1px solid #000' }}>
                   <td style={{ border: '1px solid #000' }}>4</td>
                   <td style={{ border: 'none', fontWeight: 'bold' }}>Number of new jobs created</td>
                 </tr>
-
                 {newJobs.map((row, index) => (
                   <tr key={index}>
                     <td style={{
@@ -1098,27 +976,19 @@ const Table2_5 = ({
                       borderRight: '1px solid #000',
                       borderTop: 'none',
                       borderBottom: 'none'
-                    }}>
-
-                    </td>
+                    }}></td>
                     <td style={{ border: '1px solid #000' }}>{row.indicator}</td>
                     <td style={{ border: '1px solid #000' }}>{row.baseline}</td>
                     <td style={{ border: '1px solid #000' }}>{row.target}</td>
                     <td style={{ border: '1px solid #000' }}>{row.actual}</td>
                     <td style={{ border: '1px solid #000' }}>{row.nextActual}</td>
-                    <td style={{ border: '1px solid #000' }}>
-                      <p>
-
-                      </p>
-                    </td>
+                    <td style={{ border: '1px solid #000' }}><p></p></td>
                   </tr>
                 ))}
-
                 <tr style={{ border: '1px solid #000' }}>
                   <td style={{ border: '1px solid #000' }}>5</td>
                   <td style={{ border: 'none', fontWeight: 'bold' }}>Percentage change in livestock/poultry production</td>
                 </tr>
-
                 {poultry.map((row, index) => (
                   <tr key={index}>
                     <td style={{
@@ -1126,26 +996,18 @@ const Table2_5 = ({
                       borderRight: '1px solid #000',
                       borderTop: 'none',
                       borderBottom: 'none'
-                    }}>
-
-                    </td>
+                    }}></td>
                     <td style={{ border: '1px solid #000' }}>{row.indicator}</td>
                     <td style={{ border: '1px solid #000' }}>{row.baseline}</td>
                     <td style={{ border: '1px solid #000' }}>{row.target}</td>
                     <td style={{ border: '1px solid #000' }}>{row.actual}</td>
                     <td style={{ border: '1px solid #000' }}>{row.nextActual}</td>
-                    <td style={{ border: '1px solid #000' }}>
-                      <p>
-
-                      </p>
-                    </td>
+                    <td style={{ border: '1px solid #000' }}><p></p></td>
                   </tr>
                 ))}
-
                 <tr style={{ border: '1px solid #000' }}>
                   <td style={{ border: 'none' }}></td>
                   <td style={{ border: 'none' }}></td>
-
                   <td style={{ border: 'none', fontWeight: 'bold' }}> SOCIAL DEVELOPMENT</td>
                   <td style={{ border: 'none' }}></td>
                   <td style={{ border: 'none' }}></td>
@@ -1163,22 +1025,15 @@ const Table2_5 = ({
                       borderRight: '1px solid #000',
                       borderTop: 'none',
                       borderBottom: 'none'
-                    }}>
-
-                    </td>
+                    }}></td>
                     <td style={{ border: '1px solid #000' }}>{row.indicator}</td>
                     <td style={{ border: '1px solid #000' }}>{row.baseline}%</td>
                     <td style={{ border: '1px solid #000' }}>{row.target}%</td>
                     <td style={{ border: '1px solid #000' }}>{row.actual}%</td>
                     <td style={{ border: '1px solid #000' }}>{row.nextActual}%</td>
-                    <td style={{ border: '1px solid #000' }}>
-                      <p>
-
-                      </p>
-                    </td>
+                    <td style={{ border: '1px solid #000' }}><p></p></td>
                   </tr>
                 ))}
-
                 <tr style={{ border: '1px solid #000' }}>
                   <td style={{ border: '1px solid #000' }}>7</td>
                   <td style={{ border: 'none', fontWeight: 'bold' }}>Gender Parity Index</td>
@@ -1190,22 +1045,15 @@ const Table2_5 = ({
                       borderRight: '1px solid #000',
                       borderTop: 'none',
                       borderBottom: 'none'
-                    }}>
-
-                    </td>
+                    }}></td>
                     <td style={{ border: '1px solid #000' }}>{row.indicator}</td>
                     <td style={{ border: '1px solid #000' }}>{row.baseline}</td>
                     <td style={{ border: '1px solid #000' }}>{row.target}</td>
                     <td style={{ border: '1px solid #000' }}>{row.actual}</td>
                     <td style={{ border: '1px solid #000' }}>{row.nextActual}</td>
-                    <td style={{ border: '1px solid #000' }}>
-                      <p>
-
-                      </p>
-                    </td>
+                    <td style={{ border: '1px solid #000' }}><p></p></td>
                   </tr>
                 ))}
-
                 <tr style={{ border: '1px solid #000' }}>
                   <td style={{ border: '1px solid #000' }}>8</td>
                   <td style={{ border: 'none', fontWeight: 'bold' }}>Completion rate</td>
@@ -1217,22 +1065,15 @@ const Table2_5 = ({
                       borderRight: '1px solid #000',
                       borderTop: 'none',
                       borderBottom: 'none'
-                    }}>
-
-                    </td>
+                    }}></td>
                     <td style={{ border: '1px solid #000' }}>{row.indicator}</td>
                     <td style={{ border: '1px solid #000' }}>{row.baseline}%</td>
                     <td style={{ border: '1px solid #000' }}>{row.target}%</td>
                     <td style={{ border: '1px solid #000' }}>{row.actual}%</td>
                     <td style={{ border: '1px solid #000' }}>{row.nextActual}%</td>
-                    <td style={{ border: '1px solid #000' }}>
-                      <p>
-
-                      </p>
-                    </td>
+                    <td style={{ border: '1px solid #000' }}><p></p></td>
                   </tr>
                 ))}
-
                 <tr style={{ border: '1px solid #000' }}>
                   <td style={{ border: '1px solid #000' }}>9</td>
                   <td style={{ border: 'none', fontWeight: 'bold' }}>Pass rate</td>
@@ -1244,22 +1085,15 @@ const Table2_5 = ({
                       borderRight: '1px solid #000',
                       borderTop: 'none',
                       borderBottom: 'none'
-                    }}>
-
-                    </td>
+                    }}></td>
                     <td style={{ border: '1px solid #000' }}>{row.indicator}</td>
                     <td style={{ border: '1px solid #000' }}>{row.baseline}%</td>
                     <td style={{ border: '1px solid #000' }}>{row.target}%</td>
                     <td style={{ border: '1px solid #000' }}>{row.actual}%</td>
                     <td style={{ border: '1px solid #000' }}>{row.nextActual}%</td>
-                    <td style={{ border: '1px solid #000' }}>
-                      <p>
-
-                      </p>
-                    </td>
+                    <td style={{ border: '1px solid #000' }}><p></p></td>
                   </tr>
                 ))}
-
                 <tr style={{ border: '1px solid #000' }}>
                   <td style={{ border: '1px solid #000' }}>10</td>
                   <td style={{ border: 'none', fontWeight: 'bold' }}>Proportion of health facilities that are functional</td>
@@ -1271,34 +1105,24 @@ const Table2_5 = ({
                       borderRight: '1px solid #000',
                       borderTop: 'none',
                       borderBottom: 'none'
-                    }}>
-
-                    </td>
+                    }}></td>
                     <td style={{ border: '1px solid #000' }}>{row.indicator}</td>
                     <td style={{ border: '1px solid #000' }}>{row.baseline}%</td>
                     <td style={{ border: '1px solid #000' }}>{row.target}%</td>
                     <td style={{ border: '1px solid #000' }}>{row.actual}%</td>
                     <td style={{ border: '1px solid #000' }}>{row.nextActual}%</td>
-                    <td style={{ border: '1px solid #000' }}>
-                      <p>
-
-                      </p>
-                    </td>
+                    <td style={{ border: '1px solid #000' }}><p></p></td>
                   </tr>
                 ))}
-
                 <tr style={{ border: '1px solid #000' }}>
                   <td style={{ border: 'none' }}></td>
                   <td style={{ border: 'none' }}></td>
-
-                  <td style={{ border: 'none', fontWeight: 'bold' }}>
-                    IMPLEMENTATION, COORDINATION, MONITORING AND EVALUATION DIMENSION</td>
+                  <td style={{ border: 'none', fontWeight: 'bold' }}> IMPLEMENTATION, COORDINATION, MONITORING AND EVALUATION DIMENSION</td>
                   <td style={{ border: 'none' }}></td>
                   <td style={{ border: 'none' }}></td>
                   <td style={{ border: 'none' }}></td>
                   <td style={{ border: 'none' }}></td>
                 </tr>
-
                 {implmentation.map((row, index) => (
                   <tr key={index}>
                     <td style={{
@@ -1306,28 +1130,19 @@ const Table2_5 = ({
                       borderRight: '1px solid #000',
                       borderTop: 'none',
                       borderBottom: 'none'
-                    }}>
-
-                    </td>
+                    }}></td>
                     <td style={{ border: '1px solid #000' }}>{row.indicator}</td>
                     <td style={{ border: '1px solid #000' }}>{row.baseline}%</td>
                     <td style={{ border: '1px solid #000' }}>{row.target}%</td>
                     <td style={{ border: '1px solid #000' }}>{row.actual}%</td>
                     <td style={{ border: '1px solid #000' }}>{row.nextActual}%</td>
-                    <td style={{ border: '1px solid #000' }}>
-                      <p>
-
-                      </p>
-                    </td>
+                    <td style={{ border: '1px solid #000' }}><p></p></td>
                   </tr>
                 ))}
-
                 <tr style={{ border: '1px solid #000' }}>
                   <td style={{ border: 'none' }}></td>
                   <td style={{ border: 'none' }}></td>
-
-                  <td style={{ border: 'none', fontWeight: 'bold' }}>
-                    EMERGENCY PLANNING AND PREPAREDNESS DIMENSION</td>
+                  <td style={{ border: 'none', fontWeight: 'bold' }}> EMERGENCY PLANNING AND PREPAREDNESS DIMENSION</td>
                   <td style={{ border: 'none' }}></td>
                   <td style={{ border: 'none' }}></td>
                   <td style={{ border: 'none' }}></td>
@@ -1335,10 +1150,8 @@ const Table2_5 = ({
                 </tr>
                 <tr style={{ border: '1px solid #000' }}>
                   <td style={{ border: '1px solid #000' }}>11</td>
-                  <td style={{ border: 'none', fontWeight: 'bold' }}>
-                    Number of communities affected by disaster & Proportion of population who have been tested positive for Covid-19</td>
+                  <td style={{ border: 'none', fontWeight: 'bold' }}>Number of communities affected by disaster & Proportion of population who have been tested positive for Covid-19</td>
                 </tr>
-
                 {emergency.map((row, index) => (
                   <tr key={index}>
                     <td style={{
@@ -1346,28 +1159,19 @@ const Table2_5 = ({
                       borderRight: '1px solid #000',
                       borderTop: 'none',
                       borderBottom: 'none'
-                    }}>
-
-                    </td>
+                    }}></td>
                     <td style={{ border: '1px solid #000' }}>{row.indicator}</td>
                     <td style={{ border: '1px solid #000' }}>{row.baseline}%</td>
                     <td style={{ border: '1px solid #000' }}>{row.target}%</td>
                     <td style={{ border: '1px solid #000' }}>{row.actual}%</td>
                     <td style={{ border: '1px solid #000' }}>{row.nextActual}%</td>
-                    <td style={{ border: '1px solid #000' }}>
-                      <p>
-
-                      </p>
-                    </td>
+                    <td style={{ border: '1px solid #000' }}><p></p></td>
                   </tr>
                 ))}
-
                 <tr style={{ border: '1px solid #000' }}>
                   <td style={{ border: 'none' }}></td>
                   <td style={{ border: 'none' }}></td>
-
-                  <td style={{ border: 'none', fontWeight: 'bold' }}>
-                    ENVIRONMENT, INFRASTRUCTURE AND HUMAN SETTLEMENT</td>
+                  <td style={{ border: 'none', fontWeight: 'bold' }}> ENVIRONMENT, INFRASTRUCTURE AND HUMAN SETTLEMENT</td>
                   <td style={{ border: 'none' }}></td>
                   <td style={{ border: 'none' }}></td>
                   <td style={{ border: 'none' }}></td>
@@ -1377,7 +1181,6 @@ const Table2_5 = ({
                   <td style={{ border: '1px solid #000' }}>12</td>
                   <td style={{ border: 'none', fontWeight: 'bold' }}>Percentage of road network in good condition</td>
                 </tr>
-
                 {network.map((row, index) => (
                   <tr key={index}>
                     <td style={{
@@ -1385,27 +1188,19 @@ const Table2_5 = ({
                       borderRight: '1px solid #000',
                       borderTop: 'none',
                       borderBottom: 'none'
-                    }}>
-
-                    </td>
+                    }}></td>
                     <td style={{ border: '1px solid #000' }}>{row.indicator}</td>
                     <td style={{ border: '1px solid #000' }}>{row.baseline}%</td>
                     <td style={{ border: '1px solid #000' }}>{row.target}%</td>
                     <td style={{ border: '1px solid #000' }}>{row.actual}%</td>
                     <td style={{ border: '1px solid #000' }}>{row.nextActual}%</td>
-                    <td style={{ border: '1px solid #000' }}>
-                      <p>
-
-                      </p>
-                    </td>
+                    <td style={{ border: '1px solid #000' }}><p></p></td>
                   </tr>
                 ))}
-
                 <tr style={{ border: '1px solid #000' }}>
                   <td style={{ border: '1px solid #000' }}>13</td>
                   <td style={{ border: 'none', fontWeight: 'bold' }}>Percentage of communities covered by electricity</td>
                 </tr>
-
                 {electricity.map((row, index) => (
                   <tr key={index}>
                     <td style={{
@@ -1413,26 +1208,18 @@ const Table2_5 = ({
                       borderRight: '1px solid #000',
                       borderTop: 'none',
                       borderBottom: 'none'
-                    }}>
-
-                    </td>
+                    }}></td>
                     <td style={{ border: '1px solid #000' }}>{row.indicator}</td>
                     <td style={{ border: '1px solid #000' }}>{row.baseline}%</td>
                     <td style={{ border: '1px solid #000' }}>{row.target}%</td>
                     <td style={{ border: '1px solid #000' }}>{row.actual}%</td>
                     <td style={{ border: '1px solid #000' }}>{row.nextActual}%</td>
-                    <td style={{ border: '1px solid #000' }}>
-                      <p>
-
-                      </p>
-                    </td>
+                    <td style={{ border: '1px solid #000' }}><p></p></td>
                   </tr>
                 ))}
-
                 <tr style={{ border: '1px solid #000' }}>
                   <td style={{ border: 'none' }}></td>
                   <td style={{ border: 'none' }}></td>
-
                   <td style={{ border: 'none', fontWeight: 'bold' }}> GOVERNANCE, CORRUPTION AND PUBLIC ACCOUNTABILITY</td>
                   <td style={{ border: 'none' }}></td>
                   <td style={{ border: 'none' }}></td>
@@ -1443,13 +1230,10 @@ const Table2_5 = ({
                   <td style={{ border: '1px solid #000' }}>15</td>
                   <td style={{ border: 'none', fontWeight: 'bold' }}>Reported cases of crime</td>
                 </tr>
-
-
               </tbody>}
             </table>
             <table className="table table-bordered p-0">
               <thead style={{
-
                 border: '1px solid #000',
                 borderCollapse: 'collapse',
                 width: '100%'
@@ -1465,11 +1249,9 @@ const Table2_5 = ({
                   <th style={{ border: '1px solid #000' }}>F</th>
                   <th style={{ border: '1px solid #000' }}>M</th>
                   <th style={{ border: '1px solid #000' }}>F</th>
-
                 </tr>
               </thead>
               <tbody>
-
                 {governance.map((row, index) => (
                   <tr key={index}>
                     <td style={{
@@ -1477,9 +1259,7 @@ const Table2_5 = ({
                       borderRight: '1px solid #000',
                       borderTop: 'none',
                       borderBottom: 'none'
-                    }}>
-
-                    </td>
+                    }}></td>
                     <td style={{ border: '1px solid #000' }}>{row.indicator}</td>
                     <td style={{ border: '1px solid #000' }}>{row.baselineMale}</td>
                     <td style={{ border: '1px solid #000' }}>{row.baselineFemale}</td>
@@ -1487,19 +1267,11 @@ const Table2_5 = ({
                     <td style={{ border: '1px solid #000' }}>{row.targetFemale}</td>
                     <td style={{ border: '1px solid #000' }}>{row.actualMale}</td>
                     <td style={{ border: '1px solid #000' }}>{row.actualFemale}</td>
-                    <td style={{ border: '1px solid #000' }}>
-                      <p>
-
-                      </p>
-                    </td>
-                    <td style={{ border: '1px solid #000' }}>
-                      <p>
-
-                      </p>
-                    </td>
+                    <td style={{ border: '1px solid #000' }}><p></p></td>
+                    <td style={{ border: '1px solid #000' }}><p></p></td>
                   </tr>
                 ))}
-                 <tr style={{ border: '1px solid #000' }}>
+                <tr style={{ border: '1px solid #000' }}>
                   <td style={{ border: '1px solid #000' }}>17</td>
                   <td style={{ border: 'none', fontWeight: 'bold' }}>Proportion of population with valid NHIS card</td>
                 </tr>
@@ -1510,9 +1282,7 @@ const Table2_5 = ({
                       borderRight: '1px solid #000',
                       borderTop: 'none',
                       borderBottom: 'none'
-                    }}>
-
-                    </td>
+                    }}></td>
                     <td style={{ border: '1px solid #000' }}>{row.indicator}</td>
                     <td style={{ border: '1px solid #000' }}>{row.baselineMale}%</td>
                     <td style={{ border: '1px solid #000' }}>{row.baselineFemale}%</td>
@@ -1520,16 +1290,8 @@ const Table2_5 = ({
                     <td style={{ border: '1px solid #000' }}>{row.targetFemale}%</td>
                     <td style={{ border: '1px solid #000' }}>{row.actualMale}%</td>
                     <td style={{ border: '1px solid #000' }}>{row.actualFemale}%</td>
-                    <td style={{ border: '1px solid #000' }}>
-                      <p>
-
-                      </p>
-                    </td>
-                    <td style={{ border: '1px solid #000' }}>
-                      <p>
-
-                      </p>
-                    </td>
+                    <td style={{ border: '1px solid #000' }}><p></p></td>
+                    <td style={{ border: '1px solid #000' }}><p></p></td>
                   </tr>
                 ))}
               </tbody>
@@ -1538,6 +1300,21 @@ const Table2_5 = ({
           <p className="mt-2">
             <small>Source: MPCU</small>
           </p>
+          {/* Integrate APRComment component */}
+          <APRComment
+            data={combinedData}
+            year={year}
+            districtId={district}
+            tableCommentedId="Table2_5"
+            hideComment={false}
+          >
+            {({ renderCommentInput, renderCommentList }) => (
+              <div className="mt-4">
+                {renderCommentInput()}
+                {renderCommentList()}
+              </div>
+            )}
+          </APRComment>
         </div>
       </div>
     </div>

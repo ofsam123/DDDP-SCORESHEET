@@ -3,6 +3,7 @@ import axios from "../../api/axios";
 import { filterTrackedEntitiesByCreatedAt, getAttributeValue, getPlanExecutionStats } from "../../utils/utils";
 import { Bar, Pie } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement } from "chart.js";
+import APRComment from "../APR_ReportTablesComponents/APRComments"; // Import the APRComment component
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
@@ -50,7 +51,7 @@ const Table1_2 = ({ year, district, period }) => {
 
           const counts = getPlanExecutionStats(formattedPlans, reports).map((item, index) => ({
             ...item,
-            no: item.dimension === "Total" ? 7 : index + 1, // Assign S/N, 7 for Total
+            no: item.dimension === "Total" ? 7 : index + 1,
             year: yr,
             percentage: item.planned > 0 ? ((item.executed / item.planned) * 100).toFixed(1) : 0,
           }));
@@ -68,7 +69,7 @@ const Table1_2 = ({ year, district, period }) => {
       const dimensions = tempAllData
         .filter((row) => row.dimension !== "Total")
         .map((row) => row.dimension)
-        .filter((value, index, self) => self.indexOf(value) === index); // Unique dimensions
+        .filter((value, index, self) => self.indexOf(value) === index);
 
       const barChartDataConfig = {
         labels: dimensions.map((dim) => dim.substring(0, 20) + (dim.length > 20 ? "..." : "")),
@@ -79,9 +80,9 @@ const Table1_2 = ({ year, district, period }) => {
             return row ? parseFloat(row.percentage) : 0;
           }),
           backgroundColor: [
-            "rgba(54, 162, 235, 0.6)", // First year
-            "rgba(255, 99, 132, 0.6)", // Second year
-            "rgba(75, 192, 192, 0.6)", // Current year
+            "rgba(54, 162, 235, 0.6)",
+            "rgba(255, 99, 132, 0.6)",
+            "rgba(75, 192, 192, 0.6)",
           ][index],
           borderColor: [
             "rgba(54, 162, 235, 1)",
@@ -182,7 +183,6 @@ const Table1_2 = ({ year, district, period }) => {
     const totalPlanned = totalRow ? totalRow.planned : 0;
     const totalExecuted = totalRow ? totalRow.executed : 0;
 
-    // Group data by dimension and sum planned/executed
     const dimensionStats = dimensionsData.reduce((acc, row) => {
       if (!acc[row.dimension]) {
         acc[row.dimension] = { planned: 0, executed: 0 };
@@ -192,7 +192,6 @@ const Table1_2 = ({ year, district, period }) => {
       return acc;
     }, {});
 
-    // Sort by planned activities to find the dimension with the highest planned
     const highestPlanned = Object.entries(dimensionStats).reduce((max, current) =>
       current[1].planned > max[1].planned ? current : max, ["", { planned: 0 }])[0];
 
@@ -294,6 +293,21 @@ const Table1_2 = ({ year, district, period }) => {
               <p>Loading pie chart data...</p>
             )}
           </div>
+          {/* Integrate APRComment component */}
+          <APRComment
+            data={tableData}
+            year={year}
+            districtId={district}
+            tableCommentedId="Table1_2" // Unique identifier for this table
+            hideComment={false}
+          >
+            {({ renderCommentInput, renderCommentList }) => (
+              <div className="mt-4">
+                {renderCommentInput()}
+                {renderCommentList()}
+              </div>
+            )}
+          </APRComment>
         </div>
       </div>
     </div>

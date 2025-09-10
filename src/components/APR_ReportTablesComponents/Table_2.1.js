@@ -1,8 +1,7 @@
-
 import React, { useEffect, useState } from "react";
 import axios from "../../api/axios";
 import { filterTrackedEntitiesByCreatedAt, formatDataGeneral, getAttributeValue } from "../../utils/utils";
-
+import APRComment from "../APR_ReportTablesComponents/APRComments";
 const Table2_1 = ({ year, district, period }) => {
 
   const [tableData, setTableData] = useState([]);
@@ -15,7 +14,6 @@ const Table2_1 = ({ year, district, period }) => {
     axios
       .get(`/tracker/trackedEntities?orgUnit=${district}&program=g3wMUKEMmH3&startDate=${year}-01-01&endDate=${year}-12-31&pageSize=5000`)
       .then(result => {
-
         if (result.data.instances.length > 0) {
           const startDate = `${year}-01-01`;
           const endDate = `${year}-12-31`;
@@ -28,29 +26,23 @@ const Table2_1 = ({ year, district, period }) => {
 
               const reports = filterTrackedEntitiesByCreatedAt(resp.data.instances, startDate, endDate);
 
-              // console.log("djiba reports 1: ", reports);
               const temps = [];
 
               projects.forEach((project, idx) => {
-
                 const currentReport = reports.find(rep => rep.trackedEntity === project.trackedEntity);
                 let expendature = 0.00;
                 let percentage = 0;
 
                 if (currentReport) {
-
                   currentReport.dataValues.forEach(rep => {
                     if (rep.dataElement === "jr8gk707kAw") {
-                      // console.log("expendature: ",rep.value)
                       expendature = rep.value;
                     }
 
                     if (rep.dataElement === "f1T48vHfJc1") {
-                      console.log("percentage: ", rep.value)
                       percentage = rep.value;
                     }
                   });
-
                 }
 
                 const sumTotal = getAttributeValue("Contract Sum", project);
@@ -76,25 +68,18 @@ const Table2_1 = ({ year, district, period }) => {
               });
 
               setTableData(temps);
-
-
             })
             .catch(err => console.log(err))
         }
-
-
       })
       .catch(err => console.log(err))
   }
-
 
   return (
     <div className="col-12">
       <h3>Table 2.1 – Project Register</h3>
       <div className="card">
-        <div className="card-header">
-
-        </div>
+        <div className="card-header"></div>
         <div className="card-body">
           <h7>2.1 Programme / Project Status for the year
             The projects and programmes being implemented in the Tarkwa-Nsuaem Municipality
@@ -161,6 +146,21 @@ const Table2_1 = ({ year, district, period }) => {
           <p className="mt-2">
             <small>Source: MPCU</small>
           </p>
+          {/* Integrate APRComment component */}
+          <APRComment
+            data={tableData}
+            year={year}
+            districtId={district}
+            tableCommentedId="Table2_1"
+            hideComment={false}
+          >
+            {({ renderCommentInput, renderCommentList }) => (
+              <div className="mt-4">
+                {renderCommentInput()}
+                {renderCommentList()}
+              </div>
+            )}
+          </APRComment>
         </div>
       </div>
     </div>

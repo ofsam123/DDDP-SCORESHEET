@@ -1,7 +1,7 @@
-
 import React, { useEffect, useState } from "react";
 import axios from "../../api/axios";
 import { filterTrackedEntitiesByCreatedAt, formatDataGeneral, getAttributeValue } from "../../utils/utils";
+import APRComment from "../APR_ReportTablesComponents/APRComments";
 
 const Table2_2 = ({ year, district, period }) => {
   
@@ -13,7 +13,7 @@ const Table2_2 = ({ year, district, period }) => {
   
     function getProjects() {
       axios
-        .get(`/tracker/trackedEntities?orgUnit=${district}&program=g3wMUKEMmH3&startDate=${year}-01-01&endDate=${year}-12-31&pageSize=5000`)
+        .get(`/tracker/trackedEntities?orgUnit=${district}&program=g3wMUKEMmH3&startDate=${year}-01-01&endDate=${year}-12-31`)
         .then(result => {
   
           if (result.data.instances.length > 0) {
@@ -21,9 +21,9 @@ const Table2_2 = ({ year, district, period }) => {
             const endDate = `${year}-12-31`;
   
             axios
-              .get(`/tracker/events?program=g3wMUKEMmH3&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31&pageSize=5000`)
+              .get(`/tracker/events?program=g3wMUKEMmH3&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
               .then(resp => {
-                const data = filterTrackedEntitiesByCreatedAt(result.data.instances, year, period);
+                const data = filterTrackedEntitiesByCreatedAt(result.data.instances, startDate, endDate);
                 const projects = formatDataGeneral(data, "Project & Programme Type", "Programme") || [];
   
                 const reports = filterTrackedEntitiesByCreatedAt(resp.data.instances, startDate, endDate);
@@ -102,7 +102,6 @@ const Table2_2 = ({ year, district, period }) => {
     },
   ];
 
-
   return (
     <div className="col-12">
       <h3>Table 2.2 – Programmes (Non-Physical Projects) Register</h3>
@@ -112,7 +111,7 @@ const Table2_2 = ({ year, district, period }) => {
           <div className="table-responsive">
             <table className="table table-bordered">
               <thead style={{ backgroundColor: '#d4edda', fontWeight: 'bold', border: '1px solid #000' }}>
-                <tr >
+                <tr>
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>No.</th>
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Programme Description</th>
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Development Dimension of Policy Framework</th>
@@ -161,16 +160,26 @@ const Table2_2 = ({ year, district, period }) => {
                   </tr>
                 ))}
               </tbody>
-
-             
             </table>
           </div>
-
-          
           <p className="mt-2">
             <small>Source: MPCU</small>
           </p>
-         
+          {/* Integrate APRComment component */}
+          <APRComment
+            data={tableData}
+            year={year}
+            districtId={district}
+            tableCommentedId="Table2_2"
+            hideComment={false}
+          >
+            {({ renderCommentInput, renderCommentList }) => (
+              <div className="mt-4">
+                {renderCommentInput()}
+                {renderCommentList()}
+              </div>
+            )}
+          </APRComment>
         </div>
       </div>
     </div>

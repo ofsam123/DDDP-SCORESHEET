@@ -51,7 +51,7 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
           (comment) =>
             comment.tableCommented === tableCommentedId &&
             comment.districtId === districtId &&
-            (comment.userRole === "DPAT_TECHNICAL TEAM" || comment.userRole === "DPAT_QUALITY_ASSURANCE")
+            (comment.userRole === "DPAT_TECHNICAL_TEAM" || comment.userRole === "DPAT_QUALITY_ASSURANCE")
         );
         setComments(filteredComments);
       } catch (error) {
@@ -312,6 +312,7 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
         comment.tableCommented === tableCommentedId &&
         comment.userRole === normalizedUserRole &&
         comment.districtId === districtId &&
+        comment.username === currentUsername &&
         comment.comments
     );
   };
@@ -338,7 +339,7 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
     if (canShowCommentInput()) {
       setShowCommentInput(!showCommentInput);
     } else {
-      message.info("You cannot add a new comment as your role has already commented for this district.");
+      message.info("You have already added a comment for this indicator.");
     }
   };
 
@@ -351,7 +352,7 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
       setShowGapsInput(!showGapsInput);
       setGapsText("");
     } else {
-      message.info("You cannot add a new comment as your role has already commented for this district.");
+      message.info("You have already added gaps for this indicator.");
     }
   };
 
@@ -361,18 +362,20 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
         
         {!hideComment && !isReviewer && (
           <>
+          
           <span>
           ADD COMMENT
           </span>
           <CommentOutlined
-            style={{ cursor: "pointer", fontSize: "30px", flexShrink: 0, marginTop: "50px" }}
+            style={{ cursor: "pointer", fontSize: "30px", flexShrink: 0,  }}
             onClick={handleCommentButtonClick}
           />
           </>
           
         )}
       </div>
-      {!hideComment && showCommentInput && canShowCommentInput() && (
+
+      {!hideComment && showCommentInput && (
         <div style={{ display: "flex", alignItems: "center" }}>
           <Avatar
             src={
@@ -406,13 +409,22 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
           )}
         </div>
       )}
+     
       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-        <h5 style={{ marginLeft: "-10px", fontSize: "" }}>ADD GAPS</h5>
+       
         {!hideComment && !isReviewer && (
-          <PlusCircleOutlined
+          <>
+           <span style={{ marginLeft: "0", fontSize: "" }}>ADD GAPS</span>
+            <PlusCircleOutlined
             style={{ cursor: "pointer", fontSize: "25px", flexShrink: 0 }}
             onClick={handleGapsButtonClick}
-          />
+            >
+
+            </PlusCircleOutlined>
+          
+          </>
+         
+          
         )}
       </div>
       {!hideComment && showGapsInput && (

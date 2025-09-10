@@ -6,7 +6,7 @@ import "react-quill/dist/quill.snow.css";
 import useAuth from "../hooks/useAuth";
 import instance from "../api/cmsapi";
 
-function QualityAssuranceEditor({ year, districtId, }) {
+function QualityAssuranceEditor({ year, districtId,assessmentStatus }) {
   const { user } = useAuth();
   const [editorContent, setEditorContent] = useState("");
   const [loading, setLoading] = useState(false);
@@ -182,7 +182,7 @@ function QualityAssuranceEditor({ year, districtId, }) {
                   {comment.fullName} (DPAT QUALITY ASSURANCE)
                 </h4>
                 <h11 style={{ marginLeft: "8px" }}>{comment.commentDate.join("/")}</h11>
-                {comment.username === currentUsername && isQualityAssurance && (
+                {comment.username === currentUsername && isQualityAssurance && assessmentStatus && (
 
                   <EditOutlined
                     style={{ cursor: "pointer", color: "#000000ff", marginLeft: "10px" }}

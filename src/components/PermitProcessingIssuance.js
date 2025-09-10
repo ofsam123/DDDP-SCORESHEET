@@ -1,4 +1,4 @@
-import { Layout, Table, Typography, Row } from "antd";
+import { Layout, Table, Typography, Col } from "antd";
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import axios from "../api/axios";
 import Comment from "../components/Comments";
@@ -98,12 +98,12 @@ const PermitProcessingIssuance = forwardRef(({
           <Title level={5} style={{ marginTop: "20px" }}>
             SDI 3.0-3.2i Actual Score: <strong>{scorei}</strong>
           </Title>
-          <Row align="middle">
-            <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
+          <Col align="start">
+            <Title level={5} style={{ marginTop: "20px", marginRight: "0px", marginLeft: "0px" }}>
               SDI 3.0-3.2ii Actual Score: <strong>{scoreii}</strong>
             </Title>
             {!hideComment && renderCommentInput()}
-          </Row>
+          </Col>
 
           <Title level={4} style={{ marginTop: "20px" }}>Evidence of Processing & Issuance of Building Permit
             Requests</Title>

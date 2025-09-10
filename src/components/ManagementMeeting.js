@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
-import { Layout, Typography, Table, Row } from "antd";
+import { Layout, Typography, Table, Col } from "antd";
 import Comment from "../components/Comments";
 import instance from "../api/cmsapi";
 
@@ -34,10 +34,10 @@ const ManagementMeeting = forwardRef(({ data, year, columns, districtId, hideCom
           (comment) => comment.tableCommented === "assessment_start_DAPT"
         );
         if (!relevantComment) {
-          setError("No comment found with tableCommented = 'assessment_start_DAPT'");
+       
           setEndpointData(null);
         } else if (!relevantComment.dddpData?.tables?.managementMeetingsData) {
-          setError("No managementMeetingsData found in assessment_start_DAPT comment");
+        
           setEndpointData(null);
         } else {
           setEndpointData(relevantComment.dddpData.tables.managementMeetingsData);
@@ -121,14 +121,14 @@ const ManagementMeeting = forwardRef(({ data, year, columns, districtId, hideCom
             <i>Then the CI is fulfilled</i>
           </Content>
 
-          <Row align="middle">
+          <Col align="start">
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               CI Result: <strong style={{ color: (endpointData?.fulfillment || data?.fulfillment) === "Fulfilled" ? "green" : "red" }}>
                 {endpointData?.fulfillment || data?.fulfillment || "N/A"}
               </strong>
             </Title>
             {!hideComment && renderCommentInput()}
-          </Row>
+          </Col>
 
           {loading && <Text>Loading data from endpoint...</Text>}
           {error && <Text type="danger">{error}</Text>}

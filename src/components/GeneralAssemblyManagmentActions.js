@@ -1,4 +1,4 @@
-import { Layout, Table, Typography, Row } from "antd";
+import { Layout, Table, Typography, Col } from "antd";
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import Comment from "../components/Comments";
 
@@ -66,14 +66,14 @@ const GeneralAssemblyManagementActions = forwardRef(({
             Maximum Score <strong>{maxScore}</strong>
           </Title>
 
-          <Row align="middle">
+          <Col align="start">
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               SDI 1.0-1.2 Actual Score: 
               {managementActionServiceDeliveryData && 
               <strong>{managementActionServiceDeliveryData[0]?.percentage >= 70 ? 2 : 0}</strong>}
             </Title>
             {!hideComment && renderCommentInput()}
-          </Row>
+          </Col>
 
           <Title level={5} style={{ marginTop: "30px" }}>I. Evidence of management actions on service delivery decisions</Title>
           {managementActionServiceDeliveryData && <Table

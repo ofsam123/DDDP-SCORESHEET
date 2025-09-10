@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
-import { Layout, Typography, Table, Row } from "antd";
+import { Layout, Typography, Table, Col } from "antd";
 import Comment from "../components/Comments";
 import instance from "../api/cmsapi";
 import { getAttributeValue } from "../utils/utils";
@@ -131,12 +131,12 @@ const SubStructureCommiteeMeeting = forwardRef(({ data, year, columns, memberCol
           (comment) => comment.tableCommented === "assessment_start_DAPT"
         );
         if (!relevantComment) {
-          setError("No comment found with tableCommented = 'assessment_start_DAPT'");
+         
           setEndpointData(null);
           setEndpointDepartments(null);
           setEndpointMembers(null);
         } else if (!relevantComment.dddpData?.tables?.subStatutoryData) {
-          setError("No subStatutoryData found in assessment_start_DAPT comment");
+         
           setEndpointData(null);
           setEndpointDepartments(relevantComment.dddpData?.tables?.subCommitteeDepartments || null);
           setEndpointMembers(relevantComment.dddpData?.tables?.subCommitteeMembers || null);
@@ -195,14 +195,14 @@ const SubStructureCommiteeMeeting = forwardRef(({ data, year, columns, memberCol
             <i>Then the CI is fulfilled</i>
           </Content>
 
-          <Row align="middle">
+          <Col align="start">
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
               CI Result: <strong style={{ color: (endpointData?.fulfillment || data?.fulfillment) === "Fulfilled" ? "green" : "red" }}>
                 {endpointData?.fulfillment || data?.fulfillment || "N/A"}
               </strong>
             </Title>
             {!hideComment && renderCommentInput()}
-          </Row>
+          </Col>
 
           {loading && <Text>Loading data from endpoint...</Text>}
           {error && <Text type="danger">{error}</Text>}

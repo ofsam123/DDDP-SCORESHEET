@@ -1,4 +1,4 @@
-import { Layout, Table, Typography, Row } from "antd";
+import { Layout, Table, Typography, Col } from "antd";
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import Comment from "../components/Comments";
 
@@ -72,12 +72,12 @@ const SanitationServices = forwardRef(({
           <Title level={5} style={{ marginTop: "30px" }}>Maximum Score <strong>{maxScore}</strong></Title>
           {/* {JSON.stringify(sanitationProvidersData)} */}
 
-          <Row align="middle">
-            <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
+          <Col align="start">
+            <Title level={5} style={{ marginTop: "20px", marginRight: "0px", marginLeft: "0px" }}>
               SDI 2.0-2.2i Actual Score: <strong>{score}</strong>
             </Title>
             {!hideComment && renderCommentInput()}
-          </Row>
+          </Col>
 
           <Title level={5} style={{ marginTop: "30px" }}>I. Evidence of IGF expenditure on sanitation improvement services</Title>
           {sanitationProvidersData && <Table

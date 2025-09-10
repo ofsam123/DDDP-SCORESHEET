@@ -49,7 +49,7 @@ const SPCEntityTenderCommittee = forwardRef(({ data, year, columns, districtId, 
         );
         console.log("Relevant comment:", relevantComment);
         if (!relevantComment) {
-          setError("No comment found with tableCommented = 'assessment_start_DAPT'");
+          // setError("No comment found with tableCommented = 'assessment_start_DAPT'");
           setEndpointData(null);
         } else if (!relevantComment.dddpData?.tables?.spcEntityTenderCommittee?.data) {
           setError("No spcEntityTenderCommittee data found in assessment_start_DAPT comment");

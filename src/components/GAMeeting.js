@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
-import { Layout, Typography, Table, Row, Spin, message, Avatar, Button } from "antd";
+import { Layout, Typography, Table, Row, Spin, message, Avatar, Button,Col } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import Comment from "../components/Comments";
 import instance from "../api/cmsapi";
@@ -279,14 +279,14 @@ const GAMeeting = forwardRef(({ data, year, columns, districtId, hideComment }, 
               <i>Then the CI is fulfilled</i>
             </Content>
 
-            <Row align="middle">
+            <Col align="start">
               <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
                 CI Result: <strong style={{ color: (endpointData?.fulfillment || data?.fulfillment) === "Fulfilled" ? "green" : "red" }}>
                   {endpointData?.fulfillment || data?.fulfillment || "N/A"}
                 </strong>
               </Title>
               {!hideComment && renderCommentInput()}
-            </Row>
+            </Col>
 
             <Title level={5} style={{ marginTop: "10px" }}>
               Number of Decisions: <strong>{endpointData?.numberOfDecision ?? data?.numberOfDecision ?? "N/A"}</strong>

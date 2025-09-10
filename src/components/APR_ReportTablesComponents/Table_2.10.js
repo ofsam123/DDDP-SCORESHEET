@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import axios from "../../api/axios";
 import { formatDataGeneral, getAttributeValue } from "../../utils/utils";
 import APRComment from "../APR_ReportTablesComponents/APRComments";
-import { filterTrackedEntitiesByCreatedAt, formatDataGeneral, getAttributeValue } from "../../utils/utils";
 
 const Table2_10 = ({ year, district, period }) => {
   const [tableData, setTableData] = useState([]);
@@ -24,9 +23,11 @@ const Table2_10 = ({ year, district, period }) => {
             .get(`/tracker/events?program=UfMl96n7nnX&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
             .then(resp => {
 
-              const dataProcessed = filterTrackedEntitiesByCreatedAt(result.data.instances, year, period);
+              // const reports = filterTrackedEntitiesByCreatedAt(resp.data.instances, startDate, endDate);
 
-              const data = formatDataGeneral(dataProcessed, "Evaluation Type", "Participatory Monitoring Evaluation") || [];
+              // console.log("Djiba key evaluation: ", result.data.instances)
+
+              const data = formatDataGeneral(result.data.instances, "Evaluation Type", "Participatory Monitoring Evaluation") || [];
               const reports = resp.data.instances;
 
               const temps = [];

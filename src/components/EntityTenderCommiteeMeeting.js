@@ -49,7 +49,7 @@ const EntityTenderCommitteeMeeting = forwardRef(({ data, year, columns, district
         );
         console.log("Relevant comment:", relevantComment);
         if (!relevantComment) {
-          setError("No comment found with tableCommented = 'assessment_start_DAPT'");
+          // setError("No comment found with tableCommented = 'assessment_start_DAPT'");
           setEndpointData(null);
         } else if (!relevantComment.dddpData?.tables?.entityTenderCommitteeMeeting?.data) {
           setError("No entityTenderCommitteeMeeting data found in assessment_start_DAPT comment");

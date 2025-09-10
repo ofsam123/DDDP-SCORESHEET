@@ -60,7 +60,7 @@ const InternalAuditUnitFunctionality = forwardRef(({ data, year, columns, distri
         );
         console.log("Relevant comment:", relevantComment);
         if (!relevantComment) {
-          setError("No comment found with tableCommented = 'assessment_start_DAPT'");
+          // setError("No comment found with tableCommented = 'assessment_start_DAPT'");
           setEndpointData(null);
         } else if (!relevantComment.dddpData?.tables?.internalAuditUnitFunctionality?.data) {
           setError("No internalAuditUnitFunctionality data found in assessment_start_DAPT comment");

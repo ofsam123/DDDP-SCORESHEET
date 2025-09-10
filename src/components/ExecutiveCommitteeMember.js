@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
-import { Layout, Typography, Table, Row, Spin, message, Avatar } from "antd";
+import { Layout, Typography, Table, Col, Spin, message, Avatar } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import Comment from "../components/Comments";
 import instance from "../api/cmsapi";
@@ -48,7 +48,7 @@ const ExecutiveCommitteeMember = forwardRef(({ data, year, columns, districtId, 
         );
         console.log("Relevant comment:", relevantComment);
         if (!relevantComment) {
-          setError("No comment found with tableCommented = 'assessment_start_DAPT'");
+          // setError("No comment found with tableCommented = 'assessment_start_DAPT'");
           setEndpointData(null);
         } else if (!relevantComment.dddpData?.tables?.executiveCommitteeMember) {
           setError("No executiveCommitteeMember data found in assessment_start_DAPT comment");
@@ -326,7 +326,7 @@ const ExecutiveCommitteeMember = forwardRef(({ data, year, columns, districtId, 
               <i>Then the CI is fulfilled</i>
             </Content>
 
-            <Row align="middle">
+            <Col align="start">
               <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
                 CI Result:{" "}
                 <strong
@@ -338,7 +338,7 @@ const ExecutiveCommitteeMember = forwardRef(({ data, year, columns, districtId, 
                 </strong>
               </Title>
               {!hideComment && renderCommentInput()}
-            </Row>
+            </Col>
 
             {error && <Text type="danger">{error}</Text>}
 

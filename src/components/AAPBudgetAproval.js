@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
-import { Layout, Typography, Table, Row, Spin, message, Avatar, Button } from "antd";
+import { Layout, Typography, Table, Col, Spin, message, Avatar, Button } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import Comment from "../components/Comments";
 import instance from "../api/cmsapi";
@@ -288,7 +288,7 @@ const AAPBudgetAproval = forwardRef(({ data, year, columns, districtId, hideComm
               <i>Then the CI is fulfilled</i>
             </Content>
 
-            <Row align="middle">
+            <Col align="start">
               <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
                 CI Result:{" "}
                 <strong
@@ -300,7 +300,7 @@ const AAPBudgetAproval = forwardRef(({ data, year, columns, districtId, hideComm
                 </strong>
               </Title>
               {!hideComment && renderCommentInput()}
-            </Row>
+            </Col>
 
             <div>
               <strong>{transformLink(endpointData?.aapApprovalLink || data?.aapApprovalLink)}</strong>

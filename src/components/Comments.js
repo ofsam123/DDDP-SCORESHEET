@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Input, Avatar, Col, message, Spin } from "antd";
+import { Input, Avatar, Col, message, Row } from "antd";
 import {
   CommentOutlined,
   SendOutlined,
   EditOutlined,
   DeleteOutlined,
+  BarsOutlined,
   PlusCircleOutlined,
 } from "@ant-design/icons";
 import useAuth from "../hooks/useAuth";
@@ -21,7 +22,6 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
   const [gapsText, setGapsText] = useState("");
   const [editingGapsId, setEditingGapsId] = useState(null);
   const [editGapsText, setEditGapsText] = useState({});
-  const [loading, setLoading] = useState(false);
 
   const currentUserRole = user?.user?.userRoles?.find(
     (role) => role.name === "DPAT TECHNICAL TEAM" || role.name === "DPAT QUALITY ASSURANCE"
@@ -39,13 +39,12 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
       );
       setComments(filteredComments);
     }
-  }, [data, year, tableCommentedId, districtId]);
+  }, [data, year, tableCommentedId, districtId,]);
 
   // Fetch comments from API
   useEffect(() => {
     const fetchComments = async () => {
       if (!districtId || !year) return;
-      setLoading(true);
       try {
         const response = await instance.get(`comments/tables/${districtId}/${year}/DPAT`);
         const filteredComments = response.data.filter(
@@ -62,8 +61,6 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
           status: error.response?.status,
         });
         message.error("Failed to fetch comments");
-      } finally {
-        setLoading(false);
       }
     };
     fetchComments();
@@ -310,14 +307,28 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
     if (editingCommentId) {
       return false;
     }
-    return true; // Allow multiple comments per user
+    return !comments.some(
+      (comment) =>
+        comment.tableCommented === tableCommentedId &&
+        comment.userRole === normalizedUserRole &&
+        comment.districtId === districtId &&
+        comment.username === currentUsername &&
+        comment.comments
+    );
   };
 
   const canAddGaps = () => {
     if (isReviewer) {
       return false;
     }
-    return true; // Allow multiple gaps per user
+    return !comments.some(
+      (comment) =>
+        comment.tableCommented === tableCommentedId &&
+        comment.userRole === normalizedUserRole &&
+        comment.districtId === districtId &&
+        comment.username === currentUsername &&
+        comment.gaps
+    );
   };
 
   const handleCommentButtonClick = () => {
@@ -326,9 +337,9 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
       return;
     }
     if (canShowCommentInput()) {
-      setShowCommentInput((prev) => !prev);
+      setShowCommentInput(!showCommentInput);
     } else {
-      message.info("Cannot open comment input.");
+      message.info("You have already added a comment for this indicator.");
     }
   };
 
@@ -338,24 +349,29 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
       return;
     }
     if (canAddGaps()) {
-      setShowGapsInput((prev) => !prev);
+      setShowGapsInput(!showGapsInput);
       setGapsText("");
     } else {
-      message.info("Cannot open gaps input.");
+      message.info("You have already added gaps for this indicator.");
     }
   };
 
   const renderCommentInput = () => (
     <div style={{ display: "flex", flexDirection: "column", gap: "10px", maxWidth: "800px" }}>
       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        
         {!hideComment && !isReviewer && (
           <>
-            <span>ADD COMMENT</span>
-            <CommentOutlined
-              style={{ cursor: "pointer", fontSize: "30px", flexShrink: 0 }}
-              onClick={handleCommentButtonClick}
-            />
+          
+          <span>
+          ADD COMMENT
+          </span>
+          <CommentOutlined
+            style={{ cursor: "pointer", fontSize: "30px", flexShrink: 0,  }}
+            onClick={handleCommentButtonClick}
+          />
           </>
+          
         )}
       </div>
 
@@ -393,16 +409,22 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
           )}
         </div>
       )}
-
+     
       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+       
         {!hideComment && !isReviewer && (
           <>
-            <span style={{ marginLeft: "-10px" }}>ADD GAPS</span>
+           <span style={{ marginLeft: "0", fontSize: "" }}>ADD GAPS</span>
             <PlusCircleOutlined
-              style={{ cursor: "pointer", fontSize: "25px", flexShrink: 0 }}
-              onClick={handleGapsButtonClick}
-            />
+            style={{ cursor: "pointer", fontSize: "25px", flexShrink: 0 }}
+            onClick={handleGapsButtonClick}
+            >
+
+            </PlusCircleOutlined>
+          
           </>
+         
+          
         )}
       </div>
       {!hideComment && showGapsInput && (
@@ -443,191 +465,194 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
   );
 
   const renderCommentList = () => (
-    <Spin spinning={loading} tip="Loading comments...">
-      <div
-        style={{
-          borderTop: "1px solid #e8e8e8",
-          padding: "8px",
-          background: "#fff",
-          maxWidth: "800px",
-          width: "100%",
-        }}
-      >
-        {comments.length > 0 && (
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "16px",
-              paddingLeft: "12px",
-              marginTop: showCommentInput && canShowCommentInput() ? "16px" : "0",
-            }}
-          >
-            {comments.map((comment) => (
-              <div
-                key={comment.id}
-                style={{
-                  padding: "10px",
-                  border: "1px solid #f0f0f0",
-                  borderRadius: "6px",
-                  maxWidth: "700px",
-                }}
-              >
-                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                  {/* Comment Section */}
-                  {comment.comments && (
-                    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                      <div style={{ display: "flex", alignItems: "center" }}>
-                        <Col>
-                          <Avatar
-                            src={
-                              comment.userImage ||
-                              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTL_JlCFnIGX5omgjEjgV9F3sBRq14eTERK9w&s"
-                            }
-                            style={{ marginRight: "10px", borderRadius: "50%" }}
-                            size={32}
-                          />
-                        </Col>
-                        <div style={{ flex: 1 }}>
-                          <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
-                            <h4 style={{ margin: 0, fontSize: "13px" }}>
-                              {comment.fullName} (
-                              {comment.userRole ? comment.userRole.replace("_", " ") : "Unknown Role"})
-                            </h4>
-                            {comment.username === currentUsername && (
-                              <div style={{ marginLeft: "8px", display: "flex", gap: "8px" }}>
-                                <span
-                                  style={{
-                                    marginLeft: "8px",
-                                    display: "flex",
-                                    marginRight: "8px",
-                                  }}
-                                >
-                                  {comment.commentDate.join("/")}
-                                </span>
-                                <EditOutlined
-                                  style={{ cursor: "pointer", color: "#000000ff" }}
-                                  onClick={() => handleEditComment(comment)}
-                                />
-                                <DeleteOutlined
-                                  style={{ cursor: "pointer", color: "#ff0000" }}
-                                  onClick={() => handleDeleteComment(comment.id)}
-                                />
-                              </div>
-                            )}
-                          </div>
-                          {editingCommentId === comment.id ? (
-                            <div style={{ display: "flex", alignItems: "center", marginTop: "8px" }}>
-                              <Input.TextArea
-                                value={editText[comment.id] || ""}
-                                onChange={(e) =>
-                                  setEditText({ ...editText, [comment.id]: e.target.value })
-                                }
-                                onKeyPress={(e) => handleEditKeyPress(e, comment.id)}
-                                autoSize={{ minRows: 3, maxRows: 5 }}
+    <div
+      style={{
+        borderTop: "1px solid #e8e8e8",
+        padding: "8px",
+        background: "#fff",
+        maxWidth: "800px",
+        width: "100%",
+      }}
+    >
+      {comments.length > 0 && (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "16px",
+            paddingLeft: "12px",
+            marginTop: showCommentInput && canShowCommentInput() ? "16px" : "0",
+          }}
+        >
+          {comments.map((comment) => (
+            <div
+              key={comment.id}
+              style={{
+                padding: "10px",
+                border: "1px solid #f0f0f0",
+                borderRadius: "6px",
+                maxWidth: "700px",
+              }}
+            >
+              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                {/* Comment Section */}
+                {comment.comments && (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <Col>
+                        <Avatar
+                          src={
+                            comment.userImage ||
+                            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTL_JlCFnIGX5omgjEjgV9F3sBRq14eTERK9w&s"
+                          }
+                          style={{ marginRight: "10px", borderRadius: "50%" }}
+                          size={32}
+                        />
+                      </Col>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
+                          <h4 style={{ margin: 0, fontSize: "13px" }}>
+                            {comment.fullName} (
+                            {comment.userRole
+                              ? comment.userRole.replace("_", " ")
+                              : "Unknown Role"}
+                            )
+                          </h4>
+                          {comment.username === currentUsername && (
+                            <div style={{ marginLeft: "8px", display: "flex", gap: "8px" }}>
+                              <h11
                                 style={{
-                                  flex: 1,
-                                  borderRadius: "10px",
-                                  padding: "8px 12px",
-                                  background: "#f0f2f5",
+                                  marginLeft: "8px",
+                                  display: "flex",
+                                  marginRight: "8px",
                                 }}
+                              >
+                                {comment.commentDate.join("/")}
+                              </h11>
+                              <EditOutlined
+                                style={{ cursor: "pointer", color: "#000000ff" }}
+                                onClick={() => handleEditComment(comment)}
                               />
-                              {editText[comment.id]?.trim() && (
-                                <SendOutlined
-                                  className="text-blue-500 cursor-pointer"
-                                  style={{ fontSize: "20px", marginLeft: "8px" }}
-                                  onClick={() => handleCommentSubmit(editText[comment.id])}
-                                />
-                              )}
+                              <DeleteOutlined
+                                style={{ cursor: "pointer", color: "#ff0000" }}
+                                onClick={() => handleDeleteComment(comment.id)}
+                              />
                             </div>
-                          ) : (
-                            <span style={{ fontSize: "16px" }}>{comment.comments}</span>
                           )}
                         </div>
-                      </div>
-                    </div>
-                  )}
-                  {/* Gaps Section */}
-                  {comment.gaps && (
-                    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                      <div style={{ display: "flex", alignItems: "center" }}>
-                        <Col>
-                          <Avatar
-                            src={
-                              comment.userImage ||
-                              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTL_JlCFnIGX5omgjEjgV9F3sBRq14eTERK9w&s"
-                            }
-                            style={{ marginRight: "10px", borderRadius: "50%" }}
-                            size={32}
-                          />
-                        </Col>
-                        <div style={{ flex: 1 }}>
-                          <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
-                            <h4 style={{ margin: 0, fontSize: "13px" }}>
-                              {comment.fullName} (
-                              {comment.userRole ? comment.userRole.replace("_", " ") : "Unknown Role"}
-                              ) GAPS
-                            </h4>
-                            {comment.username === currentUsername && (
-                              <div style={{ marginLeft: "8px", display: "flex", gap: "8px" }}>
-                                <span
-                                  style={{
-                                    marginLeft: "8px",
-                                    display: "flex",
-                                    marginRight: "8px",
-                                  }}
-                                >
-                                  {comment.updateDate.join("/")}
-                                </span>
-                                <EditOutlined
-                                  style={{ cursor: "pointer", color: "#000000ff" }}
-                                  onClick={() => handleEditGaps(comment)}
-                                />
-                                <DeleteOutlined
-                                  style={{ cursor: "pointer", color: "#ff0000" }}
-                                  onClick={() => handleDeleteComment(comment.id)}
-                                />
-                              </div>
+                        {editingCommentId === comment.id ? (
+                          <div style={{ display: "flex", alignItems: "center", marginTop: "8px" }}>
+                            <Input.TextArea
+                              value={editText[comment.id] || ""}
+                              onChange={(e) =>
+                                setEditText({ ...editText, [comment.id]: e.target.value })
+                              }
+                              onKeyPress={(e) => handleEditKeyPress(e, comment.id)}
+                              autoSize={{ minRows: 3, maxRows: 5 }}
+                              style={{
+                                flex: 1,
+                                borderRadius: "10px",
+                                padding: "8px 12px",
+                                background: "#f0f2f5",
+                              }}
+                            />
+                            {editText[comment.id]?.trim() && (
+                              <SendOutlined
+                                className="text-blue-500 cursor-pointer"
+                                style={{ fontSize: "20px", marginLeft: "8px" }}
+                                onClick={() => handleCommentSubmit(editText[comment.id])}
+                              />
                             )}
                           </div>
-                          {editingGapsId === comment.id ? (
-                            <div style={{ display: "flex", alignItems: "center", marginTop: "8px" }}>
-                              <Input.TextArea
-                                value={editGapsText[comment.id] || ""}
-                                onChange={(e) =>
-                                  setEditGapsText({ ...editGapsText, [comment.id]: e.target.value })
-                                }
-                                onKeyPress={(e) => handleEditGapsKeyPress(e, comment.id)}
-                                autoSize={{ minRows: 3, maxRows: 5 }}
-                                style={{
-                                  flex: 1,
-                                  borderRadius: "10px",
-                                  padding: "8px 12px",
-                                  background: "#f0f2f5",
-                                }}
-                              />
-                              {editGapsText[comment.id]?.trim() && (
-                                <SendOutlined
-                                  className="text-blue-500 cursor-pointer"
-                                  style={{ fontSize: "20px", marginLeft: "8px" }}
-                                  onClick={() => handleGapsSubmit(editGapsText[comment.id])}
-                                />
-                              )}
-                            </div>
-                          ) : (
-                            <span style={{ fontSize: "16px" }}>{comment.gaps}</span>
-                          )}
-                        </div>
+                        ) : (
+                          <h11 style={{ fontSize: "16px" }}>{comment.comments}</h11>
+                        )}
                       </div>
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
+                {/* Gaps Section */}
+                {comment.gaps && (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <Col>
+                        <Avatar
+                          src={
+                            comment.userImage ||
+                            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTL_JlCFnIGX5omgjEjgV9F3sBRq14eTERK9w&s"
+                          }
+                          style={{ marginRight: "10px", borderRadius: "50%" }}
+                          size={32}
+                        />
+                      </Col>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
+                          <h4 style={{ margin: 0, fontSize: "13px" }}>
+                            {comment.fullName} (
+                            {comment.userRole
+                              ? comment.userRole.replace("_", " ")
+                              : "Unknown Role"}
+                            ) GAPS
+                          </h4>
+                          {comment.username === currentUsername && (
+                            <div style={{ marginLeft: "8px", display: "flex", gap: "8px" }}>
+                              <h11
+                                style={{
+                                  marginLeft: "8px",
+                                  display: "flex",
+                                  marginRight: "8px",
+                                }}
+                              >
+                                {comment.updateDate.join("/")}
+                              </h11>
+                              <EditOutlined
+                                style={{ cursor: "pointer", color: "#000000ff" }}
+                                onClick={() => handleEditGaps(comment)}
+                              />
+                              <DeleteOutlined
+                                style={{ cursor: "pointer", color: "#ff0000" }}
+                                onClick={() => handleDeleteComment(comment.id)}
+                              />
+                            </div>
+                          )}
+                        </div>
+                        {editingGapsId === comment.id ? (
+                          <div style={{ display: "flex", alignItems: "center", marginTop: "8px" }}>
+                            <Input.TextArea
+                              value={editGapsText[comment.id] || ""}
+                              onChange={(e) =>
+                                setEditGapsText({ ...editGapsText, [comment.id]: e.target.value })
+                              }
+                              onKeyPress={(e) => handleEditGapsKeyPress(e, comment.id)}
+                              autoSize={{ minRows: 3, maxRows: 5 }}
+                              style={{
+                                flex: 1,
+                                borderRadius: "10px",
+                                padding: "8px 12px",
+                                background: "#f0f2f5",
+                              }}
+                            />
+                            {editGapsText[comment.id]?.trim() && (
+                              <SendOutlined
+                                className="text-blue-500 cursor-pointer"
+                                style={{ fontSize: "20px", marginLeft: "8px" }}
+                                onClick={() => handleGapsSubmit(editGapsText[comment.id])}
+                              />
+                            )}
+                          </div>
+                        ) : (
+                          <h11 style={{ fontSize: "16px" }}>{comment.gaps}</h11>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </Spin>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 
   return children({ renderCommentInput, renderCommentList });

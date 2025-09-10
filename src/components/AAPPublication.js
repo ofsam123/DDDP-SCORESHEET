@@ -55,7 +55,7 @@ const AAPPublication = forwardRef(({ data, columns, year, districtId, hideCommen
           setError(null);
         } else {
           setEndpointData(null);
-          setError("No AAP Publication data found in assessment_start_DAPT comment");
+          // setError("No AAP Publication data found in assessment_start_DAPT comment");
         }
 
         // Fetch comments

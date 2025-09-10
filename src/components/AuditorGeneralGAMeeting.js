@@ -48,7 +48,7 @@ const AuditorGeneralGAMeeting = forwardRef(({ data, gaMeetings, ecaMeeting, year
           setError(null);
         } else {
           setEndpointData(null);
-          setError("No Auditor General GA Meeting data found in assessment_start_DAPT comment");
+          // setError("No Auditor General GA Meeting data found in assessment_start_DAPT comment");
         }
 
         // Fetch comments

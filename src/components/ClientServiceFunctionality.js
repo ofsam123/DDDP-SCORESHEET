@@ -64,7 +64,7 @@ const ClientServiceFunctionality = forwardRef(({ data, columns, reportColumns, y
           setError(null);
         } else {
           setEndpointData(null);
-          setError("No Client Service Unit data found in assessment_start_DAPT comment");
+          // setError("No Client Service Unit data found in assessment_start_DAPT comment");
         }
 
         // Fetch comments

@@ -65,6 +65,7 @@ import { budgetApprovalColumns, ECAMeetingColumns, ETCMeetingColumns, gaMeetingC
 import DeepeningGenderMainstreaming from "./DeepeningGenderMainstreaming";
 import instance from "../api/cmsapi";
 import ScoreSheetSummary from "./ScoreSheetSummary";
+import CommentAndGabsSummary from "./CommentAndGabsSummary";
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
@@ -1112,6 +1113,10 @@ const DPATAssessmentSheet = ({ props }) => {
         finalTemp.forEach((m, index) => {
             m.meeting = getMeetingRank(index, "Management Meetings");
         });
+
+        if(finalTemp.length === 0){
+            fulfillment = "Not Fulfilled";
+        }
 
         setManagementMeetingsData({ data: finalTemp, fulfillment });
     };
@@ -2847,6 +2852,16 @@ const shouldRenderQualityAssuranceEditor = assessmentStatus?.status && !["Closed
                         ANNEX 4 SUMMARY SCORING SHEET FOR DPAT INDICATORS
                     </h3>
                     <ScoreSheetSummary
+                        district={district}
+                        region={region}
+                        year={year} />
+
+                    <hr />
+
+                    <h3 style={{ textAlign: "center", padding: "10px" }}>
+                        ANNEX 5 SUMMARY OF COMMENTS AND GAPS
+                    </h3>
+                    <CommentAndGabsSummary
                         district={district}
                         region={region}
                         year={year} />

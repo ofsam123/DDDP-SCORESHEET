@@ -28,8 +28,10 @@ const ExecutiveCommitteeMember = forwardRef(({ data, year, columns, districtId, 
           (comment) => comment.tableCommented === "assessment_start_DAPT"
         );
         if (!relevantComment) {
+      
           setEndpointData(null);
         } else if (!relevantComment.dddpData?.tables?.ecaMeetingData) {
+
           setEndpointData(null);
         } else {
           setEndpointData(relevantComment.dddpData.tables.ecaMeetingData);
@@ -122,7 +124,8 @@ const ExecutiveCommitteeMember = forwardRef(({ data, year, columns, districtId, 
           <Title level={3}>CI 2.0 Functionality of Statutory & Mandatory Organs of the Assembly - 2.1 Executive Committee Meetings</Title>
           <Title level={4} style={{ marginTop: "10px" }}>Assessment Guide/Requirement</Title>
           <Content>
-            From the DCD, obtain information on the membership of the Executive Committee for <strong>{year}</strong>.<br /><br />
+            From the DCD receive and review the composition, attendance and minutes of
+            meetings of the Executive Committee/ Metropolitan Authority (EC/ MA):<br /><br />
             <ol>
               <li type="i">
                 If at least a meeting of the EC/MA was held prior to each of the three mandated General Assembly meetings in {year},

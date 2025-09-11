@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import instance from '../api/cmsapi';
+import { Col, Row, Layout, Typography } from 'antd';
+import moment from 'moment';
 
-const ScoreSheetSummary = ({ districtId, year }) => {
+const { Header, Content } = Layout;
+const { Title, Text } = Typography;
+
+const ScoreSheetSummary = ({ district, year, region }) => {
     const [data, setData] = useState({
         complianceIndicators: [],
         serviceDeliveryIndicators: [],
@@ -10,7 +15,7 @@ const ScoreSheetSummary = ({ districtId, year }) => {
 
 
     const getData = () => {
-        instance.get(`comments/tables/${districtId}/${year}/DPAT`)
+        instance.get(`comments/tables/${district?.value}/${year}/DPAT`)
             .then(response => {
 
                 const jsonData = response.data;
@@ -198,10 +203,25 @@ const ScoreSheetSummary = ({ districtId, year }) => {
 
     useEffect(() => {
         getData();
-    }, [districtId, year]);
+    }, [district, year]);
 
     return (
         <div>
+           
+                <Row className="py-2">
+                        <Col span={8} className="gutter-row">
+                            <Text strong>Name of MMDA: </Text> <Text className="ms-3">{district?.label}</Text>
+                        </Col>
+                        <Col span={6} className="gutter-row">
+                            <Text strong>Region: </Text> <Text>{region}</Text>
+                        </Col>
+                        <Col span={8} className="gutter-row">
+                            <Text strong>Date of Assessment: </Text> <Text>{moment().format('MMMM Do YYYY, h:mm:ss A')}</Text>
+                        </Col>
+
+                      
+                    </Row>
+            
 
             <div className="table-responsive">
                 <table className="table table-bordered" style={{

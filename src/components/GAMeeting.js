@@ -30,7 +30,6 @@ const GAMeeting = forwardRef(({ data, year, columns, districtId, hideComment }, 
       data
     }),
   }));
-
   // Fetch CMS data and comments
   useEffect(() => {
     const fetchEndpointData = async () => {
@@ -52,6 +51,7 @@ const GAMeeting = forwardRef(({ data, year, columns, districtId, hideComment }, 
           console.log("Fetched gaMeeting data:", relevantComment.dddpData.tables.gaMeeting.data);
         } else {
           setEndpointData(null);
+        
         }
 
         // Find comments and gaps for this indicator
@@ -271,7 +271,7 @@ const GAMeeting = forwardRef(({ data, year, columns, districtId, hideComment }, 
                   If the Assembly held at least three ordinary Meetings in <strong>{year}</strong> with Minutes of Meetings duly recorded and signed by both PM and DCD;
                 </li>
                 <li type="i" className="py-1">
-                  If the ordinary meeting was convened through a notice of meeting issued within two weeks before the meeting date and duly signed by the Presiding Member/Convener; and
+                  If the ordinary meeting was convened through a notice of meeting issued at least two weeks before the meeting date and duly signed by the Presiding
                 </li>
                 <li type="i">
                   If there is evidence of decisions (e.g. Resolutions; if applicable) made by the General Assembly during the convened meetings.

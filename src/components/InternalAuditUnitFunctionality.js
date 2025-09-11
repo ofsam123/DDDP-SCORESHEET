@@ -138,8 +138,8 @@ const InternalAuditUnitFunctionality = forwardRef(({ data, year, columns, distri
                     </li>
 
                     <li type="i">
-                        If the District Assembly has submitted all quarterly Internal Audit Reports to
-                        the Internal Audit Agency by the end of the month following each quarter.
+                        If the District Assembly has submitted all quarterly Internal Audit Reports to the
+                         Internal Audit Agency by the end of the month after the end of each Quarter.
                     </li>
 
                 </ol>

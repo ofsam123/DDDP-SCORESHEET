@@ -137,7 +137,7 @@ const DistrictLEDActivityPlan = forwardRef(({
             <ol>
 
               <li type="i" className="py-1">
-                If the District has implemented at least 60% of the LED activities
+                If the District has implemented at least 90% of the LED activities
                 in the Annual Action Plan (AAP), score 2.
               </li>
             </ol>

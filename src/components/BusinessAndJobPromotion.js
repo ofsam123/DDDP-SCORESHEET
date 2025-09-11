@@ -128,8 +128,8 @@ const BusinessAndJobPromotion = forwardRef(({
                         From the DCD, receive information on LED activities:<br /><br />
                         <ol>
                             <li type="i">
-                                If the district has invested its own resources in direct productive sectors and can show
-                                that it has resulted in new businesses creating new jobs at the local level: Score 1
+                               If the district has invested Assemblies resources in direct productive and can 
+                               show that it has resulted in new businesses/ expansion of existing Score 1
                             </li>
                         </ol>
                     </Content>

@@ -28,7 +28,6 @@ import FollowUpDeduction from "./FollowUpDeduction";
 import EnvironmentalAndSocialSafeGuard from "./EnvironmentalAndSocialSafeGuard";
 import CapacityBuildingImplementation from "./CapacityBuildingImplementation";
 import PostTrainingEvaluation from "./PostTrainingEvaluation";
-import PaymentPoints from "./PaymentPoints";
 import RateableRevenu from "./RateableRevenu";
 import AuditCommitteeResponsiveness from "./AuditCommitteeResponsiveness";
 import AuditInfractions from "./AuditInfractions";
@@ -2848,7 +2847,8 @@ const shouldRenderQualityAssuranceEditor = assessmentStatus?.status && !["Closed
                         ANNEX 4 SUMMARY SCORING SHEET FOR DPAT INDICATORS
                     </h3>
                     <ScoreSheetSummary
-                        districtId={district?.value}
+                        district={district}
+                        region={region}
                         year={year} />
 
                     <hr />

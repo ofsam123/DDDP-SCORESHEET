@@ -111,7 +111,8 @@ const ManagementMeeting = forwardRef(({ data, year, columns, districtId, hideCom
           <Title level={3}>CI 2.0 Functionality of Statutory & Mandatory Organs of the Assembly - 2.3 Management Meetings</Title>
           <Title level={4} style={{ marginTop: "10px" }}>Assessment Guide/Requirement</Title>
           <Content>
-            From the DCD, obtain minutes of Management meetings for <strong>{year}</strong>.<br /><br />
+            From the DCD receive copies of duly recorded and signed Minutes of 
+            Meetings of Management in <strong>{year}</strong>.<br /><br />
             <ol>
               <li type="i">
                 If Management Meetings were held, at least quarterly, and duly attended by at least 8 out of 11 for District Assemblies; 

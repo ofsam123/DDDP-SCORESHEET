@@ -111,7 +111,8 @@ const PRCCMeeting = forwardRef(({ data, year, columns, districtId, hideComment }
           <Title level={3}>CI 2.0 Functionality of Statutory & Mandatory Organs of the Assembly - 2.4 PRCC Meetings</Title>
           <Title level={4} style={{ marginTop: "10px" }}>Assessment Guide/Requirement</Title>
           <Content>
-            From the DCD, obtain minutes of Public Relations and Complaints Committee (PRCC) meetings for <strong>{year}</strong>.<br /><br />
+            From the DCD, obtain Minutes of Meeting of the Public Relations and Complaints Committee meetings
+            <strong>{year}</strong>.<br /><br />
             <ol>
               <li type="i">
                 If PRCC is functional and Minutes of Meetings and recommendations from the meetings are available.

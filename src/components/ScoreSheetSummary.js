@@ -1,25 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import instance from '../api/cmsapi';
-import { Col, Row, Layout, Typography } from 'antd';
+import { Col, Row, Layout, Typography,Spin } from 'antd';
 import moment from 'moment';
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
 
-const ScoreSheetSummary = ({ district, year, region }) => {
+const ScoreSheetSummary = ({ district, year, region, assessmentStatus }) => {
     const [data, setData] = useState({
         complianceIndicators: [],
         serviceDeliveryIndicators: [],
         performanceIndicators: []
     });
-
+const [loading, setLoading] = useState(false);
 
     const getData = () => {
+        // setLoading(true);
         instance.get(`comments/tables/${district?.value}/${year}/DPAT`)
             .then(response => {
 
                 const jsonData = response.data;
                 if (!jsonData || !jsonData[0] || !jsonData[0].dddpData || !jsonData[0].dddpData.tables) {
+                    // setLoading(false);
                     return;
                 }
 
@@ -207,7 +209,7 @@ const ScoreSheetSummary = ({ district, year, region }) => {
 
     return (
         <div>
-           
+             {!assessmentStatus && (
                 <Row className="py-2">
                         <Col span={8} className="gutter-row">
                             <Text strong>Name of MMDA: </Text> <Text className="ms-3">{district?.label}</Text>
@@ -222,14 +224,16 @@ const ScoreSheetSummary = ({ district, year, region }) => {
                       
                     </Row>
             
-
+             )}
             <div className="table-responsive">
-                <table className="table table-bordered" style={{
-                    border: '1px solid #000',
-                    borderCollapse: 'collapse',
-                    width: '100%',
-                    marginTop: "20px"
-                }}>
+                
+                 {/* <Spin spinning={loading} tip="Loading assessment data..."> */}
+                    <table className="table table-bordered" style={{
+                        border: '1px solid #000',
+                        borderCollapse: 'collapse',
+                        width: '100%',
+                        marginTop: "20px"
+                    }}>
                     <thead>
                         <tr style={{ fontWeight: 'bold', border: '1px solid #000' }}>
                             <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>No.</th>
@@ -315,6 +319,7 @@ const ScoreSheetSummary = ({ district, year, region }) => {
                     </tbody>
 
                 </table>
+                {/* </Spin> */}
             </div>
         </div>
     );

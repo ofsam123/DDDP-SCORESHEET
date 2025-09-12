@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Layout, Typography, Button, Row, Col, message, Spin } from "antd";
+import { Layout, Typography, Button, Row, Col, message, Spin,Modal } from "antd";
 import moment from 'moment';
 import useAuth from "../hooks/useAuth";
 import { FilePdfOutlined } from "@ant-design/icons";
@@ -65,6 +65,7 @@ import { budgetApprovalColumns, ECAMeetingColumns, ETCMeetingColumns, gaMeetingC
 import DeepeningGenderMainstreaming from "./DeepeningGenderMainstreaming";
 import instance from "../api/cmsapi";
 import ScoreSheetSummary from "./ScoreSheetSummary";
+import Petition from "./Petition";
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
@@ -198,9 +199,9 @@ const DPATAssessmentSheet = ({ props }) => {
     const educationServiceSupportRef = useRef();
     const healthServiceSupportRef = useRef();
     const agricultureSupportRef = useRef();
-
+const [showPetition, setShowPetition] = useState(true); 
     const currentUserRole = user?.user?.userRoles?.find(
-        (role) => role.name === "DPAT TECHNICAL TEAM" || role.name === "DPAT QUALITY ASSURANCE"
+        (role) => role.name === "DPAT TECHNICAL TEAM" || role.name === "DPAT QUALITY ASSURANCE" || role.name === "DPAT DISTRICT USERS"
     )?.name || "";
     const normalizedUserRole = currentUserRole ? currentUserRole.replace(" ", "_").toUpperCase() : "";
     const currentUsername = user?.user?.username || "";
@@ -2234,27 +2235,96 @@ const DPATAssessmentSheet = ({ props }) => {
         }
     };
     const hideComment = !assessmentStatus || assessmentStatus?.status === "Pending" || assessmentStatus?.status === "Completed" || assessmentStatus?.status === "Closed";
-const shouldRenderQualityAssuranceEditor = assessmentStatus?.status && !["Closed", "null", "Start", ].includes(assessmentStatus.status);
+const shouldRenderQualityAssuranceEditor = assessmentStatus?.status && !["Completed", "Closed", "null", "Start", ].includes(assessmentStatus.status);
+const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatus?.status === "Start" || assessmentStatus?.status === "Pending";
+  const showConfirm = () => {
+    Modal.confirm({
+      title: 'Start Assessment',
+      content: `Do you want to start the assessment for this district?`,
+      okText: 'Yes',
+      cancelText: 'No',
+      
+      onOk() {
+        handleStartAssessmentSubmit(); // Trigger the original endpoint call
+      },
+      onCancel() {
+        // Do nothing on cancel
+      },
+    });
+  };
+
+  const showPending = () => {
+    Modal.confirm({
+      title: 'Complete Assessment',
+      content: `Do you want to Complete assessment for this district?`,
+      okText: 'Yes',
+      cancelText: 'No',
+      
+      onOk() {
+        handlePendingAssessmentSubmit(); // Trigger the original endpoint call
+      },
+      onCancel() {
+        // Do nothing on cancel
+      },
+    });
+  };
+
+
+  
+  const showComplete = () => {
+    Modal.confirm({
+      title: 'Complete Review',
+      content: `Do you want to Complete Review for this district?`,
+      okText: 'Yes',
+      cancelText: 'No',
+      
+      onOk() {
+        handleCompleteReviewSubmit(); // Trigger the original endpoint call
+      },
+      onCancel() {
+        // Do nothing on cancel
+      },
+    });
+  };
+
+  const showClose = () => {
+    Modal.confirm({
+      title: 'Close Review',
+      content: `Do you want to Close Review for this district?`,
+      okText: 'Yes',
+      cancelText: 'No',
+      
+      onOk() {
+        handleCloseReviewSubmit(); // Trigger the original endpoint call
+      },
+      onCancel() {
+        // Do nothing on cancel
+      },
+    });
+  };
+// const shouldRenderSummaryScore = assessmentStatus?.status && !["Completed", "Closed", "null", "Start", ].includes(assessmentStatus.status);
     return (
         <Layout style={{ padding: "20px", background: "#fff" }}>
-             <Col span={10} className="gutter-row">
-                            {(!assessmentStatus || ![null, "Start", "Pending", "Completed", "Closed"].includes(assessmentStatus?.status)) &&
-                                normalizedUserRole !== "DPAT_QUALITY ASSURANCE" && (
-                                    <Button
-                                        type="primary"
-                                        onClick={handleStartAssessmentSubmit}
-                                        style={{
-                                            backgroundColor: "#1890ff",
-                                            borderColor: "#1890ff",
-                                        }}
-                                        loading={progressLoad}
-                                    >
-                                        <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>
-                                            CLICK TO START ASSESMENT FOR {year}
-                                        </span>
-                                    </Button>
-                                )}
-                        </Col>
+           
+              <Col span={10} className="gutter-row">
+      {(!assessmentStatus || ![null, "Start", "Pending", "Completed", "Closed"].includes(assessmentStatus?.status)) &&
+        normalizedUserRole !== "DPAT_DISTRICT USERS" &&
+        normalizedUserRole !== "DPAT_QUALITY ASSURANCE" && (
+          <Button
+            type="primary"
+            onClick={showConfirm} // Use the confirmation popup instead of directly calling handleStartAssessmentSubmit
+            style={{
+              backgroundColor: "#1890ff",
+              borderColor: "#1890ff",
+            }}
+            loading={progressLoad}
+          >
+            <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>
+              CLICK TO START ASSESMENT FOR {year}
+            </span>
+          </Button>
+        )}
+    </Col>
             <div ref={contentToPrint} className="p-2">
                 <Header style={{ background: "#1890ff", color: "#fff", textAlign: "center", padding: "10px", height: 'auto' }}>
                     <Title level={2} style={{ color: "#fff", margin: 0 }}>
@@ -2276,16 +2346,18 @@ const shouldRenderQualityAssuranceEditor = assessmentStatus?.status && !["Closed
 
                       
                     </Row>
-                      {assessmentStatus?.status === "Closed" && (
+                     {(assessmentStatus?.status === "Closed" || 
+        (assessmentStatus?.status === "Completed" && normalizedUserRole !== "DPAT_TECHNICAL TEAM")) && 
+        showPetition && (
 
                       <h3 style={{ textAlign: "center", padding: "10px" }}>
                         MEMO SECTION
                     </h3>
                       )}
 
-                    {assessmentStatus?.status === "Closed" && (
- 
-
+                     {(assessmentStatus?.status === "Closed" || 
+        (assessmentStatus?.status === "Completed" && normalizedUserRole !== "DPAT_TECHNICAL TEAM")) && 
+        showPetition && (
                     <QualityAssuranceEditor
                         year={year}
                         districtId={district?.value}
@@ -2294,6 +2366,65 @@ const shouldRenderQualityAssuranceEditor = assessmentStatus?.status && !["Closed
                         district={district?.value}
                     />
                     )}
+
+
+                     {(assessmentStatus?.status === "Closed" || 
+        (assessmentStatus?.status === "Completed" && normalizedUserRole !== "DPAT_TECHNICAL TEAM")) && 
+        showPetition && (
+
+                     <>
+                     <h3 style={{ textAlign: "center", padding: "10px" }}>
+                        SUMMARY SCORING SHEET FOR DPAT INDICATORS
+                    </h3>
+
+                    
+                    <ScoreSheetSummary
+                        district={district}
+                        region={region}
+                         assessmentStatus = {assessmentStatus?.status !== "Closed" || assessmentStatus?.status !== "Completed"}
+                        
+                        year={year} />
+
+                    <hr />
+                    </>
+
+)}
+
+                    <Col align="end" style={{ marginBottom: "20px" }}>
+        {normalizedUserRole === "DPAT_DISTRICT USERS" && assessmentStatus?.status === "Completed" && (
+          
+          <Button
+            type="primary"
+            onClick={() => setShowPetition(!showPetition)} // Toggle the state
+            style={{
+              backgroundColor: showPetition ? "#1890ff" : "#c80303ff", // Blue when true, red when false
+              borderColor: showPetition ? "#1890ff" : "#c80303ff", // Match border to background
+              marginLeft: "30px"
+            }}
+            loading={progressLoad}
+          >
+            <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>
+              {showPetition ? "COLLAPSE PETITION FORMS" : `RAISE A PETITION FOR ${district?.label}`}
+            </span>
+          </Button>
+     )}
+      </Col>
+                
+
+     
+
+      {(assessmentStatus?.status === "Closed" || 
+        (assessmentStatus?.status === "Completed" && normalizedUserRole !== "DPAT_TECHNICAL TEAM")) && 
+        showPetition && (
+        <Petition
+          year={year}
+          districtId={district?.value}
+          hideComment={hideComment}
+          assessmentStatus = {assessmentStatus?.status !== "Closed" }
+          district={district?.value}
+        />
+      )}
+
                     <h3 style={{ textAlign: "center", padding: "10px" }}>
                         Annex 1: SECTION A - COMPLIANCE INDICATORS
                     </h3>
@@ -2840,18 +2971,28 @@ const shouldRenderQualityAssuranceEditor = assessmentStatus?.status && !["Closed
                         hideComment={hideComment}
                         district={district?.value}
                     />
+                    
                     <hr />
                     <div style={{ height: '4px', backgroundColor: '#000', width: '100%', margin: '20px 0' }} />
 
-                    <h3 style={{ textAlign: "center", padding: "10px" }}>
-                        ANNEX 4 SUMMARY SCORING SHEET FOR DPAT INDICATORS
+                  {shouldRenderQualityAssuranceEditor1&& (
+                    <>
+                     <h3 style={{ textAlign: "center", padding: "10px" }}>
+                        SUMMARY SCORING SHEET FOR DPAT INDICATORS
                     </h3>
+
+                    
                     <ScoreSheetSummary
                         district={district}
                         region={region}
+                        
                         year={year} />
 
                     <hr />
+                    </>
+                     )}
+
+                   
 
                     <div style={{ height: '4px', backgroundColor: '#000', width: '100%', margin: '20px 0' }} />
 
@@ -2908,7 +3049,7 @@ const shouldRenderQualityAssuranceEditor = assessmentStatus?.status && !["Closed
                 {normalizedUserRole === "DPAT_TECHNICAL TEAM" && assessmentStatus?.status === "Start" && (
                     <Button
                         type="primary"
-                        onClick={handlePendingAssessmentSubmit}
+                        onClick={showPending}
                         style={{
                             backgroundColor: "#2e7f05ff",
                             borderColor: "#2e7f05ff",
@@ -2925,7 +3066,7 @@ const shouldRenderQualityAssuranceEditor = assessmentStatus?.status && !["Closed
                 {normalizedUserRole === "DPAT_QUALITY ASSURANCE" && assessmentStatus?.status === "Pending" && (
                     <Button
                         type="primary"
-                        onClick={handleCompleteReviewSubmit}
+                        onClick={showComplete}
                         style={{
                             backgroundColor: "#338e06ff",
                             borderColor: "#338e06ff",
@@ -2942,7 +3083,7 @@ const shouldRenderQualityAssuranceEditor = assessmentStatus?.status && !["Closed
                 {normalizedUserRole === "DPAT_QUALITY ASSURANCE" && assessmentStatus?.status === "Completed" && (
                     <Button
                         type="primary"
-                        onClick={handleCloseReviewSubmit}
+                        onClick={showClose}
                         style={{
                             backgroundColor: "#a00000ff",
                             borderColor: "#a00000ff",

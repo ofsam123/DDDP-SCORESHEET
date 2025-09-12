@@ -2995,29 +2995,24 @@ const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatu
 
                     <hr />
 
+
+
+                    
                     
 
-                    <h3 style={{ textAlign: "center", padding: "10px" }}>
-                        ANNEX 5 SUMMARY OF COMMENTS AND GAPS
-                    </h3>
-                    <CommentAndGabsSummary
-                        district={district}
-                        region={region}
-                        year={year} />
-
-                    <hr />
-
-                    <h3 style={{ textAlign: "center", padding: "10px" }}>
-                        ANNEX 5 SUMMARY OF COMMENTS AND GAPS
-                    </h3>
-                    <CommentAndGabsSummary
-                        district={district}
-                        region={region}
-                        year={year} />
-
-                    <hr />
+                    
                     </>
                      )}
+
+                     <h3 style={{ textAlign: "center", padding: "10px" }}>
+                        ANNEX 5 SUMMARY OF COMMENTS AND GAPS
+                    </h3>
+                    <CommentAndGabsSummary
+                        district={district}
+                        region={region}
+                        year={year} />
+<hr />
+                     
 
                    
 

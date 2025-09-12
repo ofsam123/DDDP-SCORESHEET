@@ -10,7 +10,7 @@ const MaintenanceInfrastructure = forwardRef(({
 }, ref) => {
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
-  const [maxScore, setMaxScore] = useState(3);
+  const [maxScore, setMaxScore] = useState(5);
 
   useImperativeHandle(ref, () => ({
     getData: () => ({
@@ -46,7 +46,7 @@ const MaintenanceInfrastructure = forwardRef(({
             <ol>
               <li type="i">If the plan includes public places of interest such as Markets, Community Centres, Lorry Parks, U-Drains, Schools, Hospitals or Clinics, CHPS Compounds, etc, score 1;</li>
               <li type="i" className="py-1">If the budget allocation for O&M is at least 10% of Capital expenditure budget, score 1; and</li>
-              <li type="i">If there is evidence of expenditure for O&M Budget proportional to 10% of the Capital Expenditure and there is evidence of implementation of the O&M Plan, score 1</li>
+              <li type="i">If there is evidence of expenditure for O&M Budget proportional to 10% of the Capital Expenditure and there is evidence of implementation of the O&M Plan, score 3</li>
             </ol>
 
             <br />

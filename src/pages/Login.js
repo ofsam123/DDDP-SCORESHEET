@@ -42,11 +42,9 @@ export default function App() {
     axios
       .get(`/users?filter=username:eq:${userName}&filter=email:eq:${email}&
         filter=disabled:eq:false&fields=username,displayName,email,phoneNumber,
-        disabled,userCredentials[userRoles[id,name]]&paging=false`)
+        disabled,userCredentials[userRoles[id,name]],organisationUnits[id,name,level]`)
       .then(resp => {
         const userList = resp.data.users;
-
-        // console.log("user list: ", userList);
     
         if (userList.length === 0) {
           setError("Username and or Email not found in DDDP");
@@ -61,7 +59,8 @@ export default function App() {
             phone: user.phoneNumber,
             disabled: user.disabled,
             email: user.email,
-            userRoles: user?.userCredentials?.userRoles
+            userRoles: user?.userCredentials?.userRoles,
+            districts: user?.organisationUnits.filter(org=> org.level == 3)
           }
         };
     

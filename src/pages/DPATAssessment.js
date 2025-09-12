@@ -9,10 +9,10 @@ import Select from "react-select";
 // import useAuth from "../hooks/useAuth";
 // import Helper from "../utils/utils";
 import SideBarWrapper from "../components/SideBarWrapper";
-import DPATScoreSheet from "../components/DPATScoreSheet";
 import DPATAssessmentSheet from "../components/DPATAssessmentSheet";
 import { Button } from "antd";
 import { filterTrackedEntitiesByCreatedAt } from "../utils/utils";
+import useAuth from "../hooks/useAuth";
 
 const years = [
     { label: 2015, value: 2015 },
@@ -29,6 +29,8 @@ const years = [
 ];
 
 function DPATAssessment() {
+    const { user } = useAuth();
+
     const [districts, setDistricts] = useState(null);
     const [gaMeeting, setGaMeeting] = useState(null);
     const [meetingDecision, setMeetingDecision] = useState([]);
@@ -60,7 +62,17 @@ function DPATAssessment() {
         const storedDistricts = localStorage.getItem("districts");
 
         if (storedDistricts) {
-            setDistricts(JSON.parse(storedDistricts));
+            const data = JSON.parse(storedDistricts);
+            console.log("djiba users: ", user)
+            console.log("djiba users: ", user?.user?.districts)
+            // Collect all district IDs into a Set
+            const districtIds = new Set(user?.user?.districts?.map(d => d.id));
+
+            // Filter options by matching district IDs
+            const filteredOptions = 
+            user?.user?.userRoles?.find(role=> role.name === "Superuser") ?
+            data :  data.filter(opt => districtIds.has(opt.value.id));
+            setDistricts(filteredOptions);
 
         }
     }, []);
@@ -358,7 +370,7 @@ function DPATAssessment() {
             .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=g3wMUKEMmH3&pageSize=1000`)
             .then(result => {
                 if (result.data.instances.length > 0) {
-                   
+
                     axios
                         .get(`/tracker/events?program=g3wMUKEMmH3&orgUnit=${districtId}&startDate=${startDate}&endDate=${endDate}&pageSize=2000`)
                         .then(resp => {

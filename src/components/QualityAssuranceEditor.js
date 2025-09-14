@@ -21,7 +21,7 @@ function QualityAssuranceEditor({ year, districtId,assessmentStatus }) {
   const currentUsername = user?.user?.username || "";
   const currentFullName = user?.user?.fullName || "";
   const isQualityAssurance = currentUserRole === "DPAT QUALITY ASSURANCE";
-  const tableCommentedId = year + "overall";
+  const tableCommentedId = "DPAT_MEMO";
 
   // Fetch existing comments
   useEffect(() => {

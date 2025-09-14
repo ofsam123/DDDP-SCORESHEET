@@ -67,6 +67,7 @@ import instance from "../api/cmsapi";
 import ScoreSheetSummary from "./ScoreSheetSummary";
 import Petition from "./Petition";
 import CommentAndGabsSummary from "./CommentAndGabsSummary";
+import PetitionCommittee from "./PetitionCommittee";
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
@@ -202,7 +203,7 @@ const DPATAssessmentSheet = ({ props }) => {
     const agricultureSupportRef = useRef();
 const [showPetition, setShowPetition] = useState(true); 
     const currentUserRole = user?.user?.userRoles?.find(
-        (role) => role.name === "DPAT TECHNICAL TEAM" || role.name === "DPAT QUALITY ASSURANCE" || role.name === "DPAT DISTRICT USERS"
+        (role) => role.name === "DPAT TECHNICAL TEAM" || role.name === "DPAT QUALITY ASSURANCE" || role.name === "DPAT DISTRICT USERS" || role.name === "DPAT PETITION COMMITTEE"
     )?.name || "";
     const normalizedUserRole = currentUserRole ? currentUserRole.replace(" ", "_").toUpperCase() : "";
     const currentUsername = user?.user?.username || "";
@@ -218,6 +219,7 @@ const [showPetition, setShowPetition] = useState(true);
 
     // Fetch assessment status on component mount
     useEffect(() => {
+        
         const fetchAssessmentStatus = async () => {
             try {
                 const response = await instance.get(
@@ -232,6 +234,9 @@ const [showPetition, setShowPetition] = useState(true);
 
         if (district?.value && year) {
             fetchAssessmentStatus();
+             const intervalId = setInterval(fetchAssessmentStatus, 10 * 1000); // Auto-refresh every 10 seconds
+
+    return () => clearInterval(intervalId);
         }
     }, [district?.value, year]);
 
@@ -2419,7 +2424,7 @@ const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatu
      
 
       {(assessmentStatus?.status === "Closed" || 
-        (assessmentStatus?.status === "Completed" && normalizedUserRole !== "DPAT_TECHNICAL TEAM")) && 
+        (assessmentStatus?.status === "Completed" && normalizedUserRole !== "DPAT_TECHNICAL TEAM" && normalizedUserRole !== "DPAT_PETITION COMMITTEE")) && 
         showPetition && (
         <Petition
           year={year}
@@ -2429,6 +2434,19 @@ const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatu
           district={district?.value}
         />
       )}
+
+       {(assessmentStatus?.status === "Closed" || 
+        (assessmentStatus?.status === "Completed" && normalizedUserRole !== "DPAT_TECHNICAL TEAM")) &&  (
+        <PetitionCommittee
+          year={year}
+          districtId={district?.value}
+          hideComment={hideComment}
+          assessmentStatus = {assessmentStatus?.status !== "Closed" }
+          district={district?.value}
+        />
+      )}
+
+   
 
                     <h3 style={{ textAlign: "center", padding: "10px" }}>
                         Annex 1: SECTION A - COMPLIANCE INDICATORS
@@ -2675,6 +2693,7 @@ const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatu
                         year={year}
                         districtId={district?.value}
                         publications={props.publications}
+                        hideComment={hideComment}
                     />
                     <hr />
 
@@ -2742,6 +2761,7 @@ const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatu
                         ref={districtHotlineNumberRef}
                         year={year}
                         districtId={district?.value}
+                        hideComment={hideComment}
                     />
                     <hr />
 
@@ -2759,6 +2779,7 @@ const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatu
                         year={year}
                         districtId={district?.value}
                         data={deepGenderData}
+                        hideComment={hideComment}
                     />
                     <hr />
 
@@ -2903,6 +2924,7 @@ const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatu
                         year={year}
                         districtId={district?.value}
                         guards={guards}
+                        hideComment={hideComment}
                     />
                     <hr />
 
@@ -3102,7 +3124,7 @@ const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatu
                     </Button>
                 )}
 
-                {normalizedUserRole === "DPAT_QUALITY ASSURANCE" && assessmentStatus?.status === "Completed" && (
+                {normalizedUserRole === "DPAT_PETITION COMMITTEE" && assessmentStatus?.status === "Completed" && (
                     <Button
                         type="primary"
                         onClick={showClose}
@@ -3114,7 +3136,7 @@ const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatu
                         loading={progressLoad}
                     >
                         <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>
-                            CLOSE REVIEW
+                            CLOSE ASSESSMENT
                         </span>
                     </Button>
                 )}

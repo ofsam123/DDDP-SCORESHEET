@@ -124,6 +124,7 @@ const ClientServiceCharter = forwardRef(({
               SDI 2.0-2.5 Actual Score: <strong>{score}</strong>
             </Title>
             {!hideComment && renderCommentInput()}
+            
           </Col>
 
           <Title level={4} style={{ marginTop: "30px" }}>Findings / Observations & Conclusion</Title>

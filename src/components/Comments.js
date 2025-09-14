@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { Input, Avatar, Col, message, Row } from "antd";
 import {
@@ -24,12 +25,14 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
   const [editGapsText, setEditGapsText] = useState({});
 
   const currentUserRole = user?.user?.userRoles?.find(
-    (role) => role.name === "DPAT TECHNICAL TEAM" || role.name === "DPAT QUALITY ASSURANCE"
+    (role) => role.name === "DPAT TECHNICAL TEAM" || role.name === "DPAT QUALITY ASSURANCE" || role.name === "DPAT DISTRICT USERS" || role.name === "DPAT PETITION COMMITTEE"
   )?.name || "";
   const normalizedUserRole = currentUserRole ? currentUserRole.replace(" ", "_").toUpperCase() : "";
   const currentUsername = user?.user?.username || "";
   const currentFullName = user?.user?.fullName || "";
-  const isReviewer = currentUserRole === "DPAT QUALITY ASSURANCE";
+  const isReviewer = currentUserRole === "DPAT QUALITY ASSURANCE" || 
+                    currentUserRole === "DPAT DISTRICT USERS" || 
+                    currentUserRole === "DPAT PETITION COMMITTEE";
 
   // Initialize comments from provided data
   useEffect(() => {
@@ -39,31 +42,45 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
       );
       setComments(filteredComments);
     }
-  }, [data, year, tableCommentedId, districtId,]);
+  }, [data, year, tableCommentedId, districtId]);
 
   // Fetch comments from API
   useEffect(() => {
+    let isInitialFetch = true; // Track initial fetch
     const fetchComments = async () => {
       if (!districtId || !year) return;
+      if (!navigator.onLine) {
+        if (isInitialFetch) {
+          message.error("No internet connection. Please check your network.");
+        }
+        return;
+      }
       try {
         const response = await instance.get(`comments/tables/${districtId}/${year}/DPAT`);
         const filteredComments = response.data.filter(
           (comment) =>
             comment.tableCommented === tableCommentedId &&
             comment.districtId === districtId &&
-            (comment.userRole === "DPAT_TECHNICAL TEAM" || comment.userRole === "DPAT_QUALITY ASSURANCE")
+            (comment.userRole === "DPAT_TECHNICAL_TEAM" || comment.userRole === "DPAT_QUALITY ASSURANCE")
         );
         setComments(filteredComments);
       } catch (error) {
-        console.error("Failed to fetch comments:", {
-          message: error.message,
-          response: error.response?.data,
-          status: error.response?.status,
-        });
-        message.error("Failed to fetch comments");
+        // console.error("Failed to fetch comments:", {
+        //   message: error.message,
+        //   response: error.response?.data,
+        //   status: error.response?.status,
+        // });
+        if (isInitialFetch) {
+           message.error("Failed to fetch comments");
+        }
+      } finally {
+        isInitialFetch = false;
       }
     };
     fetchComments();
+    const intervalId = setInterval(fetchComments, 10 * 1000); // Auto-refresh every 10 seconds
+
+    return () => clearInterval(intervalId);
   }, [districtId, year, tableCommentedId]);
 
   const handleCommentSubmit = async (submitText = commentText) => {
@@ -80,9 +97,13 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
       (comment) =>
         comment.tableCommented === tableCommentedId &&
         comment.userRole === normalizedUserRole &&
-        comment.districtId === districtId &&
-        comment.username === currentUsername
+        comment.districtId === districtId
     );
+
+    if (existingComment && existingComment.username !== currentUsername) {
+      message.error(`Only one ${currentUserRole.replace("_", " ")} can comment on this indicator for this district.`);
+      return;
+    }
 
     const commentDate = new Date().toISOString().split("T")[0].split("-").map(Number);
     const payload = {
@@ -164,6 +185,8 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
         comment.districtId === districtId &&
         comment.username === currentUsername
     );
+
+    
 
     const commentDate = new Date().toISOString().split("T")[0].split("-").map(Number);
     const payload = {
@@ -302,7 +325,7 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
 
   const canShowCommentInput = () => {
     if (isReviewer) {
-      return false; // DPAT QUALITY ASSURANCE cannot comment
+      return false; // Reviewers cannot comment
     }
     if (editingCommentId) {
       return false;
@@ -311,9 +334,7 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
       (comment) =>
         comment.tableCommented === tableCommentedId &&
         comment.userRole === normalizedUserRole &&
-        comment.districtId === districtId &&
-        comment.username === currentUsername &&
-        comment.comments
+        comment.districtId === districtId
     );
   };
 
@@ -333,19 +354,19 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
 
   const handleCommentButtonClick = () => {
     if (isReviewer) {
-      message.info("DPAT QUALITY ASSURANCE cannot comment on indicators.");
+      message.info("Reviewers cannot comment on indicators.");
       return;
     }
-    if (canShowCommentInput()) {
-      setShowCommentInput(!showCommentInput);
-    } else {
-      message.info("You have already added a comment for this indicator.");
+    if (!canShowCommentInput()) {
+      message.error(`Only one ${currentUserRole.replace("_", " ")} can comment on this indicator for this district.`);
+      return;
     }
+    setShowCommentInput(!showCommentInput);
   };
 
   const handleGapsButtonClick = () => {
     if (isReviewer) {
-      message.info("DPAT QUALITY ASSURANCE cannot enter gaps.");
+      message.info("Reviewers cannot enter gaps.");
       return;
     }
     if (canAddGaps()) {
@@ -380,7 +401,7 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
           <Avatar
             src={
               user?.image ||
-              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTL_JlCFnIGX5omgjEjgV9F3sBRq14eTERK9w&s"
+              "https://encrypted-tbn0.gstatic.com/images?q=tbn://9GcTL_JlCFnIGX5omgjEjgV9F3sBRq14eTERK9w&s"
             }
             style={{ marginRight: "10px", borderRadius: "50%", flexShrink: 0 }}
             size={32}
@@ -432,7 +453,7 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
           <Avatar
             src={
               user?.image ||
-              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTL_JlCFnIGX5omgjEjgV9F3sBRq14eTERK9w&s"
+              "https://encrypted-tbn0.gstatic.com/images?q=tbn://9GcTL_JlCFnIGX5omgjEjgV9F3sBRq14eTERK9w&s"
             }
             style={{ marginRight: "10px", borderRadius: "50%", flexShrink: 0 }}
             size={32}
@@ -503,7 +524,7 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
                         <Avatar
                           src={
                             comment.userImage ||
-                            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTL_JlCFnIGX5omgjEjgV9F3sBRq14eTERK9w&s"
+                            "https://encrypted-tbn0.gstatic.com/images?q=tbn://9GcTL_JlCFnIGX5omgjEjgV9F3sBRq14eTERK9w&s"
                           }
                           style={{ marginRight: "10px", borderRadius: "50%" }}
                           size={32}
@@ -528,7 +549,6 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
                                 }}
                               >
                                 {comment.commentDate.join("/")}
-
                               </h11>
                               {!hideComment && !isReviewer && (
                               <EditOutlined
@@ -582,7 +602,7 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
                         <Avatar
                           src={
                             comment.userImage ||
-                            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTL_JlCFnIGX5omgjEjgV9F3sBRq14eTERK9w&s"
+                            "https://encrypted-tbn0.gstatic.com/images?q=tbn://9GcTL_JlCFnIGX5omgjEjgV9F3sBRq14eTERK9w&s"
                           }
                           style={{ marginRight: "10px", borderRadius: "50%" }}
                           size={32}
@@ -607,8 +627,6 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
                                 }}
                               >
                                 {comment.updateDate.join("/")}
-
-                                
                               </h11>
                               {!hideComment && !isReviewer && (
                               <EditOutlined

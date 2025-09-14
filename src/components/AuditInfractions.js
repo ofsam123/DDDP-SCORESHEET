@@ -41,7 +41,7 @@ const AuditInfractions = forwardRef(({ year, districtId, hideComment }, ref) => 
 
   useImperativeHandle(ref, () => ({
     getData: () => ({
-      indicator: "PI4",
+      indicator: "PI3",
       area: "Audit Performance",
       maxScore,
       irregularities,
@@ -175,7 +175,7 @@ const AuditInfractions = forwardRef(({ year, districtId, hideComment }, ref) => 
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
-          <Title level={3} style={{ marginTop: "20px" }}>PI 4.0 - 4.2 Audit Infractions</Title>
+          <Title level={3} style={{ marginTop: "20px" }}>PI 3.0 - 3.2 Audit Infractions</Title>
           <Title level={4} style={{ marginTop: "20px" }}>Assessment Guide/ Requirement</Title>
           <Content>
             From the DCD receive a copy of the Auditor General’s Annual Audit Report for {year} on financial irregularities reported on embezzlement and/or misappropriation;<br /><br />
@@ -196,12 +196,12 @@ const AuditInfractions = forwardRef(({ year, districtId, hideComment }, ref) => 
           </Title>
 
           <Title level={5} style={{ marginTop: "20px" }}>
-            PI 4.0-4.2i Actual Score: <strong>{scorei}</strong>
+            PI 3.0-3.2i Actual Score: <strong>{scorei}</strong>
           </Title>
 
           <Col align="start">
             <Title level={5} style={{ marginTop: "20px", marginRight: "0px", marginLeft: "0px" }}>
-              PI 4.0-4.2ii Actual Score: <strong>{scoreii}</strong>
+              PI 3.0-3.2ii Actual Score: <strong>{scoreii}</strong>
             </Title>
             {!hideComment && renderCommentInput()}
           </Col>

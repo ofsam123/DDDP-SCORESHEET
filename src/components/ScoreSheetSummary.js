@@ -111,10 +111,10 @@ const [loading, setLoading] = useState(false);
 
                 const piThematic = {
                     PI1: 'Annual Action Plan Implementation',
-                    PI2: 'Capacity Building',
-                    PI3: 'Revenue Generation',
-                    PI4: 'Audit Performance',
-                    PI5: 'Access to Social Services',
+                    PI2: 'Revenue Generation',
+                    PI3: 'Audit Performance',
+                    PI4: 'Access to Social Services',
+                  
                 };
 
                 // Compliance Indicators

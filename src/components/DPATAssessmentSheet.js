@@ -979,6 +979,10 @@ const [showPetition, setShowPetition] = useState(true);
             }
         });
 
+        if(formattedData.length === 0){
+            fulfillment = "Not Fulfilled";
+        }
+
         setSubStructuresMeetingData({ data: temp.concat(formattedData), fulfillment, subMeeting: formattedData });
     };
 
@@ -2748,14 +2752,14 @@ const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatu
                     />
                     <hr />
 
-                    <ShelterTransactionalHousing
+                    {/* <ShelterTransactionalHousing
                         ref={shelterTransactionalHousingRef}
                         year={year}
                         districtId={district?.value}
                         hideComment={hideComment}
                         district={district?.value}
                     />
-                    <hr />
+                    <hr /> */}
 
                     <DistrictHotlineNumber
                         ref={districtHotlineNumberRef}
@@ -2899,14 +2903,14 @@ const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatu
                     />
                     <hr />
 
-                    <ContractManagementAndAdmins
+                  {pAndP &&  <ContractManagementAndAdmins
                         ref={contractManagementAndAdminsRef}
                         year={year}
                         districtId={district?.value}
                         hideComment={hideComment}
                         district={district?.value}
                         data={pAndP}
-                    />
+                    />}
                     <hr />
 
                     <FollowUpDeduction
@@ -2928,7 +2932,7 @@ const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatu
                     />
                     <hr />
 
-                    <CapacityBuildingImplementation
+                    {/* <CapacityBuildingImplementation
                         ref={capacityBuildingImplementationRef}
                         year={year}
                         districtId={district?.value}
@@ -2944,7 +2948,7 @@ const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatu
                         hideComment={hideComment}
                         district={district?.value}
                     />
-                    <hr />
+                    <hr /> */}
 
                     <RateableRevenu
                         ref={rateableRevenueRef}
@@ -3027,7 +3031,7 @@ const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatu
                      )}
 
                      <h3 style={{ textAlign: "center", padding: "10px" }}>
-                        ANNEX 5 SUMMARY OF COMMENTS AND GAPS
+                        ANNEX 5 SUMMARY OF COMMENTS
                     </h3>
                     <CommentAndGabsSummary
                         district={district}

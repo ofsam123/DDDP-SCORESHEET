@@ -67,7 +67,7 @@ const NutritionIntervention = forwardRef(({
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
-          <Title level={3} style={{ marginTop: "30px" }}>SDI 4.0 - 4.6 Nutrition Services</Title>
+          <Title level={3} style={{ marginTop: "30px" }}>SDI 4.0 - 4.5 Nutrition Services</Title>
           <Title level={4} style={{ marginTop: "30px" }}>Assessment Guide/ Requirement</Title>
           <Content>
             From the DCD, receive information on Nutrition activities in the District:<br /><br />
@@ -83,7 +83,7 @@ const NutritionIntervention = forwardRef(({
 
           <Col align="start">
             <Title level={5} style={{ marginTop: "20px", marginRight: "0px", marginLeft: "0px" }}>
-              SDI 4.0-4.6 Actual Score: <strong>{scorei}</strong>
+              SDI 4.0-4.5 Actual Score: <strong>{scorei}</strong>
             </Title>
             {!hideComment && renderCommentInput()}
           </Col>

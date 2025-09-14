@@ -84,7 +84,8 @@ const GASupport = forwardRef(({
       maxScore,
       cededRevenueUtilisationData,
       subStructureActivityData,
-      cededRevenueUtilisationScore,
+      scorei: cededRevenueUtilisationScore >= 50 ? '2' : '0',
+      scorei: score,
       substructureExpendature,
     }),
   }));

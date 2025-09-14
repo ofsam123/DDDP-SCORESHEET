@@ -55,12 +55,12 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
         );
         setComments(filteredComments);
       } catch (error) {
-        console.error("Failed to fetch comments:", {
-          message: error.message,
-          response: error.response?.data,
-          status: error.response?.status,
-        });
-        message.error("Failed to fetch comments");
+        // console.error("Failed to fetch comments:", {
+        //   message: error.message,
+        //   response: error.response?.data,
+        //   status: error.response?.status,
+        // });
+        // message.error("Failed to fetch comments");
       }
     };
     fetchComments();

@@ -212,11 +212,70 @@ function Petition({ year, districtId,assessmentStatus }) {
     );
   };
 
+   const renderPetitionList = () => {
+      const petition = comments.find(
+        (comment) => comment.tableCommented === tableCommentedId && comment.districtId === districtId && comment.userRole === "DDUSER"
+      );
+      if (!petition) {
+        return <div style={{ padding: "20px" }}>No petition available for this district.</div>;
+      }
+      return (
+        <div
+          style={{
+            borderTop: "1px solid #e8e8e8",
+            padding: "8px",
+            background: "#fff",
+            width: "100%",
+            marginTop: "20px",
+          }}
+        >
+          <h3 style={{ textAlign: "center", padding: "10px" }}>District Petition</h3>
+          <div
+            style={{
+              padding: "10px",
+              border: "1px solid #f0f0f0",
+              borderRadius: "6px",
+            }}
+          >
+            <div style={{ display: "flex", marginBottom: "10px" }}>
+              <Col>
+                <Avatar
+                  src={petition.userImage || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTL_JlCFnIGX5omgjEjgV9F3sBRq14eTERK9w&s"}
+                  style={{ marginRight: "10px", borderRadius: "50%" }}
+                  size={32}
+                />
+              </Col>
+              <div style={{ flex: 1 }}>
+                <h4 style={{ margin: 0, fontSize: "13px" }}>
+                  {petition.fullName} (DPAT DISTRICT USERS)
+                </h4>
+                <div
+                  style={{ fontSize: "16px", marginTop: "8px" }}
+                  dangerouslySetInnerHTML={{ __html: petition.comments }}
+                />
+                {petition.fileUrl && (
+                  <div style={{ marginTop: "8px" }}>
+                    <a href={petition.fileUrl} target="_blank" rel="noopener noreferrer">
+                      Attached File: {petition.fileName}
+                    </a>
+                  </div>
+                )}
+                <Col align="end">
+                  <h11 style={{ marginLeft: "8px" }}>{petition.commentDate.join("/")}</h11>
+                </Col>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
   if (!isPetition && !comments.length && !assessmentStatus) {
-    return <div style={{ padding: "20px" }}>No Petition available for this district.</div>;
+    return <div style={{ padding: "20px" }}>No </div>;
   }
 
   return (
+    
     <div style={{ padding: "20px" }}>
         <>
         

@@ -181,7 +181,7 @@ const PWDService = forwardRef(({
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
-          <Title level={3} style={{ marginTop: "30px" }}>SDI 4.0 - 4.4 Service to Persons Who are Differently Abled  (PWDAs) </Title>
+          <Title level={3} style={{ marginTop: "30px" }}>SDI 4.0 - 4.3 Service to Persons Who are Differently Abled  (PWDAs) </Title>
           <Title level={4} style={{ marginTop: "30px" }}>Assessment Guide/ Requirement</Title>
           <Content>
             From the DCD and Head of Department of Social Welfare and Community Development
@@ -204,14 +204,14 @@ const PWDService = forwardRef(({
 
           <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>{maxScore}</strong></Title>
           <Title level={5} style={{ marginTop: "20px" }}>
-            SDI 4.0-4.4i Actual Score: <strong>{scorei}</strong>
+            SDI 4.0-4.3i Actual Score: <strong>{scorei}</strong>
           </Title>
           <Title level={5} style={{ marginTop: "20px" }}>
-            SDI 4.0-4.4ii Actual Score: <strong>{scoreii}</strong>
+            SDI 4.0-4.3ii Actual Score: <strong>{scoreii}</strong>
           </Title>
           <Col align="start">
             <Title level={5} style={{ marginTop: "20px", marginRight: "0px", marginLeft: "0px" }}>
-              SDI 4.0-4.4iii Actual Score: <strong>{scoreiii}</strong>
+              SDI 4.0-4.3iii Actual Score: <strong>{scoreiii}</strong>
             </Title>
             {!hideComment && renderCommentInput()}
           </Col>

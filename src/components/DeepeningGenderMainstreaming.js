@@ -127,7 +127,7 @@ const DeepeningGenderMainstreaming = forwardRef(({ data, year, districtId }, ref
         >
             {({ renderCommentInput, renderCommentList }) => (
                 <>
-                    <Title level={3}>SDI 4.0 - 4.5 Deepening Gender Mainstreaming</Title>
+                    <Title level={3}>SDI 4.0 - 4.4 Deepening Gender Mainstreaming</Title>
                     <Title level={4} style={{ marginTop: "10px" }}>Assessment Guide/Requirement</Title>
                     <Content>
                         From the DCD, receive information on the Gender mainstreaming activities for <strong>{year}</strong>.<br /><br />
@@ -147,11 +147,11 @@ const DeepeningGenderMainstreaming = forwardRef(({ data, year, districtId }, ref
 
                     <Title level={4} style={{ marginTop: "30px" }}>Maximum Score <strong>{maxScore}</strong></Title>
                     <Title level={5} style={{ marginTop: "20px" }}>
-                        SDI 4.0-4.5i Actual Score: <strong>{scorei}</strong>
+                        SDI 4.0-4.4i Actual Score: <strong>{scorei}</strong>
                     </Title>
                     <Col align="start">
                         <Title level={5} style={{ marginTop: "20px", marginRight: "0px", marginLeft: "0px" }}>
-                            SDI 4.0-4.5ii Actual Score: <strong>{scoreii}</strong>
+                            SDI 4.0-4.4ii Actual Score: <strong>{scoreii}</strong>
                         </Title>
                         {renderCommentInput()}
                     </Col>

@@ -20,7 +20,11 @@ const CommentAndGabsSummary = ({ district, year, region }) => {
         instance.get(`comments/tables/${district?.value}/${year}/DPAT`)
             .then(response => {
 
-                const tables = response.data.filter(item => item.tableCommented !== 'assessment_start_DAPT');
+                const tables = response.data.filter(item =>
+                    item.tableCommented !== "assessment_start_DAPT" &&
+                    item.tableCommented !== "DPAT_MEMO"
+                );
+
 
 
                 const comments = [];
@@ -48,6 +52,8 @@ const CommentAndGabsSummary = ({ district, year, region }) => {
                     gaps.push(setGaps);
                 });
 
+
+                console.log("comments: ", comments)
 
                 console.log("gaps: ", gaps)
 
@@ -117,13 +123,13 @@ const CommentAndGabsSummary = ({ district, year, region }) => {
                         <tr style={{ fontWeight: 'bold', border: '1px solid #000' }}>
                             <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>No.</th>
                             <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Indicator</th>
-                            <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Outcomes</th>
+                            <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Comments</th>
 
                         </tr>
 
                     </thead>
                     <tbody>
-                        <tr style={{ border: '1px solid #000', backgroundColor: '#ccccc9f2' }}>
+                        {/* <tr style={{ border: '1px solid #000', backgroundColor: '#ccccc9f2' }}>
                             <td style={{ border: 'none' }}></td>
 
 
@@ -132,7 +138,7 @@ const CommentAndGabsSummary = ({ district, year, region }) => {
                             </td>
 
                             <td style={{ border: 'none' }}></td>
-                        </tr>
+                        </tr> */}
                         {data.comments.map((item, index) => (
                             <tr key={index}>
                                 <td style={{ border: '1px solid #000' }}><strong>{item.no}</strong></td>
@@ -144,8 +150,33 @@ const CommentAndGabsSummary = ({ district, year, region }) => {
                         ))}
 
                     </tbody>
+
+                </table>
+
+                <br />
+                <hr />
+                <div style={{ height: '4px', backgroundColor: '#000', width: '100%', margin: '20px 0' }} />
+                <h3 style={{ textAlign: "center", padding: "10px" }}>
+                    ANNEX 6 SUMMARY OF CAPACITY GAPS
+                </h3>
+                <table className="table table-bordered" style={{
+                    border: '1px solid #000',
+                    borderCollapse: 'collapse',
+                    width: '100%',
+                    marginTop: "20px"
+                }}>
+                    <thead>
+                        <tr style={{ fontWeight: 'bold', border: '1px solid #000' }}>
+                            <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>No.</th>
+                            <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Indicator</th>
+                            <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Capacity Gaps</th>
+
+                        </tr>
+
+                    </thead>
+
                     <tbody>
-                        <tr style={{ border: '1px solid #000', backgroundColor: '#ccccc9f2' }}>
+                        {/* <tr style={{ border: '1px solid #000', backgroundColor: '#ccccc9f2' }}>
                             <td style={{ border: 'none' }}></td>
                             <td style={{ borderLeft: 'none', fontWeight: 'bold' }}>
                                 SECTION B: CAPACITY GAPS ON INDICATORS (SDIs)
@@ -153,7 +184,7 @@ const CommentAndGabsSummary = ({ district, year, region }) => {
                             <td style={{ border: 'none' }}></td>
 
 
-                        </tr>
+                        </tr> */}
                         {data.gaps.map((item, index) => (
                             <tr key={index}>
                                 <td style={{ border: '1px solid #000' }}><strong>{item.no}</strong></td>

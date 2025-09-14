@@ -2,24 +2,27 @@ import React, { useState, useEffect } from 'react';
 import instance from '../api/cmsapi';
 import { Col, Row, Layout, Typography,Spin } from 'antd';
 import moment from 'moment';
+import { useGetByDistrictAndYear } from './service/comments';
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
 
 const ScoreSheetSummary = ({ district, year, region, assessmentStatus }) => {
+    const { data: comments, error, isLoading, isSuccess } = useGetByDistrictAndYear(district?.value, year);
     const [data, setData] = useState({
         complianceIndicators: [],
         serviceDeliveryIndicators: [],
         performanceIndicators: []
     });
-const [loading, setLoading] = useState(false);
+
 
     const getData = () => {
         // setLoading(true);
-        instance.get(`comments/tables/${district?.value}/${year}/DPAT`)
-            .then(response => {
+        // console.log("comments added: ", comments);
+        // console.log("comments status: ", isSuccess);
+        if(isSuccess){
 
-                const jsonData = response.data;
+                const jsonData = comments?.data;
                 if (!jsonData || !jsonData[0] || !jsonData[0].dddpData || !jsonData[0].dddpData.tables) {
                     // setLoading(false);
                     return;
@@ -111,10 +114,10 @@ const [loading, setLoading] = useState(false);
 
                 const piThematic = {
                     PI1: 'Annual Action Plan Implementation',
-                    PI2: 'Capacity Building',
-                    PI3: 'Revenue Generation',
-                    PI4: 'Audit Performance',
-                    PI5: 'Access to Social Services',
+                    PI2: 'Revenue Generation',
+                    PI3: 'Audit Performance',
+                    PI4: 'Access to Social Services',
+                  
                 };
 
                 // Compliance Indicators
@@ -197,10 +200,7 @@ const [loading, setLoading] = useState(false);
                     performanceIndicators
                 });
 
-            })
-            .catch(error => {
-                console.log("Error during fetching: ", error);
-            })
+    }
     }
 
     useEffect(() => {

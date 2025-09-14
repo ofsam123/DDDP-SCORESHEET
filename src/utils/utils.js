@@ -97,6 +97,14 @@ export function filterTrackedEntitiesByCreatedAt(entities, year, period) {
   });
 }
 
+export function filterTrackedEntitiesByYear(entities, startDate, endDate) {
+
+  return entities.filter(entity => {
+    const created = new Date(entity.createdAt);
+    return created >= startDate && created <= endDate;
+  });
+}
+
 
 export function getPlanExecutionStats(formatedPlans, reports) {
   const counts = {};

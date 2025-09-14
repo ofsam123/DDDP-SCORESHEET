@@ -10,8 +10,9 @@ const AuditCommitteeResponsiveness = forwardRef(({ year, audits, actions, manage
 
     useImperativeHandle(ref, () => ({
         getData: () => ({
-            indicator: "PI4",
+            indicator: "PI3",
             area: "Audit Performance",
+            score: audits?.score || 0, 
             maxScore,
             maxScore,
             audits,
@@ -51,7 +52,7 @@ const AuditCommitteeResponsiveness = forwardRef(({ year, audits, actions, manage
         >
             {({ renderCommentInput, renderCommentList }) => (
                 <>
-                    <Title level={3} style={{ marginTop: "20px" }}>PI 4.0 - 4.1 Responsiveness of Audit Committee</Title>
+                    <Title level={3} style={{ marginTop: "20px" }}>PI 3.0 - 3.1 Responsiveness of Audit Committee</Title>
                     <Title level={4} style={{ marginTop: "20px" }}>Assessment Guide/ Requirement</Title>
                     <Content>
                         From the District Coordinating Director (DCD) receive information on the Audit Committee of the Assembly:<br /><br />

@@ -13,7 +13,7 @@ const MonitoringProjectAndActivity = forwardRef(({ year, district, hideComment }
     const [scorei, setScorei] = useState(0);
     const [scoreii, setScoreii] = useState(0);
     const [percentage, setPercentage] = useState(0);
-    const [maxScore, setMaxScore] = useState(3);
+    const [maxScore, setMaxScore] = useState(4);
 
     useImperativeHandle(ref, () => ({
         getData: () => ({
@@ -137,7 +137,7 @@ const MonitoringProjectAndActivity = forwardRef(({ year, district, hideComment }
 
                             setData([temp]);
                             if (percentage >= 100) {
-                                setScorei(1);
+                                setScorei(2);
                             }
 
                         })
@@ -212,7 +212,7 @@ const MonitoringProjectAndActivity = forwardRef(({ year, district, hideComment }
                         <ol>
                             <li type="i">
                                 If a clear budgetary provision has been made for M&E and 100% of Budgetary allocation released for the
-                                implementation of planned monitoring activities, score 1, else score 0
+                                implementation of planned monitoring activities, score 2, else score 0
                             </li>
                             <li type="i">
                                 If there is evidence of multi-stakeholder participation in monitoring activities, score 2

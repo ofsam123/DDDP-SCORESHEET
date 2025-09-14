@@ -68,6 +68,7 @@ import ScoreSheetSummary from "./ScoreSheetSummary";
 import Petition from "./Petition";
 import CommentAndGabsSummary from "./CommentAndGabsSummary";
 import PetitionCommittee from "./PetitionCommittee";
+import { useAddComment } from "./service/comments";
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
@@ -145,6 +146,8 @@ const DPATAssessmentSheet = ({ props }) => {
     const [cededRevenueUtilisationScore, setCededRevenueUtilisationScore] = useState(0);
     const [assessmentStatus, setAssessmentStatus] = useState(null); // New state for assessment status
     const [progressLoad, setProgressLoad] = useState(false); // New state for loading
+
+    const mutation = useAddComment({});
 
     const gaMeetingRef = useRef();
     const aapBudgetApprovalRef = useRef();
@@ -234,9 +237,7 @@ const [showPetition, setShowPetition] = useState(true);
 
         if (district?.value && year) {
             fetchAssessmentStatus();
-             const intervalId = setInterval(fetchAssessmentStatus, 10 * 1000); // Auto-refresh every 10 seconds
-
-    return () => clearInterval(intervalId);
+         
         }
     }, [district?.value, year]);
 
@@ -978,6 +979,10 @@ const [showPetition, setShowPetition] = useState(true);
                 fulfillment = "Not Fulfilled";
             }
         });
+
+        if(formattedData.length === 0){
+            fulfillment = "Not Fulfilled";
+        }
 
         setSubStructuresMeetingData({ data: temp.concat(formattedData), fulfillment, subMeeting: formattedData });
     };
@@ -1982,8 +1987,6 @@ const [showPetition, setShowPetition] = useState(true);
             agricultureSupport: agricultureSupportRef.current?.getData(),
         };
 
-        console.log("dddp: ", dddpData);
-
         try {
             // Step 1: Post to assessments endpoint
             const assessmentResponse = await instance.post(`assessments`, payload);
@@ -2029,19 +2032,19 @@ const [showPetition, setShowPetition] = useState(true);
                 },
             };
 
-            const commentResponse = await instance.post(`comments`, commentPayload);
+            // const commentResponse = await instance.post(`comments`, commentPayload);
 
+            mutation.mutate(commentPayload)
             
-            
-            message.success({
-                content: (
-                    <div>
-                        <p>Comment added successfully (Status: 201)</p>
-                    </div>
-                ),
-                duration: 3,
+            // message.success({
+            //     content: (
+            //         <div>
+            //             <p>Comment added successfully (Status: 201)</p>
+            //         </div>
+            //     ),
+            //     duration: 3,
                 
-            });
+            // });
             
            
         } catch (error) {
@@ -2748,14 +2751,14 @@ const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatu
                     />
                     <hr />
 
-                    <ShelterTransactionalHousing
+                    {/* <ShelterTransactionalHousing
                         ref={shelterTransactionalHousingRef}
                         year={year}
                         districtId={district?.value}
                         hideComment={hideComment}
                         district={district?.value}
                     />
-                    <hr />
+                    <hr /> */}
 
                     <DistrictHotlineNumber
                         ref={districtHotlineNumberRef}
@@ -2899,14 +2902,14 @@ const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatu
                     />
                     <hr />
 
-                    <ContractManagementAndAdmins
+                  {pAndP &&  <ContractManagementAndAdmins
                         ref={contractManagementAndAdminsRef}
                         year={year}
                         districtId={district?.value}
                         hideComment={hideComment}
                         district={district?.value}
                         data={pAndP}
-                    />
+                    />}
                     <hr />
 
                     <FollowUpDeduction
@@ -2928,7 +2931,7 @@ const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatu
                     />
                     <hr />
 
-                    <CapacityBuildingImplementation
+                    {/* <CapacityBuildingImplementation
                         ref={capacityBuildingImplementationRef}
                         year={year}
                         districtId={district?.value}
@@ -2944,7 +2947,7 @@ const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatu
                         hideComment={hideComment}
                         district={district?.value}
                     />
-                    <hr />
+                    <hr /> */}
 
                     <RateableRevenu
                         ref={rateableRevenueRef}
@@ -3027,7 +3030,7 @@ const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatu
                      )}
 
                      <h3 style={{ textAlign: "center", padding: "10px" }}>
-                        ANNEX 5 SUMMARY OF COMMENTS AND GAPS
+                        ANNEX 5 SUMMARY OF COMMENTS
                     </h3>
                     <CommentAndGabsSummary
                         district={district}

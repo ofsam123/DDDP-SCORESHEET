@@ -11,7 +11,7 @@ import Select from "react-select";
 import SideBarWrapper from "../components/SideBarWrapper";
 import DPATAssessmentSheet from "../components/DPATAssessmentSheet";
 import { Button } from "antd";
-import { filterTrackedEntitiesByCreatedAt } from "../utils/utils";
+import { filterTrackedEntitiesByCreatedAt, filterTrackedEntitiesByYear } from "../utils/utils";
 import useAuth from "../hooks/useAuth";
 
 const years = [
@@ -63,8 +63,7 @@ function DPATAssessment() {
 
         if (storedDistricts) {
             const data = JSON.parse(storedDistricts);
-            console.log("djiba users: ", user)
-            console.log("djiba users: ", user?.user?.districts)
+           
             // Collect all district IDs into a Set
             const districtIds = new Set(user?.user?.districts?.map(d => d.id));
 
@@ -374,7 +373,8 @@ function DPATAssessment() {
                     axios
                         .get(`/tracker/events?program=g3wMUKEMmH3&orgUnit=${districtId}&startDate=${startDate}&endDate=${endDate}&pageSize=2000`)
                         .then(resp => {
-                            const data = filterTrackedEntitiesByCreatedAt(result.data.instances, startDate, endDate);
+                            //  console.log("Djiba p&p: ", result.data.instances)
+                            const data = filterTrackedEntitiesByYear(result.data.instances, startDate, endDate);
 
                             // console.log("Djiba p&p: ", data)
 

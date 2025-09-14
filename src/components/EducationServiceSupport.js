@@ -16,7 +16,7 @@ const EducationServiceSupport = forwardRef(({ year, districtId, hideComment }, r
 
   useImperativeHandle(ref, () => ({
     getData: () => ({
-      indicator: "PI5",
+      indicator: "PI4",
       area: "Access to Social Services",
       maxScore,
       educationSupport,
@@ -173,7 +173,7 @@ const EducationServiceSupport = forwardRef(({ year, districtId, hideComment }, r
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
-          <Title level={3} style={{ marginTop: "20px" }}>PI 5.0 - 5.1 Support to Education Services</Title>
+          <Title level={3} style={{ marginTop: "20px" }}>PI 4.0 - 4.1 Support to Education Services</Title>
           <Title level={4} style={{ marginTop: "20px" }}>Assessment Guide/ Requirement</Title>
           <Content>
             From the DCD and District Director of Education receive information on
@@ -192,7 +192,7 @@ const EducationServiceSupport = forwardRef(({ year, districtId, hideComment }, r
 
           <Col align="start">
             <Title level={5} style={{ marginTop: "20px", marginRight: "0px", marginLeft: "0px" }}>
-              PI 5.0-5.1 Actual Score: <strong>{score}</strong>
+              PI 4.0-4.1 Actual Score: <strong>{score}</strong>
             </Title>
             {!hideComment && renderCommentInput()}
           </Col>

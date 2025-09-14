@@ -68,6 +68,7 @@ import ScoreSheetSummary from "./ScoreSheetSummary";
 import Petition from "./Petition";
 import CommentAndGabsSummary from "./CommentAndGabsSummary";
 import PetitionCommittee from "./PetitionCommittee";
+import { useAddComment } from "./service/comments";
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
@@ -145,6 +146,8 @@ const DPATAssessmentSheet = ({ props }) => {
     const [cededRevenueUtilisationScore, setCededRevenueUtilisationScore] = useState(0);
     const [assessmentStatus, setAssessmentStatus] = useState(null); // New state for assessment status
     const [progressLoad, setProgressLoad] = useState(false); // New state for loading
+
+    const mutation = useAddComment({});
 
     const gaMeetingRef = useRef();
     const aapBudgetApprovalRef = useRef();
@@ -234,9 +237,7 @@ const [showPetition, setShowPetition] = useState(true);
 
         if (district?.value && year) {
             fetchAssessmentStatus();
-             const intervalId = setInterval(fetchAssessmentStatus, 10 * 1000); // Auto-refresh every 10 seconds
-
-    return () => clearInterval(intervalId);
+         
         }
     }, [district?.value, year]);
 
@@ -1986,8 +1987,6 @@ const [showPetition, setShowPetition] = useState(true);
             agricultureSupport: agricultureSupportRef.current?.getData(),
         };
 
-        console.log("dddp: ", dddpData);
-
         try {
             // Step 1: Post to assessments endpoint
             const assessmentResponse = await instance.post(`assessments`, payload);
@@ -2033,19 +2032,19 @@ const [showPetition, setShowPetition] = useState(true);
                 },
             };
 
-            const commentResponse = await instance.post(`comments`, commentPayload);
+            // const commentResponse = await instance.post(`comments`, commentPayload);
 
+            mutation.mutate(commentPayload)
             
-            
-            message.success({
-                content: (
-                    <div>
-                        <p>Comment added successfully (Status: 201)</p>
-                    </div>
-                ),
-                duration: 3,
+            // message.success({
+            //     content: (
+            //         <div>
+            //             <p>Comment added successfully (Status: 201)</p>
+            //         </div>
+            //     ),
+            //     duration: 3,
                 
-            });
+            // });
             
            
         } catch (error) {

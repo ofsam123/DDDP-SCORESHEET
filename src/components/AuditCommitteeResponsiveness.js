@@ -2,7 +2,8 @@ import { Layout, Table, Typography, Col } from "antd";
 import React, { forwardRef, useImperativeHandle, useState } from "react";
 import Comment from "../components/Comments";
 
-const AuditCommitteeResponsiveness = forwardRef(({ year, audits, actions, managementLetters, hideComment }, ref) => {
+const AuditCommitteeResponsiveness = forwardRef(({ 
+    year, audits, actions, managementLetters, hideComment, districtId }, ref) => {
 
     const { Header, Content } = Layout;
     const { Title, Text } = Typography;
@@ -16,7 +17,6 @@ const AuditCommitteeResponsiveness = forwardRef(({ year, audits, actions, manage
             maxScore,
             maxScore,
             audits,
-
         }),
     }));
 
@@ -46,8 +46,8 @@ const AuditCommitteeResponsiveness = forwardRef(({ year, audits, actions, manage
         <Comment
             data={audits?.data}
             year={year}
-            districtId={null}
-            tableCommentedId={`pi4.0-4.1-${year}`}
+            districtId={districtId}
+            tableCommentedId={`pi3.0-3.1-${year}`}
             hideComment={hideComment}
         >
             {({ renderCommentInput, renderCommentList }) => (
@@ -71,7 +71,7 @@ const AuditCommitteeResponsiveness = forwardRef(({ year, audits, actions, manage
 
                     <Col align="start">
                         <Title level={5} style={{ marginTop: "20px", marginRight: "0px", marginLeft: "0px" }}>
-                            PI 4.0-4.1 Actual Score: <strong>{audits?.score || 0}</strong>
+                            PI 3.0-3.1 Actual Score: <strong>{audits?.score || 0}</strong>
                         </Title>
                         {!hideComment && renderCommentInput()}
                     </Col>

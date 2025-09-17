@@ -248,7 +248,7 @@ const RateableRevenu = forwardRef(({ year, district, hideComment }, ref) => {
             data={issuance}
             year={year}
             districtId={district}
-            tableCommentedId={`pi3.0-3.2-${year}`}
+            tableCommentedId={`pi2.0-2.1-${year}`}
             hideComment={hideComment}
         >
             {({ renderCommentInput, renderCommentList }) => (

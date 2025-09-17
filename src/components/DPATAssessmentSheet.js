@@ -68,7 +68,6 @@ import ScoreSheetSummary from "./ScoreSheetSummary";
 import Petition from "./Petition";
 import CommentAndGabsSummary from "./CommentAndGabsSummary";
 import PetitionCommittee from "./PetitionCommittee";
-import { useAddComment } from "./service/comments";
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
@@ -120,7 +119,7 @@ const DPATAssessmentSheet = ({ props }) => {
     const [decisionServiceData, setDecisionServiceData] = useState(null);
     const [decisionDeliveryData, setDecisionDeliveryData] = useState(null);
     const [decisionDeliveryListData, setDecisionDeliveryListData] = useState(null);
-    const [managementActionServiceDeliveryData, setManagementActionServiceDeliveryData] = useState(null);
+    const [managementActionServiceDeliveryData, setManagementActionServiceDeliveryData] = useState([]);
     const [ecaMeetingData, setEcaMeetingData] = useState(null);
     const [prccMeetingData, setPrccMeetingData] = useState(null);
     const [auditCommitteeMeetingData, setAuditCommitteeMeetingData] = useState(null);
@@ -146,8 +145,6 @@ const DPATAssessmentSheet = ({ props }) => {
     const [cededRevenueUtilisationScore, setCededRevenueUtilisationScore] = useState(0);
     const [assessmentStatus, setAssessmentStatus] = useState(null); // New state for assessment status
     const [progressLoad, setProgressLoad] = useState(false); // New state for loading
-
-    const mutation = useAddComment({});
 
     const gaMeetingRef = useRef();
     const aapBudgetApprovalRef = useRef();
@@ -1987,6 +1984,8 @@ const [showPetition, setShowPetition] = useState(true);
             agricultureSupport: agricultureSupportRef.current?.getData(),
         };
 
+        console.log("dddp: ", dddpData);
+
         try {
             // Step 1: Post to assessments endpoint
             const assessmentResponse = await instance.post(`assessments`, payload);
@@ -2032,19 +2031,19 @@ const [showPetition, setShowPetition] = useState(true);
                 },
             };
 
-            // const commentResponse = await instance.post(`comments`, commentPayload);
+            const commentResponse = await instance.post(`comments`, commentPayload);
 
-            mutation.mutate(commentPayload)
             
-            // message.success({
-            //     content: (
-            //         <div>
-            //             <p>Comment added successfully (Status: 201)</p>
-            //         </div>
-            //     ),
-            //     duration: 3,
+            
+            message.success({
+                content: (
+                    <div>
+                        <p>Comment added successfully (Status: 201)</p>
+                    </div>
+                ),
+                duration: 3,
                 
-            // });
+            });
             
            
         } catch (error) {
@@ -2751,14 +2750,6 @@ const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatu
                     />
                     <hr />
 
-                    {/* <ShelterTransactionalHousing
-                        ref={shelterTransactionalHousingRef}
-                        year={year}
-                        districtId={district?.value}
-                        hideComment={hideComment}
-                        district={district?.value}
-                    />
-                    <hr /> */}
 
                     <DistrictHotlineNumber
                         ref={districtHotlineNumberRef}

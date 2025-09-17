@@ -8,7 +8,8 @@ const { Header, Content } = Layout;
 const { Title, Text } = Typography;
 
 const AAPPublication = forwardRef(({ year, districtId, hideComment }, ref) => {
-  const [publication, setPublication] = useState(null);
+  const [publication, setPublication] = useState([]);
+  const [fulfillment, setFulfillment] = useState("Not Fulfilled");
 
   const publicationColumn = [
     { title: "Date of Publication on website", dataIndex: "date", key: "date" },
@@ -68,6 +69,7 @@ const AAPPublication = forwardRef(({ year, districtId, hideComment }, ref) => {
     }
 
     setPublication({ data: temp, fulfillment, report: [] });
+    setFulfillment(fulfillment);
   };
 
   function getData() {
@@ -121,7 +123,7 @@ const AAPPublication = forwardRef(({ year, districtId, hideComment }, ref) => {
 
           <Col align="start">
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
-              CI Result: <strong style={{ color: publication?.fulfillment === "Fulfilled" ? "green" : "red" }}>{publication?.fulfillment}</strong>
+              CI Result: <strong style={{ color: fulfillment === "Fulfilled" ? "green" : "red" }}>{fulfillment}</strong>
             </Title>
             {!hideComment && renderCommentInput()}
           </Col>
@@ -129,7 +131,7 @@ const AAPPublication = forwardRef(({ year, districtId, hideComment }, ref) => {
           {/* {JSON.stringify(clientService)} */}
 
           <Title level={4} style={{ marginTop: "20px" }}>Evidence of publication of Annual Budget & Workplan</Title>
-          {publication && <Table columns={publicationColumn} dataSource={publication?.data} pagination={false} bordered />}
+          <Table columns={publicationColumn} dataSource={publication?.data} pagination={false} bordered />
           <br />
           {/* <Title level={4} style={{ marginTop: "20px" }}>Evidence of establishment of sub-structures</Title> */}
           {/* {clientService && <Table columns={clienServiceReportColumn} dataSource={clientService?.report} pagination={false} bordered />} */}

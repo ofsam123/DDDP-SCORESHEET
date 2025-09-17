@@ -54,6 +54,9 @@ const AuditorGeneralGAMeeting = forwardRef(({ gaMeetings, ecaMeeting, year, dist
     });
   }
 
+  if(temp.length === 0){
+    fulfilled = "Not Fulfilled";
+  }
   seFulfillment(fulfilled);
   setData(temp);
 }, [districtId, year, gaMeetings, ecaMeeting])
@@ -71,7 +74,7 @@ useImperativeHandle(ref, () => ({
       data={gaMeetings}
       year={year}
       districtId={districtId}
-      tableCommentedId={`c1.0-1.1-${year}`}
+      tableCommentedId={`c4.0-4.3-${year}`}
        hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (

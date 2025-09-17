@@ -47,13 +47,6 @@ function AuditorGeneralReport({ year, district }) {
 
         if(reports.length > 0 && temp.length > 0){
             fulfillment = "Fulfilled";
-            // reports.forEach(rep=>{
-            //     clientServiceReport.push({
-            //         report: rep.dataValues[2]?.value,
-            //         date: rep?.dataValues[3]?.value,
-            //         issues:rep?.dataValues[1]?.value
-            //     });
-            // })
         }
 
         // if(clientServiceTemp.length > 0 && clientServiceReport.length > 0){

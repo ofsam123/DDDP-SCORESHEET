@@ -11,7 +11,7 @@ import Select from "react-select";
 import SideBarWrapper from "../components/SideBarWrapper";
 import DPATAssessmentSheet from "../components/DPATAssessmentSheet";
 import { Button } from "antd";
-import { filterTrackedEntitiesByCreatedAt, filterTrackedEntitiesByYear } from "../utils/utils";
+import { filterTrackedEntitiesByCreatedAt, filterTrackedEntitiesByYear, formatDataGeneral } from "../utils/utils";
 import useAuth from "../hooks/useAuth";
 
 const years = [
@@ -266,16 +266,17 @@ function DPATAssessment() {
             .catch(err => console.log(err))
     }
 
-    function getAnnualActionPlan(startDate, endDate, districtId) {
+    function getAnnualActionPlan(startDate, endDate, districtId, year) {
         axios
-            .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=ArLnAxhykoz&startDate=${startDate}&endDate=${endDate}&pageSize=500`)
+            .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=ArLnAxhykoz&startDate=${startDate}&endDate=${endDate}&pageSize=1000`)
             .then(result => {
                 if (result.data.instances.length > 0) {
 
                     axios
-                        .get(`/tracker/events?program=ArLnAxhykoz&orgUnit=${districtId}&startDate=${startDate}&endDate=${endDate}&pageSize=1000`)
+                        .get(`/tracker/events?program=ArLnAxhykoz&orgUnit=${districtId}&startDate=${startDate}&endDate=${endDate}&pageSize=10000`)
                         .then(resp => {
-                            setAnnualActionPlan({ aap: result.data.instances, reports: resp.data.instances })
+                            const data = formatDataGeneral(result.data.instances, "Year", `${year}`) || [];
+                            setAnnualActionPlan({ aap: data, reports: resp.data.instances })
                         })
                         .catch(err => console.log(err))
                 }
@@ -430,7 +431,8 @@ function DPATAssessment() {
         axios
             .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=dYNmYGtArrK&startDate=${startDate}&endDate=${endDate}`)
             .then(result => {
-                setIGF({ data: result.data.instances, reports: [] })
+                const data = filterTrackedEntitiesByYear(result.data.instances, startDate, endDate);
+                setIGF({ data, reports: [] })
             })
             .catch(err => console.log(err))
     }
@@ -533,7 +535,7 @@ function DPATAssessment() {
                                         getInspectorateList(startDate, endDate, val.value.id);
                                         getPermitRequest(startDate, endDate, val.value.id);
                                         getStreetNaming(startDate, endDate, val.value.id);
-                                        getAnnualActionPlan(startDate, endDate, val.value.id);
+                                        getAnnualActionPlan(startDate, endDate, val.value.id, selectedYear?.value);
                                         getDistrictGeneral(startDate, endDate, val.value.id);
                                         getFoodVendors(startDate, endDate, val.value.id);
                                         getSchoolRegistered(startDate, endDate, val.value.id);

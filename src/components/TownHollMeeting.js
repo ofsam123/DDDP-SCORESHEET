@@ -21,7 +21,7 @@ const TownHollMeeting = forwardRef(({ meetings, year, columns, districtId, hideC
       data={meetings?.data}
       year={year}
       districtId={districtId}
-      tableCommentedId={`c1.0-1.1-${year}`}
+      tableCommentedId={`c4.0-4.4-${year}`}
       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
@@ -60,7 +60,6 @@ const TownHollMeeting = forwardRef(({ meetings, year, columns, districtId, hideC
           </Title>
 
           {meetings?.data && <Table columns={columns} dataSource={meetings?.data} pagination={false} bordered />}
-
 
           {renderCommentList()}
         </>

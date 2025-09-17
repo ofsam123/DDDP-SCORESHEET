@@ -19,7 +19,9 @@ const StreetNaming = forwardRef(({
       indicator: "SDI3",
       area: "Physical and Spatial Planning Services",
       maxScore,
-      streets
+      streets,
+      scorei: streets?.data?.length > 0 ? streets.data[0].street === "YES" ? 1 : 0 : 0,
+      scoreii: streets?.percentage >= 70 ? 2 : 0
     }),
   }));
 

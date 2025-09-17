@@ -17,7 +17,7 @@ const AgricultureSupport = forwardRef(({ year, districtId, hideComment }, ref) =
 
   useImperativeHandle(ref, () => ({
     getData: () => ({
-      indicator: "PI5",
+      indicator: "PI4",
       area: "Access to Social Services",
       maxScore,
       agricultureSupport,
@@ -61,12 +61,12 @@ const AgricultureSupport = forwardRef(({ year, districtId, hideComment }, ref) =
       data={agricultureSupport}
       year={year}
       districtId={districtId}
-      tableCommentedId={`pi5.0-5.3-${year}`}
+      tableCommentedId={`pi4.0-4.3-${year}`}
       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
-          <Title level={3} style={{ marginTop: "20px" }}>PI 5.0 - 5.3 Support to Agriculture</Title>
+          <Title level={3} style={{ marginTop: "20px" }}>PI 4.0 - 4.3 Support to Agriculture</Title>
           <Title level={4} style={{ marginTop: "20px" }}>Assessment Guide/ Requirement</Title>
           <Content>
             From the DCD, receive information on Agricultural services:<br /><br />
@@ -84,7 +84,7 @@ const AgricultureSupport = forwardRef(({ year, districtId, hideComment }, ref) =
 
           <Col align="start">
             <Title level={5} style={{ marginTop: "20px", marginRight: "0px", marginLeft: "0px" }}>
-              PI 5.0-5.3 Actual Score: <strong>{score}</strong>
+              PI 4.0-4.3 Actual Score: <strong>{score}</strong>
             </Title>
             {!hideComment && renderCommentInput()}
           </Col>

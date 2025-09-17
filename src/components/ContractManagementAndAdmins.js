@@ -126,7 +126,7 @@ const ContractManagementAndAdmins = forwardRef(({ year, district, data, hideComm
         >
             {({ renderCommentInput, renderCommentList }) => (
                 <>
-                    <Title level={3} style={{ marginTop: "20px" }}>PI 1.0 - 1.3  Management and Administration</Title>
+                    <Title level={3} style={{ marginTop: "20px" }}>PI 1.0 - 1.3 Records on Contract Management and Administration</Title>
                     <Title level={4} style={{ marginTop: "20px" }}>Assessment Guide/ Requirement</Title>
                     <Content>
                         From the DCD, obtain information on contract management and administration:<br /><br />

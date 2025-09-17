@@ -12,6 +12,7 @@ const AAPImplementation = forwardRef(({ year, district, data, hideComment }, ref
     const [score, setScore] = useState(0);
     const [maxScore, setMaxScore] = useState(2);
     const [document, setDocument] = useState(data);
+    const [percentages, setPercentages] = useState(0);
 
     useEffect(() => {
         getIndicatorsData();
@@ -54,6 +55,7 @@ const AAPImplementation = forwardRef(({ year, district, data, hideComment }, ref
                         percentage: percentage
                     }]);
 
+                    setPercentages(percentage);
                     if (percentage >= 90) {
                         setScore(2);
                     }
@@ -113,9 +115,9 @@ const AAPImplementation = forwardRef(({ year, district, data, hideComment }, ref
                         bordered
                     />
 
-                    <Title level={5} style={{ marginTop: "30px" }}>Conclusion</Title>
+                    <Title level={5} style={{ marginTop: "20px" }}>Conclusion</Title>
                     <Content>
-                        The district has implemented 100% of Planned Projects and Programmes in the {year} AAP
+                        The district has implemented {percentages}% of Planned Projects and Programmes in the {year} AAP
                     </Content>
 
                     {renderCommentList()}

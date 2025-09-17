@@ -19,7 +19,7 @@ const HealthServiceSupport = forwardRef(({ year, districtId, hideComment }, ref)
 
   useImperativeHandle(ref, () => ({
     getData: () => ({
-      indicator: "PI5",
+      indicator: "PI4",
       area: "Access to Social Services",
       maxScore,
       healthFacilities,
@@ -165,12 +165,12 @@ const HealthServiceSupport = forwardRef(({ year, districtId, hideComment }, ref)
       data={healthFacilitySupport}
       year={year}
       districtId={districtId}
-      tableCommentedId={`pi5.0-5.2-${year}`}
+      tableCommentedId={`pi4.0-4.2-${year}`}
       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
-          <Title level={3} style={{ marginTop: "20px" }}>PI 5.0 - 5.2 Support to Health Services</Title>
+          <Title level={3} style={{ marginTop: "20px" }}>PI 4.0 - 4.2 Support to Health Services</Title>
           <Title level={4} style={{ marginTop: "20px" }}>Assessment Guide/ Requirement</Title>
           <Content>
             From the DCD and District Director of Health receive information on the list of public
@@ -189,7 +189,7 @@ const HealthServiceSupport = forwardRef(({ year, districtId, hideComment }, ref)
 
           <Col align="start">
             <Title level={5} style={{ marginTop: "20px", marginRight: "0px", marginLeft: "0px" }}>
-              PI 5.0-5.2 Actual Score: <strong>{score}</strong>
+              PI 4.0-4.2 Actual Score: <strong>{score}</strong>
             </Title>
             {!hideComment && renderCommentInput()}
           </Col>

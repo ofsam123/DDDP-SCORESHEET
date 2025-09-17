@@ -19,7 +19,7 @@ const RateableRevenu = forwardRef(({ year, district, hideComment }, ref) => {
 
     useImperativeHandle(ref, () => ({
         getData: () => ({
-            indicator: "PI3",
+            indicator: "PI2",
             area: "Revenue Generation",
             maxScore,
             software,
@@ -248,12 +248,12 @@ const RateableRevenu = forwardRef(({ year, district, hideComment }, ref) => {
             data={issuance}
             year={year}
             districtId={district}
-            tableCommentedId={`pi3.0-3.2-${year}`}
+            tableCommentedId={`pi2.0-2.1-${year}`}
             hideComment={hideComment}
         >
             {({ renderCommentInput, renderCommentList }) => (
                 <>
-                    <Title level={3} style={{ marginTop: "20px" }}>PI 3.0 - 3.1 Revenue from Rateable Properties and Businesses</Title>
+                    <Title level={3} style={{ marginTop: "20px" }}>PI 2.0 - 2.1 Revenue from Rateable Properties and Businesses</Title>
                     <Title level={4} style={{ marginTop: "20px" }}>Assessment Guide/ Requirement</Title>
                     <Content>
                         From the DCD, obtain information on rateable properties and businesses database:<br /><br />
@@ -277,14 +277,14 @@ const RateableRevenu = forwardRef(({ year, district, hideComment }, ref) => {
                     </Title>
 
                     <Title level={5} style={{ marginTop: "20px" }}>
-                        PI 3.0-3.1i Actual Score: <strong>{scorei}</strong>
+                        PI 2.0-2.1i Actual Score: <strong>{scorei}</strong>
                     </Title>
                     <Title level={5} style={{ marginTop: "20px" }}>
-                        PI 3.0-3.1ii Actual Score: <strong>{scoreii}</strong>
+                        PI 2.0-2.1ii Actual Score: <strong>{scoreii}</strong>
                     </Title>
                     <Col align="start">
                         <Title level={5} style={{ marginTop: "20px", marginRight: "0px", marginLeft: "0px" }}>
-                            PI 3.0-3.1iii Actual Score: <strong>{scoreiii}</strong>
+                            PI 2.0-2.1iii Actual Score: <strong>{scoreiii}</strong>
                         </Title>
                         {!hideComment && renderCommentInput()}
                     </Col>

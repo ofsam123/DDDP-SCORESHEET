@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import instance from '../api/cmsapi';
-import { Col, Row, Layout, Typography,Spin } from 'antd';
+import { Col, Row, Layout, Typography, Spin } from 'antd';
 import moment from 'moment';
 
 const { Header, Content } = Layout;
@@ -12,7 +12,7 @@ const ScoreSheetSummary = ({ district, year, region, assessmentStatus }) => {
         serviceDeliveryIndicators: [],
         performanceIndicators: []
     });
-const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const getData = () => {
         // setLoading(true);
@@ -40,24 +40,25 @@ const [loading, setLoading] = useState(false);
                 const getActualScore = (table) => {
                     if (!table) return 0;
 
-                    // Prefer using the nested data if available, otherwise fallback to the table itself
-                    const d = table.data || table;
-
-                    // Top-level score takes priority
-                    if (typeof d.score === "number") {
-                        return d.score;
-                    }
-
-                    // Otherwise, accumulate level-based scores
                     let sum = 0;
-                    if (typeof d.scorei === "number") sum += d.scorei;
-                    if (typeof d.scoreii === "number") sum += d.scoreii;
-                    if (typeof d.scoreiii === "number") sum += d.scoreiii;
+
+                    // Always check the top-level fields
+                    if (typeof table.score === "number") sum += table.score;
+                    if (typeof table.scorei === "number") sum += table.scorei;
+                    if (typeof table.scoreii === "number") sum += table.scoreii;
+                    if (typeof table.scoreiii === "number") sum += table.scoreiii;
+
+                    // If there's a nested data object, check it too
+                    if (table.data) {
+                        const d = table.data;
+                        if (typeof d.score === "number") sum += d.score;
+                        if (typeof d.scorei === "number") sum += d.scorei;
+                        if (typeof d.scoreii === "number") sum += d.scoreii;
+                        if (typeof d.scoreiii === "number") sum += d.scoreiii;
+                    }
 
                     return sum;
                 };
-
-
 
 
                 const getMaxScore = (table) => {
@@ -138,7 +139,7 @@ const [loading, setLoading] = useState(false);
                 // Service Delivery Indicators
                 const sdiKeys = Object.keys(groups).filter(k => k.startsWith('SDI')).sort((a, b) => parseInt(a.slice(3)) - parseInt(b.slice(3)));
 
-                // console.log("SDI Keis: ", groups)
+                console.log("SDI Keis: ", groups)
 
                 const serviceDeliveryIndicators = sdiKeys.map(k => ({
                     no: k.replace('SDI', 'SDI '),
@@ -146,6 +147,9 @@ const [loading, setLoading] = useState(false);
                     maxScore: groups[k]?.reduce((sum, t) => sum + getMaxScore(t), 0),
                     actualScore: groups[k]?.reduce((sum, t) => sum + getActualScore(t), 0)
                 }));
+
+
+                console.log("Calcul sdi: ", serviceDeliveryIndicators)
 
                 // Add sub-total for SDIs
                 const sdiSubTotal = {
@@ -209,31 +213,31 @@ const [loading, setLoading] = useState(false);
 
     return (
         <div>
-             {!assessmentStatus && (
+            {!assessmentStatus && (
                 <Row className="py-2">
-                        <Col span={8} className="gutter-row">
-                            <Text strong>Name of MMDA: </Text> <Text className="ms-3">{district?.label}</Text>
-                        </Col>
-                        <Col span={6} className="gutter-row">
-                            <Text strong>Region: </Text> <Text>{region}</Text>
-                        </Col>
-                        <Col span={8} className="gutter-row">
-                            <Text strong>Date of Assessment: </Text> <Text>{moment().format('MMMM Do YYYY, h:mm:ss A')}</Text>
-                        </Col>
+                    <Col span={8} className="gutter-row">
+                        <Text strong>Name of MMDA: </Text> <Text className="ms-3">{district?.label}</Text>
+                    </Col>
+                    <Col span={6} className="gutter-row">
+                        <Text strong>Region: </Text> <Text>{region}</Text>
+                    </Col>
+                    <Col span={8} className="gutter-row">
+                        <Text strong>Date of Assessment: </Text> <Text>{moment().format('MMMM Do YYYY, h:mm:ss A')}</Text>
+                    </Col>
 
-                      
-                    </Row>
-            
-             )}
+
+                </Row>
+
+            )}
             <div className="table-responsive">
-                
-                 {/* <Spin spinning={loading} tip="Loading assessment data..."> */}
-                    <table className="table table-bordered" style={{
-                        border: '1px solid #000',
-                        borderCollapse: 'collapse',
-                        width: '100%',
-                        marginTop: "20px"
-                    }}>
+
+                {/* <Spin spinning={loading} tip="Loading assessment data..."> */}
+                <table className="table table-bordered" style={{
+                    border: '1px solid #000',
+                    borderCollapse: 'collapse',
+                    width: '100%',
+                    marginTop: "20px"
+                }}>
                     <thead>
                         <tr style={{ fontWeight: 'bold', border: '1px solid #000' }}>
                             <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>No.</th>

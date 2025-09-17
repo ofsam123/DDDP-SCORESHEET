@@ -95,13 +95,13 @@ const DistrictHotlineNumber = forwardRef(({ year, districtId, hideComment }, ref
       data={dataTable}
       year={year}
       districtId={districtId}
-      tableCommentedId={`sdi4.0-4.3-${year}`}
+      tableCommentedId={`sdi4.0-4.2-${year}`}
       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (
         <>
 
-          <Title level={3}>SDI 4.0 - 4.3 Availability of Dedicated Hotline for the Vulnerable</Title>
+          <Title level={3}>SDI 4.0 - 4.2 Availability of Dedicated Hotline for the Vulnerable</Title>
           <Title level={4} style={{ marginTop: "10px" }}>Assessment Guide/ Requirement</Title>
           <Content>
             From the DCD and Head of Department of Social Welfare and Community Development receive information on the
@@ -115,7 +115,7 @@ const DistrictHotlineNumber = forwardRef(({ year, districtId, hideComment }, ref
           <Title level={5} style={{ marginTop: "20px" }}>Maximum Score <strong>{maxScore}</strong></Title>
           <Col align="start">
             <Title level={5} style={{ marginTop: "20px", marginRight: "0px", marginLeft: "0px" }}>
-              SDI 4.0-4.3 Actual Score: <strong>{score}</strong>
+              SDI 4.0-4.2 Actual Score: <strong>{score}</strong>
             </Title>
             {!hideComment && renderCommentInput()}
           </Col>

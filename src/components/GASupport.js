@@ -47,9 +47,13 @@ const GASupport = forwardRef(({
     const amountNinety = calculateNinetyPercentOfAmount(subs?.twoPercentReleased);
     const amountSpendOnSub = calculateSubExpendature();
 
-    if (amountSpendOnSub >= amountNinety) {
-      setScore(2);
+    // console.log("djiba support: ", { amountSpendOnSub, amountNinety })
+    if (amountSpendOnSub !== 0 && amountNinety !== 0) {
+      if (amountSpendOnSub >= amountNinety) {
+        setScore(2);
+      }
     }
+
 
     setConclusion(`Amount spent on substructure is ${amountSpendOnSub} and 90% of the 2% released is ${amountNinety}`);
   }, [substructureExpendature, subStructureActivityData]);
@@ -84,7 +88,8 @@ const GASupport = forwardRef(({
       maxScore,
       cededRevenueUtilisationData,
       subStructureActivityData,
-      cededRevenueUtilisationScore,
+      scorei: cededRevenueUtilisationScore >= 50 ? '2' : '0',
+      scorei: score,
       substructureExpendature,
     }),
   }));

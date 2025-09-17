@@ -64,9 +64,9 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
       }
     };
     fetchComments();
-      const intervalId = setInterval(fetchComments, 10 * 1000); // Auto-refresh every 2 seconds
+      // const intervalId = setInterval(fetchComments, 10 * 1000); // Auto-refresh every 2 seconds
 
-    return () => clearInterval(intervalId);
+    // return () => clearInterval(intervalId);
   }, [districtId, year, tableCommentedId]);
 
   const handleCommentSubmit = async (submitText = commentText) => {

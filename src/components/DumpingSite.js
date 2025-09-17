@@ -11,7 +11,7 @@ const DumpingSite = forwardRef(({
   const [scoreii, setScoreii] = useState(0);
   const [data, setData] = useState([]);
   const [siteList, setSiteList] = useState([]);
-  const [maxScore, setMaxScore] = useState(3);
+  const [maxScore, setMaxScore] = useState(5);
 
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
@@ -85,11 +85,11 @@ const DumpingSite = forwardRef(({
               setSiteList(tempSiteList);
 
               if (tempSites.length > 0) {
-                setScorei(1);
+                setScorei(2);
               }
 
               if (tempSiteList.length > 0) {
-                setScoreii(2);
+                setScoreii(3);
               }
             })
             .catch(err => console.log(err))
@@ -131,10 +131,10 @@ const DumpingSite = forwardRef(({
             <ol>
               <li type="i">
                 If there is availability of a well-maintained dumping site or
-                Engineered Landfills according to Environmental Health Standards, score 1.
+                Engineered Landfills according to Environmental Health Standards, score 2.
               </li>
               <li type="i" className="py-1">
-                If the District has a functional final disposal site or co-ownership for Solid/liquid waste with documentary evidence, score 2.
+                If the District has a functional final disposal site or co-ownership for Solid/liquid waste with documentary evidence, score 3.
               </li>
             </ol>
           </Content>

@@ -121,7 +121,7 @@ const FollowUpDeduction = forwardRef(({ year, district, data, hideComment }, ref
         if (temp.length === 0) {
             score1 = 0;
             score2 = 0;
-            score2 = 0;
+            score3 = 0;
         }
 
         setProjectList(temp)

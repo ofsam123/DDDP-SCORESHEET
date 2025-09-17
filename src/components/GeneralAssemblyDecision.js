@@ -10,6 +10,7 @@ const GeneralAssemblyDecision = forwardRef(({
   data, year, columns, decisionDeliveryData, serviceDeliveryDecisionColumns, districtId, hideComment
 }, ref) => {
   const [gaDecisionScore, setGaDecisionScore] = useState(0);
+  const [score, setScore] = useState(0);
   const [maxScore, setMaxScore] = useState(1);
 
   useImperativeHandle(ref, () => ({
@@ -17,7 +18,9 @@ const GeneralAssemblyDecision = forwardRef(({
       indicator: "SDI1",
       area: "Management Coordination – Implementation of Service Delivery Decisions",
       maxScore,
-      data, decisionDeliveryData, gaDecisionScore
+      data, decisionDeliveryData, 
+      gaDecisionScore,
+      score
     }),
   }));
 
@@ -52,7 +55,7 @@ const GeneralAssemblyDecision = forwardRef(({
 
           <Col align="start">
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
-              SDI 1.0-1.1 Actual Score: <strong>{gaDecisionScore > 70 ? '1' : '0'}</strong>
+              SDI 1.0-1.1 Actual Score: <strong>{score}</strong>
             </Title>
             {!hideComment && renderCommentInput()}
           </Col>
@@ -73,6 +76,10 @@ const GeneralAssemblyDecision = forwardRef(({
               const percentage = calculatePercentage(totalDelivered, totalDecision);
 
               setGaDecisionScore(parseFloat(percentage.toFixed(2)));
+
+              if(gaDecisionScore > 70){
+                setScore(1);
+              }
 
               return (<>
                 <Table.Summary.Row style={{ fontWeight: 'bold' }}>

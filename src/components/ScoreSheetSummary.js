@@ -1,28 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import instance from '../api/cmsapi';
-import { Col, Row, Layout, Typography,Spin } from 'antd';
+import { Col, Row, Layout, Typography, Spin } from 'antd';
 import moment from 'moment';
-import { useGetByDistrictAndYear } from './service/comments';
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
 
 const ScoreSheetSummary = ({ district, year, region, assessmentStatus }) => {
-    const { data: comments, error, isLoading, isSuccess } = useGetByDistrictAndYear(district?.value, year);
     const [data, setData] = useState({
         complianceIndicators: [],
         serviceDeliveryIndicators: [],
         performanceIndicators: []
     });
-
+    const [loading, setLoading] = useState(false);
 
     const getData = () => {
         // setLoading(true);
-        // console.log("comments added: ", comments);
-        // console.log("comments status: ", isSuccess);
-        if(isSuccess){
+        instance.get(`comments/tables/${district?.value}/${year}/DPAT`)
+            .then(response => {
 
-                const jsonData = comments?.data;
+                const jsonData = response.data;
                 if (!jsonData || !jsonData[0] || !jsonData[0].dddpData || !jsonData[0].dddpData.tables) {
                     // setLoading(false);
                     return;
@@ -43,24 +40,25 @@ const ScoreSheetSummary = ({ district, year, region, assessmentStatus }) => {
                 const getActualScore = (table) => {
                     if (!table) return 0;
 
-                    // Prefer using the nested data if available, otherwise fallback to the table itself
-                    const d = table.data || table;
-
-                    // Top-level score takes priority
-                    if (typeof d.score === "number") {
-                        return d.score;
-                    }
-
-                    // Otherwise, accumulate level-based scores
                     let sum = 0;
-                    if (typeof d.scorei === "number") sum += d.scorei;
-                    if (typeof d.scoreii === "number") sum += d.scoreii;
-                    if (typeof d.scoreiii === "number") sum += d.scoreiii;
+
+                    // Always check the top-level fields
+                    if (typeof table.score === "number") sum += table.score;
+                    if (typeof table.scorei === "number") sum += table.scorei;
+                    if (typeof table.scoreii === "number") sum += table.scoreii;
+                    if (typeof table.scoreiii === "number") sum += table.scoreiii;
+
+                    // If there's a nested data object, check it too
+                    if (table.data) {
+                        const d = table.data;
+                        if (typeof d.score === "number") sum += d.score;
+                        if (typeof d.scorei === "number") sum += d.scorei;
+                        if (typeof d.scoreii === "number") sum += d.scoreii;
+                        if (typeof d.scoreiii === "number") sum += d.scoreiii;
+                    }
 
                     return sum;
                 };
-
-
 
 
                 const getMaxScore = (table) => {
@@ -114,10 +112,10 @@ const ScoreSheetSummary = ({ district, year, region, assessmentStatus }) => {
 
                 const piThematic = {
                     PI1: 'Annual Action Plan Implementation',
-                    PI2: 'Revenue Generation',
-                    PI3: 'Audit Performance',
-                    PI4: 'Access to Social Services',
-                  
+                    PI2: 'Capacity Building',
+                    PI3: 'Revenue Generation',
+                    PI4: 'Audit Performance',
+                    PI5: 'Access to Social Services',
                 };
 
                 // Compliance Indicators
@@ -141,7 +139,7 @@ const ScoreSheetSummary = ({ district, year, region, assessmentStatus }) => {
                 // Service Delivery Indicators
                 const sdiKeys = Object.keys(groups).filter(k => k.startsWith('SDI')).sort((a, b) => parseInt(a.slice(3)) - parseInt(b.slice(3)));
 
-                // console.log("SDI Keis: ", groups)
+                console.log("SDI Keis: ", groups)
 
                 const serviceDeliveryIndicators = sdiKeys.map(k => ({
                     no: k.replace('SDI', 'SDI '),
@@ -149,6 +147,9 @@ const ScoreSheetSummary = ({ district, year, region, assessmentStatus }) => {
                     maxScore: groups[k]?.reduce((sum, t) => sum + getMaxScore(t), 0),
                     actualScore: groups[k]?.reduce((sum, t) => sum + getActualScore(t), 0)
                 }));
+
+
+                console.log("Calcul sdi: ", serviceDeliveryIndicators)
 
                 // Add sub-total for SDIs
                 const sdiSubTotal = {
@@ -200,7 +201,10 @@ const ScoreSheetSummary = ({ district, year, region, assessmentStatus }) => {
                     performanceIndicators
                 });
 
-    }
+            })
+            .catch(error => {
+                console.log("Error during fetching: ", error);
+            })
     }
 
     useEffect(() => {
@@ -209,31 +213,31 @@ const ScoreSheetSummary = ({ district, year, region, assessmentStatus }) => {
 
     return (
         <div>
-             {!assessmentStatus && (
+            {!assessmentStatus && (
                 <Row className="py-2">
-                        <Col span={8} className="gutter-row">
-                            <Text strong>Name of MMDA: </Text> <Text className="ms-3">{district?.label}</Text>
-                        </Col>
-                        <Col span={6} className="gutter-row">
-                            <Text strong>Region: </Text> <Text>{region}</Text>
-                        </Col>
-                        <Col span={8} className="gutter-row">
-                            <Text strong>Date of Assessment: </Text> <Text>{moment().format('MMMM Do YYYY, h:mm:ss A')}</Text>
-                        </Col>
+                    <Col span={8} className="gutter-row">
+                        <Text strong>Name of MMDA: </Text> <Text className="ms-3">{district?.label}</Text>
+                    </Col>
+                    <Col span={6} className="gutter-row">
+                        <Text strong>Region: </Text> <Text>{region}</Text>
+                    </Col>
+                    <Col span={8} className="gutter-row">
+                        <Text strong>Date of Assessment: </Text> <Text>{moment().format('MMMM Do YYYY, h:mm:ss A')}</Text>
+                    </Col>
 
-                      
-                    </Row>
-            
-             )}
+
+                </Row>
+
+            )}
             <div className="table-responsive">
-                
-                 {/* <Spin spinning={loading} tip="Loading assessment data..."> */}
-                    <table className="table table-bordered" style={{
-                        border: '1px solid #000',
-                        borderCollapse: 'collapse',
-                        width: '100%',
-                        marginTop: "20px"
-                    }}>
+
+                {/* <Spin spinning={loading} tip="Loading assessment data..."> */}
+                <table className="table table-bordered" style={{
+                    border: '1px solid #000',
+                    borderCollapse: 'collapse',
+                    width: '100%',
+                    marginTop: "20px"
+                }}>
                     <thead>
                         <tr style={{ fontWeight: 'bold', border: '1px solid #000' }}>
                             <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>No.</th>

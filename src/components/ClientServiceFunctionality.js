@@ -8,7 +8,8 @@ const { Header, Content } = Layout;
 const { Title, Text } = Typography;
 
 const ClientServiceFunctionality = forwardRef(({ year, districtId, hideComment }, ref) => {
-  const [clientService, setClientService] = useState(null);
+  const [clientService, setClientService] = useState([]);
+  const [fulfillment, setFulfillment] = useState("Not Fulfilled");
 
   const clienServiceColumn = [
     { title: "Date of Establishment", dataIndex: "date", key: "date" },
@@ -122,6 +123,7 @@ const ClientServiceFunctionality = forwardRef(({ year, districtId, hideComment }
 
     if (clientServiceTemp.length > 0 && clientServiceReport.length > 0) {
       fulfillment = "Fulfilled";
+      setFulfillment("Fulfilled");
     }
 
     setClientService({ data: clientServiceTemp, fulfillment, report: clientServiceReport });
@@ -172,7 +174,7 @@ const ClientServiceFunctionality = forwardRef(({ year, districtId, hideComment }
 
           <Col align="start">
             <Title level={5} style={{ marginTop: "20px", marginRight: "20px", marginLeft: "10px" }}>
-              CI Result: <strong style={{ color: clientService?.fulfillment === "Fulfilled" ? "green" : "red" }}>{clientService?.fulfillment}</strong>
+              CI Result: <strong style={{ color: fulfillment === "Fulfilled" ? "green" : "red" }}>{fulfillment}</strong>
             </Title>
             {!hideComment && renderCommentInput()}
           </Col>
@@ -180,7 +182,7 @@ const ClientServiceFunctionality = forwardRef(({ year, districtId, hideComment }
           {/* {JSON.stringify(clientService)} */}
 
           <Title level={4} style={{ marginTop: "20px" }}>Evidence of Establishment of Client Service Unit</Title>
-          {clientService && <Table columns={clienServiceColumn} dataSource={clientService?.data} pagination={false} bordered />}
+          <Table columns={clienServiceColumn} dataSource={clientService?.data || []} pagination={false} bordered />
           <br />
           {/* <Title level={4} style={{ marginTop: "20px" }}>Evidence of establishment of sub-structures</Title> */}
           {clientService && <Table columns={clienServiceReportColumn} dataSource={clientService?.report} pagination={false} bordered />}

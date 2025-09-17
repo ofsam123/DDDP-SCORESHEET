@@ -170,7 +170,7 @@ const AuditInfractions = forwardRef(({ year, districtId, hideComment }, ref) => 
       data={irregularities.dataSource}
       year={year}
       districtId={districtId}
-      tableCommentedId={`pi4.0-4.2-${year}`}
+      tableCommentedId={`pi3.0-3.2-${year}`}
       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (

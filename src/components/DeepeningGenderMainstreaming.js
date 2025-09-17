@@ -123,7 +123,7 @@ const DeepeningGenderMainstreaming = forwardRef(({ data, year, districtId }, ref
             data={data}
             year={year}
             districtId={districtId}
-            tableCommentedId={`sdi4.0-4.5-${year}`}
+            tableCommentedId={`sdi4.0-4.4-${year}`}
         >
             {({ renderCommentInput, renderCommentList }) => (
                 <>

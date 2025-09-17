@@ -2,6 +2,7 @@ import { Layout, Table, Typography, Col } from "antd";
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import axios from "../api/axios";
 import Comment from "../components/Comments";
+import { formatDataGeneral } from "../utils/utils";
 
 const DistrictLEDActivityPlan = forwardRef(({
   year,
@@ -30,13 +31,13 @@ const DistrictLEDActivityPlan = forwardRef(({
 
   function getAnnualActionPlan() {
     axios
-      .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=ArLnAxhykoz&startDate=${year}-01-01&endDate=${year}-12-31`)
+      .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=ArLnAxhykoz&startDate=${year}-01-01&endDate=${year}-12-31&pageSize=1000`)
       .then(result => {
         if (result.data.instances.length > 0) {
           axios
-            .get(`/tracker/events?program=ArLnAxhykoz&orgUnit=${districtId}&startDate=${year}-01-01&endDate=${year}-12-31`)
+            .get(`/tracker/events?program=ArLnAxhykoz&orgUnit=${districtId}&startDate=${year}-01-01&endDate=${year}-12-31&pageSize=10000`)
             .then(resp => {
-              const aap = result.data.instances;
+              const aap = formatDataGeneral(result.data.instances, "Year", `${year}`) || [];
               const reports = resp.data.instances;
               const aapLedPlans = formatDataGeneral(aap, "Activity Type", "LED Activity") || [];
               const aapTotal = aap.length;
@@ -89,13 +90,6 @@ const DistrictLEDActivityPlan = forwardRef(({
     return ((valueNum / totalNum) * 100).toFixed(2);
   };
 
-  function formatDataGeneral(data, property, value) {
-    return data?.filter(item =>
-      item.attributes.some(attr =>
-        attr.displayName === property && attr.value === value
-      )
-    );
-  }
 
   const dataColumn = [
     {

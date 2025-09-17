@@ -176,7 +176,7 @@ const PWDService = forwardRef(({
       data={pwdData.pwd}
       year={year}
       districtId={districtId}
-      tableCommentedId={`sdi4.0-4.4-${year}`}
+      tableCommentedId={`sdi4.0-4.3-${year}`}
       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (

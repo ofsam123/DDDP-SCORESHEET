@@ -87,7 +87,7 @@ export const PRCCMeetingColumns = [
     { title: "Invitation Letter Reference", dataIndex: "invitationLetterReference", key: "invitationLetterReference" },
     { title: "Minutes Ref.", dataIndex: "minutes", key: "minutes" },
     { title: "Attendance Link", dataIndex: "invitation", key: "invitation" },
-    { title: "Munite Link", dataIndex: "docs", key: "docs" },
+    { title: "Minute Link", dataIndex: "docs", key: "docs" },
     { title: "Recommendation Link", dataIndex: "recommendation", key: "recommendation" }
 ];
 
@@ -97,7 +97,7 @@ export const spcMeetingColumns = [
     { title: "Invitation Letter Reference", dataIndex: "invitationLetterReference", key: "invitationLetterReference" },
     { title: "Minutes Ref.", dataIndex: "minutes", key: "minutes" },
     { title: "Attendance Link", dataIndex: "attendance", key: "attendance" },
-    { title: "Munite Link", dataIndex: "docs", key: "docs" },
+    { title: "Minute Link", dataIndex: "docs", key: "docs" },
     { title: "Allowances Link", dataIndex: "recommendation", key: "recommendation" }
 ];
 
@@ -108,7 +108,7 @@ export const ETCMeetingColumns = [
     { title: "Invitation Letter Reference", dataIndex: "invitationLetterReference", key: "invitationLetterReference" },
     { title: "Minutes Ref.", dataIndex: "minutes", key: "minutes" },
     { title: "Attendance Link", dataIndex: "attendance", key: "attendance" },
-    { title: "Munite Link", dataIndex: "docs", key: "docs" },
+    { title: "Minute Link", dataIndex: "docs", key: "docs" },
     { title: "Documents", dataIndex: "recommendation", key: "recommendation" }
 ];
 
@@ -124,7 +124,7 @@ export const internalAuditMeetingColumns = [
     { title: "Invitation Letter Reference", dataIndex: "invitationLetterRef", key: "invitationLetterRef" },
     { title: "Munites Reference", dataIndex: "muniteRef", key: "muniteRef" },
     { title: "Attendance Link", dataIndex: "attendance", key: "attendance" },
-    { title: "Munite Link", dataIndex: "docs", key: "docs" },
+    { title: "Minute Link", dataIndex: "docs", key: "docs" },
     { title: "Reports", dataIndex: "recommendation", key: "recommendation" }
 ];
 
@@ -134,7 +134,7 @@ export const townHallMeetingColumns = [
     { title: "Invitation Letter Reference", dataIndex: "invitationLetterReference", key: "invitationLetterReference" },
     { title: "Minutes Ref.", dataIndex: "minutes", key: "minutes" },
     { title: "Attendance Link", dataIndex: "invitation", key: "invitation" },
-    { title: "Munite Link", dataIndex: "docs", key: "docs" }
+    { title: "Minute Link", dataIndex: "docs", key: "docs" }
 ];
 
 export const managementMeetingColumns = [
@@ -145,7 +145,7 @@ export const managementMeetingColumns = [
     { title: "Number in Attendance", dataIndex: "attendance", key: "attendance" },
     { title: "Minutes Ref.", dataIndex: "minutes", key: "minutes" },
     { title: "Invitation Letter Link", dataIndex: "invitation", key: "invitation" },
-    { title: "Munite Link", dataIndex: "docs", key: "docs" },
+    { title: "Minute Link", dataIndex: "docs", key: "docs" },
     { title: "Decision Link", dataIndex: "recommendation", key: "recommendation" }
 ];
 

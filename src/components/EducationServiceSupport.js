@@ -168,7 +168,7 @@ const EducationServiceSupport = forwardRef(({ year, districtId, hideComment }, r
       data={educationSupport}
       year={year}
       districtId={districtId}
-      tableCommentedId={`pi5.0-5.1-${year}`}
+      tableCommentedId={`pi4.0-4.1-${year}`}
       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (

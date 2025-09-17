@@ -62,7 +62,7 @@ const NutritionIntervention = forwardRef(({
       data={data?.aap}
       year={year}
       districtId={districtId}
-      tableCommentedId={`sdi4.0-4.6-${year}`}
+      tableCommentedId={`sdi4.0-4.5-${year}`}
       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (

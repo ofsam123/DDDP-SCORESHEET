@@ -61,7 +61,7 @@ const AgricultureSupport = forwardRef(({ year, districtId, hideComment }, ref) =
       data={agricultureSupport}
       year={year}
       districtId={districtId}
-      tableCommentedId={`pi5.0-5.3-${year}`}
+      tableCommentedId={`pi4.0-4.3-${year}`}
       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (

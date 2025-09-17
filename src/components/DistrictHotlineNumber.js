@@ -95,7 +95,7 @@ const DistrictHotlineNumber = forwardRef(({ year, districtId, hideComment }, ref
       data={dataTable}
       year={year}
       districtId={districtId}
-      tableCommentedId={`sdi4.0-4.3-${year}`}
+      tableCommentedId={`sdi4.0-4.2-${year}`}
       hideComment={hideComment}
     >
       {({ renderCommentInput, renderCommentList }) => (

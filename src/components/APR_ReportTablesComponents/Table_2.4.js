@@ -12,6 +12,7 @@ import {
 } from "chart.js";
 import axios from "../../api/axios";
 import { filterTrackedEntitiesByCreatedAt, formatDataGeneral } from "../../utils/utils";
+import APRComment from "./APRComment.js/AprComments";
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, Title, Tooltip, Legend);
@@ -243,7 +244,23 @@ const Table2_4 = ({ year, district, period }) => {
             <div className="mt-4" style={{ height: "400px" }}>
               <Line data={chartData} options={chartOptions} />
             </div>
+            
           )}
+
+              <APRComment
+                      data={tableData}
+                      year={year}
+                      districtId={district}
+                      tableCommentedId={`table2_4-${year}`}
+                     
+                    >
+                      {({ renderCommentInput, renderCommentList }) => (
+                        <>
+                          {renderCommentInput()}
+                          {renderCommentList()}
+                        </>
+                      )}
+                    </APRComment>
         </div>
       </div>
     </div>

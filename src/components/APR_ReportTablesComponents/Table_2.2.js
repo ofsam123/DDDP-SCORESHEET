@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "../../api/axios";
 import { filterTrackedEntitiesByCreatedAt, formatDataGeneral, getAttributeValue } from "../../utils/utils";
+import APRComment from "./APRComment.js/AprComments";
 
 const Table2_2 = ({ year, district, period }) => {
   
@@ -170,6 +171,21 @@ const Table2_2 = ({ year, district, period }) => {
           <p className="mt-2">
             <small>Source: MPCU</small>
           </p>
+
+              <APRComment
+                  data={tableData}
+                    year={year}
+                 districtId={district}
+               tableCommentedId={`table2_2-${year}`}
+                               
+                >
+           {({ renderCommentInput, renderCommentList }) => (
+                                  <>
+               {renderCommentInput()}
+              {renderCommentList()}
+         </>
+         )}
+            </APRComment>
          
         </div>
       </div>

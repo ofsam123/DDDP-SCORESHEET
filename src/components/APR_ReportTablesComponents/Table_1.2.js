@@ -3,6 +3,7 @@ import axios from "../../api/axios";
 import { filterTrackedEntitiesByCreatedAt, getAttributeValue, getPlanExecutionStats } from "../../utils/utils";
 import { Bar, Pie } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement } from "chart.js";
+import APRComment from "./APRComment.js/AprComments";
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
@@ -294,6 +295,21 @@ const Table1_2 = ({ year, district, period }) => {
               <p>Loading pie chart data...</p>
             )}
           </div>
+
+             <APRComment
+            data={tableData}
+            year={year}
+            districtId={district}
+            tableCommentedId={`table1_2-${year}`}
+           
+          >
+            {({ renderCommentInput, renderCommentList }) => (
+              <>
+                {renderCommentInput()}
+                {renderCommentList()}
+              </>
+            )}
+          </APRComment>
         </div>
       </div>
     </div>

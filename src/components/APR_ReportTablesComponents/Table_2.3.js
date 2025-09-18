@@ -3,6 +3,7 @@ import axios from "../../api/axios";
 import { filterTrackedEntitiesByCreatedAt, formatDataGeneral, getAttributeValue } from "../../utils/utils";
 import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
+import APRComment from "./APRComment.js/AprComments";
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -231,6 +232,21 @@ Grant. Table 2.3 shows the updates from the various sources and their targets.</
           <p className="mt-2">
             <small>Source: MPCU</small>
           </p>
+
+              <APRComment
+                      data={tableData}
+                      year={year}
+                      districtId={district}
+                      tableCommentedId={`table2_3-${year}`}
+                     
+                    >
+                      {({ renderCommentInput, renderCommentList }) => (
+                        <>
+                          {renderCommentInput()}
+                          {renderCommentList()}
+                        </>
+                      )}
+                    </APRComment>
         </div>
       </div>
     </div>

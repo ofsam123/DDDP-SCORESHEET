@@ -1,6 +1,7 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "../../api/axios";
+import APRComment from "./APRComment.js/AprComments";
 
 const agricultureData = [
   { indicator: "Maize", baseline: 0, target: 0, actual: 0, nextActual: 0 },
@@ -1538,6 +1539,20 @@ const Table2_5 = ({
           <p className="mt-2">
             <small>Source: MPCU</small>
           </p>
+              <APRComment
+                      data={tableData}
+                      year={year}
+                      districtId={district}
+                      tableCommentedId={`table2_5-${year}`}
+                     
+                    >
+                      {({ renderCommentInput, renderCommentList }) => (
+                        <>
+                          {renderCommentInput()}
+                          {renderCommentList()}
+                        </>
+                      )}
+                    </APRComment>
         </div>
       </div>
     </div>

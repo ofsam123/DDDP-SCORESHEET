@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import axios from "../../api/axios";
 import { filterTrackedEntitiesByCreatedAt, formatDataGeneral, getAttributeValue } from "../../utils/utils";
 import APRComment from "./APRComment.js/AprComments";
+import APRmemo from "./APRComment.js/APRmemo";
 
 const Table2_10 = ({ year, district, period }) => {
   const [tableData, setTableData] = useState([]);
@@ -68,6 +69,12 @@ const Table2_10 = ({ year, district, period }) => {
       <div className="card">
         <div className="card-header"></div>
         <div className="card-body">
+          <APRmemo
+                    year={year}
+                    districtId = {district}
+                      tableCommentedId={`table2_10-${year}`}
+                   
+                  />
           <div className="table-responsive">
             <table className="table table-bordered">
               <thead style={{ backgroundColor: '#d4edda', fontWeight: 'bold', border: '1px solid #000' }}>

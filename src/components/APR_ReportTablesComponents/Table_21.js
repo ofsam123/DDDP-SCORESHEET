@@ -5,7 +5,7 @@ import axios from "../../api/axios";
 import APRComment from "./APRComment.js/AprComments";
 import APRmemo from "./APRComment.js/APRmemo";
 
-const Table2_9 = ({ year, district , period}) => {
+const Table_21 = ({ year, district , period}) => {
   
   const [tableData, setTableData] = useState([]);
     const [showChart, setShowChart] = useState(true);
@@ -69,14 +69,14 @@ const Table2_9 = ({ year, district , period}) => {
 
   return (
     <div className="col-12">
-      <h3>Table 2.9 – Update on Evaluations Conducted</h3>
+      <h3>Table 21 – Update on Evaluations Conducted</h3>
       <div className="card">
         <div className="card-header"></div>
         <div className="card-body">
           <APRmemo
                     year={year}
                     districtId = {district}
-                       tableCommentedId={`table2_9-${year}`}
+                      tableCommentedId={`table21-${year}`}
                    
                   />
           <div className="table-responsive">
@@ -112,7 +112,7 @@ const Table2_9 = ({ year, district , period}) => {
                       data={tableData}
                       year={year}
                       districtId={district}
-                      tableCommentedId={`table2_9-${year}`}
+                      tableCommentedId={`table21-${year}`}
                      
                     >
                       {({ renderCommentInput, renderCommentList }) => (
@@ -128,4 +128,4 @@ const Table2_9 = ({ year, district , period}) => {
   );
 };
 
-export default Table2_9;
+export default Table_21;

@@ -13,6 +13,7 @@ import {
 import axios from "../../api/axios";
 import { filterTrackedEntitiesByCreatedAt, formatDataGeneral } from "../../utils/utils";
 import APRComment from "./APRComment.js/AprComments";
+import APRmemo from "./APRComment.js/APRmemo";
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, Title, Tooltip, Legend);
@@ -184,6 +185,12 @@ const Table2_4 = ({ year, district, period }) => {
             During the year under review, funds received were disbursed under the components of
             Compensation, Goods and Services and Non–Financial Assets. Table 2.4 presents the
             disbursement for the years.</h7>
+            <APRmemo
+                    year={year}
+                    districtId = {district}
+                      tableCommentedId={`table2_4-${year}`}
+                   
+                  />
           <div className="table-responsive">
             <table
               className="table table-bordered"

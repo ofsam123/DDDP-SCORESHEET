@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import axios from "../../api/axios";
 import { filterTrackedEntitiesByCreatedAt, formatDataGeneral, getAttributeValue } from "../../utils/utils";
 import APRComment from "./APRComment.js/AprComments";
+import APRmemo from "./APRComment.js/APRmemo";
 
 const Table2_6 = ({ year, district, period }) => {
 
@@ -113,6 +114,12 @@ Poverty Eradication Programme (IPEP) and the Nations Builders Corps (NABCO)
 Programme. Table 2.6 presents a matrix showing the summary of key critical poverty 
 development issues, the Allocations, Actual Receipt and the Number of beneficiaries.
 Details of the various interventions have been given below.</h7>
+<APRmemo
+                    year={year}
+                    districtId = {district}
+                       tableCommentedId={`table2_6-${year}`}
+                   
+                  />
           <div className="table-responsive">
             <table className="table table-bordered"  style={{marginTop: '20px'}}>
               <thead style={{ backgroundColor: '#d4edda', fontWeight: 'bold', border: '1px solid #000',  }}>

@@ -4,6 +4,7 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 import { filterTrackedEntitiesByCreatedAt, getStageValue } from "../../utils/utils";
 import axios from "../../api/axios";
 import APRComment from "./APRComment.js/AprComments";
+import APRmemo from"./APRComment.js/APRmemo";
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -237,6 +238,14 @@ const Table1_1 = ({ year, district, period }) => {
             presents the summary of the level of implementation in the MTDP and the AAP for 2022.
             Table 1.1 – Proportion of the AAP and the MTDP Implemented
           </h7>
+           <APRmemo
+                    year={year}
+                    districtId = {district}
+                     tableCommentedId={`table1_1-${year}`}
+                    
+                   
+                  />
+           
           <div className="table-responsive">
             <table
               className="table table-bordered"
@@ -284,7 +293,7 @@ const Table1_1 = ({ year, district, period }) => {
           </p>
           <hr />
           <h5>Pictorial Evidence of Projects under Implementation</h5>
-          {pictorialEvidence.length > 0 ? (
+          {/* {pictorialEvidence.length > 0 ? (
             <div className="row">
               {pictorialEvidence.map((image, index) => (
                 <div className="col-md-4 col-sm-6 mb-3" key={index}>
@@ -304,7 +313,7 @@ const Table1_1 = ({ year, district, period }) => {
             </div>
           ) : (
             <p>No pictorial evidence available.</p>
-          )}
+          )} */}
           <hr />
           <h5>Comparison of Implementation Status: 2021 vs 2022</h5>
           <div className="mt-4">
@@ -312,6 +321,7 @@ const Table1_1 = ({ year, district, period }) => {
 
             />
           </div>
+          
 
            <APRComment
             data={tableData}

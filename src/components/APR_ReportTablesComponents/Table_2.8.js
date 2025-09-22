@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "../../api/axios";
 import APRComment from "./APRComment.js/AprComments";
+import APRmemo from "./APRComment.js/APRmemo";
 
 const Table2_8 = ({ year = "2025", district = "EmVZbr0kApz", period }) => {
   const [activityData, setActivityData] = useState([]);
@@ -54,6 +55,13 @@ const Table2_8 = ({ year = "2025", district = "EmVZbr0kApz", period }) => {
       <div className="card">
         <div className="card-header"></div>
         <div className="card-body">
+
+          <APRmemo
+                    year={year}
+                    districtId = {district}
+                      tableCommentedId={`table2_8-${year}`}
+                   
+                  />
           <div className="table-responsive">
             <table className="table table-bordered">
               <thead style={{ backgroundColor: '#d4edda', fontWeight: 'bold', border: '1px solid #000' }}>

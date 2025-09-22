@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "../../api/axios";
 import APRComment from "./APRComment.js/AprComments";
+import APRmemo from "./APRComment.js/APRmemo";
 
 const agricultureData = [
   { indicator: "Maize", baseline: 0, target: 0, actual: 0, nextActual: 0 },
@@ -999,6 +1000,12 @@ const Table2_5 = ({
           various sectors has been presented below based on the development dimensions.
           <br />
           <br />
+          <APRmemo
+                    year={year}
+                    districtId = {district}
+                       tableCommentedId={`table2_5-${year}`}
+                   
+                  />
           {/* {JSON.stringify(tableData)} */}
           <div className="table-responsive">
             <table className="table table-bordered">

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import axios from "../../api/axios";
 import { filterTrackedEntitiesByCreatedAt, formatDataGeneral, getAttributeValue } from "../../utils/utils";
 import APRComment from "./APRComment.js/AprComments";
+import APRmemo from "./APRComment.js/APRmemo";
 
 const Table2_7 = ({ year, district, period }) => {
   const [tableData, setTableData] = useState([]);
@@ -93,6 +94,13 @@ const Table2_7 = ({ year, district, period }) => {
           It however has the challenge of delay payment of caterers which in effect has resulted in
           non-cooking of meals. Table 2.7 shows details of beneficiary schools and corresponding
           enrolment figures.
+
+          <APRmemo
+                    year={year}
+                    districtId = {district}
+                        tableCommentedId={`table2_7-${year}`}
+                   
+                  />
           <div className="table-responsive" style={{ marginTop: '20px' }}>
             <table className="table table-bordered">
               <thead style={{ backgroundColor: '#d4edda', fontWeight: 'bold', border: '1px solid #000' }}>
@@ -126,7 +134,7 @@ const Table2_7 = ({ year, district, period }) => {
                data={tableData}
                year={year}
                districtId={district}
-              tableCommentedId={`table2_1-${year}`}
+              tableCommentedId={`table2_7-${year}`}
                      
                     >
                       {({ renderCommentInput, renderCommentList }) => (

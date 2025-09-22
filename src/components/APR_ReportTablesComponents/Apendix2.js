@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "../../api/axios";
 import { filterTrackedEntitiesByCreatedAt, formatDataGeneral, getAttributeValue } from "../../utils/utils";
+import ExeAPR from "./APRComment.js/ExecutiveSummary";
 
 const AppendixTwoTable = ({ year, district, period }) => {
   const [tableData, setTableData] = useState([]);
@@ -201,6 +202,16 @@ const AppendixTwoTable = ({ year, district, period }) => {
           <p className="mt-2">
             <small>Source: MPCU</small>
           </p>
+
+          <h3>EXECUTIVE SUMMARY</h3>
+
+          <ExeAPR
+                    year={year}
+                    districtId = {district}
+                     tableCommentedId={`table1_1apr-${year}`}
+                    
+                   
+                  />
         </div>
       </div>
     </div>

@@ -4,6 +4,7 @@ import { filterTrackedEntitiesByCreatedAt, getAttributeValue, getPlanExecutionSt
 import { Bar, Pie } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement } from "chart.js";
 import APRComment from "./APRComment.js/AprComments";
+import APRmemo from "./APRComment.js/APRmemo";
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
@@ -225,7 +226,13 @@ const Table1_2 = ({ year, district, period }) => {
           6 | P a g e
           due to the rolled over projects from previous years and the inclusion of integrated social
           services related activities in the Plan
-
+<APRmemo
+                    year={year}
+                    districtId = {district}
+                      tableCommentedId={`table1_2-${year}`}
+                    
+                   
+                  />
           <div className="table-responsive">
             <table className="table table-bordered" style={{
               border: '1px solid #000',

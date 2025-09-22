@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import axios from "../../api/axios";
 import { filterTrackedEntitiesByCreatedAt, formatDataGeneral, getAttributeValue } from "../../utils/utils";
 import APRComment from "./APRComment.js/AprComments";
+import APRmemo from "./APRComment.js/APRmemo";
 
 const Table2_1 = ({ year, district, period }) => {
 
@@ -112,6 +113,13 @@ const Table2_1 = ({ year, district, period }) => {
             of work.
             Projects implementation progressed steadily, and visible improvements were made over
             the period. </h7>
+            <APRmemo
+                    year={year}
+                    districtId = {district}  
+                    tableCommentedId={`table2_1-${year}`}
+                    
+                   
+                  />
           <div className="table-responsive">
             <table className="table table-bordered" style={{
               border: '1px solid #000',

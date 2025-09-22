@@ -4,6 +4,7 @@ import { filterTrackedEntitiesByCreatedAt, formatDataGeneral, getAttributeValue 
 import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
 import APRComment from "./APRComment.js/AprComments";
+import APRmemo from "./APRComment.js/APRmemo";
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -162,8 +163,14 @@ const Table2_3 = ({ year, district, period }) => {
       <div className="card">
         <div className="card-header"></div>
         <div className="card-body">
-          
+          <APRmemo
+                    year={year}
+                    districtId = {district}
+                    tableCommentedId={`table2_3-${year}`}
+                   
+                  />
           <div className="table-responsive">
+
 
             <h6>The funding sources of the Assembly, over the years have been the Central Government 
 transfers to MMDAs (GOG Grants), the District Assembly Common Fund (DACF), the 

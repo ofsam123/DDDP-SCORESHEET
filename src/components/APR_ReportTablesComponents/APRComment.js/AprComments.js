@@ -1,16 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { Input, Avatar, Col, message, Row } from "antd";
+import React, { useEffect, useState, useCallback } from "react";
+import { Input, Avatar, Col, message, Row, Spin } from "antd";
 import {
   CommentOutlined,
   SendOutlined,
   EditOutlined,
   DeleteOutlined,
-  BarsOutlined,
-  PlusCircleOutlined,
 } from "@ant-design/icons";
 import useAuth from "../../../hooks/useAuth";
 import instance from "../../../api/cmsapi";
-
 
 function APRComment({ data, year, districtId, tableCommentedId, children, hideComment }) {
   const { user } = useAuth();
@@ -19,51 +16,39 @@ function APRComment({ data, year, districtId, tableCommentedId, children, hideCo
   const [comments, setComments] = useState([]);
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editText, setEditText] = useState({});
-  const [showGapsInput, setShowGapsInput] = useState(false);
-  const [gapsText, setGapsText] = useState("");
-  const [editingGapsId, setEditingGapsId] = useState(null);
-  const [editGapsText, setEditGapsText] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const currentUserRole = user?.user?.userRoles?.find(
-    (role) => role.name === "APR USER"
-  )?.name || "";
+  const currentUserRole = user?.user?.userRoles?.find((role) => role.name === "APR USER")?.name || "";
   const normalizedUserRole = currentUserRole ? currentUserRole.replace(" ", "_").toUpperCase() : "";
   const currentUsername = user?.user?.username || "";
   const currentFullName = user?.user?.fullName || "";
 
-
-  // Initialize comments from provided data
-  useEffect(() => {
-    if (data?.comments) {
-      const filteredComments = data.comments.filter(
-        (comment) => comment.tableCommented === tableCommentedId
+  // Fetch comments
+  const fetchComments = useCallback(async () => {
+    if (!districtId || !year) return;
+    setLoading(true);
+    try {
+      const response = await instance.get(`comments/tables/${districtId}/${year}/APR`);
+      const filteredComments = response.data.filter(
+        (comment) =>
+          comment.tableCommented === tableCommentedId &&
+          comment.districtId === districtId &&
+          comment.userRole === "APR_USER"
       );
       setComments(filteredComments);
+      setError(null);
+    } catch (error) {
+      setError("Failed to fetch comments");
+      console.error("Fetch error:", error);
+    } finally {
+      setLoading(false);
     }
-  }, [data, year, tableCommentedId, districtId,]);
-
-  // Fetch comments from API
-  useEffect(() => {
-    const fetchComments = async () => {
-      if (!districtId || !year) return;
-      try {
-        const response = await instance.get(`comments/tables/${districtId}/${year}/APR`);
-        const filteredComments = response.data.filter(
-          (comment) =>
-            comment.tableCommented === tableCommentedId &&
-            comment.districtId === districtId &&
-            (comment.userRole === "APR_USER")
-        );
-        setComments(filteredComments);
-      } catch (error) {
-       
-      }
-    };
-    fetchComments();
-      // const intervalId = setInterval(fetchComments, 10 * 1000); // Auto-refresh every 2 seconds
-
-    // return () => clearInterval(intervalId);
   }, [districtId, year, tableCommentedId]);
+
+  useEffect(() => {
+    fetchComments();
+  }, [fetchComments]);
 
   const handleCommentSubmit = async (submitText = commentText) => {
     if (!submitText.trim()) {
@@ -85,143 +70,77 @@ function APRComment({ data, year, districtId, tableCommentedId, children, hideCo
 
     const commentDate = new Date().toISOString().split("T")[0].split("-").map(Number);
     const payload = {
-      id: existingComment ? existingComment.id : 0,
+      id: existingComment?.id || 0,
       username: currentUsername,
       fullName: currentFullName,
       userRole: normalizedUserRole,
       type: "APR",
-      districtId: districtId,
-      year: year,
+      districtId,
+      year,
       tableCommented: tableCommentedId,
       comments: submitText,
-      gaps: "",
-      commentDate: existingComment ? existingComment.commentDate : commentDate,
+      gaps: existingComment?.gaps || "",
+      commentDate: existingComment?.commentDate || commentDate,
       updateDate: commentDate,
       dddpDataDate: commentDate,
-      dddpData: {
-        indicator: tableCommentedId,
-        tables: "",
-      },
+      dddpData: { indicator: tableCommentedId, tables: "" },
     };
 
+    setLoading(true);
     try {
+      let response;
       if (existingComment && editingCommentId) {
-        const response = await instance.put(`comments/${existingComment.id}`, payload);
-        setComments(
-          comments.map((comment) =>
+        // Optimistic update
+        setComments((prevComments) =>
+          prevComments.map((comment) =>
             comment.id === existingComment.id
               ? { ...comment, comments: submitText, updateDate: commentDate }
               : comment
           )
         );
+        response = await instance.put(`comments/${existingComment.id}`, payload);
         message.success("Comment updated successfully");
         setEditingCommentId(null);
         setEditText({});
       } else if (existingComment) {
-        const response = await instance.put(`comments/${existingComment.id}`, payload);
-        setComments(
-          comments.map((comment) =>
+        // Optimistic update
+        setComments((prevComments) =>
+          prevComments.map((comment) =>
             comment.id === existingComment.id
               ? { ...comment, comments: submitText, updateDate: commentDate }
               : comment
           )
         );
+        response = await instance.put(`comments/${existingComment.id}`, payload);
         message.success("Comment updated successfully");
         setCommentText("");
         setShowCommentInput(false);
       } else {
-        const response = await instance.post("comments", payload);
-        setComments([...comments, response.data]);
+        // Optimistic update
+        const tempId = Date.now();
+        setComments((prevComments) => [
+          ...prevComments,
+          { ...payload, id: tempId },
+        ]);
+        response = await instance.post("comments", payload);
+        setComments((prevComments) =>
+          prevComments.map((comment) =>
+            comment.id === tempId ? { ...comment, id: response.data.id } : comment
+          )
+        );
         message.success("Comment added successfully");
         setCommentText("");
         setShowCommentInput(false);
       }
+      // Refetch to sync
+      await fetchComments();
     } catch (error) {
-      console.error("Failed to save comment:", {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status,
-      });
+      // Rollback
+      await fetchComments();
+      setError("Failed to save comment");
       message.error(`Failed to save comment: ${error.response?.data?.message || error.message}`);
-    }
-  };
-
-  const handleGapsSubmit = async (submitGaps = gapsText) => {
-    if (!submitGaps.trim()) {
-      message.error("Gaps cannot be empty");
-      return;
-    }
-    if (!currentUsername || !districtId || !year) {
-      message.error("User or district information is missing");
-      return;
-    }
-
-    const existingComment = comments.find(
-      (comment) =>
-        comment.tableCommented === tableCommentedId &&
-        comment.userRole === normalizedUserRole &&
-        comment.districtId === districtId &&
-        comment.username === currentUsername
-    );
-
-    const commentDate = new Date().toISOString().split("T")[0].split("-").map(Number);
-    const payload = {
-      id: existingComment ? existingComment.id : 0,
-      username: currentUsername,
-      fullName: currentFullName,
-      userRole: normalizedUserRole,
-      type: "APR",
-      districtId: districtId,
-      year: year,
-      tableCommented: tableCommentedId,
-      comments: existingComment ? existingComment.comments || "" : "",
-      gaps: submitGaps,
-      commentDate: existingComment ? existingComment.commentDate : commentDate,
-      updateDate: commentDate,
-      dddpDataDate: commentDate,
-      dddpData: {
-        indicator: tableCommentedId,
-        tables: data,
-      },
-    };
-
-    try {
-      if (existingComment && editingGapsId) {
-        const response = await instance.put(`comments/${existingComment.id}`, payload);
-        setComments(
-          comments.map((comment) =>
-            comment.id === existingComment.id
-              ? { ...comment, gaps: submitGaps, updateDate: commentDate }
-              : comment
-          )
-        );
-        message.success("Gaps updated successfully");
-      } else if (existingComment) {
-        const response = await instance.put(`comments/${existingComment.id}`, payload);
-        setComments(
-          comments.map((comment) =>
-            comment.id === existingComment.id
-              ? { ...comment, gaps: submitGaps, updateDate: commentDate }
-              : comment
-          )
-        );
-        message.success("Gaps updated successfully");
-      } else {
-        const response = await instance.post("comments", payload);
-        setComments([...comments, response.data]);
-        message.success("Gaps added successfully");
-      }
-      setGapsText("");
-      setShowGapsInput(false);
-      setEditingGapsId(null);
-      setEditGapsText({});
-    } catch (error) {
-      console.error("Failed to save gaps:", {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status,
-      });
-      message.error(`Failed to save gaps: ${error.response?.data?.message || error.message}`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -234,40 +153,28 @@ function APRComment({ data, year, districtId, tableCommentedId, children, hideCo
     setEditText({ ...editText, [comment.id]: comment.comments });
   };
 
-  const handleEditGaps = (comment) => {
-    if (comment.username !== currentUsername) {
-      message.error("You can only edit your own gaps.");
-      return;
-    }
-    setEditingGapsId(comment.id);
-    setEditGapsText({ ...editGapsText, [comment.id]: comment.gaps });
-  };
-
   const handleDeleteComment = async (commentId) => {
     const comment = comments.find((c) => c.id === commentId);
     if (comment.username !== currentUsername) {
       message.error("You can only delete your own comments.");
       return;
     }
+    setLoading(true);
     try {
       await instance.delete(`comments/${commentId}`);
       setComments(comments.filter((comment) => comment.id !== commentId));
       setEditingCommentId(null);
-      setEditingGapsId(null);
       setCommentText("");
-      setGapsText("");
       setEditText({});
-      setEditGapsText({});
       setShowCommentInput(false);
-      setShowGapsInput(false);
       message.success("Comment deleted successfully");
+      await fetchComments(); // Refetch after delete
     } catch (error) {
-      console.error("Failed to delete comment:", {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status,
-      });
+      await fetchComments(); // Rollback
+      setError("Failed to delete comment");
       message.error("Failed to delete comment");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -285,168 +192,59 @@ function APRComment({ data, year, districtId, tableCommentedId, children, hideCo
     }
   };
 
-  const handleGapsKeyPress = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleGapsSubmit();
-    }
-  };
-
-  const handleEditGapsKeyPress = (e, commentId) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleGapsSubmit(editGapsText[commentId]);
-    }
-  };
-
-  const canShowCommentInput = () => {
-   
-    if (editingCommentId) {
-      return false;
-    }
-    return !comments.some(
-      (comment) =>
-        comment.tableCommented === tableCommentedId &&
-        comment.userRole === normalizedUserRole &&
-        comment.districtId === districtId &&
-        comment.username === currentUsername &&
-        comment.comments
-    );
-  };
-
-  const canAddGaps = () => {
-   
-    return !comments.some(
-      (comment) =>
-        comment.tableCommented === tableCommentedId &&
-        comment.userRole === normalizedUserRole &&
-        comment.districtId === districtId &&
-        comment.username === currentUsername &&
-        comment.gaps
-    );
-  };
+  const canShowCommentInput = () => !editingCommentId;
 
   const handleCommentButtonClick = () => {
-   
     if (canShowCommentInput()) {
       setShowCommentInput(!showCommentInput);
     } else {
-      message.info("You have already added a comment for this indicator.");
-    }
-  };
-
-  const handleGapsButtonClick = () => {
-    
-    if (canAddGaps()) {
-      setShowGapsInput(!showGapsInput);
-      setGapsText("");
-    } else {
-      message.info("You have already added gaps for this indicator.");
+      message.info("Comment is being edited.");
     }
   };
 
   const renderCommentInput = () => (
     <div style={{ display: "flex", flexDirection: "column", gap: "10px", maxWidth: "800px" }}>
       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-        
-      
-          <span>
-          ADD COMMENT
-          </span>
-          <CommentOutlined
-            style={{ cursor: "pointer", fontSize: "30px", flexShrink: 0,  }}
-            onClick={handleCommentButtonClick}
-          />
-        
-      
+        <span>ADD COMMENT</span>
+        <CommentOutlined
+          style={{ cursor: "pointer", fontSize: "30px", flexShrink: 0 }}
+          onClick={handleCommentButtonClick}
+        />
       </div>
-
       {showCommentInput && (
         <div style={{ display: "flex", alignItems: "center" }}>
-          <Avatar
-            src={
-              user?.image ||
-              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTL_JlCFnIGX5omgjEjgV9F3sBRq14eTERK9w&s"
-            }
-            style={{ marginRight: "10px", borderRadius: "50%", flexShrink: 0 }}
-            size={32}
-          />
-          <Input.TextArea
-            value={commentText}
-            onChange={(e) => setCommentText(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder="Add a comment..."
-            autoSize={{ minRows: 3, maxRows: 5 }}
-            bordered={false}
-            style={{
-              flex: 1,
-              borderRadius: "10px",
-              padding: "8px 12px",
-              background: "#f0f2f5",
-              width: "700px",
-            }}
-          />
-          {commentText.trim() && (
-            <SendOutlined
-              className="text-blue-500 cursor-pointer"
-              style={{ fontSize: "20px", marginLeft: "8px", flexShrink: 0 }}
-              onClick={() => handleCommentSubmit()}
+          <Spin spinning={loading}>
+            <Avatar
+              src={user?.image || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTL_JlCFnIGX5omgjEjgV9F3sBRq14eTERK9w&s"}
+              style={{ marginRight: "10px", borderRadius: "50%", flexShrink: 0 }}
+              size={32}
             />
-          )}
+            <Input.TextArea
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="Add a comment..."
+              autoSize={{ minRows: 3, maxRows: 5 }}
+              bordered={false}
+              style={{
+                flex: 1,
+                borderRadius: "10px",
+                padding: "8px 12px",
+                background: "#f0f2f5",
+                width: "700px",
+              }}
+            />
+            {commentText.trim() && (
+              <SendOutlined
+                className="text-blue-500 cursor-pointer"
+                style={{ fontSize: "20px", marginLeft: "8px", flexShrink: 0 }}
+                onClick={() => handleCommentSubmit()}
+              />
+            )}
+          </Spin>
+          {error && <div style={{ color: "red" }}>{error}</div>}
         </div>
       )}
-     
-      {/* <div style={{ display: "flex", alignItems: "center", gap: "10px" }}> */}
-       
-        {/* {!hideComment && (
-          <>
-           <span style={{ marginLeft: "0", fontSize: "" }}>ADD CAPACITY GAPS</span>
-            <PlusCircleOutlined
-            style={{ cursor: "pointer", fontSize: "25px", flexShrink: 0 }}
-            onClick={handleGapsButtonClick}
-            >
-
-            </PlusCircleOutlined>
-          
-          </>
-         
-          
-        )} */}
-      {/* </div> */}
-      {/* {!hideComment && showGapsInput && (
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <Avatar
-            src={
-              user?.image ||
-              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTL_JlCFnIGX5omgjEjgV9F3sBRq14eTERK9w&s"
-            }
-            style={{ marginRight: "10px", borderRadius: "50%", flexShrink: 0 }}
-            size={32}
-          />
-          <Input.TextArea
-            value={gapsText}
-            onChange={(e) => setGapsText(e.target.value)}
-            onKeyPress={handleGapsKeyPress}
-            placeholder="Add gaps..."
-            autoSize={{ minRows: 3, maxRows: 5 }}
-            bordered={false}
-            style={{
-              flex: 1,
-              borderRadius: "10px",
-              padding: "8px 12px",
-              background: "#f0f2f5",
-              width: "700px",
-            }}
-          />
-          {gapsText.trim() && (
-            <SendOutlined
-              className="text-blue-500 cursor-pointer"
-              style={{ fontSize: "20px", marginLeft: "8px", flexShrink: 0 }}
-              onClick={() => handleGapsSubmit()}
-            />
-          )}
-        </div>
-      )} */}
     </div>
   );
 
@@ -456,7 +254,6 @@ function APRComment({ data, year, districtId, tableCommentedId, children, hideCo
         borderTop: "1px solid #e8e8e8",
         padding: "8px",
         background: "#fff",
-        // maxWidth: "800px",
         width: "90%",
       }}
     >
@@ -473,24 +270,15 @@ function APRComment({ data, year, districtId, tableCommentedId, children, hideCo
           {comments.map((comment) => (
             <div
               key={comment.id}
-              style={{
-                padding: "10px",
-                border: "1px solid #f0f0f0",
-                borderRadius: "6px",
-                // maxWidth: "700px",
-              }}
+              style={{ padding: "10px", border: "1px solid #f0f0f0", borderRadius: "6px" }}
             >
               <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                {/* Comment Section */}
                 {comment.comments && (
                   <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                     <div style={{ display: "flex", alignItems: "center" }}>
                       <Col>
                         <Avatar
-                          src={
-                            comment.userImage ||
-                            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTL_JlCFnIGX5omgjEjgV9F3sBRq14eTERK9w&s"
-                          }
+                          src={comment.userImage || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTL_JlCFnIGX5omgjEjgV9F3sBRq14eTERK9w&s"}
                           style={{ marginRight: "10px", borderRadius: "50%" }}
                           size={32}
                         />
@@ -498,34 +286,21 @@ function APRComment({ data, year, districtId, tableCommentedId, children, hideCo
                       <div style={{ flex: 1 }}>
                         <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
                           <h4 style={{ margin: 0, fontSize: "13px" }}>
-                            {comment.fullName} (
-                            {comment.userRole
-                              ? comment.userRole.replace("_", " ")
-                              : "Unknown Role"}
-                            )
+                            {comment.fullName} ({comment.userRole.replace("_", " ")})
                           </h4>
                           {comment.username === currentUsername && (
                             <div style={{ marginLeft: "8px", display: "flex", gap: "8px" }}>
-                              <h11
-                                style={{
-                                  marginLeft: "8px",
-                                  display: "flex",
-                                  marginRight: "8px",
-                                }}
-                              >
+                              <h11 style={{ marginLeft: "8px", marginRight: "8px" }}>
                                 {comment.commentDate.join("/")}
-
                               </h11>
-                             
                               <EditOutlined
                                 style={{ cursor: "pointer", color: "#000000ff" }}
                                 onClick={() => handleEditComment(comment)}
                               />
-                              
-                              {/* <DeleteOutlined
+                              <DeleteOutlined
                                 style={{ cursor: "pointer", color: "#ff0000" }}
                                 onClick={() => handleDeleteComment(comment.id)}
-                              /> */}
+                              />
                             </div>
                           )}
                         </div>
@@ -560,10 +335,6 @@ function APRComment({ data, year, districtId, tableCommentedId, children, hideCo
                     </div>
                   </div>
                 )}
-              
-              
-
-
               </div>
             </div>
           ))}

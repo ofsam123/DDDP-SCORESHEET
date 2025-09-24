@@ -210,7 +210,7 @@ const Table1_1 = ({ year, district, period }) => {
   return (
     <div className="col-12">
       <div className="card">
-        <div className="card-header">Table 1.1 – Proportion of the AAP and the MTDP Implemented</div>
+        <div className="card-header">Table 1.1 – Proportion of the DMTDP Implemented </div>
         <div className="card-body">
           <h5>1.1 Summary of Achievement of the Implementation of the District
             Medium Term Development Plan (DMTDP)</h5>

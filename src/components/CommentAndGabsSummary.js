@@ -53,10 +53,6 @@ const CommentAndGabsSummary = ({ district, year, region }) => {
                 });
 
 
-                console.log("comments: ", comments)
-
-                console.log("gaps: ", gaps)
-
                 setData({
                     comments: sortByIndicator(comments),
                     gaps: sortByIndicator(gaps)
@@ -72,26 +68,23 @@ const CommentAndGabsSummary = ({ district, year, region }) => {
 
 
     function sortByIndicator(arr) {
-        return arr.sort((a, b) => {
-            // extract prefix (letters) and number (first number before dash)
-            let regex = /^([A-Z]+)(\d+(\.\d+)?)/;
+        // Define the desired order
+        const order = { "C": 1, "SDI": 2, "PI": 3 };
 
-            let matchA = a.indicator.match(regex);
-            let matchB = b.indicator.match(regex);
+        const sortedArray = arr.sort((a, b) => {
+            const aKey = a.indicator.startsWith("SDI") ? "SDI" : a.indicator.startsWith("PI") ? "PI" : "C";
+            const bKey = b.indicator.startsWith("SDI") ? "SDI" : b.indicator.startsWith("PI") ? "PI" : "C";
 
-            if (!matchA || !matchB) return 0;
-
-            let [, prefixA, numA] = matchA;
-            let [, prefixB, numB] = matchB;
-
-            // first sort by prefix alphabetically
-            if (prefixA !== prefixB) {
-                return prefixA.localeCompare(prefixB);
+            // First sort by CI → SDI → PI
+            if (order[aKey] !== order[bKey]) {
+                return order[aKey] - order[bKey];
             }
 
-            // then sort by number (as float)
-            return parseFloat(numA) - parseFloat(numB);
+            // If same group, sort naturally by indicator text
+            return a.indicator.localeCompare(b.indicator, undefined, { numeric: true });
         });
+
+        return sortedArray;
     }
 
     return (

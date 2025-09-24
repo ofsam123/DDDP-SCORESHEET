@@ -30,35 +30,38 @@ import Table_19 from "./APR_ReportTablesComponents/Table_19";
 import Table_20 from "./APR_ReportTablesComponents/Table_20";
 import Table_21 from "./APR_ReportTablesComponents/Table_21";
 import Table_22 from "./APR_ReportTablesComponents/Table_22";
+import Table_4 from "./APR_ReportTablesComponents/Table_4";
+import Table_5 from "./APR_ReportTablesComponents/Table_5";
+import Table_6 from "./APR_ReportTablesComponents/Table_6";
 
 
 
 // List of Tables options
 const tableOptions = [
   { value: "all_tables", label: "All Tables" },
-  { value: "table_1.1", label: "Table 1 – Proportion of the AAP and the MTDP Implemented" },
-  { value: "table_1.2", label: "Table 2 – Details on Annual Action Plan Implemented under the Development Dimensions" },
-  { value: "table_2.1", label: "Table 3 – Project Register" },
-  { value: "table_2.2", label: "Table 4 – Programmes (Non-Physical Projects) Register" },
-  { value: "table_2.3", label: "Table 5 – Revenue Updates" },
-  { value: "table_2.4", label: "Table 6 – Update of Disbursement" },
-  { value: "table_2.5", label: "Table 7 – Core Indicators and Municipal Specific Indicators" },
-  { value: "table_2.6", label: "Table 8 – Key Critical Poverty Issues, Allocations, Actual Receipt and the Number of Beneficiaries" },
-  { value: "table_2.7", label: "Table 9 – Details of beneficiary schools and corresponding enrolment figures" },
-  { value: "table_2.8", label: "Table 10 – Details of all activities implemented by the BAC for the year 2022" },
-  { value: "table_2.9", label: "Table 11 – Update on Evaluations Conducted" },
-  { value: "table_2.10", label: "Table 12 – Update on PM&E Conducted" },
+  { value: "table_1.2", label: "Table 1 – Proportion of the AAP Implemented by Development Dimensions" },
+   { value: "table_1.1", label: "Table 2 – Proportion of the DMTDP Implemented " },
+  { value: "table_2.1", label: "Table 3 – Project Register as of the end of the year" },
+  { value: "table_4", label: "Table 4 –  Total number of active projects"},
+  { value: "table_5", label: "Table 5 –   Distribution of Physical projects among departments of the Assembly"},
+  { value: "table_6", label: "Table 6 – Project Age Analysis" },
+  { value: "table_7", label: "Table 7 –  Repair and maintenance of Existing Infrastructure" },
+  { value: "table_2.2", label: "Table 8 – Programme Register as of the end of the Year, 2024" },
+  { value: "table_2.3", label: "Table 9 – Update on Revenue Sources as of the end of the Year (2021 – 2024) " },
+  { value: "table_10", label: "Table 10 – Update on Expenditure as of the Year (2021 – 2024)" },
+  { value: "table_11", label: "Table 11 –  CAPEX Budget Performance Analysis, 2024" },
+  { value: "table_12", label: "Table 12 – CAPEX Budget Allocation and Implementation of active projects" },
 
-  { value: "table_13", label: "Table 13 – CUMULATIVE  CAPEX THROW FORWARD AND  MTBF ENVELOPE, 2025-2027" },
+  { value: "table_13", label: "Table 13 – Cumulative CAPEX throw forward and MTBF Envelope, 2025-2027" },
   { value: "table_14", label: "Table 14 – AMOUNT OF CAPITAL ENVELOPE SPENT ON ACTIVE PROJECTS" },
   { value: "table_15", label: "Table 15 – ESTIMATED  COST AND  COST OVERRUNS OF  ACTIVE  PROJECTS" },
-  { value: "table_16", label: "Table 16 – PERFORMANCE OF  CORE  INDICATORS OF THE END OF THE  YEAR" },
-  { value: "table_17", label: "Table 17 – UPDATES ON  CRITICAL  DEVELOPMENT AND  POVERTY  ISSUES IN THE  YEAR" },
+  { value: "table_2.5", label: "Table 16 – PERFORMANCE OF  CORE  INDICATORS OF THE END OF THE  YEAR" },
+  { value: "table_2.6", label: "Table 17 – UPDATES ON  CRITICAL  DEVELOPMENT AND  POVERTY  ISSUES IN THE  YEAR" },
   { value: "table_18", label: "Table 18 – STAFF  STRENGTHS" },
   { value: "table_19", label: "Table 19 – CAPACITY  DEVELOPMENT" },
   { value: "table_20", label: "Table 20 – LOGISTICS  ANALYSIS" },
   { value: "table_21", label: "Table 21 – UPDATE ON EVALUATIONS CONDUCTED" },
-  { value: "table_22", label: "Table 22 – UPDATE ON  PARTICIPATORY  MONITORING AND  EVALUATION  (PM&E) TOOLS USED" },
+  { value: "table_2.10", label: "Table 22 – UPDATE ON  PARTICIPATORY  MONITORING AND  EVALUATION  (PM&E) TOOLS USED" },
   { value: "apendix_2", label: "Apendix2  –Composit Annual Action for the Year" },
 ];
 
@@ -321,6 +324,7 @@ function AprReport() {
                 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
                 <Table1_2 
                 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
+
                 <Table2_1 
               year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
                 <Table2_2 
@@ -346,6 +350,8 @@ function AprReport() {
                 <Table2_8 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
                 <Table2_9 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
                 <Table2_10 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
+                <Table_4
+                year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
                 <Table_13 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
                 <Table_14 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
                 <Table_15 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
@@ -395,6 +401,9 @@ function AprReport() {
             {selectedTable && selectedTable.value === "table_2.8" && <Table2_8 />}
             {selectedTable && selectedTable.value === "table_2.9" && <Table2_9 />}
             {selectedTable && selectedTable.value === "table_2.10" && <Table2_10 />}
+            {selectedTable && selectedTable.value === "table_4" && <Table_4 />}
+            {selectedTable && selectedTable.value === "table_5" && <Table_5 />}
+            {selectedTable && selectedTable.value === "table_6" && <Table_6 />}
             {selectedTable && selectedTable.value === "table_13" && <Table_13 />}
             {selectedTable && selectedTable.value === "table_14" && <Table_14 />}
             {selectedTable && selectedTable.value === "table_15" && <Table_15 />}

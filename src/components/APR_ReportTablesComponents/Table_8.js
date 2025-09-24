@@ -5,7 +5,7 @@ import { filterTrackedEntitiesByCreatedAt, formatDataGeneral, getAttributeValue 
 import APRComment from "./APRComment.js/AprComments";
 import APRmemo from "./APRComment.js/APRmemo";
 
-const Table2_2 = ({ year, district, period }) => {
+const Table_8 = ({ year, district, period }) => {
   
    const [tableData, setTableData] = useState([]);
   
@@ -107,14 +107,14 @@ const Table2_2 = ({ year, district, period }) => {
 
   return (
     <div className="col-12">
-      <h3>Table 2.2 – Programmes (Non-Physical Projects) Register</h3>
+      <h3>Table 8 – Programmes (Non-Physical Projects) Register</h3>
       <div className="card">
         <div className="card-header"></div>
         <div className="card-body">
           <APRmemo
                     year={year}
                     districtId = {district}
-                        tableCommentedId={`table2_2-${year}`}
+                        tableCommentedId={`table8-${year}`}
                    
                   />
           <div className="table-responsive">
@@ -131,11 +131,13 @@ const Table2_2 = ({ year, district, period }) => {
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Expenditure to Date</th>
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Outstanding Balance</th>
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Implementation Status (%)</th>
+                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Pictures</th>
                   <th colSpan="2" style={{ border: '1px solid #000', fontWeight: 'bold' }}>Total Beneficiaries</th>
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Remarks</th>
                 </tr>
                 <tr>
                   <th style={{ borderBottom: '1px solid #000', borderLeft: '1px solid #000' }}></th>
+                  <th style={{ borderBottom: '1px solid #000' }}></th>
                   <th style={{ borderBottom: '1px solid #000' }}></th>
                   <th style={{ borderBottom: '1px solid #000' }}></th>
                   <th style={{ borderBottom: '1px solid #000' }}></th>
@@ -163,6 +165,7 @@ const Table2_2 = ({ year, district, period }) => {
                     <td style={{ border: '1px solid #000' }}>{row.expenditure}</td>
                     <td style={{ border: '1px solid #000' }}>{row.outstanding}</td>
                     <td style={{ border: '1px solid #000' }}>{row.implementationStatus}</td>
+                     <td style={{ border: '1px solid #000' }}>{}</td>
                     <td style={{ border: '1px solid #000' }}>{row.beneficiariesMale}</td>
                     <td style={{ border: '1px solid #000' }}>{row.beneficiariesFemale}</td>
                     <td style={{ border: '1px solid #000' }}>{row.remarks}</td>
@@ -183,7 +186,7 @@ const Table2_2 = ({ year, district, period }) => {
                   data={tableData}
                     year={year}
                  districtId={district}
-               tableCommentedId={`table2_2-${year}`}
+               tableCommentedId={`table8-${year}`}
                                
                 >
            {({ renderCommentInput, renderCommentList }) => (
@@ -200,4 +203,4 @@ const Table2_2 = ({ year, district, period }) => {
   );
 };
 
-export default Table2_2;
+export default Table_8;

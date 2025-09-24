@@ -9,11 +9,13 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import APRComment from "./APRComment.js/AprComments";
+import APRmemo from "./APRComment.js/APRmemo";
 
 // Register chart components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const Table_4 = ({ year = 2024 }) => { // Default year set to 2024, adjustable via prop
+const Table_4 = ({ year = 2024, district }) => { // Default year set to 2024, adjustable via prop
   const tableData = [
     {
       developmentDimension: "Economic Development",
@@ -147,6 +149,12 @@ const Table_4 = ({ year = 2024 }) => { // Default year set to 2024, adjustable v
       <div className="card">
         <div className="card-header"></div>
         <div className="card-body">
+             <APRmemo
+                    year={year}
+                    districtId = {district}
+                        tableCommentedId={`table4-${year}`}
+                   
+                  />
           <div className="table-responsive">
             <table className="table table-bordered">
               <thead style={{ backgroundColor: '#d4edda', fontWeight: 'bold', border: '1px solid #000' }}>
@@ -193,6 +201,20 @@ const Table_4 = ({ year = 2024 }) => { // Default year set to 2024, adjustable v
           <p className="mt-2">
             <small>Source: 2022, 2023, 2024 Progress Reports</small>
           </p>
+           <APRComment
+                  data={tableData}
+                    year={year}
+                 districtId={district}
+               tableCommentedId={`table4-${year}`}
+                               
+                >
+           {({ renderCommentInput, renderCommentList }) => (
+                                  <>
+               {renderCommentInput()}
+              {renderCommentList()}
+         </>
+         )}
+            </APRComment>
 
           {/* Bar Chart */}
           <h4>Figure 4: Total Number of Active Projects by Development Dimension</h4>

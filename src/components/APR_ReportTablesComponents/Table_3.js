@@ -5,7 +5,7 @@ import { filterTrackedEntitiesByCreatedAt, formatDataGeneral, getAttributeValue 
 import APRComment from "./APRComment.js/AprComments";
 import APRmemo from "./APRComment.js/APRmemo";
 
-const Table2_1 = ({ year, district, period }) => {
+const Table_3 = ({ year, district, period }) => {
 
   const [tableData, setTableData] = useState([]);
 
@@ -92,13 +92,13 @@ const Table2_1 = ({ year, district, period }) => {
 
   return (
     <div className="col-12">
-      <h3>Table 2.1 – Project Register</h3>
+      <h3>Table 3 – Project Register</h3>
       <div className="card">
         <div className="card-header">
 
         </div>
         <div className="card-body">
-          <h7>2.1 Programme / Project Status for the year
+          <h7>3 Programme / Project Status for the year
             The projects and programmes being implemented in the Tarkwa-Nsuaem Municipality
             have been categorized under the various sources of funding available to the Assembly.
             These sources of funding are the District Assemblies Common Fund (DACF) and the
@@ -116,7 +116,7 @@ const Table2_1 = ({ year, district, period }) => {
             <APRmemo
                     year={year}
                     districtId = {district}  
-                    tableCommentedId={`table2_1-${year}`}
+                    tableCommentedId={`table3-${year}`}
                     
                    
                   />
@@ -130,6 +130,8 @@ const Table2_1 = ({ year, district, period }) => {
               <thead>
                 <tr style={{ backgroundColor: '#d4edda', fontWeight: 'bold', border: '1px solid #000' }}>
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>No.</th>
+                    <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Code</th>
+
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Project Description</th>
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Development Dimension of Policy Framework</th>
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Location</th>
@@ -142,6 +144,11 @@ const Table2_1 = ({ year, district, period }) => {
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Expenditure to Date</th>
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Outstanding Balance</th>
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Implementation Status %</th>
+               
+                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Pictures</th>
+                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Strategies to improve project completion rate</th>
+                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>How Citizen were involved in monitoring of works contract</th>
+
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Remarks</th>
                 </tr>
               </thead>
@@ -149,6 +156,7 @@ const Table2_1 = ({ year, district, period }) => {
                 {tableData.map((row, index) => (
                   <tr key={index}>
                     <td style={{ border: '1px solid #000' }}>{row.no}</td>
+                     <td style={{ border: '1px solid #000' }}>{}</td>
                     <td style={{ border: '1px solid #000' }}>{row.description}</td>
                     <td style={{ border: '1px solid #000' }}>{row.dimension}</td>
                     <td style={{ border: '1px solid #000' }}>{row.location}</td>
@@ -160,7 +168,11 @@ const Table2_1 = ({ year, district, period }) => {
                     <td style={{ border: '1px solid #000' }}>{row.expectedCompletion}</td>
                     <td style={{ border: '1px solid #000' }}>{row.expenditure}</td>
                     <td style={{ border: '1px solid #000' }}>{row.outstanding}</td>
+                   
                     <td style={{ border: '1px solid #000' }}>{row.implementationStatus}</td>
+                       <td style={{ border: '1px solid #000' }}>{}</td>
+                          <td style={{ border: '1px solid #000' }}>{}</td>
+                            <td style={{ border: '1px solid #000' }}>{}</td>
                     <td style={{ border: '1px solid #000' }}>{row.remarks}</td>
                   </tr>
                 ))}
@@ -176,7 +188,7 @@ const Table2_1 = ({ year, district, period }) => {
                       data={tableData}
                       year={year}
                       districtId={district}
-                      tableCommentedId={`table2_1-${year}`}
+                      tableCommentedId={`table3-${year}`}
                      
                     >
                       {({ renderCommentInput, renderCommentList }) => (
@@ -192,4 +204,4 @@ const Table2_1 = ({ year, district, period }) => {
   );
 };
 
-export default Table2_1;
+export default Table_3;

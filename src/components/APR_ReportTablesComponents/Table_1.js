@@ -9,7 +9,7 @@ import APRmemo from "./APRComment.js/APRmemo";
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 
-const Table1_2 = ({ year, district, period }) => {
+const Table_1 = ({ year, district, period }) => {
   const [tableData, setTableData] = useState([]);
   const [allData, setAllData] = useState([]);
   const [chartData, setChartData] = useState({});
@@ -21,9 +21,9 @@ const Table1_2 = ({ year, district, period }) => {
 
   async function getAnnualActionPlan() {
     try {
-      // Determine current year and previous two years
-      const currentYear = new Date().getFullYear();
-      const years = [currentYear - 2, currentYear - 1, currentYear];
+      // Determine current year and previous two years for charts (2023, 2024, 2025)
+      const currentYear = new Date().getFullYear(); // 2025
+      const years = [currentYear - 2, currentYear - 1, currentYear]; // [2023, 2024, 2025]
       const tempAllData = [];
 
       for (const yr of years) {
@@ -35,8 +35,7 @@ const Table1_2 = ({ year, district, period }) => {
         );
 
         if (result.data.instances.length > 0) {
-         
-          const aap = filterTrackedEntitiesByCreatedAt(result.data.instances, year, period);
+          const aap = filterTrackedEntitiesByCreatedAt(result.data.instances, yr, period);
           const reports = resp.data.instances;
           const formattedPlans = [];
 
@@ -61,12 +60,12 @@ const Table1_2 = ({ year, district, period }) => {
         }
       }
 
-      // Filter data for the selected year for the table
+      // Filter data for the selected year for the table (as per old code)
       const selectedYearData = tempAllData.filter((row) => row.year === parseInt(year));
       setTableData(selectedYearData);
       setAllData(tempAllData);
 
-      // Prepare bar chart data
+      // Prepare bar chart data (reusing old logic)
       const dimensions = tempAllData
         .filter((row) => row.dimension !== "Total")
         .map((row) => row.dimension)
@@ -81,9 +80,9 @@ const Table1_2 = ({ year, district, period }) => {
             return row ? parseFloat(row.percentage) : 0;
           }),
           backgroundColor: [
-            "rgba(54, 162, 235, 0.6)", // First year
-            "rgba(255, 99, 132, 0.6)", // Second year
-            "rgba(75, 192, 192, 0.6)", // Current year
+            "rgba(54, 162, 235, 0.6)", // First year (2023)
+            "rgba(255, 99, 132, 0.6)", // Second year (2024)
+            "rgba(75, 192, 192, 0.6)", // Current year (2025)
           ][index],
           borderColor: [
             "rgba(54, 162, 235, 1)",
@@ -95,7 +94,7 @@ const Table1_2 = ({ year, district, period }) => {
       };
       setChartData(barChartDataConfig);
 
-      // Prepare pie chart data for the selected year
+      // Prepare pie chart data for the selected year (reusing old logic)
       const totalRow = selectedYearData.find((row) => row.dimension === "Total");
       const implemented = totalRow ? totalRow.executed : 0;
       const nonImplemented = totalRow ? totalRow.planned - totalRow.executed : 0;
@@ -121,7 +120,7 @@ const Table1_2 = ({ year, district, period }) => {
     }
   }
 
-  // Bar chart options
+  // Bar chart options (reusing old logic)
   const barChartOptions = {
     responsive: true,
     plugins: {
@@ -156,7 +155,7 @@ const Table1_2 = ({ year, district, period }) => {
     },
   };
 
-  // Pie chart options
+  // Pie chart options (reusing old logic)
   const pieChartOptions = {
     responsive: true,
     plugins: {
@@ -175,7 +174,7 @@ const Table1_2 = ({ year, district, period }) => {
     },
   };
 
-  // Dynamic paragraph based on tableData
+  // Dynamic paragraph based on tableData (reusing old logic)
   const dynamicParagraph = () => {
     if (tableData.length === 0) return null;
 
@@ -185,7 +184,7 @@ const Table1_2 = ({ year, district, period }) => {
     const totalExecuted = totalRow ? totalRow.executed : 0;
 
     // Group data by dimension and sum planned/executed
-    const dimensionStats = dimensionsData.reduce((acc, row) => {
+    const dimensionStats = dimensionsData.reduce((acc, row)=> {
       if (!acc[row.dimension]) {
         acc[row.dimension] = { planned: 0, executed: 0 };
       }
@@ -215,24 +214,20 @@ const Table1_2 = ({ year, district, period }) => {
 
   return (
     <div className="col-12">
-      <h3>Table 1.2 – Details on Annual Action Plan Implemented under the Development Dimensions</h3>
+      <h3>Table 1 – Proportion of the AAP Implemented by Development Dimensions</h3>
       <div className="card">
         <div className="card-header"></div>
         <div className="card-body">
-          Table 1.2 presents the breakdown of activities implemented under the various
+          Table 1 presents the breakdown of activities implemented under the various
           development dimensions. Comparatively, it can be realized that there are more projects
           and programmes in the {year} Annual Action Plan as compared to the base year mainly
-          ONGOING 6-UNIT CLASSROOM BLOCK AT BOGREKROM ONGOING COMMUNITY CENTRE AT CYANIDE ONGOING CLASSROOM BLOCK AT MAHAMO
-          6 | P a g e
           due to the rolled over projects from previous years and the inclusion of integrated social
-          services related activities in the Plan
-<APRmemo
-                    year={year}
-                    districtId = {district}
-                      tableCommentedId={`table1_2-${year}`}
-                    
-                   
-                  />
+          services related activities in the Plan.
+          <APRmemo
+            year={year}
+            districtId={district}
+            tableCommentedId={`table1-${year}`}
+          />
           <div className="table-responsive">
             <table className="table table-bordered" style={{
               border: '1px solid #000',
@@ -243,33 +238,49 @@ const Table1_2 = ({ year, district, period }) => {
               <thead>
                 <tr style={{ backgroundColor: '#d4edda', fontWeight: 'bold', border: '1px solid #000' }}>
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>S/N</th>
-                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Development Dimensions</th>
-                  <th style={{ border: '1px solid #000', fontWeight: 'bold', textAlign: 'center' }} colSpan="2">{year}</th>
+                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Development Dimension</th>
+                  <th style={{ border: '1px solid #000', fontWeight: 'bold', textAlign: 'center' }} colSpan="2">2022</th>
+                  <th style={{ border: '1px solid #000', fontWeight: 'bold', textAlign: 'center' }} colSpan="2">2023</th>
+                  <th style={{ border: '1px solid #000', fontWeight: 'bold', textAlign: 'center' }} colSpan="2">2024</th>
                 </tr>
                 <tr style={{ fontWeight: 'bold', border: '1px solid #000' }}>
                   <th style={{ border: '1px solid #000' }}></th>
                   <th style={{ border: '1px solid #000' }}></th>
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Planned</th>
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Executed</th>
+                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Planned</th>
+                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Executed</th>
+                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Planned</th>
+                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Executed</th>
                 </tr>
               </thead>
               <tbody>
                 {tableData.length > 0 ? (
-                  tableData.map((row, index) => (
-                    <tr key={index} style={
-                      row.dimension === "Total"
-                        ? { fontWeight: 'bold' }
-                        : {}
-                    }>
-                      <td style={{ border: '1px solid #000', fontWeight: 'bold' }}>{row.no}</td>
-                      <td style={{ border: '1px solid #000' }}>{row.dimension}</td>
-                      <td style={{ border: '1px solid #000' }}>{row.planned}</td>
-                      <td style={{ border: '1px solid #000' }}>{row.executed}</td>
-                    </tr>
-                  ))
+                  tableData.map((row, index) => {
+                    // Fetch corresponding data for 2022, 2023, 2024 from allData
+                    const row2022 = allData.find((d) => d.dimension === row.dimension && d.year === 2022);
+                    const row2023 = allData.find((d) => d.dimension === row.dimension && d.year === 2023);
+                    const row2024 = allData.find((d) => d.dimension === row.dimension && d.year === 2024);
+                    return (
+                      <tr key={index} style={
+                        row.dimension === "Total"
+                          ? { fontWeight: 'bold' }
+                          : {}
+                      }>
+                        <td style={{ border: '1px solid #000', fontWeight: 'bold' }}>{row.no}</td>
+                        <td style={{ border: '1px solid #000' }}>{row.dimension}</td>
+                        <td style={{ border: '1px solid #000' }}>{row2022 ? row2022.planned : 0}</td>
+                        <td style={{ border: '1px solid #000' }}>{row2022 ? row2022.executed : 0}</td>
+                        <td style={{ border: '1px solid #000' }}>{row2023 ? row2023.planned : 0}</td>
+                        <td style={{ border: '1px solid #000' }}>{row2023 ? row2023.executed : 0}</td>
+                        <td style={{ border: '1px solid #000' }}>{row2024 ? row2024.planned : 0}</td>
+                        <td style={{ border: '1px solid #000' }}>{row2024 ? row2024.executed : 0}</td>
+                      </tr>
+                    );
+                  })
                 ) : (
                   <tr>
-                    <td colSpan="4" style={{ textAlign: "center" }}>
+                    <td colSpan="8" style={{ textAlign: "center" }}>
                       No data available for {year}
                     </td>
                   </tr>
@@ -283,13 +294,13 @@ const Table1_2 = ({ year, district, period }) => {
           {dynamicParagraph()}
           <hr />
           <h5>Performance Comparison by Development Dimension ({new Date().getFullYear() - 2}-{new Date().getFullYear()})</h5>
-          <div className="mt-10" style={{ height: "700px", margin: "0 auto" }}>
+          {/* <div className="mt-10" style={{ height: "700px", margin: "0 auto" }}> */}
             {Object.keys(chartData).length > 0 ? (
               <Bar data={chartData} options={barChartOptions} />
             ) : (
               <p>Loading bar chart data...</p>
             )}
-          </div>
+          {/* </div> */}
           <hr />
           <h5>Projects Implemented vs Non-Implemented ({year})</h5>
           <div
@@ -303,12 +314,11 @@ const Table1_2 = ({ year, district, period }) => {
             )}
           </div>
 
-             <APRComment
+          <APRComment
             data={tableData}
             year={year}
             districtId={district}
-            tableCommentedId={`table1_2-${year}`}
-           
+            tableCommentedId={`table1-${year}`}
           >
             {({ renderCommentInput, renderCommentList }) => (
               <>
@@ -323,4 +333,4 @@ const Table1_2 = ({ year, district, period }) => {
   );
 };
 
-export default Table1_2;
+export default Table_1;

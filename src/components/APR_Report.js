@@ -5,18 +5,10 @@ import { useReactToPrint } from 'react-to-print';
 import SideBarWrapper from "../components/SideBarWrapper";
 import { FilePdfOutlined } from "@ant-design/icons";
 import Select from "react-select";
-import Table1_1 from "../components/APR_ReportTablesComponents/Table_1.1";
-import Table1_2 from "../components/APR_ReportTablesComponents/Table_1.2";
-import Table2_1 from "../components/APR_ReportTablesComponents/Table_2.1";
-import Table2_2 from "../components/APR_ReportTablesComponents/Table_2.2";
-import Table2_3 from "../components/APR_ReportTablesComponents/Table_2.3";
-import Table2_4 from "../components/APR_ReportTablesComponents/Table_2.4";
-import Table2_5 from "../components/APR_ReportTablesComponents/Table_2.5";
-import Table2_6 from "../components/APR_ReportTablesComponents/Table_2.6";
+import Table_3 from "./APR_ReportTablesComponents/Table_3";
+import Table_8 from "./APR_ReportTablesComponents/Table_8";
+import Table_9 from "./APR_ReportTablesComponents/Table_9";
 import Table2_7 from "../components/APR_ReportTablesComponents/Table_2.7";
-import Table2_8 from "../components/APR_ReportTablesComponents/Table_2.8";
-import Table2_9 from "../components/APR_ReportTablesComponents/Table_2.9";
-import Table2_10 from "../components/APR_ReportTablesComponents/Table_2.10";
 import Apendix_2 from "../components/APR_ReportTablesComponents/Apendix2"
 import Appendix1 from "./APR_ReportTablesComponents/Apendix1";
 import { Button } from "antd";
@@ -33,21 +25,27 @@ import Table_22 from "./APR_ReportTablesComponents/Table_22";
 import Table_4 from "./APR_ReportTablesComponents/Table_4";
 import Table_5 from "./APR_ReportTablesComponents/Table_5";
 import Table_6 from "./APR_ReportTablesComponents/Table_6";
+import Table_1 from "./APR_ReportTablesComponents/Table_1";
+import Table_2 from "./APR_ReportTablesComponents/Table_2";
+import Table_7 from "./APR_ReportTablesComponents/Table_7";
+import Table_10 from "./APR_ReportTablesComponents/Table_10";
+import Table_11 from "./APR_ReportTablesComponents/Table_11";
+import Table_12 from "./APR_ReportTablesComponents/Table_12";
 
 
 
 // List of Tables options
 const tableOptions = [
   { value: "all_tables", label: "All Tables" },
-  { value: "table_1.2", label: "Table 1 – Proportion of the AAP Implemented by Development Dimensions" },
-   { value: "table_1.1", label: "Table 2 – Proportion of the DMTDP Implemented " },
-  { value: "table_2.1", label: "Table 3 – Project Register as of the end of the year" },
+  { value: "table_1", label: "Table 1 – Proportion of the AAP Implemented by Development Dimensions" },
+   { value: "table_2", label: "Table 2 – Proportion of the DMTDP Implemented" },
+  { value: "table_3", label: "Table 3 – Project Register as of the end of the year" },
   { value: "table_4", label: "Table 4 –  Total number of active projects"},
   { value: "table_5", label: "Table 5 –   Distribution of Physical projects among departments of the Assembly"},
   { value: "table_6", label: "Table 6 – Project Age Analysis" },
   { value: "table_7", label: "Table 7 –  Repair and maintenance of Existing Infrastructure" },
-  { value: "table_2.2", label: "Table 8 – Programme Register as of the end of the Year, 2024" },
-  { value: "table_2.3", label: "Table 9 – Update on Revenue Sources as of the end of the Year (2021 – 2024) " },
+  { value: "table_8", label: "Table 8 – Programme Register as of the end of the Year, 2024" },
+  { value: "table_9", label: "Table 9 – Update on Revenue Sources as of the end of the Year (2021 – 2024) " },
   { value: "table_10", label: "Table 10 – Update on Expenditure as of the Year (2021 – 2024)" },
   { value: "table_11", label: "Table 11 –  CAPEX Budget Performance Analysis, 2024" },
   { value: "table_12", label: "Table 12 – CAPEX Budget Allocation and Implementation of active projects" },
@@ -55,13 +53,12 @@ const tableOptions = [
   { value: "table_13", label: "Table 13 – Cumulative CAPEX throw forward and MTBF Envelope, 2025-2027" },
   { value: "table_14", label: "Table 14 – AMOUNT OF CAPITAL ENVELOPE SPENT ON ACTIVE PROJECTS" },
   { value: "table_15", label: "Table 15 – ESTIMATED  COST AND  COST OVERRUNS OF  ACTIVE  PROJECTS" },
-  { value: "table_2.5", label: "Table 16 – PERFORMANCE OF  CORE  INDICATORS OF THE END OF THE  YEAR" },
-  { value: "table_2.6", label: "Table 17 – UPDATES ON  CRITICAL  DEVELOPMENT AND  POVERTY  ISSUES IN THE  YEAR" },
+  { value: "table_16", label: "Table 16 – PERFORMANCE OF  CORE  INDICATORS OF THE END OF THE  YEAR" },
   { value: "table_18", label: "Table 18 – STAFF  STRENGTHS" },
   { value: "table_19", label: "Table 19 – CAPACITY  DEVELOPMENT" },
   { value: "table_20", label: "Table 20 – LOGISTICS  ANALYSIS" },
   { value: "table_21", label: "Table 21 – UPDATE ON EVALUATIONS CONDUCTED" },
-  { value: "table_2.10", label: "Table 22 – UPDATE ON  PARTICIPATORY  MONITORING AND  EVALUATION  (PM&E) TOOLS USED" },
+  { value: "table_22", label: "Table 22 – UPDATE ON  PARTICIPATORY  MONITORING AND  EVALUATION  (PM&E) TOOLS USED" },
   { value: "apendix_2", label: "Apendix2  –Composit Annual Action for the Year" },
 ];
 
@@ -73,53 +70,53 @@ const periodOption = [
   { value: "yearly", label: "Yearly" }
 ];
 const Abbreviation = [
-  { value: "1D1F", label: "1D1F-One District One Factory" },
-  { value: "AAP", label: "AAP-Annual Action Plan" },
-  { value: "AIDS", label: "AIDS-Acquired Immune Deficiency Syndrome" },
-  { value: "AMSEC", label: "Agricultural Mechanisation Services" },
-  { value: "APR", label: "Annual Progress Report" },
-  { value: "ART", label: "Anti-Retroviral Treatment" },
-  { value: "BECE", label: "Basic Education Certificate Examination" },
-  { value: "CAPEX", label: "Capital Expenditure" },
-  { value: "CLTS", label: "Community Led Total Sanitation" },
-  { value: "CHPS", label: "Community-Based Health Planning and Services" },
-  { value: "COVID", label: "Corona Virus Disease" },
-  { value: "CSOs", label: "Civil Society Organisations" },
-  { value: "DACF", label: "District Assemblies’ Common Fund" },
-  { value: "DACF-RFG", label: "District Assemblies’ Common Fund Responsiveness Factor Grant" },
-  { value: "EXECO", label: "Executive Committee" },
-  { value: "GHS", label: "Ghana Cedis" },
-  { value: "GoG", label: "Government of Ghana" },
-  { value: "HIV", label: "Human Immunodeficiency Virus" },
-  { value: "HoDs", label: "Head of Departments" },
-  { value: "IGF", label: "Internally Generated Fund" },
-  { value: "ISSOP", label: "Integrated Social Services Operating Procedure" },
-  { value: "JHS", label: "Junior High School" },
-  { value: "LEAP", label: "Livelihood Empowerment Against Poverty" },
-  { value: "LLINs", label: "Long-Lasting Insecticidal Nets" },
-  { value: "MAC", label: "Municipal AIDS Committee" },
-  { value: "MAG", label: "Modernising Agriculture in Ghana" },
-  { value: "MCD", label: "Municipal Co-ordinating Director" },
-  { value: "MCE", label: "Municipal Chief Executive" },
-  { value: "M&E", label: "Monitoring and Evaluation" },
-  { value: "MMTDP", label: "Municipal Medium-Term Development Plan" },
-  { value: "MP’s CF", label: "Member of Parliament’s Common Fund" },
-  { value: "MPCU", label: "Municipal Planning Coordinating Unit" },
-  { value: "MSEs", label: "Micro and Small Enterprises" },
-  { value: "MTDP", label: "Medium-Term Development Plan" },
-  { value: "MUSEC", label: "Municipal Security Council" },
-  { value: "NDPC", label: "National Development Planning Commission" },
-  { value: "NGOs", label: "Non-Governmental Organizations" },
-  { value: "NHIS", label: "National Health Insurance Scheme" },
-  { value: "NSMA", label: "Nkwanta South Municipal Assembly" },
-  { value: "ORCC", label: "Oti Regional Coordinating Council" },
-  { value: "PERD", label: "Planting for Export and Rural Development" },
-  { value: "PM&E", label: "Participatory Monitoring and Evaluation" },
-  { value: "PMTCT", label: "Prevention of Mother to Child Transmission" },
-  { value: "PWDs", label: "Persons With Disabilities" },
-  { value: "SHS", label: "Senior High School" },
-  { value: "SOCO", label: "Gulf of Guinea Northern Regions Social Cohesion Project" },
-  { value: "SPSS", label: "Scientific Package for Social Scientist" },
+  { value: "1D1F", label: "1D1F - One District One Factory" },
+  { value: "AAP", label: "AAP - Annual Action Plan" },
+  { value: "AIDS", label: "AIDS - Acquired Immune Deficiency Syndrome" },
+  { value: "AMSEC", label: "AMSEC - Agricultural Mechanisation Services" },
+  { value: "APR", label: "APR - Annual Progress Report" },
+  { value: "ART", label: "ART - Anti-Retroviral Treatment" },
+  { value: "BECE", label: "BECE - Basic Education Certificate Examination" },
+  { value: "CAPEX", label: "CAPEX - Capital Expenditure" },
+  { value: "CLTS", label: "CLTS - Community Led Total Sanitation" },
+  { value: "CHPS", label: "CHPS - Community-Based Health Planning and Services" },
+  { value: "COVID", label: "COVID - Corona Virus Disease" },
+  { value: "CSOs", label: "CSOs - Civil Society Organisations" },
+  { value: "DACF", label: "DACF - District Assemblies’ Common Fund" },
+  { value: "DACF-RFG", label: "DACF-RFG - District Assemblies’ Common Fund Responsiveness Factor Grant" },
+  { value: "EXECO", label: "EXECO - Executive Committee" },
+  { value: "GHS", label: "GHS - Ghana Cedis" },
+  { value: "GoG", label: "GoG - Government of Ghana" },
+  { value: "HIV", label: "HIV - Human Immunodeficiency Virus" },
+  { value: "HoDs", label: "HoDs - Head of Departments" },
+  { value: "IGF", label: "IGF - Internally Generated Fund" },
+  { value: "ISSOP", label: "ISSOP - Integrated Social Services Operating Procedure" },
+  { value: "JHS", label: "JHS - Junior High School" },
+  { value: "LEAP", label: "LEAP - Livelihood Empowerment Against Poverty" },
+  { value: "LLINs", label: "LLINs - Long-Lasting Insecticidal Nets" },
+  { value: "MAC", label: "MAC - Municipal AIDS Committee" },
+  { value: "MAG", label: "MAG - Modernising Agriculture in Ghana" },
+  { value: "MCD", label: "MCD - Municipal Co-ordinating Director" },
+  { value: "MCE", label: "MCE - Municipal Chief Executive" },
+  { value: "M&E", label: "M&E - Monitoring and Evaluation" },
+  { value: "MMTDP", label: "MMTDP - Municipal Medium-Term Development Plan" },
+  { value: "MP’s CF", label: "MP’s CF - Member of Parliament’s Common Fund" },
+  { value: "MPCU", label: "MPCU - Municipal Planning Coordinating Unit" },
+  { value: "MSEs", label: "MSEs - Micro and Small Enterprises" },
+  { value: "MTDP", label: "MTDP - Medium-Term Development Plan" },
+  { value: "MUSEC", label: "MUSEC - Municipal Security Council" },
+  { value: "NDPC", label: "NDPC - National Development Planning Commission" },
+  { value: "NGOs", label: "NGOs - Non-Governmental Organizations" },
+  { value: "NHIS", label: "NHIS - National Health Insurance Scheme" },
+  { value: "NSMA", label: "NSMA - Nkwanta South Municipal Assembly" },
+  { value: "ORCC", label: "ORCC - Oti Regional Coordinating Council" },
+  { value: "PERD", label: "PERD - Planting for Export and Rural Development" },
+  { value: "PM&E", label: "PM&E - Participatory Monitoring and Evaluation" },
+  { value: "PMTCT", label: "PMTCT - Prevention of Mother to Child Transmission" },
+  { value: "PWDs", label: "PWDs- Persons With Disabilities" },
+  { value: "SHS", label: "SHS - Senior High School" },
+  { value: "SOCO", label: "SOCO - Gulf of Guinea Northern Regions Social Cohesion Project" },
+  { value: "SPSS", label: "SPSS - Scientific Package for Social Scientist" },
 ];
 
 function AprReport() {
@@ -319,22 +316,30 @@ function AprReport() {
                           {selectedYear?.value} ANNUAL PROGRESS REPORT OF {selectedDistrict?.label} FROM {selectedDistrict?.value?.region}
                         </h3>}
                 </div>
-                
-                <Table1_1 
-                year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
-                <Table1_2 
+                  <Table_1
                 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
-
-                <Table2_1 
+                <Table_2
+                year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>            
+                <Table_3 
               year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
-                <Table2_2 
+                 <Table_4 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
+                <Table_5 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
+                <Table_6 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
+                <Table_7 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
+                <Table_8 
                 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
-                <Table2_3 
+                <Table_9 
                 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
-                <Table2_4 
-                year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
-
-                {(dataElements && categories && districtWideConstant) && <Table2_5
+                 <Table_10
+                year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />               
+                 <Table_11
+                year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
+                  <Table_12
+                year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
+                 <Table_13 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
+                <Table_14 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
+                <Table_15 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
+                   {(dataElements && categories && districtWideConstant) && <Table_16
                   year={selectedYear?.value}
                   district={selectedDistrict?.value}
                   categories={categories}
@@ -344,24 +349,24 @@ function AprReport() {
                   socialDataElements={socialDataElements}
                   period={selectedPeriod?.value}
                 />}
-
-                <Table2_6 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
-                <Table2_7 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
-                <Table2_8 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
-                <Table2_9 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
-                <Table2_10 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
-                <Table_4
-                year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
-                <Table_13 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
-                <Table_14 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
-                <Table_15 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
-                <Table_16 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
                 <Table_17 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
                 <Table_18 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
                 <Table_19 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
                 <Table_20 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
                 <Table_21 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
                 <Table_22 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
+                {/* <Table2_4 
+                year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/> */}
+
+             
+
+                {/* <Table2_6 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} /> */}
+                {/* <Table2_7 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/> */}
+                {/* <Table2_8 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/> */}
+                {/* <Table2_9 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/> */}
+                {/* <Table2_10 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/> */}
+               
+               
                 <Appendix1 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
                 <Apendix_2 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
 
@@ -389,21 +394,21 @@ function AprReport() {
                 <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>Download Report</span>
               </Button>
             </div>
-            {selectedTable && selectedTable.value === "table_1.1" && <Table1_1 />}
-            {selectedTable && selectedTable.value === "table_1.2" && <Table1_2 />}
-            {selectedTable && selectedTable.value === "table_2.1" && <Table2_1 />}
-            {selectedTable && selectedTable.value === "table_2.2" && <Table2_2 />}
-            {selectedTable && selectedTable.value === "table_2.3" && <Table2_3 />}
-            {selectedTable && selectedTable.value === "table_2.4" && <Table2_4 />}
-            {selectedTable && selectedTable.value === "table_2.5" && <Table2_5 />}
-            {selectedTable && selectedTable.value === "table_2.6" && <Table2_6 />}
-            {selectedTable && selectedTable.value === "table_2.7" && <Table2_7 />}
-            {selectedTable && selectedTable.value === "table_2.8" && <Table2_8 />}
-            {selectedTable && selectedTable.value === "table_2.9" && <Table2_9 />}
-            {selectedTable && selectedTable.value === "table_2.10" && <Table2_10 />}
+            
+            {selectedTable && selectedTable.value === "table_1" && <Table_1 />}
+            {selectedTable && selectedTable.value === "table_2" && <Table_2 />}
+            {selectedTable && selectedTable.value === "table_3" && <Table_3 />}
             {selectedTable && selectedTable.value === "table_4" && <Table_4 />}
             {selectedTable && selectedTable.value === "table_5" && <Table_5 />}
             {selectedTable && selectedTable.value === "table_6" && <Table_6 />}
+            {selectedTable && selectedTable.value === "table_7" && <Table_7 />}
+            {selectedTable && selectedTable.value === "table_8" && <Table_8 />}
+            {selectedTable && selectedTable.value === "table_9" && <Table_9 />}
+            {selectedTable && selectedTable.value === "table_10" && <Table_10 />}
+            {selectedTable && selectedTable.value === "table_11" && <Table_11 />}
+            {selectedTable && selectedTable.value === "table_12" && <Table_12 />}
+
+        
             {selectedTable && selectedTable.value === "table_13" && <Table_13 />}
             {selectedTable && selectedTable.value === "table_14" && <Table_14 />}
             {selectedTable && selectedTable.value === "table_15" && <Table_15 />}
@@ -415,8 +420,17 @@ function AprReport() {
             {selectedTable && selectedTable.value === "table_21" && <Table_21 />}
             {selectedTable && selectedTable.value === "table_22" && <Table_22 />}
 
-            {selectedTable && !["all_tables", "table_1.1", "table_1.2", "table_2.1", "table_2.2", "table_2.3", "table_2.4", "table_2.5", "table_2.6", "table_2.7", "table_2.8", "table_2.9", 
-              "table_2.10","table_13","table_14","table_15","table_16","table_17","table_18","table_19","table_20","table_21","table_22"
+
+             {/* {selectedTable && selectedTable.value === "table_2.4" && <Table2_4 />} */}
+            {/* {selectedTable && selectedTable.value === "table_2.5" && <Table2_5 />} */}
+            {/* {selectedTable && selectedTable.value === "table_2.6" && <Table2_6 />} */}
+            {selectedTable && selectedTable.value === "table_2.7" && <Table2_7 />}
+            {/* {selectedTable && selectedTable.value === "table_2.8" && <Table2_8 />} */}
+            {/* {selectedTable && selectedTable.value === "table_2.9" && <Table2_9 />}
+            {selectedTable && selectedTable.value === "table_2.10" && <Table2_10 />} */}
+
+            {selectedTable && !["all_tables",   "table_1", "table_2", "table_3", "table_4", "table_5", "table_6", "table_7", "table_8", "table_9", 
+              "table_10","table_11","table_13","table_14","table_15","table_16","table_17","table_18","table_19","table_20","table_21","table_22"
             ].includes(selectedTable.value) && (
               <div className="col-12">
                 <h3>{selectedTable.label}</h3>

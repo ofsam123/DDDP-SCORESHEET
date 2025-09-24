@@ -9,11 +9,13 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import APRComment from "./APRComment.js/AprComments";
+import APRmemo from "./APRComment.js/APRmemo";
 
 // Register chart components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const Table_6 = ({ year = 2025 }) => { // Default year set to 2025, adjustable via prop
+const Table_6 = ({ year = 2025 , district}) => { // Default year set to 2025, adjustable via prop
   const tableData = [
     {
       projectAge: "Projects that are 20yrs but less than 24 years",
@@ -176,6 +178,12 @@ const Table_6 = ({ year = 2025 }) => { // Default year set to 2025, adjustable v
       <div className="card">
         <div className="card-header"></div>
         <div class="card-body">
+             <APRmemo
+                                year={year}
+                                districtId = {district}
+                                    tableCommentedId={`table7-${year}`}
+                               
+                              />
           <div className="table-responsive">
             <table className="table table-bordered">
               <thead style={{ backgroundColor: '#d4edda', fontWeight: 'bold', border: '1px solid #000' }}>
@@ -209,7 +217,20 @@ const Table_6 = ({ year = 2025 }) => { // Default year set to 2025, adjustable v
           <p className="mt-2">
             <small>Source: Not specified</small>
           </p>
-
+  <APRComment
+                  data={tableData}
+                    year={year}
+                 districtId={district}
+               tableCommentedId={`table6-${year}`}
+                               
+                >
+           {({ renderCommentInput, renderCommentList }) => (
+                                  <>
+               {renderCommentInput()}
+              {renderCommentList()}
+         </>
+         )}
+            </APRComment>
           {/* Bar Chart */}
           <h4>Figure 6: Project Age Analysis</h4>
           <Bar data={chartData} options={chartOptions} />

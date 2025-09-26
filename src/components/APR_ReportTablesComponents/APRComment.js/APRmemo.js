@@ -20,7 +20,7 @@ function APRmemo({ year, districtId, tableCommentedId }) {
   const currentFullName = user?.user?.fullName || "";
   const isQualityAssurance = currentUserRole === "APR USER";
 
-  // Fetch existing comments
+  // Fetch both APR_USER memos and APR_RCC comments
   const fetchComments = useCallback(async () => {
     if (!districtId || !year) return;
     setLoading(true);
@@ -30,7 +30,7 @@ function APRmemo({ year, districtId, tableCommentedId }) {
         (comment) =>
           comment.tableCommented === tableCommentedId &&
           comment.districtId === districtId &&
-          comment.userRole === "APR_USER"
+          (comment.userRole === "APR_USER" || comment.userRole === "APR_RCC")
       );
       setComments(filteredComments);
       setError(null);
@@ -86,7 +86,6 @@ function APRmemo({ year, districtId, tableCommentedId }) {
     try {
       let response;
       if (existingComment) {
-        // Optimistic update for existing
         setComments((prevComments) =>
           prevComments.map((comment) =>
             comment.id === existingComment.id
@@ -97,14 +96,12 @@ function APRmemo({ year, districtId, tableCommentedId }) {
         response = await instance.put(`comments/${existingComment.id}`, payload);
         message.success("Memo updated successfully");
       } else {
-        // Optimistic update for new
-        const tempId = Date.now(); // Temporary ID for optimistic UI
+        const tempId = Date.now();
         setComments((prevComments) => [
           ...prevComments,
           { ...payload, id: tempId },
         ]);
         response = await instance.post("comments", payload);
-        // Replace tempId with actual ID after successful post
         setComments((prevComments) =>
           prevComments.map((comment) =>
             comment.id === tempId ? { ...comment, id: response.data.id } : comment
@@ -114,11 +111,9 @@ function APRmemo({ year, districtId, tableCommentedId }) {
       }
       setMemoContent("");
       setEditing(false);
-      // Refetch to sync with server
       await fetchComments();
     } catch (error) {
-      // Rollback optimistic update on error
-      await fetchComments(); // Refetch to revert to server state
+      await fetchComments();
       setError("Failed to save memo");
       message.error(`Failed to save memo: ${error.response?.data?.message || error.message}`);
     } finally {
@@ -133,13 +128,6 @@ function APRmemo({ year, districtId, tableCommentedId }) {
   const canEditMemo = () => isQualityAssurance;
 
   const renderMemoList = () => {
-    const comment = comments.find(
-      (comment) =>
-        comment.tableCommented === tableCommentedId &&
-        comment.districtId === districtId &&
-        comment.userRole === normalizedUserRole
-    );
-    if (!comment) return null;
     return (
       <div
         style={{
@@ -150,9 +138,12 @@ function APRmemo({ year, districtId, tableCommentedId }) {
           marginTop: "20px",
         }}
       >
-        <div style={{ padding: "10px", border: "1px solid #f0f0f0", borderRadius: "6px" }}>
-          <div style={{ display: "flex", marginBottom: "10px" }}>
-            {comment.username === currentUsername && canEditMemo() && (
+        {comments.map((comment) => (
+          <div
+            key={comment.id}
+            style={{ padding: "10px", border: "1px solid #f0f0f0", borderRadius: "6px", marginBottom: "10px" }}
+          >
+            <div style={{ display: "flex", marginBottom: "10px" }}>
               <Col>
                 <Avatar
                   src={comment.userImage || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTL_JlCFnIGX5omgjEjgV9F3sBRq14eTERK9w&s"}
@@ -160,43 +151,46 @@ function APRmemo({ year, districtId, tableCommentedId }) {
                   size={32}
                 />
               </Col>
-            )}
-            <div style={{ flex: 1 }}>
-              <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", width: "800px" }}>
-                {comment.username === currentUsername && canEditMemo() && (
+              <div style={{ flex: 1 }}>
+                <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", width: "800px" }}>
                   <h4 style={{ margin: 0, fontSize: "13px" }}>
-                    {comment.fullName} ({comment.userRole})
+                    {comment.fullName} ({comment.userRole.replace("_", " ")})
                   </h4>
-                )}
-                {comment.username === currentUsername && canEditMemo() && (
-                  <EditOutlined
-                    style={{ cursor: "pointer", color: "#000000ff", marginLeft: "10px" }}
-                    onClick={handleEdit}
-                  />
-                )}
+                  {comment.userRole === "APR_USER" && comment.username === currentUsername && canEditMemo() && (
+                    <EditOutlined
+                      style={{ cursor: "pointer", color: "#000000ff", marginLeft: "10px" }}
+                      onClick={handleEdit}
+                    />
+                  )}
+                </div>
+                <div
+                  style={{ fontSize: "16px", marginTop: "8px" }}
+                  dangerouslySetInnerHTML={{
+                    __html:
+                     
+                         comment.gaps 
+                        
+                  }}
+                />
+                <Col align="end">
+                  <h11 style={{ marginLeft: "8px" }}>{comment.commentDate.join("/")}</h11>
+                </Col>
               </div>
-              <div
-                style={{ fontSize: "16px", marginTop: "8px" }}
-                dangerouslySetInnerHTML={{ __html: comment.gaps || "No memo available" }}
-              />
-              <Col align="end">
-                <h11 style={{ marginLeft: "8px" }}>{comment.commentDate.join("/")}</h11>
-              </Col>
             </div>
           </div>
-        </div>
+        ))}
       </div>
     );
   };
 
   if (!isQualityAssurance && !comments.length) {
-    return <div style={{ padding: "20px" }}>No overall memo available for this district.</div>;
+    return <div style={{ padding: "20px" }}>No overall memo or comments available for this district.</div>;
   }
 
   return (
     <div style={{ padding: "20px" }}>
       {canEditMemo() && (
-        <div style={{ display: editing || !comments.length ? "block" : "none" }}>
+        <div style={{ display: editing || !comments.some((c) => c.userRole === "APR_USER") ? "block" : "none" }}>
           <Spin spinning={loading}>
             <ReactQuill
               value={memoContent}
@@ -238,7 +232,7 @@ function APRmemo({ year, districtId, tableCommentedId }) {
               style={{ marginTop: "10px" }}
               disabled={loading}
             >
-              <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>SAVE TABLE DISCRIPTION</span>
+              <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>SAVE TABLE DESCRIPTION</span>
             </Button>
           </Spin>
           {error && <div style={{ color: "red" }}>{error}</div>}

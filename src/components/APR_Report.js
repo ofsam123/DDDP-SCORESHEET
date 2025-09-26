@@ -11,7 +11,7 @@ import Table_9 from "./APR_ReportTablesComponents/Table_9";
 import Table2_7 from "../components/APR_ReportTablesComponents/Table_2.7";
 import Apendix_2 from "../components/APR_ReportTablesComponents/Apendix2"
 import Appendix1 from "./APR_ReportTablesComponents/Apendix1";
-import { Button } from "antd";
+import { Button, Row, Col } from "antd";
 import Table_13 from "./APR_ReportTablesComponents/Table_13";
 import Table_14 from "./APR_ReportTablesComponents/Table_14";
 import Table_15 from "./APR_ReportTablesComponents/Table_15";
@@ -310,6 +310,7 @@ function AprReport() {
           <div className="row gutters">
             {selectedTable && selectedTable.value === "all_tables" && (
               <em ref={contentToPrint}>
+              
                 <div className="row gutters px-2">
                        {selectedDistrict && selectedYear && <h3 className="text-center" 
                        style={{ background: "#07d9c8ff", color: "#fff", textAlign: "center", padding: "10px", height: 'auto', width: '100%' }}>

@@ -19,12 +19,13 @@ function APRComment({ data, year, districtId, tableCommentedId, children, hideCo
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const currentUserRole = user?.user?.userRoles?.find((role) => role.name === "APR USER")?.name || "";
+  const currentUserRole = user?.user?.userRoles?.find((role) => role.name === "APR RCC")?.name || "";
   const normalizedUserRole = currentUserRole ? currentUserRole.replace(" ", "_").toUpperCase() : "";
   const currentUsername = user?.user?.username || "";
   const currentFullName = user?.user?.fullName || "";
+  const isAPR_RCC = currentUserRole === "APR RCC";
 
-  // Fetch comments
+  // Fetch both APR_RCC comments and APR_USER memos
   const fetchComments = useCallback(async () => {
     if (!districtId || !year) return;
     setLoading(true);
@@ -34,7 +35,7 @@ function APRComment({ data, year, districtId, tableCommentedId, children, hideCo
         (comment) =>
           comment.tableCommented === tableCommentedId &&
           comment.districtId === districtId &&
-          comment.userRole === "APR_USER"
+          (comment.userRole === "APR_RCC" || comment.userRole === "APR_USER")
       );
       setComments(filteredComments);
       setError(null);
@@ -90,7 +91,6 @@ function APRComment({ data, year, districtId, tableCommentedId, children, hideCo
     try {
       let response;
       if (existingComment && editingCommentId) {
-        // Optimistic update
         setComments((prevComments) =>
           prevComments.map((comment) =>
             comment.id === existingComment.id
@@ -103,7 +103,6 @@ function APRComment({ data, year, districtId, tableCommentedId, children, hideCo
         setEditingCommentId(null);
         setEditText({});
       } else if (existingComment) {
-        // Optimistic update
         setComments((prevComments) =>
           prevComments.map((comment) =>
             comment.id === existingComment.id
@@ -116,7 +115,6 @@ function APRComment({ data, year, districtId, tableCommentedId, children, hideCo
         setCommentText("");
         setShowCommentInput(false);
       } else {
-        // Optimistic update
         const tempId = Date.now();
         setComments((prevComments) => [
           ...prevComments,
@@ -132,10 +130,8 @@ function APRComment({ data, year, districtId, tableCommentedId, children, hideCo
         setCommentText("");
         setShowCommentInput(false);
       }
-      // Refetch to sync
       await fetchComments();
     } catch (error) {
-      // Rollback
       await fetchComments();
       setError("Failed to save comment");
       message.error(`Failed to save comment: ${error.response?.data?.message || error.message}`);
@@ -168,9 +164,9 @@ function APRComment({ data, year, districtId, tableCommentedId, children, hideCo
       setEditText({});
       setShowCommentInput(false);
       message.success("Comment deleted successfully");
-      await fetchComments(); // Refetch after delete
+      await fetchComments();
     } catch (error) {
-      await fetchComments(); // Rollback
+      await fetchComments();
       setError("Failed to delete comment");
       message.error("Failed to delete comment");
     } finally {
@@ -273,68 +269,66 @@ function APRComment({ data, year, districtId, tableCommentedId, children, hideCo
               style={{ padding: "10px", border: "1px solid #f0f0f0", borderRadius: "6px" }}
             >
               <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                {comment.comments && (
-                  <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      <Col>
-                        <Avatar
-                          src={comment.userImage || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTL_JlCFnIGX5omgjEjgV9F3sBRq14eTERK9w&s"}
-                          style={{ marginRight: "10px", borderRadius: "50%" }}
-                          size={32}
-                        />
-                      </Col>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
-                          <h4 style={{ margin: 0, fontSize: "13px" }}>
-                            {comment.fullName} ({comment.userRole.replace("_", " ")})
-                          </h4>
-                          {comment.username === currentUsername && (
-                            <div style={{ marginLeft: "8px", display: "flex", gap: "8px" }}>
-                              <h11 style={{ marginLeft: "8px", marginRight: "8px" }}>
-                                {comment.commentDate.join("/")}
-                              </h11>
-                              <EditOutlined
-                                style={{ cursor: "pointer", color: "#000000ff" }}
-                                onClick={() => handleEditComment(comment)}
-                              />
-                              <DeleteOutlined
-                                style={{ cursor: "pointer", color: "#ff0000" }}
-                                onClick={() => handleDeleteComment(comment.id)}
-                              />
-                            </div>
-                          )}
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <Col>
+                    <Avatar
+                      src={comment.userImage || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTL_JlCFnIGX5omgjEjgV9F3sBRq14eTERK9w&s"}
+                      style={{ marginRight: "10px", borderRadius: "50%" }}
+                      size={32}
+                    />
+                  </Col>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
+                      <h4 style={{ margin: 0, fontSize: "13px" }}>
+                        {comment.fullName} ({comment.userRole.replace("_", " ")})
+                      </h4>
+                      {comment.userRole === "APR_RCC" && comment.username === currentUsername && (
+                        <div style={{ marginLeft: "8px", display: "flex", gap: "8px" }}>
+                          <h11 style={{ marginLeft: "8px", marginRight: "8px" }}>
+                            {comment.commentDate.join("/")}
+                          </h11>
+                          <EditOutlined
+                            style={{ cursor: "pointer", color: "#000000ff" }}
+                            onClick={() => handleEditComment(comment)}
+                          />
+                          <DeleteOutlined
+                            style={{ cursor: "pointer", color: "#ff0000" }}
+                            onClick={() => handleDeleteComment(comment.id)}
+                          />
                         </div>
-                        {editingCommentId === comment.id ? (
-                          <div style={{ display: "flex", alignItems: "center", marginTop: "8px" }}>
-                            <Input.TextArea
-                              value={editText[comment.id] || ""}
-                              onChange={(e) =>
-                                setEditText({ ...editText, [comment.id]: e.target.value })
-                              }
-                              onKeyPress={(e) => handleEditKeyPress(e, comment.id)}
-                              autoSize={{ minRows: 3, maxRows: 5 }}
-                              style={{
-                                flex: 1,
-                                borderRadius: "10px",
-                                padding: "8px 12px",
-                                background: "#f0f2f5",
-                              }}
-                            />
-                            {editText[comment.id]?.trim() && (
-                              <SendOutlined
-                                className="text-blue-500 cursor-pointer"
-                                style={{ fontSize: "20px", marginLeft: "8px" }}
-                                onClick={() => handleCommentSubmit(editText[comment.id])}
-                              />
-                            )}
-                          </div>
-                        ) : (
-                          <h11 style={{ fontSize: "16px" }}>{comment.comments}</h11>
+                      )}
+                    </div>
+                    {comment.userRole === "APR_RCC" && editingCommentId === comment.id ? (
+                      <div style={{ display: "flex", alignItems: "center", marginTop: "8px" }}>
+                        <Input.TextArea
+                          value={editText[comment.id] || ""}
+                          onChange={(e) =>
+                            setEditText({ ...editText, [comment.id]: e.target.value })
+                          }
+                          onKeyPress={(e) => handleEditKeyPress(e, comment.id)}
+                          autoSize={{ minRows: 3, maxRows: 5 }}
+                          style={{
+                            flex: 1,
+                            borderRadius: "10px",
+                            padding: "8px 12px",
+                            background: "#f0f2f5",
+                          }}
+                        />
+                        {editText[comment.id]?.trim() && (
+                          <SendOutlined
+                            className="text-blue-500 cursor-pointer"
+                            style={{ fontSize: "20px", marginLeft: "8px" }}
+                            onClick={() => handleCommentSubmit(editText[comment.id])}
+                          />
                         )}
                       </div>
-                    </div>
+                    ) : (
+                     <h11 style={{ fontSize: "16px" }}>
+  {comment.comments}
+</h11>
+                    )}
                   </div>
-                )}
+                </div>
               </div>
             </div>
           ))}

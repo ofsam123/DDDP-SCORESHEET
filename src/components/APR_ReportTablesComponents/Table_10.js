@@ -1,86 +1,228 @@
-import React from "react";
-import { Bar } from "react-chartjs-2";
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
+import React, { useEffect, useState } from "react";
+import { Line } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  LineElement,
+  PointElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import axios from "../../api/axios";
+import { formatDataGeneral } from "../../utils/utils";
 import APRComment from "./APRComment.js/AprComments";
 import APRmemo from "./APRComment.js/APRmemo";
 
 // Register Chart.js components
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, Title, Tooltip, Legend);
 
-const Table_10 = (year = 2025, district) => {
-  const tableData = [
-    {
-      budgetItem: "Compensation",
-      "2021": { approved: 2310543.17, released: 1347816.82, expenditure: 1347816.82 },
-      "2022": { approved: 2625297.49, released: 2625397.49, expenditure: 2625397.49 },
-      "2023": { approved: 2998350.18, released: 2998350.18, expenditure: 2998350.18 },
-      "2024": { approved: 2515200.00, released: 6372830.52, expenditure: 6372830.52 },
-    },
-    {
-      budgetItem: "Goods and Services",
-      "2021": { approved: 2451923.83, released: 178223.64, expenditure: 178223.64 },
-      "2022": { approved: 1755830.55, released: 2981126.12, expenditure: 2981126.12 },
-      "2023": { approved: 11599110.82, released: 3029832.16, expenditure: 3029832.16 },
-      "2024": { approved: 5413947.18, released: 2868750.00, expenditure: 2868750.00 },
-    },
-    {
-      budgetItem: "CAPEX",
-      "2021": { approved: 3258000.00, released: 796767.94, expenditure: 796767.94 },
-      "2022": { approved: 5763819.96, released: 703686.28, expenditure: 703686.28 },
-      "2023": { approved: 1287571.00, released: 521964.72, expenditure: 521964.72 },
-      "2024": { approved: 10272867.00, released: 4829464.64, expenditure: 4829464.64 },
-    },
-    {
-      budgetItem: "Total",
-      "2021": { approved: 8020467.00, released: 2322808.40, expenditure: 2322808.40 },
-      "2022": { approved: 10144948.00, released: 6310209.89, expenditure: 6310209.89 },
-      "2023": { approved: 15885032.00, released: 6550147.06, expenditure: 6550147.06 },
-      "2024": { approved: 18202014.18, released: 14071045.16, expenditure: 14071045.16 },
-    },
+// Function to assign colors based on category
+const getColor = (name) => {
+  switch (name) {
+    case "COMPENSATION":
+      return "rgba(0, 0, 255, 0.6)"; // Blue
+    case "GOODS AND SERVICES":
+      return "rgba(255, 165, 0, 0.6)"; // Orange
+    case "INVESTMENTS/ASSETS":
+      return "rgba(128, 128, 128, 0.6)"; // Gray
+    default:
+      return "rgba(0, 0, 0, 0.6)"; // Black as fallback
+  }
+};
+
+const Table_10 = ({ year, district, period }) => {
+  const [tableData, setTableData] = useState([]);
+  const [showChart, setShowChart] = useState(true);
+
+  useEffect(() => {
+    getData();
+  }, [year, district, period]);
+
+   const mapData = (data, report) => {
+    const names = [
+      "COMPENSATION", "GOODS AND SERVICES", "INVESTMENTS/ASSETS"
+    ];
+
+    const attributes = data[0]?.attributes;
+    const reports = report.find(rep => rep.trackedEntity === data[0]?.trackedEntity);
+
+    const result = names.map(name => {
+      const releasedItem = attributes.find(item =>
+        item?.displayName?.toLowerCase() === `${name.toLowerCase()} released`
+      );
+      const targetItem = attributes.find(item =>
+        item?.displayName?.toLowerCase() === `${name.toLowerCase()} target`
+      );
+
+      return {
+        name: name,
+        released: releasedItem ? Number(releasedItem.value) : 0,
+        target: targetItem ? Number(targetItem.value) : 0,
+        actual: 0
+      };
+    });
+
+    result.forEach(el => {
+      for (let r of reports.dataValues) {
+        if (el.name === 'COMPENSATION' && r.dataElement === "iF3bVYzJUE6") {
+          el.actual = Number(r.value);
+          break;
+        } else if (el.name === 'GOODS AND SERVICES' && r.dataElement === "ZKwpRsX6DIE") {
+          el.actual = Number(r.value);
+          break;
+        } else if (el.name === 'INVESTMENTS/ASSETS' && r.dataElement === "LKTrRHSCoEk") {
+          el.actual = Number(r.value);
+          break;
+        }
+      }
+    });
+
+    return result;
+  };
+
+ function transformDisbursements(data) {
+  const keys = [
+    "disbursementsThreeLessMapped",
+    "disbursementsTwoLessMapped",
+    "disbursementsOneLessMapped",
+    "disbursementsFirstMapped"
   ];
 
+  const suffixes = ["One", "Two", "Three", "Four"];
+
+  // Get all names from the first set
+  const names = data[keys[0]].map(item => item.name);
+
+  // Transform grouped data
+  const result = names.map(name => {
+    let obj = { name };
+
+    keys.forEach((key, i) => {
+      const match = data[key].find(item => item.name === name);
+      if (match) {
+        obj[`released${suffixes[i]}`] = match.released;
+        obj[`target${suffixes[i]}`] = match.target;
+        obj[`actual${suffixes[i]}`] = match.actual;
+      }
+    });
+
+    return obj;
+  });
+
+  // Build totals row
+  const totalRow = { name: "Total" };
+
+  suffixes.forEach((suf, i) => {
+    totalRow[`released${suf}`] = result.reduce(
+      (sum, el) => sum + (el[`released${suf}`] || 0),
+      0
+    );
+    totalRow[`target${suf}`] = result.reduce(
+      (sum, el) => sum + (el[`target${suf}`] || 0),
+      0
+    );
+    totalRow[`actual${suf}`] = result.reduce(
+      (sum, el) => sum + (el[`actual${suf}`] || 0),
+      0
+    );
+  });
+
+  result.push(totalRow);
+  return result;
+}
+
+
+
+  function getData() {
+    axios
+      .get(`/tracker/trackedEntities?orgUnit=${district}&program=WHILilRZRhT&startDate=${year}-01-01&endDate=${year}-12-31`)
+      .then(result => {
+        if (result.data.instances.length > 0) {
+          const startDate = `${year}-01-01`;
+          const endDate = `${year}-12-31`;
+
+          axios
+            .get(`/tracker/events?program=WHILilRZRhT&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31&pageSize=5000`)
+            .then(resp => {
+              
+              const years = [`${year-3}`, `${year-2}`, `${year-1}`, `${year}`]
+              const disbursementsFirst = formatDataGeneral(result.data.instances, "Years", `${year}`) || [];
+              const disbursementsOneLess = formatDataGeneral(result.data.instances, "Years", `${year-1}`) || [];
+              const disbursementsTwoLess = formatDataGeneral(result.data.instances, "Years", `${year-2}`) || [];
+              const disbursementsThreeLess = formatDataGeneral(result.data.instances, "Years", `${year-3}`) || [];
+              const reports = resp.data.instances;
+
+              const reportFiltered = reports.filter(rep=> rep.programStage === "yJ86MwzF5Ak")
+              
+              const disbursementsFirstMapped = mapData(disbursementsFirst, reportFiltered);
+              const disbursementsOneLessMapped = mapData(disbursementsOneLess, reportFiltered);
+              const disbursementsTwoLessMapped = mapData(disbursementsTwoLess, reportFiltered);
+              const disbursementsThreeLessMapped = mapData(disbursementsThreeLess, reportFiltered);
+              const tempResult = {disbursementsFirstMapped, disbursementsOneLessMapped, disbursementsTwoLessMapped, disbursementsThreeLessMapped};
+              const formatedData = transformDisbursements(tempResult);
+             
+              setTableData(formatedData);
+            })
+            .catch(err => console.log(err));
+        }
+      })
+      .catch(err => console.log(err));
+  }
+
+  // Dynamic chart data based on tableData and year
   const chartData = {
-    labels: tableData.map(item => item.budgetItem),
-    datasets: [
-      {
-        label: "Approved (GH¢)",
-        data: tableData.map(item => item["2024"].approved),
-        backgroundColor: "#007bff",
-        borderColor: "#0056b3",
-        borderWidth: 1,
-      },
-      {
-        label: "Released (GH¢)",
-        data: tableData.map(item => item["2024"].released),
-        backgroundColor: "#28a745",
-        borderColor: "#1e7e34",
-        borderWidth: 1,
-      },
-      {
-        label: "Expenditure (GH¢)",
-        data: tableData.map(item => item["2024"].expenditure),
-        backgroundColor: "#ffc107",
-        borderColor: "#d39e00",
-        borderWidth: 1,
-      },
-    ],
+    labels: ["Baseline 2021", `Target ${year}`, `Actual ${year}`, `Target ${parseInt(year) + 1}`],
+    datasets: tableData.map(item => ({
+      label: item.name,
+      data: [
+        item.baseline, // Baseline 2021
+        item.target,   // Target for the selected year
+        item.actual,   // Actual for the selected year
+        item.target * 1.1, // Approximate Target for next year (dynamic scaling, adjust as needed)
+      ],
+      backgroundColor: getColor(item.name),
+      borderColor: getColor(item.name),
+      borderWidth: 2,
+      fill: false,
+      tension: 0.1,
+    })),
   };
 
   const chartOptions = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
-      legend: { position: "top" },
+      legend: {
+        position: "top",
+      },
       title: {
         display: true,
-        text: "Expenditure Overview for 2024",
+        text: `Figure 2.4 – Expenditure Analysis (${year})`,
       },
     },
     scales: {
       y: {
-        beginAtZero: true,
         title: {
           display: true,
-          text: "Amount (GH¢)",
+          text: "Expenditure in GH¢",
+        },
+        beginAtZero: true,
+        ticks: {
+          callback: function (value) {
+            return new Intl.NumberFormat("en-GH", {
+              style: "currency",
+              currency: "GHS",
+              minimumFractionDigits: 0,
+            }).format(value);
+          },
+        },
+      },
+      x: {
+        title: {
+          display: true,
+          text: "Year",
         },
       },
     },
@@ -88,28 +230,35 @@ const Table_10 = (year = 2025, district) => {
 
   return (
     <div className="col-12">
-      <h3>Table 10: Update on Expenditure as of the Year </h3>
-      
+      <h3>Table 10 - Update on Expenditure as of the Year ({year-3} – {year})</h3>
       <div className="card">
+        <div className="card-header"></div>
         <div className="card-body">
-             <APRmemo
-            year={year}
-            districtId={district}
-            tableCommentedId={`table10-${year}`}
-          />
+          {/* <h5>2.2.3 Update on Disbursements</h5> */}
+          <h7>
+            During the year under review, funds received were disbursed under the components of
+            Compensation, Goods and Services and Non–Financial Assets. Table 2.4 presents the
+            disbursement for the years.</h7>
+            <APRmemo
+                    year={year}
+                    districtId = {district}
+                      tableCommentedId={`table2_4-${year}`}
+                   
+                  />
+          {/* {JSON.stringify(tableData)} */}
           <div className="table-responsive">
             <table className="table table-bordered" style={{ borderCollapse: "collapse", width: "100%" }}>
               <thead style={{ backgroundColor: "#d4edda", fontWeight: "bold" }}>
                 <tr>
                   <th style={{ border: "1px solid #000" }} rowSpan="2">Budget Items</th>
-                  {["2021", "2022", "2023", "2024"].map(year => (
+                  {[`${year-3}`, `${year-2}`, `${year-1}`, `${year}`].map(year => (
                     <th key={year} style={{ border: "1px solid #000" }} colSpan="3">
                       {year}
                     </th>
                   ))}
                 </tr>
                 <tr>
-                  {["2021", "2022", "2023", "2024"].flatMap(year => [
+                  {[`${year-3}`, `${year-2}`, `${year-1}`, `${year}`].flatMap(year => [
                     <th key={`${year}-approved`} style={{ border: "1px solid #000" }}>Approved</th>,
                     <th key={`${year}-released`} style={{ border: "1px solid #000" }}>Released</th>,
                     <th key={`${year}-expenditure`} style={{ border: "1px solid #000" }}>Expenditure</th>,
@@ -119,48 +268,81 @@ const Table_10 = (year = 2025, district) => {
               <tbody>
                 {tableData.map((row, index) => (
                   <tr key={index}>
-                    <td style={{ border: "1px solid #000" }}>{row.budgetItem}</td>
-                    {["2021", "2022", "2023", "2024"].map(year => (
-                      <>
+                    <td style={{ border: "1px solid #000" }}>{row.name !== 'INVESTMENTS/ASSETS' ? row.name : 'CAPEX '}</td>
+
                         <td style={{ border: "1px solid #000" }}>
-                          {row[year].approved.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          {row.targetOne.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </td>
                         <td style={{ border: "1px solid #000" }}>
-                          {row[year].released.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          {row.releasedOne.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </td>
                         <td style={{ border: "1px solid #000" }}>
-                          {row[year].expenditure.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          {row.actualOne.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </td>
-                      </>
-                    ))}
+                        <td style={{ border: "1px solid #000" }}>
+                          {row.targetTwo.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </td>
+                        <td style={{ border: "1px solid #000" }}>
+                          {row.releasedTwo.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </td>
+                        <td style={{ border: "1px solid #000" }}>
+                          {row.actualTwo.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </td>
+                        <td style={{ border: "1px solid #000" }}>
+                          {row.targetThree.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </td>
+                        <td style={{ border: "1px solid #000" }}>
+                          {row.releasedThree.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </td>
+                        <td style={{ border: "1px solid #000" }}>
+                          {row.actualThree.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </td>
+                        <td style={{ border: "1px solid #000" }}>
+                          {row.targetFour.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </td>
+                        <td style={{ border: "1px solid #000" }}>
+                          {row.releasedFour.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </td>
+                        <td style={{ border: "1px solid #000" }}>
+                          {row.actualFour.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </td>
+                      
+                   
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
           <p className="mt-2">
-            <small>Source: Expenditure Report, 2021-2024</small>
+            <small>Source: MPCU</small>
           </p>
-          
-          {/* Bar Chart */}
-          <h4>Figure 10: Expenditure Breakdown for 2024</h4>
-          
-            <Bar data={chartData} options={chartOptions} />
-            <APRComment
-            data={tableData}
-            year={year}
-            districtId={district}
-            tableCommentedId={`table10-${year}`}
+          <button
+            className="btn btn-primary mt-3"
+            onClick={() => setShowChart(!showChart)}
           >
-            {({ renderCommentInput, renderCommentList }) => (
-              <>
-                {renderCommentInput()}
-                {renderCommentList()}
-              </>
-            )}
-          </APRComment>
+            {showChart ? "Hide Figure 2.4" : "Show Figure 2.4"}
+          </button>
+          {showChart && (
+            <div className="mt-4" style={{ height: "400px" }}>
+              <Line data={chartData} options={chartOptions} />
+            </div>
+            
+          )}
 
-          
+              <APRComment
+                      data={tableData}
+                      year={year}
+                      districtId={district}
+                      tableCommentedId={`table2_4-${year}`}
+                     
+                    >
+                      {({ renderCommentInput, renderCommentList }) => (
+                        <>
+                          {renderCommentInput()}
+                          {renderCommentList()}
+                        </>
+                      )}
+                    </APRComment>
         </div>
       </div>
     </div>

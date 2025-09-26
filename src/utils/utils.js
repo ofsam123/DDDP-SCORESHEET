@@ -49,6 +49,15 @@ export function formatDataGeneral(data, property, value) {
   );
 }
 
+export function getDataByTypes(data, property, values) {
+  return data?.filter(item =>
+    item.attributes.some(attr =>
+      attr.displayName === property && values.includes(attr.value)
+    )
+  );
+}
+
+
 export function getDataRank(index) {
 
   switch (index) {

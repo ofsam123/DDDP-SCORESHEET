@@ -262,13 +262,10 @@ const nhisData = [
 ];
 
 
-
-
-
 const Table_16 = ({
-   year, district, dataElements, categories,
-    districtWideConstant, economicDataElements,
-     socialDataElements, period }) => {
+  year, district, dataElements, categories,
+  districtWideConstant, economicDataElements,
+  socialDataElements, period }) => {
 
   const [tableData, setTableData] = useState([]);
   const [showChart, setShowChart] = useState(true);
@@ -472,7 +469,7 @@ const Table_16 = ({
       item?.dataElementName?.includes("valid NHIS")
     );
 
-    console.log("NHIS: ",{nhisActuals, nhisBaselineAndTarget});
+    console.log("NHIS: ", { nhisActuals, nhisBaselineAndTarget });
 
 
     schoolCompletionRateData.forEach(item => {
@@ -555,7 +552,7 @@ const Table_16 = ({
       }
     });
 
-     nhisData.forEach(item => {
+    nhisData.forEach(item => {
       const actualMale = nhisActuals.find(el => el.categoryOptionComboName.includes(`${item.id}, Actual, Male`));
 
       if (actualMale) {
@@ -984,7 +981,7 @@ const Table_16 = ({
 
   return (
     <div className="col-12">
-      <h3>Table 16 – PERFORMANCE OF  CORE  INDICATORS OF THE END OF THE  YEAR</h3>
+      <h3>Table 16: Performance of Core Indicators of the End of the Year, {year}</h3>
       <div className="card">
         <div className="card-header"></div>
         <div className="card-body">
@@ -1001,11 +998,11 @@ const Table_16 = ({
           <br />
           <br />
           <APRmemo
-                    year={year}
-                    districtId = {district}
-                       tableCommentedId={`table16-${year}`}
-                   
-                  />
+            year={year}
+            districtId={district}
+            tableCommentedId={`table2_5-${year}`}
+
+          />
           {/* {JSON.stringify(tableData)} */}
           <div className="table-responsive">
             <table className="table table-bordered">
@@ -1507,7 +1504,7 @@ const Table_16 = ({
                     </td>
                   </tr>
                 ))}
-                 <tr style={{ border: '1px solid #000' }}>
+                <tr style={{ border: '1px solid #000' }}>
                   <td style={{ border: '1px solid #000' }}>17</td>
                   <td style={{ border: 'none', fontWeight: 'bold' }}>Proportion of population with valid NHIS card</td>
                 </tr>
@@ -1546,20 +1543,20 @@ const Table_16 = ({
           <p className="mt-2">
             <small>Source: MPCU</small>
           </p>
-              <APRComment
-                      data={tableData}
-                      year={year}
-                      districtId={district}
-                      tableCommentedId={`table16-${year}`}
-                     
-                    >
-                      {({ renderCommentInput, renderCommentList }) => (
-                        <>
-                          {renderCommentInput()}
-                          {renderCommentList()}
-                        </>
-                      )}
-                    </APRComment>
+          <APRComment
+            data={tableData}
+            year={year}
+            districtId={district}
+            tableCommentedId={`table2_5-${year}`}
+
+          >
+            {({ renderCommentInput, renderCommentList }) => (
+              <>
+                {renderCommentInput()}
+                {renderCommentList()}
+              </>
+            )}
+          </APRComment>
         </div>
       </div>
     </div>

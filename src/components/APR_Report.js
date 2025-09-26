@@ -9,6 +9,9 @@ import Table_3 from "./APR_ReportTablesComponents/Table_3";
 import Table_8 from "./APR_ReportTablesComponents/Table_8";
 import Table_9 from "./APR_ReportTablesComponents/Table_9";
 import Table2_7 from "../components/APR_ReportTablesComponents/Table_2.7";
+import Table2_8 from "../components/APR_ReportTablesComponents/Table_2.8";
+import Table2_9 from "../components/APR_ReportTablesComponents/Table_2.9";
+import Table2_10 from "../components/APR_ReportTablesComponents/Table_2.10";
 import Apendix_2 from "../components/APR_ReportTablesComponents/Apendix2"
 import Appendix1 from "./APR_ReportTablesComponents/Apendix1";
 import { Button, Row, Col } from "antd";
@@ -310,29 +313,28 @@ function AprReport() {
           <div className="row gutters">
             {selectedTable && selectedTable.value === "all_tables" && (
               <em ref={contentToPrint}>
-              
                 <div className="row gutters px-2">
-                       {selectedDistrict && selectedYear && <h3 className="text-center" 
-                       style={{ background: "#07d9c8ff", color: "#fff", textAlign: "center", padding: "10px", height: 'auto', width: '100%' }}>
-                          {selectedYear?.value} ANNUAL PROGRESS REPORT OF {selectedDistrict?.label} FROM {selectedDistrict?.value?.region}
-                        </h3>}
+                  {selectedDistrict && selectedYear && <h3 className="text-center"
+                    style={{ background: "#07d9c8ff", color: "#fff", textAlign: "center", padding: "10px", height: 'auto', width: '100%' }}>
+                    {selectedYear?.value} ANNUAL PROGRESS REPORT OF {selectedDistrict?.label} FROM {selectedDistrict?.value?.region}
+                  </h3>}
                 </div>
                   <Table_1
                 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
                 <Table_2
-                year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>            
-                <Table_3 
+                year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
+                <Table_3
               year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
                  <Table_4 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
                 <Table_5 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
                 <Table_6 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
                 <Table_7 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
-                <Table_8 
+                <Table_8
                 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
-                <Table_9 
+                <Table_9
                 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
                  <Table_10
-                year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />               
+                year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
                  <Table_11
                 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
                   <Table_12
@@ -356,18 +358,18 @@ function AprReport() {
                 <Table_20 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
                 <Table_21 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
                 <Table_22 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
-                {/* <Table2_4 
+                {/* <Table2_4
                 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/> */}
 
-             
+
 
                 {/* <Table2_6 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} /> */}
                 {/* <Table2_7 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/> */}
                 {/* <Table2_8 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/> */}
                 {/* <Table2_9 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/> */}
                 {/* <Table2_10 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/> */}
-               
-               
+
+
                 <Appendix1 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
                 <Apendix_2 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
 
@@ -395,7 +397,7 @@ function AprReport() {
                 <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>Download Report</span>
               </Button>
             </div>
-            
+
             {selectedTable && selectedTable.value === "table_1" && <Table_1 />}
             {selectedTable && selectedTable.value === "table_2" && <Table_2 />}
             {selectedTable && selectedTable.value === "table_3" && <Table_3 />}
@@ -409,7 +411,7 @@ function AprReport() {
             {selectedTable && selectedTable.value === "table_11" && <Table_11 />}
             {selectedTable && selectedTable.value === "table_12" && <Table_12 />}
 
-        
+
             {selectedTable && selectedTable.value === "table_13" && <Table_13 />}
             {selectedTable && selectedTable.value === "table_14" && <Table_14 />}
             {selectedTable && selectedTable.value === "table_15" && <Table_15 />}
@@ -430,7 +432,7 @@ function AprReport() {
             {/* {selectedTable && selectedTable.value === "table_2.9" && <Table2_9 />}
             {selectedTable && selectedTable.value === "table_2.10" && <Table2_10 />} */}
 
-            {selectedTable && !["all_tables",   "table_1", "table_2", "table_3", "table_4", "table_5", "table_6", "table_7", "table_8", "table_9", 
+            {selectedTable && !["all_tables",   "table_1", "table_2", "table_3", "table_4", "table_5", "table_6", "table_7", "table_8", "table_9",
               "table_10","table_11","table_13","table_14","table_15","table_16","table_17","table_18","table_19","table_20","table_21","table_22"
             ].includes(selectedTable.value) && (
               <div className="col-12">

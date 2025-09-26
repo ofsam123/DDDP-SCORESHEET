@@ -48,7 +48,7 @@ const Table_3 = ({ year, district, period }) => {
                     }
 
                     if (rep.dataElement === "f1T48vHfJc1") {
-                      console.log("percentage: ", rep.value)
+                      // console.log("percentage: ", rep.value)
                       percentage = rep.value;
                     }
                   });

@@ -41,7 +41,7 @@ const AAPImplementation = forwardRef(({ year, district, data, hideComment }, ref
     ];
 
     const getIndicatorsData = () => {
-        axios.get(`/analytics.json?dimension=dx:fqixUP5VIxv;fqixUP5VIxv&dimension=ou:LEVEL-3;${district}&filter=pe:${year}-01-01;${year}-12-31`)
+        axios.get(`/analytics.json?dimension=dx:fqixUP5VIxv;rwB5o0L1eUM&dimension=ou:LEVEL-3;${district}&filter=pe:${year}-01-01;${year}-12-31`)
             .then(res => {
                 // console.log("AAP Implemented Diallo: ",res.data?.rows);
                 const data = res.data?.rows;

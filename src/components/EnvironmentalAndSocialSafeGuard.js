@@ -34,7 +34,7 @@ const EnvironmentalAndSocialSafeGuard = forwardRef(({ year, data, districtId, hi
     const projectColumns = [
         { title: "No", dataIndex: "no", key: "no" },
         { title: "Projects", dataIndex: "project", key: "project" },
-        { title: "Screeming Froms", dataIndex: "screeming", key: "screeming" },
+        { title: "Screening Froms", dataIndex: "screeming", key: "screeming" },
         { title: "EPA Permits", dataIndex: "permit", key: "permit" },
         { title: "Report", dataIndex: "report", key: "report" },
     ];

@@ -2248,7 +2248,9 @@ const [showPetition, setShowPetition] = useState(true);
     };
     const hideComment = !assessmentStatus || assessmentStatus?.status === "Pending" || assessmentStatus?.status === "Completed" || assessmentStatus?.status === "Closed";
 const shouldRenderQualityAssuranceEditor = assessmentStatus?.status && !["Completed", "Closed", "null", "Start", ].includes(assessmentStatus.status);
+
 const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatus?.status === "Start" || assessmentStatus?.status === "Pending";
+// console.log("quality assurance: ", {assessmentStatus});
   const showConfirm = () => {
     Modal.confirm({
       title: 'Start Assessment',
@@ -3045,7 +3047,6 @@ const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatu
 
                     {shouldRenderQualityAssuranceEditor && (
  
-
                     <QualityAssuranceEditor
                         year={year}
                         districtId={district?.value}
@@ -3053,7 +3054,7 @@ const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatu
                         assessmentStatus = {assessmentStatus?.status !== "Closed" }
                         district={district?.value}
                     />
-                    )}
+                    )} 
 
                     {/* Print Button */}
 

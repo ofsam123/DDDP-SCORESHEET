@@ -1,127 +1,101 @@
-import React from "react";
-import { Bar } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
-import APRmemo from "./APRComment.js/APRmemo";
-import APRComment from "./APRComment.js/AprComments";
 
-// Register chart components
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+import React, { useEffect, useState } from "react";
+import axios from "../../api/axios";
+import { filterTrackedEntitiesByCreatedAt, formatDataGeneral, getAttributeValue, getDataByTypes } from "../../utils/utils";
 
-const Table_7 = ({ year = 2024, district }) => { // Default year set to 2024, adjustable via prop
-  const tableData = [
-    {
-      sn: 1,
-      assetInfrastructure: "Road Network (Main Road)",
-      location: "Nkwanta Central",
-      typeOfMaintenance: "Repair",
-      estimatedCost: 150000.00,
-      actualRelease: 120000.00,
-      gap: 30000.00,
-      expenditure: 118000.00,
-      recommendation: "Allocate additional funds for full repair",
-    },
-    {
-      sn: 2,
-      assetInfrastructure: "School Building",
-      location: "Kete Krachi",
-      typeOfMaintenance: "Maintenance",
-      estimatedCost: 80000.00,
-      actualRelease: 70000.00,
-      gap: 10000.00,
-      expenditure: 68000.00,
-      recommendation: "Prioritize roof repairs in next budget",
-    },
-    {
-      sn: 3,
-      assetInfrastructure: "Market Shed",
-      location: "Dambai",
-      typeOfMaintenance: "Rehabilitation",
-      estimatedCost: 50000.00,
-      actualRelease: 45000.00,
-      gap: 5000.00,
-      expenditure: 44000.00,
-      recommendation: "Engage local contractors for cost efficiency",
-    },
-    {
-      sn: 4,
-      assetInfrastructure: "Borehole",
-      location: "Chinderi",
-      typeOfMaintenance: "Repair",
-      estimatedCost: 25000.00,
-      actualRelease: 20000.00,
-      gap: 5000.00,
-      expenditure: 19500.00,
-      recommendation: "Secure grants for water infrastructure",
-    },
-  ];
 
-  const chartData = {
-    labels: tableData.map((row) => row.assetInfrastructure.substring(0, 15) + '...'), // Truncate for labels
-    datasets: [
-      {
-        label: "Estimated Cost (GHS)",
-        data: tableData.map((row) => row.estimatedCost),
-        backgroundColor: "#007bff",
-        borderColor: "#0056b3",
-        borderWidth: 1,
-      },
-      {
-        label: "Actual Release (GHS)",
-        data: tableData.map((row) => row.actualRelease),
-        backgroundColor: "#28a745",
-        borderColor: "#1e7e34",
-        borderWidth: 1,
-      },
-      {
-        label: "Expenditure (GHS)",
-        data: tableData.map((row) => row.expenditure),
-        backgroundColor: "#ffc107",
-        borderColor: "#d39e00",
-        borderWidth: 1,
-      },
-    ],
+const Table_7 = ({ year, district, period }) => {
+
+  const [tableData, setTableData] = useState([]);
+
+  useEffect(() => {
+    getProjects();
+  }, [year, district, period]);
+
+  function getProjects() {
+    axios
+      .get(`/tracker/trackedEntities?orgUnit=${district}&program=g3wMUKEMmH3&startDate=${year}-01-01&endDate=${year}-12-31&pageSize=5000`)
+      .then(result => {
+
+        if (result.data.instances.length > 0) {
+          const startDate = `${year}-01-01`;
+          const endDate = `${year}-12-31`;
+
+          axios
+            .get(`/tracker/events?program=g3wMUKEMmH3&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31&pageSize=5000`)
+            .then(resp => {
+              const data = filterTrackedEntitiesByCreatedAt(result.data.instances, year, period);
+              const projects = formatDataGeneral(data, "Project & Programme Type", "Project") || [];
+              const maintenance = [
+                "Rehabilitation", "Extension", "Spot", "Improvement", "Spot Improvement"
+              ]
+              const maintenanceProjects = getDataByTypes(data, "Project Focus", maintenance) || [];
+
+              const reports = resp.data.instances;
+              const temp = [];
+
+              projects.forEach((project, idx) => {
+
+                const currentReport = reports.filter(rep => rep.trackedEntity === project.trackedEntity);
+                let observation = "";
+                let expenditure = 0;
+
+                if (currentReport) {
+
+                  currentReport.forEach(curReport => {
+                    curReport.dataValues.forEach(rep => {
+                      if (rep.dataElement === "tprVkQQg1wm") {
+                        observation = rep.value;
+                      }
+
+                      if (rep.dataElement === "jr8gk707kAw") {
+                        expenditure = rep.value;
+                      }
+
+                    });
+                  })
+
+                }
+
+                const estimatedCost = getAttributeValue("Estimated Cost", project);
+                const actualReleased = getAttributeValue("Actual Released", project);
+
+                const dataSetTemp = {
+                  no: idx + 1,
+                  description: getAttributeValue("Description", project),
+                  location: getAttributeValue("Location", project),
+                  maintenance: getAttributeValue("Project Focus", project),
+                  estimatedCost: getAttributeValue("Estimated Cost", project),
+                  actualReleased: getAttributeValue("Actual Released", project),
+                  gap: parseFloat(estimatedCost) - parseFloat(actualReleased),
+                  expenditure,
+                  observation
+                };
+
+                temp.push(dataSetTemp);
+              });
+
+              setTableData(temp);
+
+            })
+            .catch(err => console.log(err))
+        }
+
+
+      })
+      .catch(err => console.log(err))
   };
 
-  const chartOptions = {
-    responsive: true,
-    plugins: {
-      legend: { position: "top" },
-      title: {
-        display: true,
-        text: `Repair and Maintenance of Existing Infrastructure, ${year}`,
-      },
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        title: {
-          display: true,
-          text: "Amount (GHS)",
-        },
-      },
-    },
-  };
 
   return (
     <div className="col-12">
-      <h3>Table 7: Repair and maintenance of Existing Infrastructure</h3>
+      <h3>Table 7 - Repair and maintenance of Existing Infrastructure</h3>
       <div className="card">
-        <div className="card-header"></div>
+        <div className="card-header">
+
+        </div>
         <div className="card-body">
-             <APRmemo
-                    year={year}
-                    districtId = {district}
-                        tableCommentedId={`table7-${year}`}
-                   
-                  />
+
           <div className="table-responsive">
             <table className="table table-bordered">
               <thead style={{ backgroundColor: '#d4edda', fontWeight: 'bold', border: '1px solid #000' }}>
@@ -131,51 +105,34 @@ const Table_7 = ({ year = 2024, district }) => { // Default year set to 2024, ad
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Location</th>
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Type of Maintenance</th>
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Estimated Cost</th>
-                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Actual Release</th>
-                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Gap</th>
-                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Expenditure</th>
-                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Recommendation</th>
+                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}> Actual Release</th>
+                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Gap </th>
+                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Expenditure </th>
+                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Recommendation </th>
                 </tr>
+                
               </thead>
               <tbody>
                 {tableData.map((row, index) => (
                   <tr key={index}>
-                    <td style={{ border: '1px solid #000' }}>{row.sn}</td>
-                    <td style={{ border: '1px solid #000' }}>{row.assetInfrastructure}</td>
+                   
+                    <td style={{ border: '1px solid #000' }}>{row.no}</td>
+                    <td style={{ border: '1px solid #000' }}>{row.description}</td>
                     <td style={{ border: '1px solid #000' }}>{row.location}</td>
-                    <td style={{ border: '1px solid #000' }}>{row.typeOfMaintenance}</td>
-                    <td style={{ border: '1px solid #000' }}>{row.estimatedCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                    <td style={{ border: '1px solid #000' }}>{row.actualRelease.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                    <td style={{ border: '1px solid #000' }}>{row.gap.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                    <td style={{ border: '1px solid #000' }}>{row.expenditure.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                    <td style={{ border: '1px solid #000' }}>{row.recommendation}</td>
+                    <td style={{ border: '1px solid #000' }}>{row.maintenance}</td>
+                    <td style={{ border: '1px solid #000' }}>{row.estimatedCost}</td>
+                    <td style={{ border: '1px solid #000' }}>{row.actualReleased}</td>
+                    <td style={{ border: '1px solid #000' }}>{row.gap}</td>
+                    <td style={{ border: '1px solid #000' }}>{row.expenditure}</td>
+                    <td style={{ border: '1px solid #000' }}>{row.observation}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
           <p className="mt-2">
-            <small>Source: Infrastructure Maintenance Report, {year}</small>
+            <small>Source: MPCU</small>
           </p>
-           
-          {/* Bar Chart */}
-          <h4>Figure 7: Repair and Maintenance Cost Analysis, {year}</h4>
-          <Bar data={chartData} options={chartOptions} />
-           <APRComment
-                  data={tableData}
-                    year={year}
-                 districtId={district}
-               tableCommentedId={`table7-${year}`}
-                               
-                >
-           {({ renderCommentInput, renderCommentList }) => (
-                                  <>
-               {renderCommentInput()}
-              {renderCommentList()}
-         </>
-         )}
-            </APRComment>
-
         </div>
       </div>
     </div>

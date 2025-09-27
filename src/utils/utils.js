@@ -57,6 +57,243 @@ export function getDataByTypes(data, property, values) {
   );
 }
 
+export function getProjectDetails(projects, reports) {
+  const temp = [];
+  projects.forEach((project, idx) => {
+
+    const currentReport = reports.filter(rep => rep.trackedEntity === project.trackedEntity);
+    let projectStatus = "";
+
+    if (currentReport) {
+
+      currentReport.forEach(curReport => {
+        curReport.dataValues.forEach(rep => {
+          if (rep.dataElement === "tE3QKB203nh") {
+            projectStatus = rep.value;
+          }
+
+        });
+      })
+
+    }
+
+    const dataSetTemp = {
+      no: idx + 1,
+      expectedStart: getAttributeValue("Expected Start Date", project),
+      expectedCompletion: getAttributeValue("Expected Completion Date", project),
+      department: getAttributeValue("Department", project),
+      sector: getAttributeValue("Sector", project),
+      rolloverCost: getAttributeValue("Rollover Cost", project),
+      projectBuget: getAttributeValue("Actual Released", project),
+      contract: getAttributeValue("Contract Sum", project),
+      reviseContract: getAttributeValue("Revise Contract Sum", project),
+      projectStatus
+    };
+
+    temp.push(dataSetTemp);
+  });
+
+  return temp;
+}
+
+export const groupProjectsBySectorAmountWithBudget = (projects, departments, sectorBudget, year) => {
+
+  const grouped = {};
+  const temp = [];
+
+  departments.forEach(dep => {
+    const departmentProjects = projects.filter(
+      project => project.department && project.department.includes(dep)
+    );
+
+    let rolloverCost = 0;
+    let newCost = 0;
+
+    departmentProjects.forEach(p => {
+      if (p.expectedStart.includes(year)) {
+        newCost += p.projectBuget !== 'N/A' ? parseFloat(p.projectBuget) : 0;
+      }
+
+      if (!p.expectedStart.includes(year)) {
+        const projectYear = new Date(p.expectedCompletion).getFullYear();
+        if ((projectYear < year) && !p.projectStatus.includes("Completed")) {
+          rolloverCost += p.rolloverCost !== 'N/A' ? parseFloat(p.rolloverCost) : 0;
+        }
+      }
+
+
+    });
+
+    grouped[dep] = departmentProjects;
+    const currentSectorBudget = sectorBudget.find(s => s.sector === dep)
+    const tempDataSet = {
+      sector: dep,
+      rolloverCost,
+      newCost,
+      capitalEnvelop: currentSectorBudget ? currentSectorBudget.budget : 0
+    };
+
+    temp.push(tempDataSet);
+
+  });
+
+  let newTotal = 0;
+  let rolloverTotal = 0;
+  let budgetTotal = 0
+
+  temp.forEach(tp => {
+    newTotal += tp.newCost;
+    rolloverTotal += tp.rolloverCost;
+    budgetTotal += parseFloat(tp.capitalEnvelop);
+  });
+
+  const total = {
+    sector: "Total",
+    rolloverCost: rolloverTotal,
+    newCost: newTotal,
+    capitalEnvelop: budgetTotal
+  };
+
+  temp.push(total);
+
+  return temp;
+}
+
+export const groupProjectsBySectorAmountWithoutBudget = (projects, departments, year) => {
+
+  const grouped = {};
+  const temp = [];
+
+  departments.forEach(dep => {
+    const departmentProjects = projects.filter(
+      project => project.department && project.department.includes(dep)
+    );
+
+    let rolloverCost = 0;
+    let newCost = 0;
+    let contractSum = 0;
+    let reviseContractSum = 0;
+    let actualPayment = 0
+
+    departmentProjects.forEach(p => {
+      if (p.expectedStart.includes(year)) {
+        contractSum += p.contract !== 'N/A' ? parseFloat(p.contract) : 0;
+        reviseContractSum += p.reviseContract !== 'N/A' ? parseFloat(p.reviseContract) : 0;
+      }
+
+      if (!p.expectedStart.includes(year)) {
+        const projectYear = new Date(p.expectedCompletion).getFullYear();
+        if ((projectYear < year) && !p.projectStatus.includes("Completed")) {
+          rolloverCost += p.rolloverCost !== 'N/A' ? parseFloat(p.rolloverCost) : 0;
+        }
+      }
+
+
+    });
+
+    grouped[dep] = departmentProjects;
+    const tempDataSet = {
+      sector: dep,
+      rolloverCost,
+      contractSum,
+      reviseContractSum,
+      actualPayment,
+      outstanding: parseFloat(contractSum) - parseFloat(actualPayment) - parseFloat(rolloverCost),
+      percentage: 0
+    };
+
+    temp.push(tempDataSet);
+
+  });
+
+  let contractTotal = 0;
+  let contractReviseTotal = 0;
+  let actualTotal = 0;
+  let outstandingTotal = 0;
+  let rolloverTotal = 0;
+  let percentage = 0;
+
+  temp.forEach(tp => {
+    contractTotal += parseFloat(tp.contractSum);
+    rolloverTotal += parseFloat(tp.rolloverCost);
+    contractReviseTotal += parseFloat(tp.reviseContractSum);
+    actualTotal = parseFloat(tp.actualPayment);
+    outstandingTotal = parseFloat(tp.outstanding);
+    percentage = 0
+  });
+
+  const total = {
+    sector: "Total",
+    rolloverCost: rolloverTotal,
+    contractSum: contractTotal,
+    reviseContractSum: contractReviseTotal,
+    actualPayment: actualTotal,
+    outstanding: outstandingTotal,
+    percentage
+  };
+
+  temp.push(total);
+
+  return temp;
+}
+
+export const groupProjectByDevelopmentDimension = (projects, departments, year) => {
+
+    const grouped = {};
+    const temp = [];
+
+    departments.forEach(dep => {
+      const departmentProjects = projects.filter(
+        project => project.department && project.department.includes(dep)
+      );
+
+      let rolloverCounter = 0;
+      let newCounter = 0;
+
+      departmentProjects.forEach(p=>{
+        if(p.expectedStart.includes(year)){
+          newCounter += 1;
+        }
+
+        if(!p.expectedStart.includes(year)){
+          const projectYear = new Date(p.expectedCompletion).getFullYear();
+          if((projectYear < year) && !p.projectStatus.includes("Completed")){
+            rolloverCounter += 1;
+          }
+        }
+        
+      });
+
+      grouped[dep] = departmentProjects;
+      const tempDataSet = {
+        department: dep,
+        rollover: rolloverCounter,
+        new: newCounter
+        
+      };
+
+      temp.push(tempDataSet);
+
+    });
+
+    let newTotal = 0;
+    let rolloverTotal = 0;
+
+    temp.forEach(tp=>{
+      newTotal += tp.new;
+      rolloverTotal += tp.rollover
+    });
+
+    const total = {
+       department: "Total" ,
+        rollover: rolloverTotal,
+        new: newTotal
+    };
+
+    temp.push(total);
+
+    return temp;
+  }
 
 export function getDataRank(index) {
 
@@ -361,13 +598,13 @@ export const getMeetingRank = (index, type) => {
 
 export const getStageValue = (currentReport, uuid) => {
 
-    for (let rep of currentReport.dataValues) {
-      if (rep.dataElement === uuid) {
-          return parseFloat(rep.value);
-      }
+  for (let rep of currentReport.dataValues) {
+    if (rep.dataElement === uuid) {
+      return parseFloat(rep.value);
     }
-
   }
+
+}
 
 
 

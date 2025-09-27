@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -11,22 +11,66 @@ import {
 } from "chart.js";
 import APRmemo from "./APRComment.js/APRmemo";
 import APRComment from "./APRComment.js/AprComments";
+import { filterTrackedEntitiesByCreatedAt, getAttributeValue, getDataByTypes, getProjectDetails, groupProjectsBySectorAmount, groupProjectsBySectorAmountWithBudget } from "../../utils/utils";
+import axios from "../../api/axios";
 
 // Register chart components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 // Table14 Component
-const Table_14 = ({ year,district }) => { // Updated to 2025 as per current date
-  const tableData = [
-    { sector: "Education", capitalEnvelope: 1504679.80, rollover: 160113.12, newProjects: 1344566.68 },
-    { sector: "Health", capitalEnvelope: 487609.96, rollover: 487609.96, newProjects: 0.00 },
-    { sector: "Water and Sanitation", capitalEnvelope: 734089.85, rollover: 507392.45, newProjects: 226697.40 },
-    { sector: "Roads and Transport", capitalEnvelope: 406659.09, rollover: 406659.09, newProjects: 0.00 },
-    { sector: "Trade, Industry and Tourism", capitalEnvelope: 819695.48, rollover: 819695.48, newProjects: 0.00 },
-    { sector: "Security", capitalEnvelope: 0.00, rollover: 0.00, newProjects: 0.00 },
-    { sector: "Governance", capitalEnvelope: 0.00, rollover: 0.00, newProjects: 0.00 },
-    { sector: "Total", capitalEnvelope: 3952741.18, rollover: 2381470.10, newProjects: 1571264.08 }
-  ];
+const Table_14 = ({ year, district, period }) => { // Updated to 2025 as per current date
+  const [tableData, setTableData] = useState([]);
+
+  useEffect(() => {
+    getData();
+  }, [district, year, period]);
+
+
+  function getData() {
+    axios
+      .get(`/tracker/trackedEntities?orgUnit=${district}&program=g3wMUKEMmH3&startDate=${year}-01-01&endDate=${year}-12-31&pageSize=5000`)
+      .then(result => {
+
+        axios
+          .get(`/tracker/events?program=g3wMUKEMmH3&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31&pageSize=5000`)
+          .then(resp => {
+            const reports = resp.data.instances;
+            const projectDetails = getProjectDetails(result.data.instances, reports);
+            axios
+              .get(`/tracker/trackedEntities?orgUnit=${district}&program=YHVtzXj8iIC&startDate=${year}-01-01&endDate=${year}-12-31&pageSize=5000`)
+              .then(resp => {
+                const budgets = filterTrackedEntitiesByCreatedAt(resp.data.instances, year, period);
+
+                const sectors = [
+                  "Health", "Education", "Governance/Administration", "Water and Sanitation",
+                  "Roads and Transport", "Trade, Industry and Tourism", "Security"
+                ];
+
+                const budgetBySectors = getDataByTypes(budgets, "Sector", sectors) || [];
+                const tempBudget = [];
+
+                 budgetBySectors.forEach(b=>{
+                  tempBudget.push({
+                    sector: getAttributeValue("Sector", b),
+                    budget: getAttributeValue("Allocated Budget", b),
+                  })
+                });
+
+                const goupBySector = groupProjectsBySectorAmountWithBudget(projectDetails, sectors, tempBudget,  year);
+
+                setTableData(goupBySector);
+
+
+              })
+              .catch(err => console.log(err))
+
+          })
+          .catch(err => console.log(err))
+
+
+      })
+      .catch(err => console.log(err))
+  };
 
   const chartData = {
     labels: tableData.map((row) => row.sector),
@@ -81,13 +125,13 @@ const Table_14 = ({ year,district }) => { // Updated to 2025 as per current date
       <div className="card">
         <div className="card-header"></div>
         <div className="card-body">
-            
-             <APRmemo
-                    year={year}
-                    districtId = {district}
-                     tableCommentedId={`table14-${year}`}
-                   
-                  />
+
+          <APRmemo
+            year={year}
+            districtId={district}
+            tableCommentedId={`table14-${year}`}
+
+          />
           <div className="table-responsive">
             <table className="table table-bordered">
               <thead style={{ backgroundColor: '#d4edda', fontWeight: 'bold', border: '1px solid #000' }}>
@@ -101,10 +145,10 @@ const Table_14 = ({ year,district }) => { // Updated to 2025 as per current date
               <tbody>
                 {tableData.map((row, index) => (
                   <tr key={index}>
-                    <td style={{ border: '1px solid #000' }}>{row.sector}</td>
-                    <td style={{ border: '1px solid #000' }}>{row.capitalEnvelope.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                    <td style={{ border: '1px solid #000' }}>{row.rollover.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                    <td style={{ border: '1px solid #000' }}>{row.newProjects.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td style={{ border: '1px solid #000' }}>{row?.sector}</td>
+                    <td style={{ border: '1px solid #000' }}>{row?.capitalEnvelop.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td style={{ border: '1px solid #000' }}>{row?.rolloverCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td style={{ border: '1px solid #000' }}>{row?.newCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                   </tr>
                 ))}
               </tbody>
@@ -117,20 +161,20 @@ const Table_14 = ({ year,district }) => { // Updated to 2025 as per current date
           {/* Bar Chart */}
           <h4>Figure 9: Capital Envelope Spending Analysis, {year}</h4>
           <Bar data={chartData} options={chartOptions} />
-           <APRComment
-                      data={tableData}
-                      year={year}
-                      districtId={district}
-                      tableCommentedId={`table14-${year}`}
-                     
-                    >
-                      {({ renderCommentInput, renderCommentList }) => (
-                        <>
-                          {renderCommentInput()}
-                          {renderCommentList()}
-                        </>
-                      )}
-                    </APRComment>
+          <APRComment
+            data={tableData}
+            year={year}
+            districtId={district}
+            tableCommentedId={`table14-${year}`}
+
+          >
+            {({ renderCommentInput, renderCommentList }) => (
+              <>
+                {renderCommentInput()}
+                {renderCommentList()}
+              </>
+            )}
+          </APRComment>
         </div>
       </div>
     </div>

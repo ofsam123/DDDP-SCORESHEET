@@ -1,83 +1,113 @@
 {
-    "disbursementsFirstMapped": [
+    "groupDevelopment": [
         {
-            "name": "COMPENSATION",
-            "released": 50094309,
-            "target": 30000000,
-            "actual": 28500000
+            "department": "Economic Development (ED)",
+            "rollover": 0,
+            "new": 0
         },
         {
-            "name": "GOODS AND SERVICES",
-            "released": 4659856,
-            "target": 1000000,
-            "actual": 950000
+            "department": "Social Development (SD)",
+            "rollover": 0,
+            "new": 0
         },
         {
-            "name": "INVESTMENTS/ASSETS",
-            "released": 113298,
-            "target": 45000000,
-            "actual": 42000000
+            "department": "Governance, Corruption And Public Accountability(GCPA)",
+            "rollover": 0,
+            "new": 0
+        },
+        {
+            "department": "Environment, infrastructure and human settlement",
+            "rollover": 0,
+            "new": 0
+        },
+        {
+            "department": "Emergency Planning And Covid-19 Response",
+            "rollover": 0,
+            "new": 0
+        },
+        {
+            "department": "Implementation, Coordination, Monitoring And Evaluation",
+            "rollover": 0,
+            "new": 0
+        },
+        {
+            "department": "Total",
+            "rollover": 0,
+            "new": 0
         }
     ],
-    "disbursementsOneLessMapped": [
+    "groupDevelopment1": [
         {
-            "name": "COMPENSATION",
-            "released": 256873,
-            "target": 5485952,
-            "actual": 0
+            "department": "Economic Development (ED)",
+            "rollover": 0,
+            "new": 0
         },
         {
-            "name": "GOODS AND SERVICES",
-            "released": 390000,
-            "target": 13475360,
-            "actual": 0
+            "department": "Social Development (SD)",
+            "rollover": 0,
+            "new": 0
         },
         {
-            "name": "INVESTMENTS/ASSETS",
-            "released": 40000,
-            "target": 11565865,
-            "actual": 0
+            "department": "Governance, Corruption And Public Accountability(GCPA)",
+            "rollover": 0,
+            "new": 0
+        },
+        {
+            "department": "Environment, infrastructure and human settlement",
+            "rollover": 0,
+            "new": 0
+        },
+        {
+            "department": "Emergency Planning And Covid-19 Response",
+            "rollover": 0,
+            "new": 0
+        },
+        {
+            "department": "Implementation, Coordination, Monitoring And Evaluation",
+            "rollover": 0,
+            "new": 0
+        },
+        {
+            "department": "Total",
+            "rollover": 0,
+            "new": 0
         }
     ],
-    "disbursementsTwoLessMapped": [
+    "groupDevelopment2": [
         {
-            "name": "COMPENSATION",
-            "released": 236004,
-            "target": 7234111,
-            "actual": 7245234
+            "department": "Economic Development (ED)",
+            "rollover": 0,
+            "new": 0
         },
         {
-            "name": "GOODS AND SERVICES",
-            "released": 258600,
-            "target": 2543987,
-            "actual": 2425765
+            "department": "Social Development (SD)",
+            "rollover": 0,
+            "new": 0
         },
         {
-            "name": "INVESTMENTS/ASSETS",
-            "released": 4586702,
-            "target": 6234987,
-            "actual": 5123654
-        }
-    ],
-    "disbursementsThreeLessMapped": [
-        {
-            "name": "COMPENSATION",
-            "released": 454950,
-            "target": 6453123,
-            "actual": 6123563
+            "department": "Governance, Corruption And Public Accountability(GCPA)",
+            "rollover": 0,
+            "new": 0
         },
         {
-            "name": "GOODS AND SERVICES",
-            "released": 20000,
-            "target": 5642872,
-            "actual": 4231987
+            "department": "Environment, infrastructure and human settlement",
+            "rollover": 0,
+            "new": 0
         },
         {
-            "name": "INVESTMENTS/ASSETS",
-            "released": 30000,
-            "target": 7654123,
-            "actual": 6234123
+            "department": "Emergency Planning And Covid-19 Response",
+            "rollover": 0,
+            "new": 0
+        },
+        {
+            "department": "Implementation, Coordination, Monitoring And Evaluation",
+            "rollover": 0,
+            "new": 0
+        },
+        {
+            "department": "Total",
+            "rollover": 0,
+            "new": 0
         }
     ]
 }
-

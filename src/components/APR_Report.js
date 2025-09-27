@@ -34,6 +34,7 @@ import Table_7 from "./APR_ReportTablesComponents/Table_7";
 import Table_10 from "./APR_ReportTablesComponents/Table_10";
 import Table_11 from "./APR_ReportTablesComponents/Table_11";
 import Table_12 from "./APR_ReportTablesComponents/Table_12";
+import { filterTrackedEntitiesByCreatedAt } from "../utils/utils";
 
 
 
@@ -240,7 +241,6 @@ function AprReport() {
   }
 
 
-
   // Handler for Table selection
   const handleTableSelection = (selectedOption) => {
     setSelectedTable(selectedOption);
@@ -323,24 +323,20 @@ function AprReport() {
                 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
                 <Table_2
                 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
-                <Table_3
-              year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
-                 <Table_4 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
+                <Table_3 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
+                <Table_4 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
                 <Table_5 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
                 <Table_6 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
                 <Table_7 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
-                <Table_8
-                year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
-                <Table_9
-                year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
-                 <Table_10
-                year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
-                 <Table_11
-                year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
-                  <Table_12
-                year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
-                 <Table_13 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
+                <Table_8 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
+                <Table_9 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
+                <Table_10 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
+                <Table_11 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
+                <Table_12 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
+                <Table_13 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
+                
                 <Table_14 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
+
                 <Table_15 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
                    {(dataElements && categories && districtWideConstant) && <Table_16
                   year={selectedYear?.value}
@@ -358,17 +354,6 @@ function AprReport() {
                 <Table_20 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
                 <Table_21 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
                 <Table_22 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/>
-                {/* <Table2_4
-                year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/> */}
-
-
-
-                {/* <Table2_6 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} /> */}
-                {/* <Table2_7 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/> */}
-                {/* <Table2_8 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/> */}
-                {/* <Table2_9 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/> */}
-                {/* <Table2_10 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/> */}
-
 
                 <Appendix1 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
                 <Apendix_2 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />

@@ -1,55 +1,165 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
 import APRmemo from "./APRComment.js/APRmemo";
 import APRComment from "./APRComment.js/AprComments";
+import axios from "../../api/axios";
+import { formatDataGeneral } from "../../utils/utils";
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const Table_11 = (year = 2025, district) => {
-  const tableData = [
-    {
-      item: "GoG",
-      unconstrained: 15837367.10,
-      constrained: 8139057.19,
-      released: 4558617.69,
-      expenditure: 4558617.69,
-      variationAB: 7698309.90,
-      variationBC: 3580439.50,
-      variationCD: 0.00,
-    },
-    {
-      item: "IGF",
-      unconstrained: 125000.00,
-      constrained: 115000.00,
-      released: 65000.00,
-      expenditure: 65000.00,
-      variationAB: 10000.00,
-      variationBC: 50000.00,
-      variationCD: 0.00,
-    },
-    {
-      item: "Donor",
-      unconstrained: 0.00,
-      constrained: 0.00,
-      released: 0.00,
-      expenditure: 0.00,
-      variationAB: 0.00,
-      variationBC: 0.00,
-      variationCD: 0.00,
-    },
-    {
-      item: "Total",
-      unconstrained: 15962367.10,
-      constrained: 8254057.19,
-      released: 4623617.69,
-      expenditure: 4623617.69,
-      variationAB: 7708309.90,
-      variationBC: 3630439.50,
-      variationCD: 0.00,
-    },
-  ];
+const Table_11 = ({year, district, period}) => {
+  const [tableData, setTableData] = useState([]);
+  const [showChart, setShowChart] = useState(true);
+  
+    useEffect(() => {
+      getData();
+    }, [year, district, period]);
+  
+     const mapData = (data, report) => {
+
+      const reports = report.find(rep => rep.trackedEntity === data[0]?.trackedEntity);
+      const temp = [];
+
+      if(reports){
+          const gogDataSet = {
+            name: "GOG",
+            constrained: 0,
+            unconstrained: 0,
+            released: 0,
+            expenditure: 0,
+            unc_const: 0,
+            const_rel: 0,
+            rel_exp: 0
+          };
+
+          const igfDataSet = {
+            name: "IGF",
+            constrained: 0,
+            unconstrained: 0,
+            released: 0,
+            expenditure: 0,
+            unc_const: 0,
+            const_rel: 0,
+            rel_exp: 0
+          };
+
+          const donorDataSet = {
+            name: "Donor",
+            constrained: 0,
+            unconstrained: 0,
+            released: 0,
+            expenditure: 0,
+            unc_const: 0,
+            const_rel: 0,
+            rel_exp: 0
+          };
+
+        for (let r of reports?.dataValues) {
+          
+          // =====GOG details================
+          if (r.dataElement === "TRxVdnSbc3T") {
+            gogDataSet.constrained = Number(r.value);
+            
+          } else if (r.dataElement === "H1B1tDtqNzT") {
+            gogDataSet.unconstrained = Number(r.value);
+            
+          } else if (r.dataElement === "t4EVw4yCrQx") {
+            gogDataSet.expenditure = Number(r.value);
+           
+          }else if (r.dataElement === "lLUIrkMKxuB") {
+            gogDataSet.released = Number(r.value);
+            
+          }
+
+            // =====IGF details================
+          if (r.dataElement === "YDaRbbOoID1") {
+            igfDataSet.constrained = Number(r.value);
+           
+          } else if (r.dataElement === "rXbeGbHiFTH") {
+            igfDataSet.unconstrained = Number(r.value);
+            
+          } else if (r.dataElement === "bYOo4cA1AI5") {
+           igfDataSet.expenditure = Number(r.value);
+            
+          }else if (r.dataElement === "ZLUExo9LVUu") {
+            igfDataSet.released = Number(r.value);
+            
+          }
+
+            // =====donor details================
+          if (r.dataElement === "TYvaR9lZWhN") {
+            donorDataSet.constrained = Number(r.value);
+           
+          } else if (r.dataElement === "i23XBxNQNJA") {
+            donorDataSet.unconstrained = Number(r.value);
+           
+          } else if (r.dataElement === "sVhc1ZgtsPK") {
+            donorDataSet.expenditure = Number(r.value);
+            
+          }else if (r.dataElement === "RZpv96bxm2F") {
+            donorDataSet.released = Number(r.value);
+            
+          }
+
+        }
+
+        gogDataSet.unc_const = gogDataSet.unconstrained - gogDataSet.constrained;
+        gogDataSet.const_rel = gogDataSet.constrained - gogDataSet.released;
+        gogDataSet.rel_exp = gogDataSet.released - gogDataSet.expenditure;
+
+        igfDataSet.unc_const = igfDataSet.unconstrained - igfDataSet.constrained;
+        igfDataSet.const_rel = igfDataSet.constrained - igfDataSet.released;
+        igfDataSet.rel_exp = igfDataSet.released - igfDataSet.expenditure;
+
+        donorDataSet.unc_const = donorDataSet.unconstrained - donorDataSet.constrained;
+        donorDataSet.const_rel = donorDataSet.constrained - donorDataSet.released;
+        donorDataSet.rel_exp = donorDataSet.released - donorDataSet.expenditure;
+
+        temp.push(gogDataSet);
+        temp.push(igfDataSet);
+        temp.push(donorDataSet);
+
+      }      
+  
+      return temp;
+    };
+  
+  
+  
+  
+    function getData() {
+      axios
+        .get(`/tracker/trackedEntities?orgUnit=${district}&program=WHILilRZRhT&startDate=${year}-01-01&endDate=${year}-12-31`)
+        .then(result => {
+          if (result.data.instances.length > 0) {
+            const startDate = `${year}-01-01`;
+            const endDate = `${year}-12-31`;
+  
+            axios
+              .get(`/tracker/events?program=WHILilRZRhT&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31&pageSize=5000`)
+              .then(resp => {
+                
+                
+                const expenditures = formatDataGeneral(result.data.instances, "Years", `${year}`) || [];
+                
+                const reports = resp.data.instances;
+  
+                const reportFiltered = reports.filter(rep=> rep.programStage === "BRJ5cnjnoaq")
+                
+                const expenditureMapped = mapData(expenditures, reportFiltered);
+
+                console.log("Djiba expenses data: ", expenditureMapped);
+                
+               
+                setTableData(expenditureMapped);
+              })
+              .catch(err => console.log(err));
+          }
+        })
+        .catch(err => console.log(err));
+    }
 
   const chartData = {
     labels: tableData.map(item => item.item),
@@ -120,8 +230,8 @@ const Table_11 = (year = 2025, district) => {
               <thead style={{ backgroundColor: "#d4edda", fontWeight: "bold" }}>
                 <tr>
                   <th style={{ border: "1px solid #000" }}>Item</th>
-                  <th style={{ border: "1px solid #000" }}>Estimate</th>
-                  <th style={{ border: "1px solid #000" }} colSpan="2">Released</th>
+                  <th style={{ border: "1px solid #000" }} colSpan="2">Estimate</th>
+                  <th style={{ border: "1px solid #000" }} >Released</th>
                   <th style={{ border: "1px solid #000" }}>Expenditure</th>
                   <th style={{ border: "1px solid #000" }} colSpan="3">Variation</th>
                 </tr>
@@ -139,7 +249,7 @@ const Table_11 = (year = 2025, district) => {
               <tbody>
                 {tableData.map((row, index) => (
                   <tr key={index}>
-                    <td style={{ border: "1px solid #000" }}>{row.item}</td>
+                    <td style={{ border: "1px solid #000" }}>{row.name}</td>
                     <td style={{ border: "1px solid #000" }}>
                       {row.unconstrained.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </td>
@@ -153,13 +263,13 @@ const Table_11 = (year = 2025, district) => {
                       {row.expenditure.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </td>
                     <td style={{ border: "1px solid #000" }}>
-                      {row.variationAB.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      {row.unc_const?.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </td>
                     <td style={{ border: "1px solid #000" }}>
-                      {row.variationBC.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      {row.const_rel?.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </td>
                     <td style={{ border: "1px solid #000" }}>
-                      {row.variationCD.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      {row.rel_exp?.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </td>
                   </tr>
                 ))}

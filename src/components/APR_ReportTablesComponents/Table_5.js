@@ -88,8 +88,6 @@ const Table_5 = ({ year, district, period }) => {
 
   const groupDataByDepartments = (projects) => {
 
-    // console.log(projects)
-
     const grouped = {};
     const temp = [];
 

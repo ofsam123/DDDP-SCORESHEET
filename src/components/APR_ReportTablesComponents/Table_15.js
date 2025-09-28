@@ -1,19 +1,47 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import APRmemo from "./APRComment.js/APRmemo";
 import APRComment from "./APRComment.js/AprComments";
+import axios from "../../api/axios";
+import { getProjectDetails, groupProjectsBySectorAmountWithoutBudget } from "../../utils/utils";
 
 // Table15 Component
-const Table_15 = ({ year, district }) => {
-  const tableData = [
-    { sector: "Education", totalContract: 2288082.70, revisedContract: 804662.80, costOverruns: 229771.59, actualPayment: 764092.52, outstandingBalance: 1663510.28, percentWorkDone: 67.8 },
-    { sector: "Health", totalContract: 172491.59, revisedContract: 0.00, costOverruns: 0.00, actualPayment: 567609.96, outstandingBalance: 120481.63, percentWorkDone: 57.5 },
-    { sector: "Water and Sanitation", totalContract: 2068987.04, revisedContract: 0.00, costOverruns: 0.00, actualPayment: 888426.85, outstandingBalance: 1180561.19, percentWorkDone: 13 },
-    { sector: "Roads and Transport", totalContract: 1994017.92, revisedContract: 0.00, costOverruns: 0.00, actualPayment: 556247.60, outstandingBalance: 1437770.32, percentWorkDone: 25 },
-    { sector: "Trade, Industry and Tourism", totalContract: 2654628.34, revisedContract: 0.00, costOverruns: 0.00, actualPayment: 794704.23, outstandingBalance: 1859924.11, percentWorkDone: 40.8 },
-    { sector: "Security", totalContract: 386955.45, revisedContract: 0.00, costOverruns: 0.00, actualPayment: 0.00, outstandingBalance: 386955.45, percentWorkDone: 70 },
-    { sector: "Governance", totalContract: 368891.00, revisedContract: 0.00, costOverruns: 0.00, actualPayment: 183212.45, outstandingBalance: 185678.55, percentWorkDone: 88.3 },
-    { sector: "Total", totalContract: 11534054.04, revisedContract: 804662.80, costOverruns: 229771.59, actualPayment: 3754293.61, outstandingBalance: 7192805.53, percentWorkDone: null }
-  ];
+const Table_15 = ({ year, district, period }) => {
+  const [tableData, setTableData] = useState([]);
+
+  useEffect(() => {
+    getData();
+  }, [district, year, period]);
+
+
+  function getData() {
+    axios
+      .get(`/tracker/trackedEntities?orgUnit=${district}&program=g3wMUKEMmH3&startDate=${year}-01-01&endDate=${year}-12-31&pageSize=5000`)
+      .then(result => {
+
+        axios
+          .get(`/tracker/events?program=g3wMUKEMmH3&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31&pageSize=5000`)
+          .then(resp => {
+            const reports = resp.data.instances;
+            const projectDetails = getProjectDetails(result.data.instances, reports);
+
+            const sectors = [
+              "Health", "Education", "Governance/Administration", "Water and Sanitation",
+              "Roads and Transport", "Trade, Industry and Tourism", "Security"
+            ];
+
+            const goupBySector = groupProjectsBySectorAmountWithoutBudget(projectDetails, sectors, year);
+
+            setTableData(goupBySector);
+
+
+          })
+          .catch(err => console.log(err))
+
+
+      })
+      .catch(err => console.log(err))
+  };
+
 
   return (
     <div className="col-12">
@@ -21,12 +49,12 @@ const Table_15 = ({ year, district }) => {
       <div className="card">
         <div className="card-header"></div>
         <div className="card-body">
-             <APRmemo
-                    year={year}
-                    districtId = {district}
-                     tableCommentedId={`table15-${year}`}
-                   
-                  />
+          <APRmemo
+            year={year}
+            districtId={district}
+            tableCommentedId={`table15-${year}`}
+
+          />
           <div className="table-responsive">
             <table className="table table-bordered">
               <thead style={{ backgroundColor: '#d4edda', fontWeight: 'bold', border: '1px solid #000' }}>
@@ -42,14 +70,15 @@ const Table_15 = ({ year, district }) => {
               </thead>
               <tbody>
                 {tableData.map((row, index) => (
+                  
                   <tr key={index}>
                     <td style={{ border: '1px solid #000' }}>{row.sector}</td>
-                    <td style={{ border: '1px solid #000' }}>{row.totalContract.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                    <td style={{ border: '1px solid #000' }}>{row.revisedContract.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                    <td style={{ border: '1px solid #000' }}>{row.costOverruns.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                    <td style={{ border: '1px solid #000' }}>{row.actualPayment.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                    <td style={{ border: '1px solid #000' }}>{row.outstandingBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                    <td style={{ border: '1px solid #000' }}>{row.percentWorkDone !== null ? `${row.percentWorkDone}` : ''}</td>
+                    <td style={{ border: '1px solid #000' }}>{row.contractSum?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td style={{ border: '1px solid #000' }}>{row.reviseContractSum?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td style={{ border: '1px solid #000' }}>{row.rolloverCost?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td style={{ border: '1px solid #000' }}>{row.actualPayment?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td style={{ border: '1px solid #000' }}>{row.outstanding?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td style={{ border: '1px solid #000' }}>{row.percentage}</td>
                   </tr>
                 ))}
               </tbody>
@@ -58,20 +87,20 @@ const Table_15 = ({ year, district }) => {
           <p className="mt-2">
             <small>Source: 2024 Progress Reports, 2024 Composite Budget & Contract Register</small>
           </p>
-           <APRComment
-                      data={tableData}
-                      year={year}
-                      districtId={district}
-                      tableCommentedId={`table15-${year}`}
-                     
-                    >
-                      {({ renderCommentInput, renderCommentList }) => (
-                        <>
-                          {renderCommentInput()}
-                          {renderCommentList()}
-                        </>
-                      )}
-                    </APRComment>
+          <APRComment
+            data={tableData}
+            year={year}
+            districtId={district}
+            tableCommentedId={`table15-${year}`}
+
+          >
+            {({ renderCommentInput, renderCommentList }) => (
+              <>
+                {renderCommentInput()}
+                {renderCommentList()}
+              </>
+            )}
+          </APRComment>
         </div>
       </div>
     </div>

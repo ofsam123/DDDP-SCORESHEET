@@ -2405,23 +2405,7 @@ const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatu
 )}
 
                     <Col align="end" style={{ marginBottom: "20px" }}>
-        {normalizedUserRole === "DPAT_DISTRICT USERS" && assessmentStatus?.status === "Completed" && (
-          
-          <Button
-            type="primary"
-            onClick={() => setShowPetition(!showPetition)} // Toggle the state
-            style={{
-              backgroundColor: showPetition ? "#1890ff" : "#c80303ff", // Blue when true, red when false
-              borderColor: showPetition ? "#1890ff" : "#c80303ff", // Match border to background
-              marginLeft: "30px"
-            }}
-            loading={progressLoad}
-          >
-            <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>
-              {showPetition ? "COLLAPSE PETITION FORMS" : `RAISE A PETITION FOR ${district?.label}`}
-            </span>
-          </Button>
-     )}
+        
       </Col>
                 
 
@@ -2438,6 +2422,23 @@ const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatu
           district={district?.value}
         />
       )}
+      {/* {normalizedUserRole === "DPAT_DISTRICT USERS" && assessmentStatus?.status === "Completed" && (
+          
+          <Button
+            type="primary"
+            onClick={() => setShowPetition(!showPetition)} // Toggle the state
+            style={{
+              backgroundColor: showPetition ? "#1890ff" : "#c80303ff", // Blue when true, red when false
+              borderColor: showPetition ? "#1890ff" : "#c80303ff", // Match border to background
+              marginLeft: "30px"
+            }}
+            loading={progressLoad}
+          >
+            <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>
+              {showPetition ? "COLLAPSE PETITION FORMS" : `RAISE A PETITION FOR ${district?.label}`}
+            </span>
+          </Button>
+     )} */}
 
        {(assessmentStatus?.status === "Closed" || 
         (assessmentStatus?.status === "Completed" && normalizedUserRole !== "DPAT_TECHNICAL TEAM")) &&  (

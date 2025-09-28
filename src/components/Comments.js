@@ -512,15 +512,17 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
                           size={32}
                         />
                       </Col>
+                      
                       <div style={{ flex: 1 }}>
                         <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
+                           {!hideComment && !isReviewer && (
                           <h4 style={{ margin: 0, fontSize: "13px" }}>
                             {comment.fullName} (
                             {comment.userRole
                               ? comment.userRole.replace("_", " ")
                               : "Unknown Role"}
                             )
-                          </h4>
+                          </h4> )}
                           {comment.username === currentUsername && (
                             <div style={{ marginLeft: "8px", display: "flex", gap: "8px" }}>
                               <h11
@@ -593,13 +595,14 @@ function Comment({ data, year, districtId, tableCommentedId, children, hideComme
                       </Col>
                       <div style={{ flex: 1 }}>
                         <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
+                            {!hideComment && !isReviewer && (
                           <h4 style={{ margin: 0, fontSize: "13px" }}>
                             {comment.fullName} (
                             {comment.userRole
                               ? comment.userRole.replace("_", " ")
                               : "Unknown Role"}
                             ) GAPS
-                          </h4>
+                          </h4> )}
                           {comment.username === currentUsername && (
                             <div style={{ marginLeft: "8px", display: "flex", gap: "8px" }}>
                               <h11

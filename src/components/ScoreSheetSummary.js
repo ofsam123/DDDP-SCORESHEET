@@ -15,13 +15,12 @@ const ScoreSheetSummary = ({ district, year, region, assessmentStatus }) => {
     const [loading, setLoading] = useState(false);
 
     const getData = () => {
-        // setLoading(true);
+        setLoading(true);
         instance.get(`comments/tables/${district?.value}/${year}/DPAT`)
             .then(response => {
-
                 const jsonData = response.data;
                 if (!jsonData || !jsonData[0] || !jsonData[0].dddpData || !jsonData[0].dddpData.tables) {
-                    // setLoading(false);
+                    setLoading(false);
                     return;
                 }
 
@@ -60,7 +59,6 @@ const ScoreSheetSummary = ({ district, year, region, assessmentStatus }) => {
                     return sum;
                 };
 
-
                 const getMaxScore = (table) => {
                     if (!table) return 0;
 
@@ -82,11 +80,10 @@ const ScoreSheetSummary = ({ district, year, region, assessmentStatus }) => {
                     return sum;
                 };
 
-
                 const getPerformanceActualScore = (table) => {
                     const d = table;
                     if ('score' in d) return d.score || 0;
-                    if ('audits' in d) return d?.audits?.score || 0
+                    if ('audits' in d) return d?.audits?.score || 0;
                     let sum = 0;
                     if ('scorei' in d) sum += d.scorei || 0;
                     if ('scoreii' in d) sum += d.scoreii || 0;
@@ -124,32 +121,24 @@ const ScoreSheetSummary = ({ district, year, region, assessmentStatus }) => {
                     no: k.replace('CI', 'CI.'),
                     thematicArea: ciThematic[k] || '',
                     isFulfilled: groups[k].every(t => {
-
                         const fulfillment =
                             t?.clientService?.fulfillment
                             || t?.meetings?.fulfillment
                             || t?.publication?.fulfillment
                             || t?.fulfillment
                             || (t.data && t.data.fulfillment);
-
                         return fulfillment === 'Fulfilled';
                     })
                 }));
 
                 // Service Delivery Indicators
                 const sdiKeys = Object.keys(groups).filter(k => k.startsWith('SDI')).sort((a, b) => parseInt(a.slice(3)) - parseInt(b.slice(3)));
-
-                console.log("SDI Keis: ", groups)
-
                 const serviceDeliveryIndicators = sdiKeys.map(k => ({
                     no: k.replace('SDI', 'SDI '),
                     thematicArea: sdiThematic[k] || '',
                     maxScore: groups[k]?.reduce((sum, t) => sum + getMaxScore(t), 0),
                     actualScore: groups[k]?.reduce((sum, t) => sum + getActualScore(t), 0)
                 }));
-
-
-                console.log("Calcul sdi: ", serviceDeliveryIndicators)
 
                 // Add sub-total for SDIs
                 const sdiSubTotal = {
@@ -161,7 +150,6 @@ const ScoreSheetSummary = ({ district, year, region, assessmentStatus }) => {
                 serviceDeliveryIndicators.push(sdiSubTotal);
 
                 // Performance Indicators
-
                 const piKeys = Object.keys(groups).filter(k => k.startsWith('PI')).sort((a, b) => parseInt(a.slice(2)) - parseInt(b.slice(2)));
                 const performanceIndicators = piKeys.map(k => {
                     const maxScore = groups[k].reduce((sum, t) => {
@@ -190,8 +178,6 @@ const ScoreSheetSummary = ({ district, year, region, assessmentStatus }) => {
                     thematicArea: '',
                     maxScore: sdiSubTotal.maxScore + piSubTotal.maxScore,
                     actualScore: sdiSubTotal.actualScore + piSubTotal.actualScore
-                    // maxScore: 0 + piSubTotal.maxScore,
-                    // actualScore: 0 + piSubTotal.actualScore
                 };
                 performanceIndicators.push(total);
 
@@ -200,12 +186,13 @@ const ScoreSheetSummary = ({ district, year, region, assessmentStatus }) => {
                     serviceDeliveryIndicators,
                     performanceIndicators
                 });
-
+                setLoading(false);
             })
             .catch(error => {
                 console.log("Error during fetching: ", error);
-            })
-    }
+                setLoading(false);
+            });
+    };
 
     useEffect(() => {
         getData();
@@ -224,106 +211,88 @@ const ScoreSheetSummary = ({ district, year, region, assessmentStatus }) => {
                     <Col span={8} className="gutter-row">
                         <Text strong>Date of Assessment: </Text> <Text>{moment().format('MMMM Do YYYY, h:mm:ss A')}</Text>
                     </Col>
-
-
                 </Row>
-
             )}
             <div className="table-responsive">
-
-                {/* <Spin spinning={loading} tip="Loading assessment data..."> */}
-                <table className="table table-bordered" style={{
-                    border: '1px solid #000',
-                    borderCollapse: 'collapse',
-                    width: '100%',
-                    marginTop: "20px"
-                }}>
-                    <thead>
-                        <tr style={{ fontWeight: 'bold', border: '1px solid #000' }}>
-                            <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>No.</th>
-                            <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Thematic Area</th>
-                            <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Outcomes</th>
-
-                        </tr>
-
-                    </thead>
-                    <tbody>
-                        <tr style={{ border: '1px solid #000', backgroundColor: '#ccccc9f2' }}>
-                            <td style={{ border: 'none' }}></td>
-
-
-                            <td style={{ border: 'none', fontWeight: 'bold' }}>
-                                SECTION A: COMPLIANCE INDICATORS (CI)
-                            </td>
-
-                            <td style={{ border: 'none' }}></td>
-                        </tr>
-                        {data.complianceIndicators.map((item, index) => (
-                            <tr key={index}>
-                                <td style={{ border: '1px solid #000' }}><strong>{item.no}</strong></td>
-                                <td style={{ border: '1px solid #000' }}>{item.thematicArea}</td>
-                                <td style={{ border: '1px solid #000' }}>
-                                    {item.isFulfilled ? <span style={{ color: 'green', fontWeight: 'bold' }}> Fulfilled</span>
-                                        : <span style={{ color: 'red', fontWeight: 'bold' }}> Not Fulfilled</span>}
-                                </td>
-
+                <Spin spinning={loading} tip="Loading assessment data...">
+                    <table className="table table-bordered" style={{
+                        border: '1px solid #000',
+                        borderCollapse: 'collapse',
+                        width: '100%',
+                        marginTop: "20px"
+                    }}>
+                        <thead>
+                            <tr style={{ fontWeight: 'bold', border: '1px solid #000' }}>
+                                <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>No.</th>
+                                <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Thematic Area</th>
+                                <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Outcomes</th>
                             </tr>
-                        ))}
-
-                    </tbody>
-                    <tbody>
-                        <tr style={{ border: '1px solid #000', backgroundColor: '#ccccc9f2' }}>
-                            <td style={{ borderRight: 'none' }}></td>
-                            <td style={{ borderLeft: 'none', fontWeight: 'bold' }}>
-                                SECTION B: SERVICE DELIVERY INDICATORS (SDIs)
-                            </td>
-
-                            <td style={{ fontWeight: 'bold' }}>Max Score</td>
-                            <td style={{ fontWeight: 'bold' }}>Actual Score</td>
-                        </tr>
-                        {data.serviceDeliveryIndicators.map((item, index) => (
-                            <tr key={index}>
-                                <td style={{ border: '1px solid #000' }}><strong>{item.no}</strong></td>
-                                <td style={{ border: '1px solid #000' }}>{item.thematicArea}</td>
-                                <td style={{ border: '1px solid #000' }}>
-                                    <span style={{ fontWeight: 'bold' }}>{item.maxScore} </span>
+                        </thead>
+                        <tbody>
+                            <tr style={{ border: '1px solid #000', backgroundColor: '#ccccc9f2' }}>
+                                <td style={{ border: 'none' }}></td>
+                                <td style={{ border: 'none', fontWeight: 'bold' }}>
+                                    SECTION A: COMPLIANCE INDICATORS (CI)
                                 </td>
-                                <td style={{ border: '1px solid #000' }}>
-                                    <span style={{ fontWeight: 'bold' }}>{item.actualScore} </span>
-                                </td>
-
+                                <td style={{ border: 'none' }}></td>
                             </tr>
-                        ))}
-
-                    </tbody>
-                    <tbody>
-                        <tr style={{ border: '1px solid #000', backgroundColor: '#ccccc9f2' }}>
-                            <td style={{ borderRight: 'none' }}></td>
-                            <td style={{ borderLeft: 'none', fontWeight: 'bold' }}>
-                                SECTION C: PERFORMANCE INDICATORS (PIs)
-                            </td>
-
-                            <td style={{ fontWeight: 'bold' }}>Max Score</td>
-                            <td style={{ fontWeight: 'bold' }}>Actual Score</td>
-                        </tr>
-                        {data.performanceIndicators.map((item, index) => (
-                            <tr key={index}>
-                                <td style={{ border: '1px solid #000' }}><strong>{item.no}</strong></td>
-                                <td style={{ border: '1px solid #000' }}>{item.thematicArea}</td>
-                                <td style={{ border: '1px solid #000' }}>
-                                    <span style={{ fontWeight: 'bold' }}>{item.maxScore} </span>
+                            {data.complianceIndicators.map((item, index) => (
+                                <tr key={index}>
+                                    <td style={{ border: '1px solid #000' }}><strong>{item.no}</strong></td>
+                                    <td style={{ border: '1px solid #000' }}>{item.thematicArea}</td>
+                                    <td style={{ border: '1px solid #000' }}>
+                                        {item.isFulfilled ? <span style={{ color: 'green', fontWeight: 'bold' }}> Fulfilled</span>
+                                            : <span style={{ color: 'red', fontWeight: 'bold' }}> Not Fulfilled</span>}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                        <tbody>
+                            <tr style={{ border: '1px solid #000', backgroundColor: '#ccccc9f2' }}>
+                                <td style={{ borderRight: 'none' }}></td>
+                                <td style={{ borderLeft: 'none', fontWeight: 'bold' }}>
+                                    SECTION B: SERVICE DELIVERY INDICATORS (SDIs)
                                 </td>
-                                <td style={{ border: '1px solid #000' }}>
-                                    <span style={{ fontWeight: 'bold' }}>{item.actualScore} </span>
-                                </td>
-
+                                <td style={{ fontWeight: 'bold' }}>Max Score</td>
+                                <td style={{ fontWeight: 'bold' }}>Actual Score</td>
                             </tr>
-                        ))}
-
-                    </tbody>
-
-                </table>
-                {/* </Spin> */}
+                            {data.serviceDeliveryIndicators.map((item, index) => (
+                                <tr key={index}>
+                                    <td style={{ border: '1px solid #000' }}><strong>{item.no}</strong></td>
+                                    <td style={{ border: '1px solid #000' }}>{item.thematicArea}</td>
+                                    <td style={{ border: '1px solid #000' }}>
+                                        <span style={{ fontWeight: 'bold' }}>{item.maxScore} </span>
+                                    </td>
+                                    <td style={{ border: '1px solid #000' }}>
+                                        <span style={{ fontWeight: 'bold' }}>{item.actualScore} </span>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                        <tbody>
+                            <tr style={{ border: '1px solid #000', backgroundColor: '#ccccc9f2' }}>
+                                <td style={{ borderRight: 'none' }}></td>
+                                <td style={{ borderLeft: 'none', fontWeight: 'bold' }}>
+                                    SECTION C: PERFORMANCE INDICATORS (PIs)
+                                </td>
+                                <td style={{ fontWeight: 'bold' }}>Max Score</td>
+                                <td style={{ fontWeight: 'bold' }}>Actual Score</td>
+                            </tr>
+                            {data.performanceIndicators.map((item, index) => (
+                                <tr key={index}>
+                                    <td style={{ border: '1px solid #000' }}><strong>{item.no}</strong></td>
+                                    <td style={{ border: '1px solid #000' }}>{item.thematicArea}</td>
+                                    <td style={{ border: '1px solid #000' }}>
+                                        <span style={{ fontWeight: 'bold' }}>{item.maxScore} </span>
+                                    </td>
+                                    <td style={{ border: '1px solid #000' }}>
+                                        <span style={{ fontWeight: 'bold' }}>{item.actualScore} </span>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </Spin>
             </div>
         </div>
     );

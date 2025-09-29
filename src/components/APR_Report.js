@@ -714,8 +714,8 @@ const fetchAssessmentStatus = async () => {
                 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} hideTableDis={hideTableDis} />
                 <Table_9 
                 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} hideTableDis={hideTableDis} />
-                 {/* <Table_10
-                year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} hideTableDis={hideTableDis} />                */}
+                 <Table_10
+                year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} hideTableDis={hideTableDis} />               
                  <Table_11
                 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} hideTableDis={hideTableDis} />
                   <Table_12

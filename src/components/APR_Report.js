@@ -699,7 +699,10 @@ const fetchAssessmentStatus = async () => {
                    </>
                       )}
                    <Table_1
-                year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}   hideTableDis={hideTableDis}/>
+                year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}   hideTableDis={hideTableDis}  
+                 assessmentStatus = {assessmentStatus?.status === "Pending" }
+                
+                />
                 <Table_2
                 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} hideTableDis={hideTableDis}/> 
 

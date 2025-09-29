@@ -56,7 +56,7 @@ function Recommendations({ year, district, assessmentStatus }) {
         }
       } catch (error) {
         console.error("Failed to fetch Recommendations comment:", error);
-        message.error("Failed to fetch Recommendations");
+        // message.error("Failed to fetch Recommendations");
       } finally {
         setLoading(false);
       }

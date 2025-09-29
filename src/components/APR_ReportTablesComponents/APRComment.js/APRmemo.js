@@ -6,7 +6,7 @@ import "react-quill/dist/quill.snow.css";
 import useAuth from "../../../hooks/useAuth";
 import instance from "../../../api/cmsapi";
 
-function APRmemo({ year, districtId, tableCommentedId, hideTableDis }) {
+function APRmemo({ year, districtId, tableCommentedId,  }) {
   const { user } = useAuth();
   const [memoContent, setMemoContent] = useState("");
   const [loading, setLoading] = useState(false);
@@ -194,12 +194,12 @@ function APRmemo({ year, districtId, tableCommentedId, hideTableDis }) {
   };
 
   if (!isQualityAssurance && !comments.length) {
-    return <div style={{ padding: "20px" }}>No overall memo or comments available for this district.</div>;
+    return <div style={{ padding: "20px" }}>No Table Discription</div>;
   }
 
   return (
     <div style={{ padding: "20px" }}>
-      {!hideTableDis && canEditMemo() && (
+      { canEditMemo() && (
         <div style={{ display: editing || !comments.some((c) => c.userRole === "APR_USER") ? "block" : "none" }}>
           <Spin spinning={loading}>
             <ReactQuill

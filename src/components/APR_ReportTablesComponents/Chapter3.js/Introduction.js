@@ -55,8 +55,8 @@ function Introduction({ year, district, assessmentStatus }) {
           setExistingCommentId(null);
         }
       } catch (error) {
-        console.error("Failed to fetch executive summary comment:", error);
-        message.error("Failed to fetch executive summary");
+        // console.error("Failed to fetch executive summary comment:", error);
+        // message.error("Failed to fetch executive summary");
       } finally {
         setLoading(false);
       }

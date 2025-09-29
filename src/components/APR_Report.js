@@ -31,6 +31,8 @@ import Table_7 from "./APR_ReportTablesComponents/Table_7";
 import Table_10 from "./APR_ReportTablesComponents/Table_10";
 import Table_11 from "./APR_ReportTablesComponents/Table_11";
 import Table_12 from "./APR_ReportTablesComponents/Table_12";
+import { filterTrackedEntitiesByCreatedAt } from "../utils/utils";
+import ReportCover from "./APR_ReportTablesComponents/ReportCover";
 import useAuth from "../hooks/useAuth";
 import instance from "../api/cmsapi";
 import ExeAPR from "./APR_ReportTablesComponents/APRComment.js/ExecutiveSummary";
@@ -666,10 +668,12 @@ const fetchAssessmentStatus = async () => {
               <em ref={contentToPrint}>
               
                 <div className="row gutters px-2">
-                       {selectedDistrict && selectedYear && <h3 className="text-center" 
-                       style={{ background: "#0026a1ff", color: "#fff", textAlign: "center", padding: "10px", height: 'auto', width: '100%' , marginTop:"10px"}}>
-                          {selectedYear?.value} ANNUAL PROGRESS REPORT OF {selectedDistrict?.label}
-                        </h3>}
+                  {/* {selectedDistrict && selectedYear && <h3 className="text-center"
+                    style={{ background: "#07d9c8ff", color: "#fff", textAlign: "center", padding: "10px", height: 'auto', width: '100%' }}>
+                    {selectedYear?.value} ANNUAL PROGRESS REPORT OF {selectedDistrict?.label} FROM {selectedDistrict?.value?.region}
+                  </h3>} */}
+                  {selectedDistrict && selectedYear &&
+                    <ReportCover district={selectedDistrict} year={selectedYear?.value}/>}
                 </div>
 
                  {(

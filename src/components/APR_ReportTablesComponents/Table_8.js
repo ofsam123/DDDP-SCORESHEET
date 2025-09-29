@@ -120,7 +120,13 @@ const Table_8 = ({ year, district, period,hideTableDis }) => {
                    
                   />
           <div className="table-responsive">
-            <table className="table table-bordered">
+            <table className="table table-bordered" style={{
+              tableLayout: "fixed",
+              border: '1px solid #000',
+              borderCollapse: 'collapse',
+              width: '100%',
+              marginTop: "20px"
+            }}>
               <thead style={{ backgroundColor: '#d4edda', fontWeight: 'bold', border: '1px solid #000' }}>
                 <tr >
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>No.</th>

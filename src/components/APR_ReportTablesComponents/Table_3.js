@@ -122,6 +122,7 @@ const Table_3 = ({ year, district, period, hideTableDis }) => {
                   />
           <div className="table-responsive">
             <table className="table table-bordered" style={{
+              tableLayout: "fixed",
               border: '1px solid #000',
               borderCollapse: 'collapse',
               width: '100%',
@@ -129,7 +130,7 @@ const Table_3 = ({ year, district, period, hideTableDis }) => {
             }}>
               <thead>
                 <tr style={{ backgroundColor: '#d4edda', fontWeight: 'bold', border: '1px solid #000' }}>
-                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>No.</th>
+                  {/* <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>No.</th> */}
                     <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Code</th>
 
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Project Description</th>
@@ -155,7 +156,7 @@ const Table_3 = ({ year, district, period, hideTableDis }) => {
               <tbody>
                 {tableData.map((row, index) => (
                   <tr key={index}>
-                    <td style={{ border: '1px solid #000' }}>{row.no}</td>
+                    {/* <td style={{ border: '1px solid #000' }}>{row.no}</td> */}
                      <td style={{ border: '1px solid #000' }}>{}</td>
                     <td style={{ border: '1px solid #000' }}>{row.description}</td>
                     <td style={{ border: '1px solid #000' }}>{row.dimension}</td>
@@ -182,7 +183,6 @@ const Table_3 = ({ year, district, period, hideTableDis }) => {
           <p className="mt-2">
             <small>Source: MPCU</small>
           </p>
-
 
                      <APRComment
                       data={tableData}

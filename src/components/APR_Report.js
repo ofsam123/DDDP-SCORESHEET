@@ -643,7 +643,7 @@ const fetchAssessmentStatus = async () => {
               />
             </div>
           </div>
-          <div className="row gutters">
+          <div className="row gutters mb-3">
 
                  <Col span={10} className="gutter-row">
                   {(!assessmentStatus || ![null, "Start", "Pending", "Completed", "Closed"].includes(assessmentStatus?.status)) &&
@@ -667,7 +667,7 @@ const fetchAssessmentStatus = async () => {
             {selectedTable && selectedTable.value === "all_tables" && (
               <em ref={contentToPrint}>
               
-                <div className="row gutters px-2">
+                <div className="row gutters">
                   {/* {selectedDistrict && selectedYear && <h3 className="text-center"
                     style={{ background: "#07d9c8ff", color: "#fff", textAlign: "center", padding: "10px", height: 'auto', width: '100%' }}>
                     {selectedYear?.value} ANNUAL PROGRESS REPORT OF {selectedDistrict?.label} FROM {selectedDistrict?.value?.region}

@@ -271,7 +271,7 @@ function Petition({ year, districtId,assessmentStatus }) {
     };
 
   if (!isPetition && !comments.length && !assessmentStatus) {
-    return <div style={{ padding: "20px" }}>No </div>;
+    return <div style={{ padding: "20px" }}> </div>;
   }
 
   return (

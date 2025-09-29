@@ -9,7 +9,7 @@ import { formatDataGeneral } from "../../utils/utils";
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const Table_11 = ({year, district, period}) => {
+const Table_11 = ({year, district, period, hideTableDis}) => {
   const [tableData, setTableData] = useState([]);
   const [showChart, setShowChart] = useState(true);
   
@@ -30,7 +30,7 @@ const Table_11 = ({year, district, period}) => {
             released: 0,
             expenditure: 0,
             unc_const: 0,
-            const_rel: 0,
+            const_rel: 0, 
             rel_exp: 0
           };
 
@@ -224,6 +224,7 @@ const Table_11 = ({year, district, period}) => {
             year={year}
             districtId={district}
             tableCommentedId={`table11-${year}`}
+            hideTableDis={hideTableDis}
           />
           <div className="table-responsive">
             <table className="table table-bordered" style={{ borderCollapse: "collapse", width: "100%" }}>

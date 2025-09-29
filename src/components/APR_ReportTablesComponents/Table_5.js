@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import axios from "../../api/axios";
 import { filterTrackedEntitiesByCreatedAt, formatDataGeneral, getAttributeValue } from "../../utils/utils";
 import moment from "moment";
+import APRmemo from "./APRComment.js/APRmemo";
+import APRComment from "./APRComment.js/AprComments";
 
 const departments = [
   "Central Administration",
@@ -13,7 +15,7 @@ const departments = [
   "N/A"
 ];
 
-const Table_5 = ({ year, district, period }) => {
+const Table_5 = ({ year, district, period,   hideTableDis }) => {
 
   const [tableData, setTableData] = useState([]);
   const [tableDataDummy, setTableDataDummy] = useState([]);
@@ -161,6 +163,14 @@ const Table_5 = ({ year, district, period }) => {
         <div className="card-body">
           {/* {JSON.stringify(tableDataDummy)} */}
 
+          <APRmemo
+            year={year}
+            districtId={district}
+            tableCommentedId={`table5-${year}`}
+              hideTableDis={hideTableDis}
+
+          />
+
           <div className="table-responsive">
             <table className="table table-bordered">
               <thead style={{ backgroundColor: '#d4edda', fontWeight: 'bold', border: '1px solid #000' }}>
@@ -194,6 +204,21 @@ const Table_5 = ({ year, district, period }) => {
           <p className="mt-2">
             <small>Source: MPCU</small>
           </p>
+
+          <APRComment
+            data={tableData}
+            year={year}
+            districtId={district}
+            tableCommentedId={`table5-${year}`}
+
+          >
+            {({ renderCommentInput, renderCommentList }) => (
+              <>
+                {renderCommentInput()}
+                {renderCommentList()}
+              </>
+            )}
+          </APRComment>
         </div>
       </div>
     </div>

@@ -32,7 +32,7 @@ const getColor = (name) => {
   }
 };
 
-const Table_10 = ({ year, district, period }) => {
+const Table_10 = ({ year, district, period, hideTableDis }) => {
   const [tableData, setTableData] = useState([]);
   const [showChart, setShowChart] = useState(true);
 
@@ -242,7 +242,8 @@ const Table_10 = ({ year, district, period }) => {
             <APRmemo
                     year={year}
                     districtId = {district}
-                      tableCommentedId={`table2_4-${year}`}
+                      tableCommentedId={`table10-${year}`}
+                      hideTableDis={hideTableDis}
                    
                   />
           {/* {JSON.stringify(tableData)} */}
@@ -333,7 +334,7 @@ const Table_10 = ({ year, district, period }) => {
                       data={tableData}
                       year={year}
                       districtId={district}
-                      tableCommentedId={`table2_4-${year}`}
+                      tableCommentedId={`table10-${year}`}
                      
                     >
                       {({ renderCommentInput, renderCommentList }) => (

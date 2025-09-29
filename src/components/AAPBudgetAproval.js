@@ -35,7 +35,7 @@ const AAPBudgetAproval = forwardRef(({ data, year, columns, districtId, hideComm
   useEffect(() => {
     const fetchEndpointData = async () => {
       if (!districtId || !year) {
-        setError("District ID or year is missing");
+        // setError("District ID or year is missing");
         return;
       }
 

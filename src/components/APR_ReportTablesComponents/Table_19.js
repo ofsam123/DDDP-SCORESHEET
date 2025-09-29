@@ -3,7 +3,7 @@ import APRmemo from "./APRComment.js/APRmemo";
 import APRComment from "./APRComment.js/AprComments";
 
 // Table19 Component
-const Table_19 = ({ year, district }) => {
+const Table_19 = ({ year, district, hideTableDis }) => {
   const tableData = [
     {
       department: "Agriculture",
@@ -105,6 +105,7 @@ const Table_19 = ({ year, district }) => {
                     year={year}
                     districtId = {district}
                       tableCommentedId={`table19-${year}`}
+                      hideTableDis={hideTableDis}
                    
                   />
           <div className="table-responsive">

@@ -20,7 +20,7 @@ const staffStrengths = [
 ];
 
 // Table18 Component
-const Table_18 = ({ year, district, period }) => {
+const Table_18 = ({ year, district, period, hideTableDis }) => {
   const [tableData, setTableData] = useState([]);
 
   useEffect(() => {
@@ -98,6 +98,7 @@ const Table_18 = ({ year, district, period }) => {
             year={year}
             districtId={district}
             tableCommentedId={`table18-${year}`}
+            hideTableDis={hideTableDis}
 
           />
           <div className="table-responsive">

@@ -15,7 +15,7 @@ import APRComment from "./APRComment.js/AprComments";
 // Register chart components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const Table_20 = ({ year, district}) => {
+const Table_20 = ({ year, district,hideTableDis}) => {
   const tableData = [
     {
       item: "Computers",
@@ -105,6 +105,7 @@ const Table_20 = ({ year, district}) => {
                                 year={year}
                                 districtId = {district}
                                  tableCommentedId={`table20-${year}`}
+                                 hideTableDis={hideTableDis}
                                
                               />
           <div className="table-responsive">

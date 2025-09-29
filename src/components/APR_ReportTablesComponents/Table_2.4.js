@@ -32,7 +32,7 @@ const getColor = (name) => {
   }
 };
 
-const Table2_4 = ({ year, district, period }) => {
+const Table2_4 = ({ year, district, period,  }) => {
   const [tableData, setTableData] = useState([]);
   const [showChart, setShowChart] = useState(true);
   const [total, setTotal] = useState(null);

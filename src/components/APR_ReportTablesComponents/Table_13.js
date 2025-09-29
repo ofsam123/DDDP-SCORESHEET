@@ -2,7 +2,7 @@ import React from "react";
 import APRmemo from "./APRComment.js/APRmemo";
 import APRComment from "./APRComment.js/AprComments";
 
-const Table_13 = ({ year ,district }) => {  // Default year for source; can be passed as prop if needed
+const Table_13 = ({ year ,district,hideTableDis }) => {  // Default year for source; can be passed as prop if needed
   const tableData = [
     {
       item: "CAPEX Throw Forward",
@@ -28,6 +28,7 @@ const Table_13 = ({ year ,district }) => {  // Default year for source; can be p
                     year={year}
                     districtId = {district}
                     tableCommentedId={`table13-${year}`}
+                    hideTableDis ={hideTableDis}
                    
                   />
           <div className="table-responsive">

@@ -5,7 +5,7 @@ import axios from "../../api/axios";
 import APRComment from "./APRComment.js/AprComments";
 import APRmemo from "./APRComment.js/APRmemo";
 
-const Table_21 = ({ year, district , period}) => {
+const Table_21 = ({ year, district , period, hideTableDis}) => {
   
   const [tableData, setTableData] = useState([]);
     const [showChart, setShowChart] = useState(true);
@@ -77,6 +77,7 @@ const Table_21 = ({ year, district , period}) => {
                     year={year}
                     districtId = {district}
                       tableCommentedId={`table21-${year}`}
+                      hideTableDis={hideTableDis}
                    
                   />
           <div className="table-responsive">

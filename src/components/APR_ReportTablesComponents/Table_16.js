@@ -265,7 +265,7 @@ const nhisData = [
 const Table_16 = ({
   year, district, dataElements, categories,
   districtWideConstant, economicDataElements,
-  socialDataElements, period }) => {
+  socialDataElements, period , hideTableDis}) => {
 
   const [tableData, setTableData] = useState([]);
   const [showChart, setShowChart] = useState(true);
@@ -1000,7 +1000,8 @@ const Table_16 = ({
           <APRmemo
             year={year}
             districtId={district}
-            tableCommentedId={`table2_5-${year}`}
+            tableCommentedId={`table16-${year}`}
+            hideTableDis={hideTableDis}
 
           />
           {/* {JSON.stringify(tableData)} */}

@@ -5,7 +5,7 @@ import { filterTrackedEntitiesByCreatedAt, formatDataGeneral, getAttributeValue 
 import APRComment from "./APRComment.js/AprComments";
 import APRmemo from "./APRComment.js/APRmemo";
 
-const Table_3 = ({ year, district, period }) => {
+const Table_3 = ({ year, district, period, hideTableDis }) => {
 
   const [tableData, setTableData] = useState([]);
 
@@ -117,7 +117,7 @@ const Table_3 = ({ year, district, period }) => {
                     year={year}
                     districtId = {district}  
                     tableCommentedId={`table3-${year}`}
-                    
+                     hideTableDis={hideTableDis}
                    
                   />
           <div className="table-responsive">

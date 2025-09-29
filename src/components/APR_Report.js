@@ -432,7 +432,7 @@ const fetchAssessmentStatus = async () => {
             message.success({
                 content: (
                     <div>
-                        <p>Assessment completed successfully (Status: 200)</p>
+                        <p>Progress Report Sent successfully</p>
                     </div>
                 ),
                 duration: 3,
@@ -497,7 +497,7 @@ const fetchAssessmentStatus = async () => {
             message.success({
                 content: (
                     <div>
-                        <p>Assessment completed successfully (Status: 200)</p>
+                        <p>Submitted Successfully </p>
                     </div>
                 ),
                 duration: 3,
@@ -699,7 +699,10 @@ const fetchAssessmentStatus = async () => {
                    </>
                       )}
                    <Table_1
-                year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}   hideTableDis={hideTableDis}/>
+                year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}   hideTableDis={hideTableDis}  
+                 assessmentStatus = {assessmentStatus?.status === "Pending" }
+                
+                />
                 <Table_2
                 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} hideTableDis={hideTableDis}/> 
 

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Button, message, Avatar, Col } from "antd";
+import React, { useEffect, useState, useCallback } from "react";
+import { Button, message, Avatar, Col, Spin } from "antd"; // Added Spin
 import { EditOutlined } from "@ant-design/icons";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -13,6 +13,7 @@ function GeneralIntroduction({ year, district, assessmentStatus }) {
   const [existingCommentId, setExistingCommentId] = useState(null);
   const [comments, setComments] = useState([]);
   const [editing, setEditing] = useState(false);
+  const [error, setError] = useState(null); // Added error state
 
   // Determine user role and permissions
   const currentUserRole = user?.user?.userRoles?.find(
@@ -23,72 +24,74 @@ function GeneralIntroduction({ year, district, assessmentStatus }) {
   const currentFullName = user?.user?.fullName || "";
   const isQualityAssurance = currentUserRole === "APR USER";
   const tableCommentedId = "APR_GeneralIntroduction";
+  const districtId = district; // Alias for clarity
 
   // Fetch existing comments
-  
+  const fetchComments = useCallback(async () => {
+    if (!districtId || !year) {
+    
+    //   setLoading(false);
+      return;
+    }
+    setLoading(true);
+    try {
+      console.log("Fetching comments with params:", { districtId, year, tableCommentedId, currentUsername });
+      const response = await instance.get(`comments/tables/${districtId}/${year}/APR`);
+      console.log("API response:", response.data);
+      const filteredComments = response.data.filter(
+        (comment) =>
+          comment.tableCommented === tableCommentedId &&
+          comment.districtId === districtId &&
+          (comment.userRole === "APR_RCC" || comment.userRole === "APR_USER")
+      );
+      console.log("Filtered comments:", filteredComments);
+      setComments(filteredComments);
+      setError(null);
+      const userComment = filteredComments.find(
+        (comment) => comment.username === currentUsername
+      );
+      if (userComment) {
+        setEditorContent(userComment.comments || "");
+        setExistingCommentId(userComment.id);
+      } else {
+        setEditorContent("");
+        setExistingCommentId(null);
+      }
+    } catch (error) {
+      console.error("", {
+      
+      });
+    //   setError("Failed to fetch Executive Summary");
+    //   message.error("Failed to fetch Executive Summary");
+    } finally {
+      setLoading(false);
+    }
+  }, [districtId, year, tableCommentedId, currentUsername]);
+
+  // Trigger fetch on mount or dependency change
   useEffect(() => {
-    const fetchComment = async () => {
-      if (!district || !year) {
-        // message.warning("District ID or year is missing");
-        setLoading(false);
-        return;
-      }
-      try {
-        setLoading(true);
-        console.log("Fetching comments with params:", { district, year, tableCommentedId, currentUsername });
-        const response = await instance.get("comments");
-        console.log("API response:", response.data);
-        const filteredComments = response.data.filter(
-          (comment) =>
-            comment.tableCommented === tableCommentedId &&
-            comment.districtId === district &&
-            comment.userRole === "APR_GeneralInfo" // Adjust if API uses "APREXECUTIVE"
-        );
-        console.log("Filtered comments:", filteredComments);
-        setComments(filteredComments);
-        const userComment = filteredComments.find(
-          (comment) => comment.username === currentUsername
-        );
-        if (userComment) {
-          setEditorContent(userComment.comments || "");
-          setExistingCommentId(userComment.id);
-        } else {
-          setEditorContent("");
-          setExistingCommentId(null);
-        }
-      } catch (error) {
-        console.error("Failed to fetch Executive Summary comment:", {
-          message: error.message,
-          response: error.response?.data,
-          status: error.response?.status,
-        });
-        message.error("Failed to fetch Executive Summary");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchComment();
-  }, [district, year, currentUsername, tableCommentedId]);
+    fetchComments();
+  }, [fetchComments]);
 
   const handleSave = async () => {
     if (!editorContent.trim()) {
       message.error("Comment cannot be empty");
       return;
     }
-    if (!currentUsername || !district || !year) {
+    if (!currentUsername || !districtId || !year) {
       message.error("User or district information is missing");
       return;
     }
     if (!isQualityAssurance) {
-      message.error("Only APR USER can edit the General Info");
+      message.error("Only APR USER can edit the Executive Summary");
       return;
     }
 
     const existingComment = comments.find(
       (comment) =>
         comment.tableCommented === tableCommentedId &&
-        comment.districtId === district &&
-        comment.userRole === "APR_GeneralInfo"
+        comment.districtId === districtId &&
+        comment.userRole === "APR_USER"
     );
 
     if (existingComment && existingComment.username !== currentUsername && !existingCommentId) {
@@ -101,9 +104,9 @@ function GeneralIntroduction({ year, district, assessmentStatus }) {
       id: existingCommentId || 0,
       username: currentUsername,
       fullName: currentFullName,
-      userRole: "APR_GeneralInfo",
+      userRole: "APR_USER",
       type: "APR",
-      districtId: district,
+      districtId: districtId,
       year: year,
       tableCommented: tableCommentedId,
       comments: editorContent,
@@ -125,23 +128,23 @@ function GeneralIntroduction({ year, district, assessmentStatus }) {
               : comment
           )
         );
-        message.success("General Info updated successfully");
+        message.success("General Intro updated successfully");
         setEditing(false);
       } else {
         const response = await instance.post("comments", payload);
         console.log("Post response:", response.data);
         setComments([...comments, response.data]);
         setExistingCommentId(response.data.id);
-        message.success("Executive Summary added successfully");
+        message.success("General Intro added successfully");
         setEditing(false);
       }
     } catch (error) {
-      console.error("Failed to save Executive Summary:", {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status,
-      });
-      message.error(`Failed to save Executive Summary: ${error.response?.data?.message || error.message}`);
+    //   console.error("Failed to save Executive Summary:", {
+    //     message: error.message,
+    //     response: error.response?.data,
+    //     status: error.response?.status,
+    //   });
+    //   message.error(`Failed to save Executive Summary: ${error.response?.data?.message || error.message}`);
     } finally {
       setLoading(false);
     }
@@ -158,15 +161,25 @@ function GeneralIntroduction({ year, district, assessmentStatus }) {
     const existingComment = comments.find(
       (comment) =>
         comment.tableCommented === tableCommentedId &&
-        comment.districtId === district &&
-        comment.userRole === "APR_GeneralInfo"
+        comment.districtId === districtId &&
+        comment.userRole === "APR_USER"
     );
     return !existingComment || existingComment.username === currentUsername;
   };
 
   const renderCommentList = () => {
+    if (loading) {
+      return (
+        <div style={{ textAlign: "center", padding: "20px" }}>
+          <Spin tip="Loading comments..." />
+        </div>
+      );
+    }
+    if (error) {
+      return <p>{error}</p>;
+    }
     if (!comments.length) {
-      return <p>No iNFO available for this district.</p>;
+      return <p>No General Introduction.</p>;
     }
     return (
       <div
@@ -225,16 +238,16 @@ function GeneralIntroduction({ year, district, assessmentStatus }) {
     );
   };
 
-  if (!isQualityAssurance && !comments.length) {
+  if (!isQualityAssurance && !comments.length && !loading && !error) {
     return (
       <div className="col-12">
         <div className="card">
           <div className="card-header">
-            <h3>GENERAL INFORMATION</h3>
+            <h3>General Introduction</h3>
           </div>
           <div className="card-body">
             <div style={{ padding: "20px" }}>
-              <p>No INFO available for this district.</p>
+              <p>No GeneralIntroduction available for this district.</p>
             </div>
           </div>
         </div>
@@ -246,7 +259,7 @@ function GeneralIntroduction({ year, district, assessmentStatus }) {
     <div className="col-12">
       <div className="card">
         <div className="card-header">
-          <h3>GENERAL INFORMATION</h3>
+          <h3>GENERAL INTRODUCTION</h3>
         </div>
         <div className="card-body">
           <div style={{ padding: "20px" }}>
@@ -295,7 +308,7 @@ function GeneralIntroduction({ year, district, assessmentStatus }) {
                   disabled={loading}
                 >
                   <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>
-                    Save Info
+                    Save General Introduction
                   </span>
                 </Button>
               </div>

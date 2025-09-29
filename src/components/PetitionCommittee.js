@@ -108,7 +108,7 @@ function PetitionCommittee({ year, districtId, assessmentStatus: initialAssessme
           response: error.response?.data,
           status: error.response?.status,
         });
-        message.error("Failed to fetch comments");
+        // message.error("Failed to fetch comments");
       } finally {
         setLoading(false);
       }

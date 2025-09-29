@@ -9,7 +9,7 @@ import {
 import useAuth from "../../../hooks/useAuth";
 import instance from "../../../api/cmsapi";
 
-function APRComment({ data, year, districtId, tableCommentedId, children, hideComment }) {
+function APRComment({ data, year, districtId, tableCommentedId, children,  assessmentStatus}) {
   const { user } = useAuth();
   const [showCommentInput, setShowCommentInput] = useState(false);
   const [commentText, setCommentText] = useState("");
@@ -40,8 +40,8 @@ function APRComment({ data, year, districtId, tableCommentedId, children, hideCo
       setComments(filteredComments);
       setError(null);
     } catch (error) {
-      setError("Failed to fetch comments");
-      console.error("Fetch error:", error);
+      // setError("Failed to fetch comments");
+      // console.error("Fetch error:", error);
     } finally {
       setLoading(false);
     }
@@ -255,15 +255,21 @@ function APRComment({ data, year, districtId, tableCommentedId, children, hideCo
       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
 
        
-        <span>COMMENT</span>
+      
 
-        {normalizedUserRole &&(
-          
+        {normalizedUserRole &&  assessmentStatus &&(
+          <>
+            <span>COMMENT</span>
+         
  <CommentOutlined
           style={{ cursor: "pointer", fontSize: "30px", flexShrink: 0 }}
           onClick={handleCommentButtonClick}
         />
+
+        </>
         )}
+
+         
        
       </div>
       {showCommentInput && (

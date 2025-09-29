@@ -9,7 +9,7 @@ import APRmemo from "./APRComment.js/APRmemo";
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 
-const Table_1 = ({ year, district, period,  hideTableDis }) => {
+const Table_1 = ({ year, district, period,  hideTableDis,assessmentStatus }) => {
   const [tableData, setTableData] = useState([]);
   const [allData, setAllData] = useState([]);
   const [chartData, setChartData] = useState({});
@@ -228,6 +228,7 @@ const Table_1 = ({ year, district, period,  hideTableDis }) => {
             districtId={district}
             tableCommentedId={`table1-${year}`}
              hideTableDis={hideTableDis}
+            
           />
           <div className="table-responsive">
             <table className="table table-bordered" style={{
@@ -320,6 +321,7 @@ const Table_1 = ({ year, district, period,  hideTableDis }) => {
             year={year}
             districtId={district}
             tableCommentedId={`table1-${year}`}
+             assessmentStatus ={assessmentStatus}
           >
             {({ renderCommentInput, renderCommentList }) => (
               <>

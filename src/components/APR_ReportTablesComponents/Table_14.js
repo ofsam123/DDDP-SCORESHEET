@@ -18,7 +18,7 @@ import axios from "../../api/axios";
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 // Table14 Component
-const Table_14 = ({ year, district, period }) => { // Updated to 2025 as per current date
+const Table_14 = ({ year, district, period , hideTableDis}) => { // Updated to 2025 as per current date
   const [tableData, setTableData] = useState([]);
 
   useEffect(() => {
@@ -130,6 +130,7 @@ const Table_14 = ({ year, district, period }) => { // Updated to 2025 as per cur
             year={year}
             districtId={district}
             tableCommentedId={`table14-${year}`}
+            hideTableDis={hideTableDis}
 
           />
           <div className="table-responsive">

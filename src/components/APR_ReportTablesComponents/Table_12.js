@@ -7,7 +7,7 @@ import APRComment from "./APRComment.js/AprComments";
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const Table_12 = (year = 2025, district) => {
+const Table_12 = (year, district, hideTableDis) => {
   const tableData = {
     throwForward: [
       {
@@ -104,6 +104,7 @@ const Table_12 = (year = 2025, district) => {
             year={year}
             districtId={district}
             tableCommentedId={`table12-${year}`}
+            hideTableDis={hideTableDis}
           />
           <div className="table-responsive">
             {/* Multi-year CAPEX Throw Forward Section */}

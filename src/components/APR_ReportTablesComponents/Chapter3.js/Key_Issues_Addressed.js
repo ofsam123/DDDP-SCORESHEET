@@ -1,19 +1,18 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { Button, message, Avatar, Col, Spin } from "antd"; // Added Spin
+import React, { useEffect, useState } from "react";
+import { Button, message, Avatar, Col } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import useAuth from "../../../hooks/useAuth";
 import instance from "../../../api/cmsapi";
 
-function ExeAPR({ year, district, assessmentStatus }) {
+function KIA({ year, district, assessmentStatus }) {
   const { user } = useAuth();
   const [editorContent, setEditorContent] = useState("");
   const [loading, setLoading] = useState(false);
   const [existingCommentId, setExistingCommentId] = useState(null);
   const [comments, setComments] = useState([]);
   const [editing, setEditing] = useState(false);
-  const [error, setError] = useState(null); // Added error state
 
   // Determine user role and permissions
   const currentUserRole = user?.user?.userRoles?.find(
@@ -23,75 +22,67 @@ function ExeAPR({ year, district, assessmentStatus }) {
   const currentUsername = user?.user?.username || "";
   const currentFullName = user?.user?.fullName || "";
   const isQualityAssurance = currentUserRole === "APR USER";
-  const tableCommentedId = "APR_EXECUTIVE";
-  const districtId = district; // Alias for clarity
+  const tableCommentedId = "APR_KIA";
 
   // Fetch existing comments
-  const fetchComments = useCallback(async () => {
-    if (!districtId || !year) {
-    
-    //   setLoading(false);
-      return;
-    }
-    setLoading(true);
-    try {
-      console.log("Fetching comments with params:", { districtId, year, tableCommentedId, currentUsername });
-      const response = await instance.get(`comments/tables/${districtId}/${year}/APR`);
-      console.log("API response:", response.data);
-      const filteredComments = response.data.filter(
-        (comment) =>
-          comment.tableCommented === tableCommentedId &&
-          comment.districtId === districtId &&
-          (comment.userRole === "APR_RCC" || comment.userRole === "APR_USER")
-      );
-      console.log("Filtered comments:", filteredComments);
-      setComments(filteredComments);
-      setError(null);
-      const userComment = filteredComments.find(
-        (comment) => comment.username === currentUsername
-      );
-      if (userComment) {
-        setEditorContent(userComment.comments || "");
-        setExistingCommentId(userComment.id);
-      } else {
-        setEditorContent("");
-        setExistingCommentId(null);
-      }
-    } catch (error) {
-      console.error("", {
-      
-      });
-    //   setError("Failed to fetch Executive Summary");
-    //   message.error("Failed to fetch Executive Summary");
-    } finally {
-      setLoading(false);
-    }
-  }, [districtId, year, tableCommentedId, currentUsername]);
-
-  // Trigger fetch on mount or dependency change
   useEffect(() => {
-    fetchComments();
-  }, [fetchComments]);
+    const fetchComment = async () => {
+        setLoading(true);
+      if (!district || !year) {
+        // message.warning("District ID or year is missing");
+        return;
+      }
+      try {
+        setLoading(true);
+        const response = await instance.get("comments");
+        console.log("API response:", response.data); // Debug: Log the full response
+        const filteredComments = response.data.filter(
+          (comment) =>
+            comment.tableCommented === tableCommentedId &&
+            comment.districtId === district && // Use districtId instead of district
+            comment.userRole === "APRKIA"
+        );
+        console.log("Filtered comments:", filteredComments); // Debug: Log filtered comments
+        setComments(filteredComments);
+        const userComment = filteredComments.find(
+          (comment) => comment.username === currentUsername
+        );
+        if (userComment) {
+          setEditorContent(userComment.comments || "");
+          setExistingCommentId(userComment.id);
+        } else {
+          setEditorContent("");
+          setExistingCommentId(null);
+        }
+      } catch (error) {
+        console.error("Failed to fetch Key Issues Addressed comment:", error);
+        // message.error("Failed to fetch Key Issues Addressed");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchComment();
+  }, [district, year, currentUsername, tableCommentedId]);
 
   const handleSave = async () => {
     if (!editorContent.trim()) {
       message.error("Comment cannot be empty");
       return;
     }
-    if (!currentUsername || !districtId || !year) {
+    if (!currentUsername || !district || !year) {
       message.error("User or district information is missing");
       return;
     }
     if (!isQualityAssurance) {
-      message.error("Only APR USER can edit the Executive Summary");
+      message.error("Only APR USER can edit the Key Issues Addressed");
       return;
     }
 
     const existingComment = comments.find(
       (comment) =>
         comment.tableCommented === tableCommentedId &&
-        comment.districtId === districtId &&
-        comment.userRole === "APR_USER"
+        comment.districtId === district && // Use districtId
+        comment.userRole === "APRKIA"
     );
 
     if (existingComment && existingComment.username !== currentUsername && !existingCommentId) {
@@ -104,21 +95,20 @@ function ExeAPR({ year, district, assessmentStatus }) {
       id: existingCommentId || 0,
       username: currentUsername,
       fullName: currentFullName,
-      userRole: "APR_USER",
+      userRole: "APRKIA",
       type: "APR",
-      districtId: districtId,
+      districtId: district, // Use district directly (string)
       year: year,
       tableCommented: tableCommentedId,
       comments: editorContent,
       commentDate: commentDate,
       updateDate: commentDate,
       dddpDataDate: null,
-      dddpData: {},
+      dddpData: {}, // Match API response structure
     };
 
     try {
       setLoading(true);
-      console.log("Saving comment with payload:", payload);
       if (existingCommentId) {
         await instance.put(`comments/${existingCommentId}`, payload);
         setComments(
@@ -128,23 +118,22 @@ function ExeAPR({ year, district, assessmentStatus }) {
               : comment
           )
         );
-        message.success("Executive Summary updated successfully");
+        message.success("Key Issues Addressed updated successfully");
         setEditing(false);
       } else {
         const response = await instance.post("comments", payload);
-        console.log("Post response:", response.data);
         setComments([...comments, response.data]);
         setExistingCommentId(response.data.id);
-        message.success("Executive Summary added successfully");
+        message.success("Key Issues Addressed added successfully");
         setEditing(false);
       }
     } catch (error) {
-    //   console.error("Failed to save Executive Summary:", {
-    //     message: error.message,
-    //     response: error.response?.data,
-    //     status: error.response?.status,
-    //   });
-    //   message.error(`Failed to save Executive Summary: ${error.response?.data?.message || error.message}`);
+      console.error("Failed to save Key Issues Addressed:", {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+      });
+      message.error(`Failed to save Key Issues Addressed: ${error.response?.data?.message || error.message}`);
     } finally {
       setLoading(false);
     }
@@ -161,25 +150,21 @@ function ExeAPR({ year, district, assessmentStatus }) {
     const existingComment = comments.find(
       (comment) =>
         comment.tableCommented === tableCommentedId &&
-        comment.districtId === districtId &&
-        comment.userRole === "APR_USER"
+        comment.districtId === district && // Use districtId
+        comment.userRole === "APRKIA"
     );
     return !existingComment || existingComment.username === currentUsername;
   };
 
   const renderCommentList = () => {
-    if (loading) {
-      return (
-        <div style={{ textAlign: "center", padding: "20px" }}>
-          <Spin tip="Loading comments..." />
-        </div>
-      );
-    }
-    if (error) {
-      return <p>{error}</p>;
-    }
-    if (!comments.length) {
-      return <p>No Executive Summary available for this district.</p>;
+    const comment = comments.find(
+      (comment) =>
+        comment.tableCommented === tableCommentedId &&
+        comment.districtId === district && // Use districtId
+        comment.userRole === "APRKIA"
+    );
+    if (!comment) {
+      return <p>No Key Issues Addressed available for this district.</p>;
     }
     return (
       <div
@@ -191,17 +176,15 @@ function ExeAPR({ year, district, assessmentStatus }) {
           marginTop: "20px",
         }}
       >
-        {comments.map((comment) => (
-          <div
-            key={comment.id}
-            style={{
-              padding: "10px",
-              border: "1px solid #f0f0f0",
-              borderRadius: "6px",
-              marginBottom: "10px",
-            }}
-          >
-            <div style={{ display: "flex", marginBottom: "10px" }}>
+        <div
+          style={{
+            padding: "10px",
+            border: "1px solid #f0f0f0",
+            borderRadius: "6px",
+          }}
+        >
+          <div style={{ display: "flex", marginBottom: "10px" }}>
+            {comment.username === currentUsername && isQualityAssurance && (
               <Col>
                 <Avatar
                   src={comment.userImage || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTL_JlCFnIGX5omgjEjgV9F3sBRq14eTERK9w&s"}
@@ -209,45 +192,45 @@ function ExeAPR({ year, district, assessmentStatus }) {
                   size={32}
                 />
               </Col>
-              <div style={{ flex: 1 }}>
-                <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
+            )}
+            {assessmentStatus && (
+            <div style={{ flex: 1 }}>
+              <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
+                {comment.username === currentUsername && isQualityAssurance && (
                   <h4 style={{ margin: 0, fontSize: "13px" }}>{comment.fullName}</h4>
-                  {comment.username === currentUsername && isQualityAssurance && assessmentStatus && (
-                    <EditOutlined
-                      style={{ cursor: "pointer", color: "#000000ff", marginLeft: "10px" }}
-                      onClick={() => {
-                        setEditorContent(comment.comments);
-                        setExistingCommentId(comment.id);
-                        handleEdit();
-                      }}
-                    />
-                  )}
-                </div>
-                <div
-                  style={{ fontSize: "16px", marginTop: "8px" }}
-                  dangerouslySetInnerHTML={{ __html: comment.comments || "" }}
-                />
-                <Col align="end">
-                  <h6 style={{ marginLeft: "8px" }}>{comment.commentDate?.join("/") || "N/A"}</h6>
-                </Col>
+                )}
+                {comment.username === currentUsername && isQualityAssurance && assessmentStatus && (
+                  <EditOutlined
+                    style={{ cursor: "pointer", color: "#000000ff", marginLeft: "10px" }}
+                    onClick={handleEdit}
+                  />
+                )}
               </div>
+              <div
+                style={{ fontSize: "16px", marginTop: "8px" }}
+                dangerouslySetInnerHTML={{ __html: comment.comments || "" }}
+              />
+              <Col align="end">
+                <h6 style={{ marginLeft: "8px" }}>{comment.commentDate?.join("/") || "N/A"}</h6>
+              </Col>
             </div>
+            )}
           </div>
-        ))}
+        </div>
       </div>
     );
   };
 
-  if (!isQualityAssurance && !comments.length && !loading && !error) {
+  if (!isQualityAssurance && !comments.length) {
     return (
       <div className="col-12">
         <div className="card">
           <div className="card-header">
-            <h3>EXECUTIVE SUMMARY</h3>
+            <h3>3.2 Key Issues Addressed</h3>
           </div>
           <div className="card-body">
             <div style={{ padding: "20px" }}>
-              <p>No Executive Summary available for this district.</p>
+              <p>No Key Issues Addressed available for this district.</p>
             </div>
           </div>
         </div>
@@ -259,7 +242,7 @@ function ExeAPR({ year, district, assessmentStatus }) {
     <div className="col-12">
       <div className="card">
         <div className="card-header">
-          <h3>EXECUTIVE SUMMARY</h3>
+          <h3>3.2 Key Issues Addressed</h3>
         </div>
         <div className="card-body">
           <div style={{ padding: "20px" }}>
@@ -308,7 +291,7 @@ function ExeAPR({ year, district, assessmentStatus }) {
                   disabled={loading}
                 >
                   <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>
-                    Save Executive Summary
+                    Save Key Issues Addressed
                   </span>
                 </Button>
               </div>
@@ -321,4 +304,4 @@ function ExeAPR({ year, district, assessmentStatus }) {
   );
 }
 
-export default ExeAPR;
+export default KIA;

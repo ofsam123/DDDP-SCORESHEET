@@ -17,7 +17,7 @@ import { getProjectDetails, groupProjectByDevelopmentDimension } from "../../uti
 // Register chart components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const Table_4 = ({ year, district, period }) => { // Default year set to 2024, adjustable via prop
+const Table_4 = ({ year, district, period,   hideTableDis }) => { // Default year set to 2024, adjustable via prop
   const [tableData, setTableData] = useState([]);
   const [tableDataDummy, setTableDataDummy] = useState([]);
 
@@ -146,6 +146,7 @@ const Table_4 = ({ year, district, period }) => { // Default year set to 2024, a
             year={year}
             districtId={district}
             tableCommentedId={`table4-${year}`}
+              hideTableDis={hideTableDis}
 
           />
           <div className="table-responsive">

@@ -9,7 +9,7 @@ import APRmemo from "./APRComment.js/APRmemo";
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const Table_9 = ({ year, district, period }) => {
+const Table_9 = ({ year, district, period,hideTableDis }) => {
   const [tableData, setTableData] = useState([]);
   const [total, setTotal] = useState(null);
   const currentYear = new Date().getFullYear(); // 2025
@@ -175,6 +175,7 @@ const Table_9 = ({ year, district, period }) => {
             year={year}
             districtId={district}
             tableCommentedId={`table9-${year}`}
+            hideTableDis={hideTableDis}
           />
           <div className="table-responsive">
             <h6>The funding sources of the Assembly, over the years have been the Central Government 

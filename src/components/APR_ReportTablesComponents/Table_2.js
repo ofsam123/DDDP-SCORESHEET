@@ -9,7 +9,7 @@ import APRmemo from "./APRComment.js/APRmemo";
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const Table_2 = ({ year, district, period }) => {
+const Table_2 = ({ year, district, period, hideTableDis }) => {
   const [tableData, setTableData] = useState([]);
   const currentYear = new Date().getFullYear(); // 2025
   const years = [currentYear - 2, currentYear - 1, currentYear]; // [2023, 2024, 2025]
@@ -248,6 +248,7 @@ const Table_2 = ({ year, district, period }) => {
             year={year}
             districtId={district}
             tableCommentedId={`table2-${year}`}
+             hideTableDis={hideTableDis}
           />
           <div className="table-responsive">
             <table
@@ -296,7 +297,7 @@ const Table_2 = ({ year, district, period }) => {
           </p>
           <hr />
           <h5>Pictorial Evidence of Projects under Implementation</h5>
-          {pictorialEvidence.length > 0 ? (
+          {/* {pictorialEvidence.length > 0 ? (
             <div className="row">
               {pictorialEvidence.map((image, index) => (
                 <div className="col-md-4 col-sm-6 mb-3" key={index}>
@@ -316,7 +317,7 @@ const Table_2 = ({ year, district, period }) => {
             </div>
           ) : (
             <p>No pictorial evidence available.</p>
-          )}
+          )} */}
           <hr />
           <h5>Comparison of Implementation Status: {years[0]}-{years[2] + 1}</h5>
           <div className="mt-4">

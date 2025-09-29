@@ -5,7 +5,7 @@ import axios from "../../api/axios";
 import { getProjectDetails, groupProjectsBySectorAmountWithoutBudget } from "../../utils/utils";
 
 // Table15 Component
-const Table_15 = ({ year, district, period }) => {
+const Table_15 = ({ year, district, period,hideTableDis }) => {
   const [tableData, setTableData] = useState([]);
 
   useEffect(() => {
@@ -92,6 +92,7 @@ const Table_15 = ({ year, district, period }) => {
             year={year}
             districtId={district}
             tableCommentedId={`table15-${year}`}
+            hideTableDis={hideTableDis}
 
           >
             {({ renderCommentInput, renderCommentList }) => (

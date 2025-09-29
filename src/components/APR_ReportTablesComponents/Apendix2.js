@@ -1,10 +1,10 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "../../api/axios";
-import { filterTrackedEntitiesByCreatedAt, formatDataGeneral, getAttributeValue } from "../../utils/utils";
+import { filterTrackedEntitiesByCreatedAt, formatDataGeneral, getAttributeValue, hideTableDis} from "../../utils/utils";
 import ExeAPR from "./APRComment.js/ExecutiveSummary";
 
-const AppendixTwoTable = ({ year, district, period }) => {
+const AppendixTwoTable = ({ year, district, period, hide }) => {
   const [tableData, setTableData] = useState([]);
 
   useEffect(() => {
@@ -203,15 +203,10 @@ const AppendixTwoTable = ({ year, district, period }) => {
             <small>Source: MPCU</small>
           </p>
 
-          <h3>EXECUTIVE SUMMARY</h3>
+        
 
-          <ExeAPR
-                    year={year}
-                    districtId = {district}
-                     tableCommentedId={`table1_1apr-${year}`}
-                    
-                   
-                  />
+         
+    
         </div>
       </div>
     </div>

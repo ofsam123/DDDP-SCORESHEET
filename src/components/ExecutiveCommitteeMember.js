@@ -15,7 +15,7 @@ const ExecutiveCommitteeMember = forwardRef(({ data, year, columns, districtId, 
   useEffect(() => {
     const fetchEndpointData = async () => {
       if (!districtId || !year) {
-        setError("District ID or year is missing");
+        // setError("District ID or year is missing");
         return;
       }
       setLoading(true);

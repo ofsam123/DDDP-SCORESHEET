@@ -2,9 +2,11 @@
 import React, { useEffect, useState } from "react";
 import axios from "../../api/axios";
 import { filterTrackedEntitiesByCreatedAt, formatDataGeneral, getAttributeValue, getDataByTypes } from "../../utils/utils";
+import APRComment from "./APRComment.js/AprComments";
+import APRmemo from "./APRComment.js/APRmemo";
 
 
-const Table_7 = ({ year, district, period }) => {
+const Table_7 = ({ year, district, period,hideTableDis }) => {
 
   const [tableData, setTableData] = useState([]);
 
@@ -95,6 +97,13 @@ const Table_7 = ({ year, district, period }) => {
 
         </div>
         <div className="card-body">
+             <APRmemo
+            year={year}
+            districtId={district}
+            tableCommentedId={`table6-${year}`}
+              hideTableDis={hideTableDis}
+
+          />
 
           <div className="table-responsive">
             <table className="table table-bordered">
@@ -133,6 +142,21 @@ const Table_7 = ({ year, district, period }) => {
           <p className="mt-2">
             <small>Source: MPCU</small>
           </p>
+
+          <APRComment
+                      data={tableData}
+                      year={year}
+                      districtId={district}
+                      tableCommentedId={`table7-${year}`}
+          
+                    >
+                      {({ renderCommentInput, renderCommentList }) => (
+                        <>
+                          {renderCommentInput()}
+                          {renderCommentList()}
+                        </>
+                      )}
+                    </APRComment>
         </div>
       </div>
     </div>

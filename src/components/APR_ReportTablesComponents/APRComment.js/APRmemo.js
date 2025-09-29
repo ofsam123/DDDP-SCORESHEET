@@ -6,7 +6,7 @@ import "react-quill/dist/quill.snow.css";
 import useAuth from "../../../hooks/useAuth";
 import instance from "../../../api/cmsapi";
 
-function APRmemo({ year, districtId, tableCommentedId }) {
+function APRmemo({ year, districtId, tableCommentedId, hideTableDis }) {
   const { user } = useAuth();
   const [memoContent, setMemoContent] = useState("");
   const [loading, setLoading] = useState(false);
@@ -122,6 +122,16 @@ function APRmemo({ year, districtId, tableCommentedId }) {
   };
 
   const handleEdit = () => {
+    const existingComment = comments.find(
+      (comment) =>
+        comment.tableCommented === tableCommentedId &&
+        comment.userRole === normalizedUserRole &&
+        comment.districtId === districtId &&
+        comment.username === currentUsername
+    );
+    if (existingComment) {
+      setMemoContent(existingComment.gaps || "");
+    }
     setEditing(true);
   };
 
@@ -138,47 +148,47 @@ function APRmemo({ year, districtId, tableCommentedId }) {
           marginTop: "20px",
         }}
       >
-        {comments.map((comment) => (
-          <div
-            key={comment.id}
-            style={{ padding: "10px", border: "1px solid #f0f0f0", borderRadius: "6px", marginBottom: "10px" }}
-          >
-            <div style={{ display: "flex", marginBottom: "10px" }}>
-              <Col>
-                <Avatar
-                  src={comment.userImage || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTL_JlCFnIGX5omgjEjgV9F3sBRq14eTERK9w&s"}
-                  style={{ marginRight: "10px", borderRadius: "50%" }}
-                  size={32}
-                />
-              </Col>
-              <div style={{ flex: 1 }}>
-                <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", width: "800px" }}>
-                  <h4 style={{ margin: 0, fontSize: "13px" }}>
-                    {comment.fullName} ({comment.userRole.replace("_", " ")})
-                  </h4>
-                  {comment.userRole === "APR_USER" && comment.username === currentUsername && canEditMemo() && (
-                    <EditOutlined
-                      style={{ cursor: "pointer", color: "#000000ff", marginLeft: "10px" }}
-                      onClick={handleEdit}
-                    />
-                  )}
-                </div>
-                <div
-                  style={{ fontSize: "16px", marginTop: "8px" }}
-                  dangerouslySetInnerHTML={{
-                    __html:
-                     
-                         comment.gaps 
-                        
-                  }}
-                />
-                <Col align="end">
-                  <h11 style={{ marginLeft: "8px" }}>{comment.commentDate.join("/")}</h11>
+        {comments
+          .filter((comment) => comment.gaps && comment.gaps.trim() !== "")
+          .map((comment) => (
+            <div
+              key={comment.id}
+              style={{ padding: "10px", border: "1px solid #f0f0f0", borderRadius: "6px", marginBottom: "10px" }}
+            >
+              <div style={{ display: "flex", marginBottom: "10px" }}>
+                <Col>
+                  <Avatar
+                    src={comment.userImage || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTL_JlCFnIGX5omgjEjgV9F3sBRq14eTERK9w&s"}
+                    style={{ marginRight: "10px", borderRadius: "50%" }}
+                    size={32}
+                  />
                 </Col>
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", width: "800px" }}>
+                    <h4 style={{ margin: 0, fontSize: "13px" }}>
+                      {comment.fullName} ({comment.userRole.replace("_", " ")})
+                    </h4>
+                    {comment.userRole === "APR_USER" && comment.username === currentUsername && canEditMemo() && (
+                      <EditOutlined
+                        style={{ cursor: "pointer", color: "#000000ff", marginLeft: "10px" }}
+                        onClick={handleEdit}
+                      />
+                    )}
+                  </div>
+                  {/* Display only the gaps field (memo content), excluding comments field */}
+                  <div
+                    style={{ fontSize: "16px", marginTop: "8px" }}
+                    dangerouslySetInnerHTML={{
+                      __html: comment.gaps,
+                    }}
+                  />
+                  <Col align="end">
+                    <h11 style={{ marginLeft: "8px" }}>{comment.commentDate.join("/")}</h11>
+                  </Col>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
       </div>
     );
   };
@@ -189,7 +199,7 @@ function APRmemo({ year, districtId, tableCommentedId }) {
 
   return (
     <div style={{ padding: "20px" }}>
-      {canEditMemo() && (
+      {!hideTableDis && canEditMemo() && (
         <div style={{ display: editing || !comments.some((c) => c.userRole === "APR_USER") ? "block" : "none" }}>
           <Spin spinning={loading}>
             <ReactQuill

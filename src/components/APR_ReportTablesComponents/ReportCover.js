@@ -6,11 +6,12 @@ import { getAttributeValue } from "../../utils/utils";
 const ReportCover = ({ district, year }) => {
   const [profile, setProfile] = useState("");
 
-  useEffect(() => {
-    if (district?.value) {
-      getData();
-    }
-  }, [district]);
+    useEffect(() => {
+        if (district?.value) {
+            setProfile("");
+            getData();
+        }
+    }, [district]);
 
   async function getData() {
     try {

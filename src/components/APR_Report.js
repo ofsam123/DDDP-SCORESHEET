@@ -668,10 +668,7 @@ const fetchAssessmentStatus = async () => {
               <em ref={contentToPrint}>
               
                 <div className="row gutters">
-                  {/* {selectedDistrict && selectedYear && <h3 className="text-center"
-                    style={{ background: "#07d9c8ff", color: "#fff", textAlign: "center", padding: "10px", height: 'auto', width: '100%' }}>
-                    {selectedYear?.value} ANNUAL PROGRESS REPORT OF {selectedDistrict?.label} FROM {selectedDistrict?.value?.region}
-                  </h3>} */}
+                 
                   {selectedDistrict && selectedYear &&
                     <ReportCover district={selectedDistrict} year={selectedYear?.value}/>}
                 </div>
@@ -701,7 +698,7 @@ const fetchAssessmentStatus = async () => {
                   />
                    </>
                       )}
-                  <Table_1
+                   <Table_1
                 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}   hideTableDis={hideTableDis}/>
                 <Table_2
                 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} hideTableDis={hideTableDis}/> 
@@ -717,8 +714,8 @@ const fetchAssessmentStatus = async () => {
                 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} hideTableDis={hideTableDis} />
                 <Table_9 
                 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} hideTableDis={hideTableDis} />
-                 <Table_10
-                year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} hideTableDis={hideTableDis} />               
+                 {/* <Table_10
+                year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} hideTableDis={hideTableDis} />                */}
                  <Table_11
                 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} hideTableDis={hideTableDis} />
                   <Table_12
@@ -743,28 +740,11 @@ const fetchAssessmentStatus = async () => {
                 <Table_20 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}hideTableDis={hideTableDis} />
                 <Table_21 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}hideTableDis={hideTableDis} />
                 <Table_22 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} hideTableDis={hideTableDis}/>
-                {/* <Table2_4 
-                year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/> */}
-
-             
-
-                {/* <Table2_6 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} /> */}
-                {/* <Table2_7 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/> */}
-                {/* <Table2_8 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/> */}
-                {/* <Table2_9 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/> */}
-                {/* <Table2_10 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}/> */}
+                
                
-               
-                <Appendix1 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} hideTableDis={hideTableDis} />
-                <Apendix_2 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} />
+                {/* <Appendix1 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} hideTableDis={hideTableDis} />
+                <Apendix_2 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} /> */}
 
-
-
-
-                   
-
-
-                  
                       <>
                 <h2 style={{ textAlign: "center" }}>CHAPTER THREE (3)</h2>
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -11,48 +11,48 @@ import {
 } from "chart.js";
 import APRmemo from "./APRComment.js/APRmemo";
 import APRComment from "./APRComment.js/AprComments";
+import axios from "../../api/axios";
+import { formatDataGeneral, getAttributeValue } from "../../utils/utils";
 
 // Register chart components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const Table_20 = ({ year, district,hideTableDis}) => {
-  const tableData = [
-    {
-      item: "Computers",
-      required: 24,
-      actual: 12,
-      remarks:
-        "Gap needs to be bridged in order to ensure effective and efficient service delivery",
-    },
-    {
-      item: "Printers",
-      required: 13,
-      actual: 10,
-      remarks:
-        "Gap needs to be bridged in order to ensure effective and efficient service delivery",
-    },
-    {
-      item: "Projectors",
-      required: 2,
-      actual: 1,
-      remarks:
-        "Gap needs to be bridged in order to ensure effective and efficient service delivery",
-    },
-    {
-      item: "Office Space",
-      required: 11,
-      actual: 11,
-      remarks:
-        "Gap needs to be bridged in order to ensure effective and efficient service delivery",
-    },
-    {
-      item: "Vehicle",
-      required: 14,
-      actual: 4,
-      remarks:
-        "Gap needs to be bridged in order to ensure effective and efficient service delivery",
-    },
-  ];
+const Table_20 = ({ year, district, period, hideTableDis }) => {
+  
+  const [tableData, setTableData] = useState([]);
+  
+    useEffect(() => {
+      getData();
+    }, [district, year, period]);
+  
+    function getData() {
+      axios
+        .get(`/tracker/trackedEntities?orgUnit=${district}&program=TX0gMnftQc8&startDate=${year}-01-01&endDate=${year}-12-31&pageSize=5000`)
+        .then(result => {
+  
+          const data = result.data.instances;
+          const items = formatDataGeneral(data, "Years", `${year}`) || [];
+          const temp = [];
+  
+          items.forEach(val => {
+           
+            const dataSet = {
+              item: getAttributeValue("Item Category", val),
+              required: getAttributeValue("Required", val),
+              actual: getAttributeValue("Actual", val),
+              remarks: getAttributeValue("Remarks", val),
+
+            };
+
+            temp.push(dataSet);
+          });
+  
+          setTableData(temp);
+  
+  
+        })
+        .catch(err => console.log(err))
+    };
 
   const chartData = {
     labels: tableData.map((row) => row.item),

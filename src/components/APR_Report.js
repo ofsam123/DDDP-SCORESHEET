@@ -432,7 +432,7 @@ const fetchAssessmentStatus = async () => {
             message.success({
                 content: (
                     <div>
-                        <p>Assessment completed successfully (Status: 200)</p>
+                        <p>Progress Report Sent successfully</p>
                     </div>
                 ),
                 duration: 3,
@@ -497,7 +497,7 @@ const fetchAssessmentStatus = async () => {
             message.success({
                 content: (
                     <div>
-                        <p>Assessment completed successfully (Status: 200)</p>
+                        <p>Submitted Successfully </p>
                     </div>
                 ),
                 duration: 3,

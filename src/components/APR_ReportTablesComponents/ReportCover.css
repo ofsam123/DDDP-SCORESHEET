@@ -1,0 +1,39 @@
+.report-cover {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  height: 100vh;           /* full page height */
+  width: 100%;             /* full width */
+  padding: 30px;
+  box-sizing: border-box;
+}
+
+.title-top {
+  font-size: 3rem;          /* large title */
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #000;
+  text-align: center;
+  margin: 0;
+  text-shadow: 2px 2px #fff, -2px -2px #fff, 2px -2px #fff, -2px 2px #fff; /* stroke effect */
+}
+
+.logo {
+  max-width: 800px;
+  max-height: 400px;
+  object-fit: contain;
+  margin: auto;
+}
+
+.title-bottom {
+  font-size: 2.5rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: #000;
+  margin: 0;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px #fff, -2px -2px #fff, 2px -2px #fff, -2px 2px #fff; /* stroke effect */
+}

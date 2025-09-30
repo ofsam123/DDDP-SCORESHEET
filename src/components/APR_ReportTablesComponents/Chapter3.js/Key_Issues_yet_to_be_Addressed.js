@@ -259,7 +259,7 @@ function KIYTBA({ year, district, assessmentStatus }) {
     <div className="col-12">
       <div className="card">
         <div className="card-header">
-          <h3>3.3 KEY ISSUES YEST TO BE ADDRESSED</h3>
+          <h3>3.3 KEY ISSUES YET TO BE ADDRESSED</h3>
         </div>
         <div className="card-body">
           <div style={{ padding: "20px" }}>

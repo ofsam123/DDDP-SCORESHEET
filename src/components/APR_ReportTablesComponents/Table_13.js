@@ -1,22 +1,53 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import APRmemo from "./APRComment.js/APRmemo";
 import APRComment from "./APRComment.js/AprComments";
+import axios from "../../api/axios";
+import { getAttributeValue } from "../../utils/utils";
 
-const Table_13 = ({ year ,district,hideTableDis }) => {  // Default year for source; can be passed as prop if needed
-  const tableData = [
-    {
-      item: "CAPEX Throw Forward",
-      amount: "10,272,867.00"
-    },
-    {
-      item: "MTBF (Ceilings)",
-      amount: "4,829,464.64"
-    },
-    {
-      item: "Variation",
-      amount: "5,443,402.36"  // Note: This appears to be MTBF minus CAPEX (4,829,464.64 - 10,272,867.00 = -5,443,402.36), but shown as positive in the table. If it's an absolute value or different calculation, adjust accordingly.
-    }
-  ];
+const Table_13 = ({ year, district, period, hideTableDis }) => {  // Default year for source; can be passed as prop if needed
+ const [tableData, setTableData] = useState([]);
+ 
+   useEffect(() => {
+     getData();
+   }, [district, year, period]);
+ 
+   function getData() {
+     axios
+       .get(`/tracker/trackedEntities?orgUnit=${district}&program=IhERRdqHsFi&startDate=${year}-01-01&endDate=${year}-12-31&pageSize=5000`)
+       .then(result => {
+ 
+         const data = result.data.instances;
+ 
+         const temp = [];
+ 
+         data.forEach(val => {
+           const capex = getAttributeValue("CAPEX throw Forward", val);
+           const mtbf = getAttributeValue("MTBF (Ceilings)", val);
+           const variation = parseFloat(capex) - parseFloat(mtbf);
+
+           temp.push({
+            item: "CAPEX throw Forward",
+            amount: capex
+           });
+
+           temp.push({
+            item: "MTBF (Ceilings)",
+            amount: mtbf
+           });
+
+           temp.push({
+            item: "Variation",
+            amount: variation
+           });
+         });
+ 
+         setTableData(temp);
+ 
+ 
+       })
+       .catch(err => console.log(err))
+   };
+ 
 
   return (
     <div className="col-12">
@@ -43,7 +74,7 @@ const Table_13 = ({ year ,district,hideTableDis }) => {  // Default year for sou
                 {tableData.map((row, index) => (
                   <tr key={index}>
                     <td style={{ border: '1px solid #000' }}>{row.item}</td>
-                    <td style={{ border: '1px solid #000' }}>{row.amount}</td>
+                    <td style={{ border: '1px solid #000' }}>{row.amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                   </tr>
                 ))}
               </tbody>

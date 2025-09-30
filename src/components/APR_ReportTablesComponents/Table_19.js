@@ -1,99 +1,50 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import APRmemo from "./APRComment.js/APRmemo";
 import APRComment from "./APRComment.js/AprComments";
+import axios from "../../api/axios";
+import { filterTrackedEntitiesByCreatedAt, getAttributeValue } from "../../utils/utils";
 
 // Table19 Component
-const Table_19 = ({ year, district, hideTableDis }) => {
-  const tableData = [
-    {
-      department: "Agriculture",
-      trainingPrograms: 5,
-      participants: 45,
-      male: 25,
-      female: 20,
-      durationDays: 10
-    },
-    {
-      department: "Central Administration",
-      trainingPrograms: 3,
-      participants: 30,
-      male: 15,
-      female: 15,
-      durationDays: 7
-    },
-    {
-      department: "Education, Youth and Sports",
-      trainingPrograms: 8,
-      participants: 120,
-      male: 60,
-      female: 60,
-      durationDays: 14
-    },
-    {
-      department: "Environmental Health",
-      trainingPrograms: 2,
-      participants: 18,
-      male: 10,
-      female: 8,
-      durationDays: 5
-    },
-    {
-      department: "Finance",
-      trainingPrograms: 4,
-      participants: 24,
-      male: 12,
-      female: 12,
-      durationDays: 8
-    },
-    {
-      department: "Health",
-      trainingPrograms: 6,
-      participants: 72,
-      male: 30,
-      female: 42,
-      durationDays: 12
-    },
-    {
-      department: "Human Resource",
-      trainingPrograms: 2,
-      participants: 10,
-      male: 4,
-      female: 6,
-      durationDays: 4
-    },
-    {
-      department: "Physical Planning",
-      trainingPrograms: 3,
-      participants: 15,
-      male: 8,
-      female: 7,
-      durationDays: 6
-    },
-    {
-      department: "Social Welfare and Community Development",
-      trainingPrograms: 4,
-      participants: 32,
-      male: 12,
-      female: 20,
-      durationDays: 9
-    },
-    {
-      department: "Works",
-      trainingPrograms: 3,
-      participants: 27,
-      male: 15,
-      female: 12,
-      durationDays: 7
-    },
-    {
-      department: "Total",
-      trainingPrograms: 40,
-      participants: 393,
-      male: 191,
-      female: 202,
-      durationDays: 82
-    }
-  ];
+const Table_19 = ({ year, district, period, hideTableDis }) => {
+  const [tableData, setTableData] = useState([]);
+
+  useEffect(() => {
+    getData();
+  }, [district, year, period]);
+
+  function getData() {
+    axios
+      .get(`/tracker/trackedEntities?orgUnit=${district}&program=Sqzqe1y30hF&startDate=${year}-01-01&endDate=${year}-12-31&pageSize=5000`)
+      .then(result => {
+
+        const data = filterTrackedEntitiesByCreatedAt(result.data.instances, year, period);
+
+        const temp = [];
+
+        data.forEach(val => {
+          const beneficiaryMale = getAttributeValue("DPAT | Number of Attendance - Male", val);
+          const beneficiaryFemale = getAttributeValue("DPAT | Number of Attendance - Female", val)
+          const dataSet = {
+            name: getAttributeValue("Topic", val),
+            location: getAttributeValue("Location", val),
+            purpose: getAttributeValue("Purpose", val),
+            funding: getAttributeValue("Primary Funding Source", val),
+            target: getAttributeValue("Group of Target", val),
+            facilitators: getAttributeValue("Facilitators", val),
+            total: parseInt(beneficiaryMale) + parseInt(beneficiaryFemale),
+            male: beneficiaryMale,
+            female: beneficiaryFemale
+          };
+
+          temp.push(dataSet);
+        });
+
+        setTableData(temp);
+
+
+      })
+      .catch(err => console.log(err))
+  };
 
   return (
     <div className="col-12">
@@ -101,34 +52,40 @@ const Table_19 = ({ year, district, hideTableDis }) => {
       <div className="card">
         <div className="card-header"></div>
         <div className="card-body">
-             <APRmemo
-                    year={year}
-                    districtId = {district}
-                      tableCommentedId={`table19-${year}`}
-                      hideTableDis={hideTableDis}
-                   
-                  />
+          <APRmemo
+            year={year}
+            districtId={district}
+            tableCommentedId={`table19-${year}`}
+            hideTableDis={hideTableDis}
+
+          />
           <div className="table-responsive">
             <table className="table table-bordered">
               <thead style={{ backgroundColor: '#d4edda', fontWeight: 'bold', border: '1px solid #000' }}>
                 <tr>
-                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Department</th>
-                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Training Programs</th>
-                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Participants</th>
-                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Male</th>
+                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}> Capacity Development Name</th>
+                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Venue/Location</th>
+                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Purpose</th>
+                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Source of funding</th>
+                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Target group</th>
+                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Facilitators</th>
+                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Total</th>
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Female</th>
-                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Duration (Days)</th>
+                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Male</th>
                 </tr>
               </thead>
               <tbody>
                 {tableData.map((row, index) => (
                   <tr key={index}>
-                    <td style={{ border: '1px solid #000' }}>{row.department}</td>
-                    <td style={{ border: '1px solid #000' }}>{row.trainingPrograms}</td>
-                    <td style={{ border: '1px solid #000' }}>{row.participants}</td>
-                    <td style={{ border: '1px solid #000' }}>{row.male}</td>
+                    <td style={{ border: '1px solid #000' }}>{row.name}</td>
+                    <td style={{ border: '1px solid #000' }}>{row.location}</td>
+                    <td style={{ border: '1px solid #000' }}>{row.purpose}</td>
+                    <td style={{ border: '1px solid #000' }}>{row.funding}</td>
+                    <td style={{ border: '1px solid #000' }}>{row.target}</td>
+                    <td style={{ border: '1px solid #000' }}>{row.facilitators}</td>
+                    <td style={{ border: '1px solid #000' }}>{row.total}</td>
                     <td style={{ border: '1px solid #000' }}>{row.female}</td>
-                    <td style={{ border: '1px solid #000' }}>{row.durationDays}</td>
+                    <td style={{ border: '1px solid #000' }}>{row.male}</td>
                   </tr>
                 ))}
               </tbody>
@@ -137,20 +94,20 @@ const Table_19 = ({ year, district, hideTableDis }) => {
           <p className="mt-2">
             <small>Source: {year} Training Reports</small>
           </p>
-           <APRComment
-                                data={tableData}
-                                year={year}
-                                districtId={district}
-                                tableCommentedId={`table19-${year}`}
-                               
-                              >
-                                {({ renderCommentInput, renderCommentList }) => (
-                                  <>
-                                    {renderCommentInput()}
-                                    {renderCommentList()}
-                                  </>
-                                )}
-                              </APRComment>
+          <APRComment
+            data={tableData}
+            year={year}
+            districtId={district}
+            tableCommentedId={`table19-${year}`}
+
+          >
+            {({ renderCommentInput, renderCommentList }) => (
+              <>
+                {renderCommentInput()}
+                {renderCommentList()}
+              </>
+            )}
+          </APRComment>
         </div>
       </div>
     </div>

@@ -98,21 +98,7 @@ const Table_3 = ({ year, district, period, hideTableDis }) => {
 
         </div>
         <div className="card-body">
-          <h7>3 Programme / Project Status for the year
-            The projects and programmes being implemented in the Tarkwa-Nsuaem Municipality
-            have been categorized under the various sources of funding available to the Assembly.
-            These sources of funding are the District Assemblies Common Fund (DACF) and the
-            District Assemblies Common Fund Responsive Factor Grant (DACF-RFG). Others are the
-            Internally Generated Funds (IGF) and the Minerals Development Fund (MDF).
-            The update on projects and programmes has been presented in the registers in Table 2.1
-            and 2.2. The registers are made up of the name of the project or programme,
-            development dimension, project location, contractor or consultant involved, budget,
-            source of funding and type of funding. The other columns also show date started,
-            expected completion date, contract sum, expenditure to date, implementation status and
-            remarks on the status of implementation. The remarks state the exact physical progress
-            of work.
-            Projects implementation progressed steadily, and visible improvements were made over
-            the period. </h7>
+        
             <APRmemo
                     year={year}
                     districtId = {district}  

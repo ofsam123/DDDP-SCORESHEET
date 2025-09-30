@@ -6,7 +6,7 @@ import "react-quill/dist/quill.snow.css";
 import useAuth from "../../../hooks/useAuth";
 import instance from "../../../api/cmsapi";
 
-function Introduction({ year, district, assessmentStatus , assessmentStatus1 }) {
+function NdpcSummary({ year, district, assessmentStatus1 }) {
   const { user } = useAuth();
   const [editorContent, setEditorContent] = useState("");
   const [loading, setLoading] = useState(false);
@@ -17,13 +17,13 @@ function Introduction({ year, district, assessmentStatus , assessmentStatus1 }) 
 
   // Determine user role and permissions
   const currentUserRole = user?.user?.userRoles?.find(
-    (role) => role.name === "APR USER"
+    (role) => role.name === "NDPC USER"
   )?.name || "";
   const normalizedUserRole = currentUserRole ? currentUserRole.replace(" ", "_").toUpperCase() : "";
   const currentUsername = user?.user?.username || "";
   const currentFullName = user?.user?.fullName || "";
-  const isQualityAssurance = currentUserRole === "APR USER";
-  const tableCommentedId = "APR_Introduction";
+  const isQualityAssurance = currentUserRole === "NDPC USER";
+  const tableCommentedId = "APR_NDPC";
   const districtId = district; // Alias for clarity
 
   // Fetch existing comments
@@ -42,7 +42,7 @@ function Introduction({ year, district, assessmentStatus , assessmentStatus1 }) 
         (comment) =>
           comment.tableCommented === tableCommentedId &&
           comment.districtId === districtId &&
-          (comment.userRole === "APR_RCC" || comment.userRole === "APR_USER")
+          (comment.userRole === "APR_RCC" || comment.userRole === "APR_USER" || comment.userRole === "NDPC_USER")
       );
       console.log("Filtered comments:", filteredComments);
       setComments(filteredComments);
@@ -91,11 +91,11 @@ function Introduction({ year, district, assessmentStatus , assessmentStatus1 }) 
       (comment) =>
         comment.tableCommented === tableCommentedId &&
         comment.districtId === districtId &&
-        comment.userRole === "APR_USER"
+        comment.userRole === "NDPC_USER"
     );
 
     if (existingComment && existingComment.username !== currentUsername && !existingCommentId) {
-      message.error("Only one APR USER can comment for this district.");
+      message.error("Only one  USER can comment for this district.");
       return;
     }
 
@@ -104,7 +104,7 @@ function Introduction({ year, district, assessmentStatus , assessmentStatus1 }) 
       id: existingCommentId || 0,
       username: currentUsername,
       fullName: currentFullName,
-      userRole: "APR_USER",
+      userRole: normalizedUserRole,
       type: "APR",
       districtId: districtId,
       year: year,
@@ -128,14 +128,14 @@ function Introduction({ year, district, assessmentStatus , assessmentStatus1 }) 
               : comment
           )
         );
-        message.success("Introduction updated successfully");
+        message.success("Summary updated successfully");
         setEditing(false);
       } else {
         const response = await instance.post("comments", payload);
         console.log("Post response:", response.data);
         setComments([...comments, response.data]);
         setExistingCommentId(response.data.id);
-        message.success("Introduction added successfully");
+        message.success("Summary added successfully");
         setEditing(false);
       }
     } catch (error) {
@@ -162,7 +162,7 @@ function Introduction({ year, district, assessmentStatus , assessmentStatus1 }) 
       (comment) =>
         comment.tableCommented === tableCommentedId &&
         comment.districtId === districtId &&
-        comment.userRole === "APR_USER"
+        comment.userRole === "NDPC_USER"
     );
     return !existingComment || existingComment.username === currentUsername;
   };
@@ -179,7 +179,7 @@ function Introduction({ year, district, assessmentStatus , assessmentStatus1 }) 
       return <p>{error}</p>;
     }
     if (!comments.length) {
-      return <p>No Introduction.</p>;
+      return <p></p>;
     }
     return (
       <div
@@ -202,21 +202,21 @@ function Introduction({ year, district, assessmentStatus , assessmentStatus1 }) 
             }}
           >
             <div style={{ display: "flex", marginBottom: "10px" }}>
-               { assessmentStatus1 && (
               <Col>
+                { assessmentStatus1  && (
                 <Avatar
                   src={comment.userImage || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTL_JlCFnIGX5omgjEjgV9F3sBRq14eTERK9w&s"}
                   style={{ marginRight: "10px", borderRadius: "50%" }}
                   size={32}
                 />
+                )}
               </Col>
-               )}
               <div style={{ flex: 1 }}>
                 <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
-                   { assessmentStatus1 && (
+                    { assessmentStatus1  && (
                   <h4 style={{ margin: 0, fontSize: "13px" }}>{comment.fullName}</h4>
-                   )}
-                  {comment.username === currentUsername && isQualityAssurance && assessmentStatus && assessmentStatus1 && (
+                    )}
+                  {comment.username === currentUsername && isQualityAssurance && assessmentStatus1 && (
                     <EditOutlined
                       style={{ cursor: "pointer", color: "#000000ff", marginLeft: "10px" }}
                       onClick={() => {
@@ -247,11 +247,11 @@ function Introduction({ year, district, assessmentStatus , assessmentStatus1 }) 
       <div className="col-12">
         <div className="card">
           <div className="card-header">
-            <h3>Introduction</h3>
+            <h3>NDPC SUMMARY</h3>
           </div>
           <div className="card-body">
             <div style={{ padding: "20px" }}>
-              <p>No Introduction available for this district.</p>
+              <p>NDPC PREPERING SUMMARY !!!..... </p>
             </div>
           </div>
         </div>
@@ -263,10 +263,10 @@ function Introduction({ year, district, assessmentStatus , assessmentStatus1 }) 
     <div className="col-12">
       <div className="card">
         <div className="card-header">
-          <h3>3.1 INTRODUCTION</h3>
+          <h2 style={{ textAlign: "center" }}>NDPC SUMAARY</h2> 
         </div>
         <div className="card-body">
-          <div style={{ padding: "0px" }}>
+          <div style={{ padding: "20px" }}>
             {isQualityAssurance && canComment() && (
               <div style={{ display: editing || !existingCommentId ? "block" : "none" }}>
                 <ReactQuill
@@ -312,7 +312,7 @@ function Introduction({ year, district, assessmentStatus , assessmentStatus1 }) 
                   disabled={loading}
                 >
                   <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>
-                    Save Introduction
+                    Save NDPC SUMMARY
                   </span>
                 </Button>
               </div>
@@ -325,4 +325,4 @@ function Introduction({ year, district, assessmentStatus , assessmentStatus1 }) 
   );
 }
 
-export default Introduction;
+export default NdpcSummary;

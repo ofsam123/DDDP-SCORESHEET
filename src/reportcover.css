@@ -4,8 +4,8 @@
   justify-content: center;    /* center vertically */
   align-items: center;        /* center horizontally */
   text-align: center;
-  height: 85vh;
-  background: linear-gradient(135deg, #ffffff, #eef2f7);
+  height: 95vh;
+  background: linear-gradient(135deg, #ffffff, #ffffff);
   font-family: "Georgia", serif;
   padding: 40px;
   width: 100%;

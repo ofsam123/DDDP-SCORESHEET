@@ -2190,6 +2190,8 @@ const [showPetition, setShowPetition] = useState(true);
         const reviewEndDate = new Date().toISOString().split("T")[0];
         const assessmentStartDate = assessmentStatus?.assessmentStartDate || new Date().toISOString().split("T")[0]; // Use existing start date or fallback to today
         const assessmentEndDate = assessmentStatus?.assessmentEndDate || new Date().toISOString().split("T")[0]; // Use existing end date or fallback to today
+         const reviewCloseDate = new Date().toISOString().split("T")[0];
+        
 
         // Ensure assessmentStatus has an ID
         if (!assessmentStatus?.id) {
@@ -2211,7 +2213,7 @@ const [showPetition, setShowPetition] = useState(true);
             assessmentEndDate: assessmentEndDate,
             reviewStartDate: assessmentStatus?.reviewStartDate || assessmentEndDate, // Use existing review start date or fallback to assessmentEndDate
             reviewEndDate: reviewEndDate,
-            closedDate: null,
+            closedDate: reviewCloseDate,
         };
 
         try {

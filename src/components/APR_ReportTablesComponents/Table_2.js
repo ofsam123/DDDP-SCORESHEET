@@ -197,31 +197,8 @@ const Table_2 = ({ district, period }) => {
       <div className="card">
         <div className="card-header">Table 2 – Proportion of the DMTDP Implemented</div>
         <div className="card-body">
-          <h5>2 Summary of Achievement of the Implementation of the District Medium Term Development Plan (DMTDP)</h5>
-          <h7>
-            In assessing the implementation status of the MTDP 2022-2025 for the year under review,
-            premium was placed on the analysis of the progress made in implementing the key
-            activities outlined in the 2022 Annual Action Plan and the Medium-Term Development
-            Plan as a whole. The achievements in set indicators were used as the basis for the
-            assessment.
-            The analysis further grouped proposed interventions into three categories. These are
-            “Fully implemented” which describes projects or programmes outlined in the Annual
-            Action Plan that have been started and completed. “Ongoing” describes projects/
-            programmes that have been started but not yet completed and “Not Implemented”
-            describes a project/programme that has not been started or yet to start.
-            A total number of 137 activities were captured in the 2022 Annual Action Plan whilst the
-            MTDP contained a total number of 528 interventions. By the end of the year 2022, 121
-            activities representing 88.32% projects were completed, 13 activities representing 9.49%
-            were ongoing and 3 activities representing 2.19% were yet to be started. In all 134
-            2 | P a g e
-            3 | P a g e
-            projects and programmes representing 97.81% of the Annual Action Plan for 2022 were
-            implemented.
-            This so far translates into 25.4% achievement of the total 528 planned interventions of
-            the 2022-2025 Medium-Term Development Plan as of December 2022. Table 1.1
-            presents the summary of the level of implementation in the MTDP and the AAP for 2022.
-            Table 1.1 – Proportion of the AAP and the MTDP Implemented
-          </h7>
+         
+         
           <APRmemo
             year={years[2]}
             districtId={district}

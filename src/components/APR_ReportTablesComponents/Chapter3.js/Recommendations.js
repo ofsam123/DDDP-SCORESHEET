@@ -6,7 +6,7 @@ import "react-quill/dist/quill.snow.css";
 import useAuth from "../../../hooks/useAuth";
 import instance from "../../../api/cmsapi";
 
-function Recommendations({ year, district, assessmentStatus }) {
+function Recommendations({ year, district, assessmentStatus, assessmentStatus1 }) {
   const { user } = useAuth();
   const [editorContent, setEditorContent] = useState("");
   const [loading, setLoading] = useState(false);
@@ -202,6 +202,8 @@ function Recommendations({ year, district, assessmentStatus }) {
             }}
           >
             <div style={{ display: "flex", marginBottom: "10px" }}>
+
+              {assessmentStatus1 && (
               <Col>
                 <Avatar
                   src={comment.userImage || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTL_JlCFnIGX5omgjEjgV9F3sBRq14eTERK9w&s"}
@@ -209,10 +211,13 @@ function Recommendations({ year, district, assessmentStatus }) {
                   size={32}
                 />
               </Col>
+              )}
               <div style={{ flex: 1 }}>
                 <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
+                 {assessmentStatus1 && (  
                   <h4 style={{ margin: 0, fontSize: "13px" }}>{comment.fullName}</h4>
-                  {comment.username === currentUsername && isQualityAssurance && assessmentStatus && (
+                 )}
+                  {comment.username === currentUsername && isQualityAssurance && assessmentStatus && assessmentStatus1 && (
                     <EditOutlined
                       style={{ cursor: "pointer", color: "#000000ff", marginLeft: "10px" }}
                       onClick={() => {
@@ -246,7 +251,7 @@ function Recommendations({ year, district, assessmentStatus }) {
             <h3>Recommendations</h3>
           </div>
           <div className="card-body">
-            <div style={{ padding: "20px" }}>
+            <div style={{ padding: "0px" }}>
               <p>No Recommendations available for this district.</p>
             </div>
           </div>
@@ -262,7 +267,7 @@ function Recommendations({ year, district, assessmentStatus }) {
           <h3>3.4 RECOMMENDATION</h3>
         </div>
         <div className="card-body">
-          <div style={{ padding: "20px" }}>
+          <div style={{ padding: "0px" }}>
             {isQualityAssurance && canComment() && (
               <div style={{ display: editing || !existingCommentId ? "block" : "none" }}>
                 <ReactQuill

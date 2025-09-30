@@ -6,7 +6,7 @@ import "react-quill/dist/quill.snow.css";
 import useAuth from "../../../hooks/useAuth";
 import instance from "../../../api/cmsapi";
 
-function APRmemo({ year, districtId, tableCommentedId,  }) {
+function APRmemo({ year, districtId, tableCommentedId,  assessmentStatus1  }) {
   const { user } = useAuth();
   const [memoContent, setMemoContent] = useState("");
   const [loading, setLoading] = useState(false);
@@ -156,19 +156,25 @@ function APRmemo({ year, districtId, tableCommentedId,  }) {
               style={{ padding: "10px", border: "1px solid #f0f0f0", borderRadius: "6px", marginBottom: "10px" }}
             >
               <div style={{ display: "flex", marginBottom: "10px" }}>
-                <Col>
+                { assessmentStatus1 && (
+
+<Col>
                   <Avatar
                     src={comment.userImage || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTL_JlCFnIGX5omgjEjgV9F3sBRq14eTERK9w&s"}
                     style={{ marginRight: "10px", borderRadius: "50%" }}
                     size={32}
                   />
                 </Col>
+                )}
+                
                 <div style={{ flex: 1 }}>
                   <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", width: "800px" }}>
+                      { assessmentStatus1 && (
                     <h4 style={{ margin: 0, fontSize: "13px" }}>
                       {comment.fullName} ({comment.userRole.replace("_", " ")})
                     </h4>
-                    {comment.userRole === "APR_USER" && comment.username === currentUsername && canEditMemo() && (
+                      )}
+                    {assessmentStatus1 && comment.userRole === "APR_USER" && comment.username === currentUsername && canEditMemo() && (
                       <EditOutlined
                         style={{ cursor: "pointer", color: "#000000ff", marginLeft: "10px" }}
                         onClick={handleEdit}
@@ -194,12 +200,12 @@ function APRmemo({ year, districtId, tableCommentedId,  }) {
   };
 
   if (!isQualityAssurance && !comments.length) {
-    return <div style={{ padding: "20px" }}>No Table Discription</div>;
+    return <div style={{ padding: "0px" }}>No Table Discription</div>;
   }
 
   return (
-    <div style={{ padding: "20px" }}>
-      { canEditMemo() && (
+    <div style={{ padding: "0px" }}>
+      { assessmentStatus1 && canEditMemo() && (
         <div style={{ display: editing || !comments.some((c) => c.userRole === "APR_USER") ? "block" : "none" }}>
           <Spin spinning={loading}>
             <ReactQuill

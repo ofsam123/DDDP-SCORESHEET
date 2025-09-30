@@ -9,7 +9,7 @@ import APRmemo from "./APRComment.js/APRmemo";
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 
-const Table_1 = ({ year, district, period,  hideTableDis,assessmentStatus }) => {
+const Table_1 = ({ year, district, period,  hideTableDis,assessmentStatus, assessmentStatus1, normalizedUserRole }) => {
   const [tableData, setTableData] = useState([]);
   const [allData, setAllData] = useState([]);
   const [chartData, setChartData] = useState({});
@@ -218,16 +218,14 @@ const Table_1 = ({ year, district, period,  hideTableDis,assessmentStatus }) => 
       <div className="card">
         <div className="card-header"></div>
         <div className="card-body">
-          Table 1 presents the breakdown of activities implemented under the various
-          development dimensions. Comparatively, it can be realized that there are more projects
-          and programmes in the {year} Annual Action Plan as compared to the base year mainly
-          due to the rolled over projects from previous years and the inclusion of integrated social
-          services related activities in the Plan.
+         
           <APRmemo
             year={year}
             districtId={district}
             tableCommentedId={`table1-${year}`}
              hideTableDis={hideTableDis}
+             assessmentStatus1={assessmentStatus1}
+            
             
           />
           <div className="table-responsive">
@@ -322,6 +320,8 @@ const Table_1 = ({ year, district, period,  hideTableDis,assessmentStatus }) => 
             districtId={district}
             tableCommentedId={`table1-${year}`}
              assessmentStatus ={assessmentStatus}
+              assessmentStatus1={assessmentStatus1}
+               normalizedUserRole ={normalizedUserRole}
           >
             {({ renderCommentInput, renderCommentList }) => (
               <>

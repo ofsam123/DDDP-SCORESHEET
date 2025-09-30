@@ -42,6 +42,7 @@ import Key_Issues_yet_to_be_Addressed from "./APR_ReportTablesComponents/Chapter
 import Recommendations from "./APR_ReportTablesComponents/Chapter3.js/Recommendations";
 import Conclusion from "./APR_ReportTablesComponents/Chapter3.js/Conclusion";
 import GeneralIntroduction from "./APR_ReportTablesComponents/Chapter1/GeneralIntroduction";
+import NdpcSummary from "./APR_ReportTablesComponents/NDPC/NdpcSummary";
 
 
 
@@ -524,6 +525,72 @@ const fetchAssessmentStatus = async () => {
             setProgressLoad(false);
         }
     };
+
+
+      const handleCloseAPR = async () => {
+        setProgressLoad(true);
+         const reviewEndDate = new Date().toISOString().split("T")[0];
+         const assessmentEndDate = new Date().toISOString().split("T")[0];
+         const assessmentStartDate = assessmentStatus?.assessmentStartDate || new Date().toISOString().split("T")[0]; // Use existing start date or fallback to today
+         const reviewCloseDate = new Date().toISOString().split("T")[0];
+
+        const payload = {
+             id: assessmentStatus.id,
+            username: user?.user?.username,
+            fullName: user?.user?.fullName,
+            userRole: normalizedUserRole,
+            // userRole: "DDDP_USER",
+            type: "APR",
+            districtId: selectedDistrict?.value,
+            year: selectedYear?.value,
+            status: "Closed",
+              assessmentStartDate: assessmentStartDate,
+            assessmentEndDate: assessmentEndDate,
+            reviewStartDate: assessmentStatus?.reviewStartDate || assessmentEndDate, // Use existing review start date or fallback to assessmentEndDate
+            reviewEndDate: reviewEndDate,
+            closedDate: reviewCloseDate,
+        };
+
+        const aprData = {
+           
+        };
+
+        console.log("apr: ", aprData);
+
+        try {
+            // Step 1: Update assessment with PUT request
+            const response = await instance.put(`assessments/${payload.id}`, payload);
+            setAssessmentStatus(response.data);
+            message.success({
+                content: (
+                    <div>
+                        <p>Submitted Successfully </p>
+                    </div>
+                ),
+                duration: 3,
+            });
+
+            // Step 2: Fetch assessment status from the provided endpoint
+            const assessmentStatusResponse = await instance.get(
+                `assessments/dpat/${selectedDistrict?.value}/${selectedYear?.value}/APR`
+            );
+            const fetchedStatus = assessmentStatusResponse.data?.status; // Adjust based on actual response structure
+            setAssessmentStatus(assessmentStatusResponse.data); // Update state with the fetched assessment data
+
+
+
+
+        } catch (error) {
+            console.error("Failed to Submit Report:", {
+                message: error.message,
+                response: error.response?.data,
+                status: error.response?.status,
+            });
+            message.error(`Failed to Submit Report: ${error.response?.data?.message || error.message}`);
+        } finally {
+            setProgressLoad(false);
+        }
+    };
   // Handler for Table selection
   const handleTableSelection = (selectedOption) => {
     setSelectedTable(selectedOption);
@@ -570,6 +637,23 @@ const fetchAssessmentStatus = async () => {
         
         onOk() {
           handleCompleteAPR(); // Trigger the original endpoint call
+        },
+        onCancel() {
+          // Do nothing on cancel
+        },
+      });
+    };
+
+
+     const showClosed = () => {
+      Modal.confirm({
+        title: 'CLOSE PROGRESS REPORT',
+        content: `Do you want to close progress report for this district?`,
+        okText: 'Yes',
+        cancelText: 'No',
+        
+        onOk() {
+          handleCloseAPR(); // Trigger the original endpoint call
         },
         onCancel() {
           // Do nothing on cancel
@@ -681,6 +765,7 @@ const fetchAssessmentStatus = async () => {
                    district={selectedDistrict?.value}
                      hideTableDis={hideTableDis}
                       assessmentStatus = {assessmentStatus?.status !== "Completed" }
+                        assessmentStatus1 = {assessmentStatus?.status !== "Closed" }
                   />
                    </>
                       )}
@@ -695,12 +780,16 @@ const fetchAssessmentStatus = async () => {
                    district={selectedDistrict?.value}
                      hideTableDis={hideTableDis}
                       assessmentStatus = {assessmentStatus?.status !== "Completed" }
+                        assessmentStatus1 = {assessmentStatus?.status !== "Closed" }
                   />
                    </>
                       )}
                    <Table_1
                 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}   hideTableDis={hideTableDis}  
                  assessmentStatus = {assessmentStatus?.status === "Pending" }
+                  assessmentStatus1 = {assessmentStatus?.status !== "Closed" }
+                  normalizedUserRole = {normalizedUserRole?.status === "NDPC USER"}
+
                 
                 />
                 <Table_2
@@ -757,60 +846,61 @@ const fetchAssessmentStatus = async () => {
                    district={selectedDistrict?.value}
                      hideTableDis={hideTableDis}
                      assessmentStatus = {assessmentStatus?.status !== "Completed" }
+                      assessmentStatus1 = {assessmentStatus?.status !== "Closed" }
                   />
                    <Key_Issues_Addressed
                     year={selectedYear?.value}
                    district={selectedDistrict?.value}
                      hideTableDis={hideTableDis}
                       assessmentStatus = {assessmentStatus?.status !== "Completed" }
+                       assessmentStatus1 = {assessmentStatus?.status !== "Closed" }
                   />
                    <Key_Issues_yet_to_be_Addressed
                     year={selectedYear?.value}
                    district={selectedDistrict?.value}
                      hideTableDis={hideTableDis}
                       assessmentStatus = {assessmentStatus?.status !== "Completed" }
+                      assessmentStatus1 = {assessmentStatus?.status !== "Closed" }
                   />
                    <Recommendations
                     year={selectedYear?.value}
                    district={selectedDistrict?.value}
                      hideTableDis={hideTableDis}
                       assessmentStatus = {assessmentStatus?.status !== "Completed" }
+                        assessmentStatus1 = {assessmentStatus?.status !== "Closed" }
                   />
                   <Conclusion
                     year={selectedYear?.value}
                    district={selectedDistrict?.value}
                      hideTableDis={hideTableDis}
                       assessmentStatus = {assessmentStatus?.status !== "Completed" }
+                        assessmentStatus1 = {assessmentStatus?.status !== "Closed" }
                   />
+
+
+
+                     { assessmentStatus?.status === "Completed" || assessmentStatus?.status === "Closed" && (
+                    <>
+                   
+                    <NdpcSummary
+                    year={selectedYear?.value}
+                   district={selectedDistrict?.value}
+                     hideTableDis={hideTableDis}
+                     
+                       assessmentStatus1 = {assessmentStatus?.status !== "Closed" }
+                  />
+                   </>
+                      )}
                   </>
                     
 
 
               </em>
             )}
+
+          
             
-            <div style={{ textAlign: "right" }}>
-              <Button
-                type="primary"
-                icon={<FilePdfOutlined style={{ fontSize: "20px", color: "white", fontWeight: "bold" }} />}
-                onClick={() => {
-                  if (contentToPrint.current) {
-                    handlePrint();
-                  } else {
-                    console.log("Content is not available for printing.");
-                  }
-                }}
-                style={{
-                  marginTop: "10px",
-                  backgroundColor: "#1890ff",
-                  borderColor: "#1890ff",
-                  height: "35px",
-                  padding: "0 15px",
-                }}
-              >
-                <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>Download Report</span>
-              </Button>
-            </div>
+            
 
              <Col span={10} className="gutter-row">
                   {assessmentStatus?.status === "Start" &&
@@ -853,6 +943,50 @@ const fetchAssessmentStatus = async () => {
                       </Button>
                     )}
                 </Col>
+
+                  <Col span={10} className="gutter-row">
+                  {assessmentStatus?.status === "Completed" &&
+                    normalizedUserRole !== "APR_RCC" &&
+                    normalizedUserRole !== "APR_USER" && (
+                      <Button
+                        type="primary"
+                        onClick={showClosed} // Use the confirmation popup instead of directly calling handleStartAssessmentSubmit
+                        style={{
+                          backgroundColor: "#b60000ff",
+                          borderColor: "#b60000ff",
+                           marginTop: "10px",
+                        }}
+                        loading={progressLoad}
+                      >
+                        <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>
+                         CLOSE REPORT FOR {selectedDistrict?.label} {selectedYear?.value}
+                        </span>
+                      </Button>
+                    )}
+                </Col>
+
+                <div style={{ textAlign: "right" }}>
+              <Button
+                type="primary"
+                icon={<FilePdfOutlined style={{ fontSize: "20px", color: "white", fontWeight: "bold" }} />}
+                onClick={() => {
+                  if (contentToPrint.current) {
+                    handlePrint();
+                  } else {
+                    console.log("Content is not available for printing.");
+                  }
+                }}
+                style={{
+                  marginTop: "10px",
+                  backgroundColor: "#1890ff",
+                  borderColor: "#1890ff",
+                  height: "35px",
+                  padding: "0 15px",
+                }}
+              >
+                <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>Download Report for {selectedDistrict?.label}  {selectedYear?.value}</span>
+              </Button>
+            </div>
 
             
             {selectedTable && selectedTable.value === "table_1" && <Table_1 />}

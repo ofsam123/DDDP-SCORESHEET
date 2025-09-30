@@ -259,7 +259,7 @@ function Recommendations({ year, district, assessmentStatus }) {
     <div className="col-12">
       <div className="card">
         <div className="card-header">
-          <h3>3.4 Recommendations</h3>
+          <h3>3.4 RECOMMENDATION</h3>
         </div>
         <div className="card-body">
           <div style={{ padding: "20px" }}>

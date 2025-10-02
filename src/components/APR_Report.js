@@ -9,8 +9,6 @@ import Table_3 from "./APR_ReportTablesComponents/Table_3";
 import Table_8 from "./APR_ReportTablesComponents/Table_8";
 import Table_9 from "./APR_ReportTablesComponents/Table_9";
 import Table2_7 from "../components/APR_ReportTablesComponents/Table_2.7";
-import Apendix_2 from "../components/APR_ReportTablesComponents/Apendix2"
-import Appendix1 from "./APR_ReportTablesComponents/Apendix1";
 import { Button, Row, Col,Modal, message } from "antd";
 import Table_13 from "./APR_ReportTablesComponents/Table_13";
 import Table_14 from "./APR_ReportTablesComponents/Table_14";
@@ -274,6 +272,8 @@ function AprReport() {
       })
       .catch((err) => console.log(err));
   }
+
+ 
 
 const assessmentStartDate = new Date().toISOString().split("T")[0].split("-").map(Number);
 
@@ -704,7 +704,11 @@ const fetchAssessmentStatus = async () => {
                 
                 />
                 <Table_2
-                year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} hideTableDis={hideTableDis}/> 
+                      year={selectedYear?.value} 
+                      district={selectedDistrict?.value} 
+                      period={selectedPeriod?.value} 
+                      hideTableDis={hideTableDis}
+                      />
 
                  <h2 style={{ textAlign: "center" }}>CHAPTER TWO (2)</h2>           
                 <Table_3 
@@ -743,10 +747,6 @@ const fetchAssessmentStatus = async () => {
                 <Table_20 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}hideTableDis={hideTableDis} />
                 <Table_21 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}hideTableDis={hideTableDis} />
                 <Table_22 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} hideTableDis={hideTableDis}/>
-                
-               
-                {/* <Appendix1 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} hideTableDis={hideTableDis} />
-                <Apendix_2 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} /> */}
 
                       <>
                 <h2 style={{ textAlign: "center" }}>CHAPTER THREE (3)</h2>
@@ -879,15 +879,7 @@ const fetchAssessmentStatus = async () => {
             {selectedTable && selectedTable.value === "table_20" && <Table_20 />}
             {selectedTable && selectedTable.value === "table_21" && <Table_21 />}
             {selectedTable && selectedTable.value === "table_22" && <Table_22 />}
-
-
-             {/* {selectedTable && selectedTable.value === "table_2.4" && <Table2_4 />} */}
-            {/* {selectedTable && selectedTable.value === "table_2.5" && <Table2_5 />} */}
-            {/* {selectedTable && selectedTable.value === "table_2.6" && <Table2_6 />} */}
             {selectedTable && selectedTable.value === "table_2.7" && <Table2_7 />}
-            {/* {selectedTable && selectedTable.value === "table_2.8" && <Table2_8 />} */}
-            {/* {selectedTable && selectedTable.value === "table_2.9" && <Table2_9 />}
-            {selectedTable && selectedTable.value === "table_2.10" && <Table2_10 />} */}
 
             {selectedTable && !["all_tables",   "table_1", "table_2", "table_3", "table_4", "table_5", "table_6", "table_7", "table_8", "table_9", 
               "table_10","table_11","table_13","table_14","table_15","table_16","table_17","table_18","table_19","table_20","table_21","table_22"

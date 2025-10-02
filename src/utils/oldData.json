@@ -1,4 +1,3 @@
-
 {
     "tables": {
         "gaMeeting": {
@@ -871,18 +870,18 @@
             ]
         },
         "sanitationServices": {
-            "indicator": "SDI2",
             "area": "Basic/ Social Services",
+            "score": 0,
             "maxScore": 3,
+            "indicator": "SDI2",
+            "percentage": 0,
             "sanitationProvidersData": [
                 {
-                    "ifgCollected": 1.662193014E7,
-                    "igfSpentOnSanitation": 4708000,
-                    "percentage": "28.32"
+                    "percentage": 0,
+                    "ifgCollected": 0,
+                    "igfSpentOnSanitation": null
                 }
-            ],
-            "score": 3,
-            "percentage": 0
+            ]
         },
         "electricityServices": {
             "area": "Basic/ Social Services",

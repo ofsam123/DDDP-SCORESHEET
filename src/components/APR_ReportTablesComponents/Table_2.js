@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
-import { filterTrackedEntitiesByCreatedAt, getStageValue } from "../../utils/utils";
+import { filterTrackedEntitiesByCreatedAt, formatDataGeneral, getAttributeValue, getStageValue } from "../../utils/utils";
 import axios from "../../api/axios";
 import APRComment from "./APRComment.js/AprComments";
 import APRmemo from "./APRComment.js/APRmemo";
@@ -9,149 +9,237 @@ import APRmemo from "./APRComment.js/APRmemo";
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const Table_2 = ({ district, period }) => {
-  const currentYear = new Date().getFullYear(); // 2025
-  const years = [currentYear - 2, currentYear - 1, currentYear]; // [2023, 2024, 2025]
+const Table_2 = ({ year, district, period }) => {
 
   const [tableData, setTableData] = useState([]);
+  const [tableDummy, setTableDummy] = useState([]);
+
 
   useEffect(() => {
     getBaselinesAndTargets();
-  }, [district, period]);
+  }, [year, district, period]);
 
   function getBaselinesAndTargets() {
     axios
-      .get(`/tracker/trackedEntities?orgUnit=${district}&program=pcG18cDzLtf&startDate=${years[0]}-01-01&endDate=${years[2]}-12-31&pageSize=5000`)
+      .get(`/tracker/trackedEntities?orgUnit=${district}&program=pcG18cDzLtf&startDate=${year}-01-01&endDate=${year}-12-31&pageSize=5000`)
       .then(result => {
+
         if (result.data.instances.length > 0) {
+
           axios
-            .get(`/tracker/events?program=pcG18cDzLtf&orgUnit=${district}&startDate=${years[0]}-01-01&endDate=${years[2]}-12-31&pageSize=5000`)
+            .get(`/tracker/events?program=pcG18cDzLtf&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31&pageSize=5000`)
             .then(resp => {
-              const data = filterTrackedEntitiesByCreatedAt(result.data.instances, years[2], period);
-              const reports = filterTrackedEntitiesByCreatedAt(resp.data.instances, years[2], period);
+              // const data = filterTrackedEntitiesByCreatedAt(result.data.instances, year, period);
+              const currentYear = formatDataGeneral(result.data.instances, "Years", `${year}`) || [];
+              const oldActivities = formatDataGeneral(result.data.instances, "Years", `${year - 3}`) || [];
+
+              const reports = resp.data.instances;
               const temps = [];
 
-              let completedBaseline2023 = 0, completedActual2024 = 0, completedActual2025 = 0, completedTarget2025 = 0;
-              let onGoingBaseline2023 = 0, onGoingActual2024 = 0, onGoingActual2025 = 0, onGoingTarget2025 = 0;
-              let abandonedBaseline2023 = 0, abandonedActual2024 = 0, abandonedActual2025 = 0, abandonedTarget2025 = 0;
-              let yetToStartBaseline2023 = 0, yetToStartActual2024 = 0, yetToStartActual2025 = 0, yetToStartTarget2025 = 0;
-              let mtdpBaseline2023 = 0, mtdpActual2024 = 0, mtdpActual2025 = 0, mtdpTarget2025 = 0;
+              axios
+                .get(`/tracker/trackedEntities?orgUnit=${district}&program=ArLnAxhykoz&startDate=${year}-01-01&endDate=${year}-12-31&pageSize=5000`)
+                .then(results => {
+                  if (results.data.instances.length > 0) {
 
-              data.forEach((item, idx) => {
+                    axios
+                      .get(`/tracker/events?program=ArLnAxhykoz&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31&pageSize=10000`)
+                      .then(response => {
+                        console.log("aap reports");
+
+                        const currentYearActual = formatDataGeneral(results.data.instances, "Year", `${year}`) || [];
+                        const currentYearActual1 = formatDataGeneral(results.data.instances, "Year", `${year -1}`) || [];
+                        const currentYearActual2 = formatDataGeneral(results.data.instances, "Year", `${year - 2}`) || [];
+                      })
+                      .catch(err => console.log(err));
+                  } 
+                })
+                .catch(err => console.log(err));
+
+
+              let completedBaseline = 0;
+              let completedTarget = 0;
+              let onGoingBaseline = 0;
+              let onGoingTarget = 0;
+              let abandonedBaseline = 0;
+              let abandonedTarget = 0;
+              let yetToStartBaseline = 0;
+              let yetToStartTarget = 0;
+
+              //old activities baselines
+              let oldCompletedBaseline = 0;
+              let oldOnGoingBaseline = 0;
+              let oldAbandonedBaseline = 0;
+              let oldYetToStartBaseline = 0;
+              let oldMtdpBaseline = 0
+
+              let mtdpBaseline = 0;
+              let mtdpTarget = 0;
+              let mtdpActual = 0;
+
+              oldActivities.forEach((item, idx) => {
+
                 const trackerReport = reports.filter(rep => rep.trackedEntity === item.trackedEntity);
 
                 if (trackerReport) {
+
                   trackerReport.forEach(currentReport => {
-                    // Completed AAP
-                    completedBaseline2023 += getStageValue(currentReport, "dxOHO0QnZsR"); // Baseline for 2023
-                    completedActual2024 += getStageValue(currentReport, "KNoWsIA6kze"); // Actual for 2024
-                    completedActual2025 += getStageValue(currentReport, "KNoWsIA6kze") * 0.9; // Placeholder for 2025 actual
-                    completedTarget2025 += getStageValue(currentReport, "KNoWsIA6kze") * 1.1; // Placeholder for 2025 target
+                    //Completed AAP
+                    oldCompletedBaseline += getStageValue(currentReport, "dxOHO0QnZsR");
 
-                    // Ongoing AAP
-                    onGoingBaseline2023 += getStageValue(currentReport, "ZVRR4ozm2od");
-                    onGoingActual2024 += getStageValue(currentReport, "lrVDQzE3hpM");
-                    onGoingActual2025 += getStageValue(currentReport, "lrVDQzE3hpM") * 1.1;
-                    onGoingTarget2025 += getStageValue(currentReport, "lrVDQzE3hpM") * 1.2;
+                    //Ongoing AAP
+                    oldOnGoingBaseline += getStageValue(currentReport, "ZVRR4ozm2od");
 
-                    // Abandoned AAP
-                    abandonedBaseline2023 += getStageValue(currentReport, "WfyEAyQQlfr");
-                    abandonedActual2024 += getStageValue(currentReport, "xAw7tiaoQTm");
-                    abandonedActual2025 += 0; // No data, assuming 0
-                    abandonedTarget2025 += 0; // No data, assuming 0
+                    //Abandoned AAP
+                    oldAbandonedBaseline += getStageValue(currentReport, "WfyEAyQQlfr");
 
-                    // Yet to Start AAP
-                    yetToStartBaseline2023 += getStageValue(currentReport, "Z69ZIsB8TbP");
-                    yetToStartActual2024 += getStageValue(currentReport, "QZYgxnf7mP3");
-                    yetToStartActual2025 += getStageValue(currentReport, "QZYgxnf7mP3") * 1.0;
-                    yetToStartTarget2025 += getStageValue(currentReport, "QZYgxnf7mP3") * 0.8;
+                    //Yet to start AAP
+                    oldYetToStartBaseline += getStageValue(currentReport, "Z69ZIsB8TbP");
 
-                    // MTDP
-                    mtdpBaseline2023 += getStageValue(currentReport, "WrLpyyxA5pZ");
-                    mtdpActual2024 += getStageValue(currentReport, "UMxVuTWkMrC");
-                    mtdpActual2025 += getStageValue(currentReport, "UMxVuTWkMrC") * 1.2;
-                    mtdpTarget2025 += getStageValue(currentReport, "U635zrF1mKK") * 1.5;
+                    //MTDP
+                    oldMtdpBaseline += getStageValue(currentReport, "WrLpyyxA5pZ");
+
                   });
-                }
+
+
+                };
+              });
+
+              currentYear.forEach((item, idx) => {
+
+                const trackerReport = reports.filter(rep => rep.trackedEntity === item.trackedEntity);
+
+                if (trackerReport) {
+
+                  trackerReport.forEach(currentReport => {
+                    //Completed AAP
+                    completedBaseline += getStageValue(currentReport, "dxOHO0QnZsR");
+                    completedTarget += getStageValue(currentReport, "KNoWsIA6kze");
+
+                    //Ongoing AAP
+                    onGoingBaseline += getStageValue(currentReport, "ZVRR4ozm2od");
+                    onGoingTarget += getStageValue(currentReport, "lrVDQzE3hpM");
+
+                    //Abandoned AAP
+                    abandonedBaseline += getStageValue(currentReport, "WfyEAyQQlfr");
+                    abandonedTarget += getStageValue(currentReport, "xAw7tiaoQTm");
+
+                    //Yet to start AAP
+                    yetToStartBaseline += getStageValue(currentReport, "Z69ZIsB8TbP");
+                    yetToStartTarget += getStageValue(currentReport, "QZYgxnf7mP3");
+
+                    //MTDP
+                    mtdpBaseline += getStageValue(currentReport, "WrLpyyxA5pZ");
+                    mtdpTarget += getStageValue(currentReport, "U635zrF1mKK");
+                    mtdpActual += getStageValue(currentReport, "UMxVuTWkMrC");
+
+                  });
+
+
+                };
 
                 const dataSet = [
                   {
+                    oldCompletedBaseline,
+                    target: completedTarget,
                     indicator: "Percentage of activities completed",
-                    baseline2023: completedBaseline2023,
-                    actual2024: completedActual2024,
-                    actual2025: completedActual2025,
-                    target2025: completedTarget2025,
+                    actual: 0
+
                   },
                   {
+                    oldOnGoingBaseline,
+                    target: onGoingTarget,
                     indicator: "Percentage of on-going activities",
-                    baseline2023: onGoingBaseline2023,
-                    actual2024: onGoingActual2024,
-                    actual2025: onGoingActual2025,
-                    target2025: onGoingTarget2025,
+                    actual: 0
                   },
                   {
+                    oldAbandonedBaseline,
+                    target: abandonedTarget,
                     indicator: "Percentage of activities abandoned",
-                    baseline2023: abandonedBaseline2023,
-                    actual2024: abandonedActual2024,
-                    actual2025: abandonedActual2025,
-                    target2025: abandonedTarget2025,
+                    actual: 0
                   },
                   {
+                    oldYetToStartBaseline,
+                    target: yetToStartTarget,
                     indicator: "Percentage of activities yet to start",
-                    baseline2023: yetToStartBaseline2023,
-                    actual2024: yetToStartActual2024,
-                    actual2025: yetToStartActual2025,
-                    target2025: yetToStartTarget2025,
+                    actual: 0
                   },
                   {
+                    oldMtdpBaseline,
+                    target: mtdpTarget,
+                    actual: mtdpActual,
                     indicator: "Proportion of the overall Medium-Term Development Plan implemented",
-                    baseline2023: mtdpBaseline2023,
-                    actual2024: mtdpActual2024,
-                    actual2025: mtdpActual2025,
-                    target2025: mtdpTarget2025,
-                  },
+                  }
                 ];
+
+                console.log("djiba aap impletemented data: ", dataSet)
+
 
                 temps.push(dataSet);
                 setTableData(dataSet);
               });
+
+
+
+
             })
-            .catch(err => console.log(err));
+            .catch(err => console.log(err))
         }
+
+
       })
-      .catch(err => console.log(err));
+      .catch(err => console.log(err))
   }
+
+  const formatData = (aap, reports)=>{
+
+    const temp = [];
+      aap.forEach((item, idx) => {
+    
+        const currentReport = reports.filter(rep => rep.trackedEntity === item.trackedEntity);
+        let status = "";
+    
+        if (currentReport) {
+    
+          currentReport.forEach(curReport => {
+            curReport.dataValues.forEach(rep => {
+              if (rep.dataElement === "tE3QKB203nh") {
+                status = rep.value;
+              }
+    
+            });
+          })
+    
+        }
+    
+        const dataSetTemp = {
+          year: getAttributeValue("Year", item),
+          developmentDimension: getAttributeValue("Development Dimension", item),
+          status
+        };
+    
+        temp.push(dataSetTemp);
+      });
+    
+      return temp;
+  }
+
 
   // Data for the bar graph
   const chartData = {
-    labels: tableData.map((row) => row.indicator),
+    labels: tableData.map((row) => row.indicator), // Shorten labels for readability
     datasets: [
       {
-        label: "Baseline 2023 (%)",
-        data: tableData.map((row) => parseFloat(row.baseline2023) || 0),
+        label: "Baseline 2021 (%)",
+        data: tableData.map((row) => parseFloat(row.baseline2021) || 0),
         backgroundColor: "rgba(54, 162, 235, 0.6)",
         borderColor: "rgba(54, 162, 235, 1)",
         borderWidth: 1,
       },
       {
-        label: "Actual 2024 (%)",
-        data: tableData.map((row) => parseFloat(row.actual2024) || 0),
+        label: "Actual 2022 (%)",
+        data: tableData.map((row) => parseFloat(row.actual2022) || 0),
         backgroundColor: "rgba(255, 99, 132, 0.6)",
         borderColor: "rgba(255, 99, 132, 1)",
-        borderWidth: 1,
-      },
-      {
-        label: "Actual 2025 (%)",
-        data: tableData.map((row) => parseFloat(row.actual2025) || 0),
-        backgroundColor: "rgba(75, 192, 192, 0.6)",
-        borderColor: "rgba(75, 192, 192, 1)",
-        borderWidth: 1,
-      },
-      {
-        label: "Target 2025 (%)",
-        data: tableData.map((row) => parseFloat(row.target2025) || 0),
-        backgroundColor: "rgba(153, 102, 255, 0.6)",
-        borderColor: "rgba(153, 102, 255, 1)",
         borderWidth: 1,
       },
     ],
@@ -166,7 +254,7 @@ const Table_2 = ({ district, period }) => {
       },
       title: {
         display: true,
-        text: "Implementation Status Comparison: 2023-2025",
+        text: "Implementation Status Comparison: 2021 vs 2022",
       },
       tooltip: {
         callbacks: {
@@ -195,38 +283,19 @@ const Table_2 = ({ district, period }) => {
   return (
     <div className="col-12">
       <div className="card">
-        <div className="card-header">Table 2 – Proportion of the DMTDP Implemented</div>
+        <div className="card-header">Table 1.1 – Proportion of the DMTDP Implemented </div>
         <div className="card-body">
-          <h5>2 Summary of Achievement of the Implementation of the District Medium Term Development Plan (DMTDP)</h5>
-          <h7>
-            In assessing the implementation status of the MTDP 2022-2025 for the year under review,
-            premium was placed on the analysis of the progress made in implementing the key
-            activities outlined in the 2022 Annual Action Plan and the Medium-Term Development
-            Plan as a whole. The achievements in set indicators were used as the basis for the
-            assessment.
-            The analysis further grouped proposed interventions into three categories. These are
-            “Fully implemented” which describes projects or programmes outlined in the Annual
-            Action Plan that have been started and completed. “Ongoing” describes projects/
-            programmes that have been started but not yet completed and “Not Implemented”
-            describes a project/programme that has not been started or yet to start.
-            A total number of 137 activities were captured in the 2022 Annual Action Plan whilst the
-            MTDP contained a total number of 528 interventions. By the end of the year 2022, 121
-            activities representing 88.32% projects were completed, 13 activities representing 9.49%
-            were ongoing and 3 activities representing 2.19% were yet to be started. In all 134
-            2 | P a g e
-            3 | P a g e
-            projects and programmes representing 97.81% of the Annual Action Plan for 2022 were
-            implemented.
-            This so far translates into 25.4% achievement of the total 528 planned interventions of
-            the 2022-2025 Medium-Term Development Plan as of December 2022. Table 1.1
-            presents the summary of the level of implementation in the MTDP and the AAP for 2022.
-            Table 1.1 – Proportion of the AAP and the MTDP Implemented
-          </h7>
+          <h5>1.1 Summary of Achievement of the Implementation of the District
+            Medium Term Development Plan (DMTDP)</h5>
+
           <APRmemo
-            year={years[2]}
+            year={year}
             districtId={district}
-            tableCommentedId={`table2-${years[2]}`}
+            tableCommentedId={`table1_1-${year}`}
+
+
           />
+
           <div className="table-responsive">
             <table
               className="table table-bordered"
@@ -243,14 +312,15 @@ const Table_2 = ({ district, period }) => {
               }}>
                 <tr>
                   <th style={{ border: '1px solid #000' }}>Indicators</th>
-                  <th style={{ border: '1px solid #000' }}>Baseline (2023)</th>
-                  <th style={{ border: '1px solid #000' }}>Actual (2024)</th>
-                  <th style={{ border: '1px solid #000' }}>Actual (2025)</th>
-                  <th style={{ border: '1px solid #000' }}>Target (2025)</th>
+                  <th style={{ border: '1px solid #000' }}>Baseline {year - 3}</th>
+                  <th style={{ border: '1px solid #000' }}>Actual {year - 2}</th>
+                  <th style={{ border: '1px solid #000' }}>Actual {year - 1}</th>
+                  <th style={{ border: '1px solid #000' }}>Target {year}</th>
+                  <th style={{ border: '1px solid #000' }}>Actual {year}</th>
                 </tr>
               </thead>
               <tbody>
-                {tableData.map((row, index) => (
+                {/* {tableData.map((row, index) => (
                   <tr key={index}>
                     <td style={{ border: '1px solid #000' }}>{row.indicator}</td>
                     <td style={{ border: '1px solid #000' }}>{row.baseline2023.toFixed(1)}</td>
@@ -258,26 +328,31 @@ const Table_2 = ({ district, period }) => {
                     <td style={{ border: '1px solid #000' }}>{row.actual2025.toFixed(1)}</td>
                     <td style={{ border: '1px solid #000' }}>{row.target2025.toFixed(1)}</td>
                   </tr>
-                ))}
+                ))} */}
               </tbody>
             </table>
           </div>
           <p className="mt-2">
-            <small>Source: 2022-2025 MTDP, 2023, 2024, 2025 AAPs & Progress Reports</small>
+            <small>Source: {year - 3} - {year} MTDP, {year - 2}, {year - 1}, {year} AAPs & Progress Reports</small>
           </p>
           <hr />
-       
+
           {/* Pictorial evidence section commented out as per original code */}
           <hr />
-          <h5>Comparison of Implementation Status: 2023-2025</h5>
+          <h5>Comparison of Implementation Status: {year - 2} - {year}</h5>
           <div className="mt-4">
-            <Bar data={chartData} options={chartOptions} />
+            <Bar data={chartData} options={chartOptions}
+
+            />
           </div>
+
+
           <APRComment
             data={tableData}
-            year={years[2]}
+            year={year}
             districtId={district}
-            tableCommentedId={`table2-${years[2]}`}
+            tableCommentedId={`table1_1-${year}`}
+
           >
             {({ renderCommentInput, renderCommentList }) => (
               <>

@@ -9,7 +9,7 @@ import APRmemo from "./APRComment.js/APRmemo";
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const Table_2 = ({ district, period }) => {
+const Table_2 = ({ year, district, period }) => {
   const currentYear = new Date().getFullYear(); // 2025
   const years = [currentYear - 2, currentYear - 1, currentYear]; // [2023, 2024, 2025]
 
@@ -197,12 +197,12 @@ const Table_2 = ({ district, period }) => {
       <div className="card">
         <div className="card-header">Table 2 – Proportion of the DMTDP Implemented</div>
         <div className="card-body">
-         
+          <h5></h5>
          
           <APRmemo
-            year={years[2]}
+            year={year}
             districtId={district}
-            tableCommentedId={`table2-${years[2]}`}
+           tableCommentedId={`table1-${year}`}
           />
           <div className="table-responsive">
             <table
@@ -252,9 +252,9 @@ const Table_2 = ({ district, period }) => {
           </div>
           <APRComment
             data={tableData}
-            year={years[2]}
+            year={year}
             districtId={district}
-            tableCommentedId={`table2-${years[2]}`}
+            tableCommentedId={`table2-${year}`}
           >
             {({ renderCommentInput, renderCommentList }) => (
               <>

@@ -257,7 +257,7 @@ function APRComment({ data, year, districtId, tableCommentedId, children,  asses
        
       
 
-        {normalizedUserRole && (
+        {normalizedUserRole &&  assessmentStatus &&(
           <>
             <span>COMMENT</span>
          

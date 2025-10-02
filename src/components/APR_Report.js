@@ -163,6 +163,26 @@ function AprReport() {
     const year = 2020 + i;
     return { value: year.toString(), label: year.toString() };
   });
+
+  useEffect(() => {
+  if (selectedDistrict) {
+    fetchAssessmentStatus(selectedDistrict.value);
+  }
+}, [selectedDistrict]);
+
+async function fetchAssessmentStatus(districtId) {
+  try {
+    const resp = await axios.get(`/api/assessments?district=${districtId}`);
+    if (resp.data) {
+      setAssessmentStatus(resp.data); // could be object with status
+    } else {
+      setAssessmentStatus(null); // no assessment yet
+    }
+  } catch (err) {
+    console.error("Failed to load assessment status", err);
+    setAssessmentStatus(null);
+  }
+}
  useEffect(() => {
         
         const fetchAssessmentStatus = async () => {
@@ -246,6 +266,7 @@ function AprReport() {
         console.log(err);
       });
   }
+  
 
   function getData() {
     const storedDistricts = localStorage.getItem("districts");
@@ -278,30 +299,30 @@ function AprReport() {
 
 const assessmentStartDate = new Date().toISOString().split("T")[0].split("-").map(Number);
 
-const fetchAssessmentStatus = async () => {
-  if (!selectedDistrict?.value || !selectedYear?.value) {
-    console.error("District or year not selected");
-    return;
-  }
+// const fetchAssessmentStatus = async () => {
+//   if (!selectedDistrict?.value || !selectedYear?.value) {
+//     console.error("District or year not selected");
+//     return;
+//   }
 
-  try {
-    const assessmentStatusResponse = await instance.get(
-      `assessments/dpat/${selectedDistrict.value}/${selectedYear.value}/APR`
-    );
-    const fetchedStatus = assessmentStatusResponse.data?.status || "Not Started";
-    setAssessmentStatus(assessmentStatusResponse.data);
-    console.log("Current assessment status:", fetchedStatus);
-    return fetchedStatus;
-  } catch (error) {
-    console.error("Failed to fetch assessment status:", {
-      message: error.message,
-      response: error.response?.data,
-      status: error.response?.status,
-    });
-    // message.error(`Failed to fetch status: ${error.response?.data?.message || error.message}`);
-    return null;
-  }
-};
+//   try {
+//     const assessmentStatusResponse = await instance.get(
+//       `assessments/dpat/${selectedDistrict.value}/${selectedYear.value}/APR`
+//     );
+//     const fetchedStatus = assessmentStatusResponse.data?.status || "Not Started";
+//     setAssessmentStatus(assessmentStatusResponse.data);
+//     console.log("Current assessment status:", fetchedStatus);
+//     return fetchedStatus;
+//   } catch (error) {
+//     console.error("Failed to fetch assessment status:", {
+//       message: error.message,
+//       response: error.response?.data,
+//       status: error.response?.status,
+//     });
+//     // message.error(`Failed to fetch status: ${error.response?.data?.message || error.message}`);
+//     return null;
+//   }
+// };
 
  const handleStartAPR = async () => {
   setProgressLoad(true);
@@ -729,7 +750,7 @@ const fetchAssessmentStatus = async () => {
           </div>
           <div className="row gutters mb-3">
 
-                 <Col span={10} className="gutter-row">
+                 {/* <Col span={10} className="gutter-row">
                   {(!assessmentStatus || ![null, "Start", "Pending", "Completed", "Closed"].includes(assessmentStatus?.status)) &&
                     normalizedUserRole !== "APR_RCC" &&
                     normalizedUserRole !== "NDPC_USER" && (
@@ -747,7 +768,29 @@ const fetchAssessmentStatus = async () => {
                         </span>
                       </Button>
                     )}
-                </Col>
+                </Col> */}
+
+
+                <Col span={10} className="gutter-row">
+  {assessmentStatus === null &&
+    normalizedUserRole !== "APR_RCC" &&
+    normalizedUserRole !== "NDPC_USER" && (
+      <Button
+        type="primary"
+        onClick={showConfirm}
+        style={{
+          backgroundColor: "#1890ff",
+          borderColor: "#1890ff",
+        }}
+        loading={progressLoad}
+      >
+        <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>
+          CLICK TO START PROGRESS REPORT FOR {selectedYear?.value}
+        </span>
+      </Button>
+    )}
+</Col>
+
             {selectedTable && selectedTable.value === "all_tables" && (
               <em ref={contentToPrint}>
               

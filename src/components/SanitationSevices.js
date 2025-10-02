@@ -85,9 +85,9 @@ const SanitationServices = forwardRef(({
             dataSource={sanitationProvidersData}
             pagination={false} bordered />}
 
-          <Content>
+          {/* <Content>
             Calculated as: % of IGF i=on Sanitation = (B/A) x 100
-          </Content>
+          </Content> */}
           {/* <Title level={5} style={{ marginTop: "10px" }}>Conclusion:</Title>
           <Content>
             Percentage of total expenditure on sanitation services on total IGF collected

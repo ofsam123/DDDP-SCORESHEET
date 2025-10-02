@@ -527,7 +527,9 @@ const [showPetition, setShowPetition] = useState(true);
     const setSanitationServiceDataDisplay = () => {
         const aap = props?.plans?.aap;
         const ifg = props?.ifg?.data;
-        const sanitationPlans = formatDataGeneral(aap, "Sector", "Sanitation") || [];
+        const sanitationPlan = formatDataGeneral(aap, "Sector", "Sanitation") || [];
+        const sanitationPlans = formatDataGeneral(sanitationPlan, "Year", "2024") || [];       
+
         const temp = [];
         let totalBudget = 0;
         let totalIGF = 0;
@@ -541,12 +543,12 @@ const [showPetition, setShowPetition] = useState(true);
 
             temp.push(tempDataSet);
 
-            totalBudget += parseFloat(currentBudget);
+            totalBudget += currentBudget !== 'N/A' ? parseFloat(currentBudget) : 0;
         });
 
         ifg?.forEach(ig => {
             const currentIGFBudget = getAttributeValue("Amt Collected", ig);
-            totalIGF += parseFloat(currentIGFBudget);
+            totalIGF += currentIGFBudget !== 'N/A' ?  parseFloat(currentIGFBudget) : 0;
         });
 
         const percentage = calculatePercentage(totalIGF, totalBudget);

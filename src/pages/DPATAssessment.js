@@ -431,7 +431,7 @@ function DPATAssessment() {
         axios
             .get(`/tracker/trackedEntities?orgUnit=${districtId}&program=dYNmYGtArrK&startDate=${startDate}&endDate=${endDate}`)
             .then(result => {
-                const data = filterTrackedEntitiesByYear(result.data.instances, startDate, endDate);
+                const data = formatDataGeneral(result.data.instances, "Year", "2024") || [];
                 setIGF({ data, reports: [] })
             })
             .catch(err => console.log(err))

@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import axios from "../../api/axios";
 import { filterTrackedEntitiesByCreatedAt, formatDataGeneral, getAttributeValue } from "../../utils/utils";
 import moment from "moment";
@@ -15,7 +15,7 @@ const departments = [
   "N/A"
 ];
 
-const Table_5 = ({ year, district, period,   hideTableDis }) => {
+const Table_5 = forwardRef(({ year, district, period, hideTableDis }, ref) => {
 
   const [tableData, setTableData] = useState([]);
   const [tableDataDummy, setTableDataDummy] = useState([]);
@@ -23,6 +23,13 @@ const Table_5 = ({ year, district, period,   hideTableDis }) => {
   useEffect(() => {
     getProjects();
   }, [year, district, period]);
+
+  useImperativeHandle(ref, () => ({
+    getData: () => ({
+      indicator: "Table_5",
+      tableData
+    }),
+  }));
 
   function getProjects() {
     axios
@@ -74,7 +81,7 @@ const Table_5 = ({ year, district, period,   hideTableDis }) => {
 
               setTableDataDummy(temp);
 
-             const dataGrouped =  groupDataByDepartments(temp);
+              const dataGrouped = groupDataByDepartments(temp);
 
               setTableData(dataGrouped);
 
@@ -102,21 +109,21 @@ const Table_5 = ({ year, district, period,   hideTableDis }) => {
       let newCounter = 0;
       let collaboratingDep = "";
 
-      departmentProjects.forEach(p=>{
-        if(p.expectedStart.includes(year)){
+      departmentProjects.forEach(p => {
+        if (p.expectedStart.includes(year)) {
           newCounter += 1;
           collaboratingDep += p.collaboratingDepartments !== 'N/A' ? `${p.collaboratingDepartments}, ` : ""
         }
 
-        if(!p.expectedStart.includes(year)){
+        if (!p.expectedStart.includes(year)) {
           const projectYear = new Date(p.expectedCompletion).getFullYear();
-          if((projectYear < year) && !p.projectStatus.includes("Completed")){
+          if ((projectYear < year) && !p.projectStatus.includes("Completed")) {
             rolloverCounter += 1;
             collaboratingDep += p.collaboratingDepartments !== 'N/A' ? `${p.collaboratingDepartments}, ` : ""
           }
         }
 
-        
+
       });
 
       grouped[dep] = departmentProjects;
@@ -135,17 +142,17 @@ const Table_5 = ({ year, district, period,   hideTableDis }) => {
     let newTotal = 0;
     let rolloverTotal = 0;
 
-    temp.forEach(tp=>{
+    temp.forEach(tp => {
       newTotal += tp.new;
       rolloverTotal += tp.rollover
     });
 
     const total = {
-       department: <strong>Total</strong> ,
-        rollover: <strong>{rolloverTotal}</strong>,
-        new: <strong>{newTotal}</strong> ,
-        totalProjects: <strong>{parseInt(rolloverTotal) + parseInt(newTotal)}</strong>,
-        collaboratingDepartment:""
+      department: <strong>Total</strong>,
+      rollover: <strong>{rolloverTotal}</strong>,
+      new: <strong>{newTotal}</strong>,
+      totalProjects: <strong>{parseInt(rolloverTotal) + parseInt(newTotal)}</strong>,
+      collaboratingDepartment: ""
     };
 
     temp.push(total);
@@ -167,7 +174,7 @@ const Table_5 = ({ year, district, period,   hideTableDis }) => {
             year={year}
             districtId={district}
             tableCommentedId={`table5-${year}`}
-              hideTableDis={hideTableDis}
+            hideTableDis={hideTableDis}
 
           />
 
@@ -223,6 +230,6 @@ const Table_5 = ({ year, district, period,   hideTableDis }) => {
       </div>
     </div>
   );
-};
+});
 
 export default Table_5;

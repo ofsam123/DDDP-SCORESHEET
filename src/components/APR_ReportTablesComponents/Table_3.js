@@ -1,17 +1,24 @@
 
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import axios from "../../api/axios";
 import { filterTrackedEntitiesByCreatedAt, formatDataGeneral, getAttributeValue } from "../../utils/utils";
 import APRComment from "./APRComment.js/AprComments";
 import APRmemo from "./APRComment.js/APRmemo";
 
-const Table_3 = ({ year, district, period, hideTableDis }) => {
+const Table_3 = forwardRef(({ year, district, period, hideTableDis }, ref) => {
 
   const [tableData, setTableData] = useState([]);
 
   useEffect(() => {
     getProjects();
   }, [year, district, period]);
+
+  useImperativeHandle(ref, () => ({
+    getData: () => ({
+      indicator: "Table_3",
+      tableData
+    }),
+  }));
 
   function getProjects() {
     axios
@@ -113,13 +120,13 @@ const Table_3 = ({ year, district, period, hideTableDis }) => {
             of work.
             Projects implementation progressed steadily, and visible improvements were made over
             the period. </h7>
-            <APRmemo
-                    year={year}
-                    districtId = {district}  
-                    tableCommentedId={`table3-${year}`}
-                     hideTableDis={hideTableDis}
-                   
-                  />
+          <APRmemo
+            year={year}
+            districtId={district}
+            tableCommentedId={`table3-${year}`}
+            hideTableDis={hideTableDis}
+
+          />
           <div className="table-responsive">
             <table className="table table-bordered" style={{
               tableLayout: "fixed",
@@ -131,7 +138,7 @@ const Table_3 = ({ year, district, period, hideTableDis }) => {
               <thead>
                 <tr style={{ backgroundColor: '#d4edda', fontWeight: 'bold', border: '1px solid #000' }}>
                   {/* <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>No.</th> */}
-                    <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Code</th>
+                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Code</th>
 
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Project Description</th>
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Development Dimension of Policy Framework</th>
@@ -145,10 +152,10 @@ const Table_3 = ({ year, district, period, hideTableDis }) => {
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Expenditure to Date</th>
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Outstanding Balance</th>
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Implementation Status %</th>
-               
+
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Pictures</th>
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Strategies to improve project completion rate</th>
-                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>How Citizen were involved in monitoring of works contract</th>
+                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>How Citizen were involved in monitoring of works contract</th>
 
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Remarks</th>
                 </tr>
@@ -157,7 +164,7 @@ const Table_3 = ({ year, district, period, hideTableDis }) => {
                 {tableData.map((row, index) => (
                   <tr key={index}>
                     {/* <td style={{ border: '1px solid #000' }}>{row.no}</td> */}
-                     <td style={{ border: '1px solid #000' }}>{}</td>
+                    <td style={{ border: '1px solid #000' }}>{ }</td>
                     <td style={{ border: '1px solid #000' }}>{row.description}</td>
                     <td style={{ border: '1px solid #000' }}>{row.dimension}</td>
                     <td style={{ border: '1px solid #000' }}>{row.location}</td>
@@ -169,11 +176,11 @@ const Table_3 = ({ year, district, period, hideTableDis }) => {
                     <td style={{ border: '1px solid #000' }}>{row.expectedCompletion}</td>
                     <td style={{ border: '1px solid #000' }}>{row.expenditure}</td>
                     <td style={{ border: '1px solid #000' }}>{row.outstanding}</td>
-                   
+
                     <td style={{ border: '1px solid #000' }}>{row.implementationStatus}</td>
-                       <td style={{ border: '1px solid #000' }}>{}</td>
-                          <td style={{ border: '1px solid #000' }}>{}</td>
-                            <td style={{ border: '1px solid #000' }}>{}</td>
+                    <td style={{ border: '1px solid #000' }}>{ }</td>
+                    <td style={{ border: '1px solid #000' }}>{ }</td>
+                    <td style={{ border: '1px solid #000' }}>{ }</td>
                     <td style={{ border: '1px solid #000' }}>{row.remarks}</td>
                   </tr>
                 ))}
@@ -184,24 +191,24 @@ const Table_3 = ({ year, district, period, hideTableDis }) => {
             <small>Source: MPCU</small>
           </p>
 
-                     <APRComment
-                      data={tableData}
-                      year={year}
-                      districtId={district}
-                      tableCommentedId={`table3-${year}`}
-                     
-                    >
-                      {({ renderCommentInput, renderCommentList }) => (
-                        <>
-                          {renderCommentInput()}
-                          {renderCommentList()}
-                        </>
-                      )}
-                    </APRComment>
+          <APRComment
+            data={tableData}
+            year={year}
+            districtId={district}
+            tableCommentedId={`table3-${year}`}
+
+          >
+            {({ renderCommentInput, renderCommentList }) => (
+              <>
+                {renderCommentInput()}
+                {renderCommentList()}
+              </>
+            )}
+          </APRComment>
         </div>
       </div>
     </div>
   );
-};
+});
 
 export default Table_3;

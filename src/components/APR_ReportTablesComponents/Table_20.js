@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -17,42 +17,49 @@ import { formatDataGeneral, getAttributeValue } from "../../utils/utils";
 // Register chart components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const Table_20 = ({ year, district, period, hideTableDis }) => {
-  
+const Table_20 = forwardRef(({ year, district, period, hideTableDis }, ref) => {
+
   const [tableData, setTableData] = useState([]);
-  
-    useEffect(() => {
-      getData();
-    }, [district, year, period]);
-  
-    function getData() {
-      axios
-        .get(`/tracker/trackedEntities?orgUnit=${district}&program=TX0gMnftQc8&startDate=${year}-01-01&endDate=${year}-12-31&pageSize=5000`)
-        .then(result => {
-  
-          const data = result.data.instances;
-          const items = formatDataGeneral(data, "Years", `${year}`) || [];
-          const temp = [];
-  
-          items.forEach(val => {
-           
-            const dataSet = {
-              item: getAttributeValue("Item Category", val),
-              required: getAttributeValue("Required", val),
-              actual: getAttributeValue("Actual", val),
-              remarks: getAttributeValue("Remarks", val),
 
-            };
+  useEffect(() => {
+    getData();
+  }, [district, year, period]);
 
-            temp.push(dataSet);
-          });
-  
-          setTableData(temp);
-  
-  
-        })
-        .catch(err => console.log(err))
-    };
+  useImperativeHandle(ref, () => ({
+    getData: () => ({
+      indicator: "Table_20",
+      tableData
+    }),
+  }));
+
+  function getData() {
+    axios
+      .get(`/tracker/trackedEntities?orgUnit=${district}&program=TX0gMnftQc8&startDate=${year}-01-01&endDate=${year}-12-31&pageSize=5000`)
+      .then(result => {
+
+        const data = result.data.instances;
+        const items = formatDataGeneral(data, "Years", `${year}`) || [];
+        const temp = [];
+
+        items.forEach(val => {
+
+          const dataSet = {
+            item: getAttributeValue("Item Category", val),
+            required: getAttributeValue("Required", val),
+            actual: getAttributeValue("Actual", val),
+            remarks: getAttributeValue("Remarks", val),
+
+          };
+
+          temp.push(dataSet);
+        });
+
+        setTableData(temp);
+
+
+      })
+      .catch(err => console.log(err))
+  };
 
   const chartData = {
     labels: tableData.map((row) => row.item),
@@ -101,13 +108,13 @@ const Table_20 = ({ year, district, period, hideTableDis }) => {
       <div className="card">
         <div className="card-header"></div>
         <div className="card-body">
-             <APRmemo
-                                year={year}
-                                districtId = {district}
-                                 tableCommentedId={`table20-${year}`}
-                                 hideTableDis={hideTableDis}
-                               
-                              />
+          <APRmemo
+            year={year}
+            districtId={district}
+            tableCommentedId={`table20-${year}`}
+            hideTableDis={hideTableDis}
+
+          />
           <div className="table-responsive">
             <table className="table table-bordered">
               <thead
@@ -154,24 +161,24 @@ const Table_20 = ({ year, district, period, hideTableDis }) => {
           <h4>Figure 8: Logistic Analysis, {year}</h4>
           <Bar data={chartData} options={chartOptions} />
 
-           <APRComment
-                      data={tableData}
-                      year={year}
-                      districtId={district}
-                      tableCommentedId={`table20-${year}`}
-                     
-                    >
-                      {({ renderCommentInput, renderCommentList }) => (
-                        <>
-                          {renderCommentInput()}
-                          {renderCommentList()}
-                        </>
-                      )}
-                    </APRComment>
+          <APRComment
+            data={tableData}
+            year={year}
+            districtId={district}
+            tableCommentedId={`table20-${year}`}
+
+          >
+            {({ renderCommentInput, renderCommentList }) => (
+              <>
+                {renderCommentInput()}
+                {renderCommentList()}
+              </>
+            )}
+          </APRComment>
         </div>
       </div>
     </div>
   );
-};
+});
 
 export default Table_20;

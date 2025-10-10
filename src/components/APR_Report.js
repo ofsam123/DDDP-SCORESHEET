@@ -9,7 +9,7 @@ import Table_3 from "./APR_ReportTablesComponents/Table_3";
 import Table_8 from "./APR_ReportTablesComponents/Table_8";
 import Table_9 from "./APR_ReportTablesComponents/Table_9";
 import Table2_7 from "../components/APR_ReportTablesComponents/Table_2.7";
-import { Button, Row, Col,Modal, message } from "antd";
+import { Button, Row, Col, Modal, message } from "antd";
 import Table_13 from "./APR_ReportTablesComponents/Table_13";
 import Table_14 from "./APR_ReportTablesComponents/Table_14";
 import Table_15 from "./APR_ReportTablesComponents/Table_15";
@@ -47,10 +47,10 @@ import GeneralIntroduction from "./APR_ReportTablesComponents/Chapter1/GeneralIn
 const tableOptions = [
   { value: "all_tables", label: "All Tables" },
   { value: "table_1", label: "Table 1 – Proportion of the AAP Implemented by Development Dimensions" },
-   { value: "table_2", label: "Table 2 – Proportion of the DMTDP Implemented" },
+  { value: "table_2", label: "Table 2 – Proportion of the DMTDP Implemented" },
   { value: "table_3", label: "Table 3 – Project Register as of the end of the year" },
-  { value: "table_4", label: "Table 4 –  Total number of active projects"},
-  { value: "table_5", label: "Table 5 –   Distribution of Physical projects among departments of the Assembly"},
+  { value: "table_4", label: "Table 4 –  Total number of active projects" },
+  { value: "table_5", label: "Table 5 –   Distribution of Physical projects among departments of the Assembly" },
   { value: "table_6", label: "Table 6 – Project Age Analysis" },
   { value: "table_7", label: "Table 7 –  Repair and maintenance of Existing Infrastructure" },
   { value: "table_8", label: "Table 8 – Programme Register as of the end of the Year, 2024" },
@@ -144,14 +144,37 @@ function AprReport() {
   const contentToPrint = useRef(null);
   const [progressLoad, setProgressLoad] = useState(false); // New state for loading
 
-      const [assessmentStatus, setAssessmentStatus] = useState(null); // New state for assessment status
+  const table1Ref = useRef();
+  const table2Ref = useRef();
+  const table3Ref = useRef();
+  const table4Ref = useRef();
+  const table5Ref = useRef();
+  const table6Ref = useRef();
+  const table7Ref = useRef();
+  const table8Ref = useRef();
+  const table9Ref = useRef();
+  const table10Ref = useRef();
+  const table11Ref = useRef();
+  const table12Ref = useRef();
+  const table13Ref = useRef();
+  const table14Ref = useRef();
+  const table15Ref = useRef();
+  const table16Ref = useRef();
+  const table17Ref = useRef();
+  const table18Ref = useRef();
+  const table19Ref = useRef();
+  const table20Ref = useRef();
+  const table21Ref = useRef();
+  const table22Ref = useRef();
+
+  const [assessmentStatus, setAssessmentStatus] = useState(null); // New state for assessment status
   const { user } = useAuth();
-   const currentUserRole = user?.user?.userRoles?.find(
-        (role) => role.name === "APR USER" || role.name === "APR RCC" || role.name === "NDPC USER"
-    )?.name || "";
-    const normalizedUserRole = currentUserRole ? currentUserRole.replace(" ", "_").toUpperCase() : "";
-    const currentUsername = user?.user?.username || "";
-    const currentFullName = user?.user?.fullName || "";
+  const currentUserRole = user?.user?.userRoles?.find(
+    (role) => role.name === "APR USER" || role.name === "APR RCC" || role.name === "NDPC USER"
+  )?.name || "";
+  const normalizedUserRole = currentUserRole ? currentUserRole.replace(" ", "_").toUpperCase() : "";
+  const currentUsername = user?.user?.username || "";
+  const currentFullName = user?.user?.fullName || "";
   // Set "All Tables" as the default selected table
   const [selectedTable, setSelectedTable] = useState({ value: "all_tables", label: "All Tables" });
 
@@ -160,26 +183,26 @@ function AprReport() {
     const year = 2020 + i;
     return { value: year.toString(), label: year.toString() };
   });
- useEffect(() => {
-        
-        const fetchAssessmentStatus = async () => {
-            try {
-                const response = await instance.get(
-                //  'assessments/dpat/EmVZbr0kApz/2021/APR'
-                    `assessments/dpat/${selectedDistrict?.value}/${selectedYear?.value}/APR`
-                );
-                setAssessmentStatus(response.data);
-            } catch (error) {
-                console.error("Failed to fetch assessment status:", error);
-                setAssessmentStatus(null); // Set to null if API call fails
-            }
-        };
+  useEffect(() => {
 
-        if (selectedDistrict?.value && selectedYear?.value) {
-            fetchAssessmentStatus();
-         
-        }
-    }, [selectedDistrict?.value?.id, selectedYear?.value]);
+    const fetchAssessmentStatus = async () => {
+      try {
+        const response = await instance.get(
+          //  'assessments/dpat/EmVZbr0kApz/2021/APR'
+          `assessments/dpat/${selectedDistrict?.value}/${selectedYear?.value}/APR`
+        );
+        setAssessmentStatus(response.data);
+      } catch (error) {
+        console.error("Failed to fetch assessment status:", error);
+        setAssessmentStatus(null); // Set to null if API call fails
+      }
+    };
+
+    if (selectedDistrict?.value && selectedYear?.value) {
+      fetchAssessmentStatus();
+
+    }
+  }, [selectedDistrict?.value?.id, selectedYear?.value]);
 
   useEffect(() => {
     getData();
@@ -273,89 +296,47 @@ function AprReport() {
       .catch((err) => console.log(err));
   }
 
- 
 
-const assessmentStartDate = new Date().toISOString().split("T")[0].split("-").map(Number);
 
-const fetchAssessmentStatus = async () => {
-  if (!selectedDistrict?.value || !selectedYear?.value) {
-    console.error("District or year not selected");
-    return;
-  }
+  const assessmentStartDate = new Date().toISOString().split("T")[0].split("-").map(Number);
 
-  try {
-    const assessmentStatusResponse = await instance.get(
-      `assessments/dpat/${selectedDistrict.value}/${selectedYear.value}/APR`
-    );
-    const fetchedStatus = assessmentStatusResponse.data?.status || "Not Started";
-    setAssessmentStatus(assessmentStatusResponse.data);
-    console.log("Current assessment status:", fetchedStatus);
-    return fetchedStatus;
-  } catch (error) {
-    console.error("Failed to fetch assessment status:", {
-      message: error.message,
-      response: error.response?.data,
-      status: error.response?.status,
-    });
-    // message.error(`Failed to fetch status: ${error.response?.data?.message || error.message}`);
-    return null;
-  }
-};
+  const fetchAssessmentStatus = async () => {
+    if (!selectedDistrict?.value || !selectedYear?.value) {
+      console.error("District or year not selected");
+      return;
+    }
 
- const handleStartAPR = async () => {
-  setProgressLoad(true);
-
-  // Step 1: Check current assessment status
-  const currentStatus = await fetchAssessmentStatus();
-  if (currentStatus && currentStatus !== "Not Started") {
-    message.warning(`An assessment for ${selectedYear?.label} in ${selectedDistrict?.label} is already in progress (Status: ${currentStatus}).`);
-    setProgressLoad(false);
-    return;
-  }
-
-  const payload = {
-    id: 0,
-    username: user?.user?.username || "",
-    fullName: user?.user?.fullName || "",
-    userRole: normalizedUserRole || "",
-    type: "APR",
-    districtId: selectedDistrict?.value || "",
-    year: selectedYear?.value || "",
-    status: "Start",
-    assessmentStartDate: new Date().toISOString().split("T")[0],
-    assessmentEndDate: null,
-    reviewStartDate: null,
-    reviewEndDate: null,
-    closedDate: null,
+    try {
+      const assessmentStatusResponse = await instance.get(
+        `assessments/dpat/${selectedDistrict.value}/${selectedYear.value}/APR`
+      );
+      const fetchedStatus = assessmentStatusResponse.data?.status || "Not Started";
+      setAssessmentStatus(assessmentStatusResponse.data);
+      console.log("Current assessment status:", fetchedStatus);
+      return fetchedStatus;
+    } catch (error) {
+      console.error("Failed to fetch assessment status:", {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+      });
+      // message.error(`Failed to fetch status: ${error.response?.data?.message || error.message}`);
+      return null;
+    }
   };
 
-  const aprData = {};
+  const handleStartAPR = async () => {
+    setProgressLoad(true);
 
-  console.log("apr payload:", payload);
+    // Step 1: Check current assessment status
+    const currentStatus = await fetchAssessmentStatus();
+    if (currentStatus && currentStatus !== "Not Started") {
+      message.warning(`An assessment for ${selectedYear?.label} in ${selectedDistrict?.label} is already in progress (Status: ${currentStatus}).`);
+      setProgressLoad(false);
+      return;
+    }
 
-  try {
-    // Step 2: Post to assessments endpoint
-    const assessmentResponse = await instance.post(`assessments`, payload);
-    setAssessmentStatus(assessmentResponse.data);
-    message.success({
-      content: (
-        <div>
-          <p>Assessment started successfully (Status: 201)</p>
-        </div>
-      ),
-      duration: 3,
-    });
-
-    // Step 3: Fetch updated assessment status
-    const assessmentStatusResponse = await instance.get(
-      `assessments/dpat/${selectedDistrict?.value}/${selectedYear?.value}/APR`
-    );
-    const fetchedStatus = assessmentStatusResponse.data?.status || "Start";
-    setAssessmentStatus(assessmentStatusResponse.data);
-
-    // Step 4: Post to comments endpoint
-    const commentDate = new Date().toISOString().split("T")[0];
-    const commentPayload = {
+    const payload = {
       id: 0,
       username: user?.user?.username || "",
       fullName: user?.user?.fullName || "",
@@ -363,179 +344,221 @@ const fetchAssessmentStatus = async () => {
       type: "APR",
       districtId: selectedDistrict?.value || "",
       year: selectedYear?.value || "",
-      tableCommented: "Progress_start",
-      comments: `Progress Report started automatically with status: ${fetchedStatus}`,
-      gaps: "",
-      commentDate: commentDate,
-      updateDate: commentDate,
-      dddpDataDate: commentDate,
-      dddpData: {
-        indicator: "progress_report_start",
-        tables: aprData,
-      },
+      status: "Start",
+      assessmentStartDate: new Date().toISOString().split("T")[0],
+      assessmentEndDate: null,
+      reviewStartDate: null,
+      reviewEndDate: null,
+      closedDate: null,
     };
 
-    await instance.post(`comments`, commentPayload);
+    const aprData = {};
 
-    message.success({
-      content: (
-        <div>
-          <p>Comment added successfully</p>
-        </div>
-      ),
-      duration: 3,
-    });
-  } catch (error) {
-    console.error("Failed to process report or comment:", {
-      // message: error.message,
-      response: error.response?.data,
-      status: error.response?.status,
-    });
-    // message.error(`Failed to process: ${error.response?.data?.message || error.message}`);
-  } finally {
-    setProgressLoad(false);
-  }
-};
+    console.log("apr payload:", payload);
 
-     const handlePendingAPR = async () => {
-        setProgressLoad(true);
-         const assessmentEndDate = new Date().toISOString().split("T")[0];
-        const assessmentStartDate = assessmentStatus?.assessmentStartDate || new Date().toISOString().split("T")[0]; // Use existing start date or fallback to today
+    try {
+      // Step 2: Post to assessments endpoint
+      const assessmentResponse = await instance.post(`assessments`, payload);
+      setAssessmentStatus(assessmentResponse.data);
+      message.success({
+        content: (
+          <div>
+            <p>Assessment started successfully (Status: 201)</p>
+          </div>
+        ),
+        duration: 3,
+      });
 
-        const payload = {
-             id: assessmentStatus.id,
-            username: user?.user?.username,
-            fullName: user?.user?.fullName,
-            userRole: normalizedUserRole,
-            // userRole: "DDDP_USER",
-            type: "APR",
-            districtId: selectedDistrict?.value,
-            year: selectedYear?.value,
-            status: "Pending",
-           assessmentStartDate: assessmentStartDate,
-            assessmentEndDate: assessmentEndDate,
-            reviewStartDate: assessmentEndDate,
-            reviewEndDate: null,
-            closedDate: null,
-        };
+      // Step 3: Fetch updated assessment status
+      const assessmentStatusResponse = await instance.get(
+        `assessments/dpat/${selectedDistrict?.value}/${selectedYear?.value}/APR`
+      );
+      const fetchedStatus = assessmentStatusResponse.data?.status || "Start";
+      setAssessmentStatus(assessmentStatusResponse.data);
 
-        const aprData = {
-           
-        };
+      // Step 4: Post to comments endpoint
+      const commentDate = new Date().toISOString().split("T")[0];
+      const commentPayload = {
+        id: 0,
+        username: user?.user?.username || "",
+        fullName: user?.user?.fullName || "",
+        userRole: normalizedUserRole || "",
+        type: "APR",
+        districtId: selectedDistrict?.value || "",
+        year: selectedYear?.value || "",
+        tableCommented: "Progress_start",
+        comments: `Progress Report started automatically with status: ${fetchedStatus}`,
+        gaps: "",
+        commentDate: commentDate,
+        updateDate: commentDate,
+        dddpDataDate: commentDate,
+        dddpData: {
+          indicator: "progress_report_start",
+          tables: aprData,
+        },
+      };
 
-        console.log("apr: ", aprData);
+      await instance.post(`comments`, commentPayload);
 
-        try {
-            // Step 1: Update assessment with PUT request
-            const response = await instance.put(`assessments/${payload.id}`, payload);
-            setAssessmentStatus(response.data);
-            message.success({
-                content: (
-                    <div>
-                        <p>Progress Report Sent successfully</p>
-                    </div>
-                ),
-                duration: 3,
-            });
+      message.success({
+        content: (
+          <div>
+            <p>Comment added successfully</p>
+          </div>
+        ),
+        duration: 3,
+      });
+    } catch (error) {
+      console.error("Failed to process report or comment:", {
+        // message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+      });
+      // message.error(`Failed to process: ${error.response?.data?.message || error.message}`);
+    } finally {
+      setProgressLoad(false);
+    }
+  };
 
-            // Step 2: Fetch assessment status from the provided endpoint
-            const assessmentStatusResponse = await instance.get(
-                `assessments/dpat/${selectedDistrict?.value}/${selectedYear?.value}/APR`
-            );
-            const fetchedStatus = assessmentStatusResponse.data?.status; // Adjust based on actual response structure
-            setAssessmentStatus(assessmentStatusResponse.data); // Update state with the fetched assessment data
+  const handlePendingAPR = async () => {
+    setProgressLoad(true);
+    const assessmentEndDate = new Date().toISOString().split("T")[0];
+    const assessmentStartDate = assessmentStatus?.assessmentStartDate || new Date().toISOString().split("T")[0]; // Use existing start date or fallback to today
 
-
-
-
-        } catch (error) {
-            console.error("Failed to Submit Report:", {
-                message: error.message,
-                response: error.response?.data,
-                status: error.response?.status,
-            });
-            message.error(`Failed to Submit Report: ${error.response?.data?.message || error.message}`);
-        } finally {
-            setProgressLoad(false);
-        }
+    const payload = {
+      id: assessmentStatus.id,
+      username: user?.user?.username,
+      fullName: user?.user?.fullName,
+      userRole: normalizedUserRole,
+      // userRole: "DDDP_USER",
+      type: "APR",
+      districtId: selectedDistrict?.value,
+      year: selectedYear?.value,
+      status: "Pending",
+      assessmentStartDate: assessmentStartDate,
+      assessmentEndDate: assessmentEndDate,
+      reviewStartDate: assessmentEndDate,
+      reviewEndDate: null,
+      closedDate: null,
     };
 
+    const aprData = {
 
-       const handleCompleteAPR = async () => {
-        setProgressLoad(true);
-         const reviewEndDate = new Date().toISOString().split("T")[0];
-         const assessmentEndDate = new Date().toISOString().split("T")[0];
-        const assessmentStartDate = assessmentStatus?.assessmentStartDate || new Date().toISOString().split("T")[0]; // Use existing start date or fallback to today
-
-        const payload = {
-             id: assessmentStatus.id,
-            username: user?.user?.username,
-            fullName: user?.user?.fullName,
-            userRole: normalizedUserRole,
-            // userRole: "DDDP_USER",
-            type: "APR",
-            districtId: selectedDistrict?.value,
-            year: selectedYear?.value,
-            status: "Completed",
-              assessmentStartDate: assessmentStartDate,
-            assessmentEndDate: assessmentEndDate,
-            reviewStartDate: assessmentStatus?.reviewStartDate || assessmentEndDate, // Use existing review start date or fallback to assessmentEndDate
-            reviewEndDate: reviewEndDate,
-            closedDate: null,
-        };
-
-        const aprData = {
-           
-        };
-
-        console.log("apr: ", aprData);
-
-        try {
-            // Step 1: Update assessment with PUT request
-            const response = await instance.put(`assessments/${payload.id}`, payload);
-            setAssessmentStatus(response.data);
-            message.success({
-                content: (
-                    <div>
-                        <p>Submitted Successfully </p>
-                    </div>
-                ),
-                duration: 3,
-            });
-
-            // Step 2: Fetch assessment status from the provided endpoint
-            const assessmentStatusResponse = await instance.get(
-                `assessments/dpat/${selectedDistrict?.value}/${selectedYear?.value}/APR`
-            );
-            const fetchedStatus = assessmentStatusResponse.data?.status; // Adjust based on actual response structure
-            setAssessmentStatus(assessmentStatusResponse.data); // Update state with the fetched assessment data
-
-
-
-
-        } catch (error) {
-            console.error("Failed to Submit Report:", {
-                message: error.message,
-                response: error.response?.data,
-                status: error.response?.status,
-            });
-            message.error(`Failed to Submit Report: ${error.response?.data?.message || error.message}`);
-        } finally {
-            setProgressLoad(false);
-        }
     };
+
+    console.log("apr: ", aprData);
+
+    try {
+      // Step 1: Update assessment with PUT request
+      const response = await instance.put(`assessments/${payload.id}`, payload);
+      setAssessmentStatus(response.data);
+      message.success({
+        content: (
+          <div>
+            <p>Progress Report Sent successfully</p>
+          </div>
+        ),
+        duration: 3,
+      });
+
+      // Step 2: Fetch assessment status from the provided endpoint
+      const assessmentStatusResponse = await instance.get(
+        `assessments/dpat/${selectedDistrict?.value}/${selectedYear?.value}/APR`
+      );
+      const fetchedStatus = assessmentStatusResponse.data?.status; // Adjust based on actual response structure
+      setAssessmentStatus(assessmentStatusResponse.data); // Update state with the fetched assessment data
+
+
+
+
+    } catch (error) {
+      console.error("Failed to Submit Report:", {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+      });
+      message.error(`Failed to Submit Report: ${error.response?.data?.message || error.message}`);
+    } finally {
+      setProgressLoad(false);
+    }
+  };
+
+
+  const handleCompleteAPR = async () => {
+    setProgressLoad(true);
+    const reviewEndDate = new Date().toISOString().split("T")[0];
+    const assessmentEndDate = new Date().toISOString().split("T")[0];
+    const assessmentStartDate = assessmentStatus?.assessmentStartDate || new Date().toISOString().split("T")[0]; // Use existing start date or fallback to today
+
+    const payload = {
+      id: assessmentStatus.id,
+      username: user?.user?.username,
+      fullName: user?.user?.fullName,
+      userRole: normalizedUserRole,
+      // userRole: "DDDP_USER",
+      type: "APR",
+      districtId: selectedDistrict?.value,
+      year: selectedYear?.value,
+      status: "Completed",
+      assessmentStartDate: assessmentStartDate,
+      assessmentEndDate: assessmentEndDate,
+      reviewStartDate: assessmentStatus?.reviewStartDate || assessmentEndDate, // Use existing review start date or fallback to assessmentEndDate
+      reviewEndDate: reviewEndDate,
+      closedDate: null,
+    };
+
+    const aprData = {
+
+    };
+
+    console.log("apr: ", aprData);
+
+    try {
+      // Step 1: Update assessment with PUT request
+      const response = await instance.put(`assessments/${payload.id}`, payload);
+      setAssessmentStatus(response.data);
+      message.success({
+        content: (
+          <div>
+            <p>Submitted Successfully </p>
+          </div>
+        ),
+        duration: 3,
+      });
+
+      // Step 2: Fetch assessment status from the provided endpoint
+      const assessmentStatusResponse = await instance.get(
+        `assessments/dpat/${selectedDistrict?.value}/${selectedYear?.value}/APR`
+      );
+      const fetchedStatus = assessmentStatusResponse.data?.status; // Adjust based on actual response structure
+      setAssessmentStatus(assessmentStatusResponse.data); // Update state with the fetched assessment data
+
+
+
+
+    } catch (error) {
+      console.error("Failed to Submit Report:", {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+      });
+      message.error(`Failed to Submit Report: ${error.response?.data?.message || error.message}`);
+    } finally {
+      setProgressLoad(false);
+    }
+  };
   // Handler for Table selection
   const handleTableSelection = (selectedOption) => {
     setSelectedTable(selectedOption);
     // console.log("Selected Table:", selectedOption);
   };
- const showConfirm = () => {
+  const showConfirm = () => {
     Modal.confirm({
       title: 'Start Report',
       content: `Do you want to start the Progress Report for this district?`,
       okText: 'Yes',
       cancelText: 'No',
-      
+
       onOk() {
         handleStartAPR(); // Trigger the original endpoint call
       },
@@ -546,42 +569,42 @@ const fetchAssessmentStatus = async () => {
   };
 
   const showPending = () => {
-      Modal.confirm({
-        title: 'SUBMIT APR TO RCC',
-        content: `Do you want to submit progress report to RCC for this district?`,
-        okText: 'Yes',
-        cancelText: 'No',
-        
-        onOk() {
-          handlePendingAPR(); // Trigger the original endpoint call
-        },
-        onCancel() {
-          // Do nothing on cancel
-        },
-      });
-    };
-  
-    const showCompleted = () => {
-      Modal.confirm({
-        title: 'SUBMIT APR TO NDPC',
-        content: `Do you want to submit your final progress report to NDPC for this district?`,
-        okText: 'Yes',
-        cancelText: 'No',
-        
-        onOk() {
-          handleCompleteAPR(); // Trigger the original endpoint call
-        },
-        onCancel() {
-          // Do nothing on cancel
-        },
-      });
-    };
+    Modal.confirm({
+      title: 'SUBMIT APR TO RCC',
+      content: `Do you want to submit progress report to RCC for this district?`,
+      okText: 'Yes',
+      cancelText: 'No',
 
-     const hideTableDis = !assessmentStatus || assessmentStatus?.status === "Pending" || assessmentStatus?.status === "Completed" || assessmentStatus?.status === "Closed";
+      onOk() {
+        handlePendingAPR(); // Trigger the original endpoint call
+      },
+      onCancel() {
+        // Do nothing on cancel
+      },
+    });
+  };
+
+  const showCompleted = () => {
+    Modal.confirm({
+      title: 'SUBMIT APR TO NDPC',
+      content: `Do you want to submit your final progress report to NDPC for this district?`,
+      okText: 'Yes',
+      cancelText: 'No',
+
+      onOk() {
+        handleCompleteAPR(); // Trigger the original endpoint call
+      },
+      onCancel() {
+        // Do nothing on cancel
+      },
+    });
+  };
+
+  const hideTableDis = !assessmentStatus || assessmentStatus?.status === "Pending" || assessmentStatus?.status === "Completed" || assessmentStatus?.status === "Closed";
 
 
   return (
-    
+
     <div className="page-wrapper">
       <SideBarWrapper />
       <div className="page-content">
@@ -592,7 +615,7 @@ const fetchAssessmentStatus = async () => {
             <li className="breadcrumb-item active">Annual Progress Report (APR)</li>
           </ol>
         </div>
-        
+
         <div className="main-container">
           <div className="row gutters mb-3">
             <div className="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-12">
@@ -645,150 +668,286 @@ const fetchAssessmentStatus = async () => {
           </div>
           <div className="row gutters mb-3">
 
-                 <Col span={10} className="gutter-row">
-                  {(!assessmentStatus || ![null, "Start", "Pending", "Completed", "Closed"].includes(assessmentStatus?.status)) &&
-                    normalizedUserRole !== "APR_RCC" &&
-                    normalizedUserRole !== "NDPC_USER" && (
-                      <Button
-                        type="primary"
-                        onClick={showConfirm} // Use the confirmation popup instead of directly calling handleStartAssessmentSubmit
-                        style={{
-                          backgroundColor: "#1890ff",
-                          borderColor: "#1890ff",
-                        }}
-                        loading={progressLoad}
-                      >
-                        <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>
-                          CLICK TO START PROGRESS REPORT FOR {selectedYear?.value}
-                        </span>
-                      </Button>
-                    )}
-                </Col>
+            <Col span={10} className="gutter-row">
+              {(!assessmentStatus || ![null, "Start", "Pending", "Completed", "Closed"].includes(assessmentStatus?.status)) &&
+                normalizedUserRole !== "APR_RCC" &&
+                normalizedUserRole !== "NDPC_USER" && (
+                  <Button
+                    type="primary"
+                    onClick={showConfirm} // Use the confirmation popup instead of directly calling handleStartAssessmentSubmit
+                    style={{
+                      backgroundColor: "#1890ff",
+                      borderColor: "#1890ff",
+                    }}
+                    loading={progressLoad}
+                  >
+                    <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>
+                      CLICK TO START PROGRESS REPORT FOR {selectedYear?.value}
+                    </span>
+                  </Button>
+                )}
+            </Col>
             {selectedTable && selectedTable.value === "all_tables" && (
               <em ref={contentToPrint}>
-              
+
                 <div className="row gutters">
-                 
+
                   {selectedDistrict && selectedYear &&
-                    <ReportCover district={selectedDistrict} year={selectedYear?.value}/>}
+                    <ReportCover district={selectedDistrict} year={selectedYear?.value} />}
                 </div>
 
-                 {(
-                    <>
-                     <h2 style={{ textAlign: "center" }}>EXECUTIVE SUMMARY</h2>
+                {(
+                  <>
+                    <h2 style={{ textAlign: "center" }}>EXECUTIVE SUMMARY</h2>
                     <ExeAPR
-                    year={selectedYear?.value}
-                   district={selectedDistrict?.value}
-                     hideTableDis={hideTableDis}
-                      assessmentStatus = {assessmentStatus?.status !== "Completed" }
-                  />
-                   </>
-                      )}
-                      
-
-                      <h2 style={{ textAlign: "center" }}>CHAPTER ONE (1)</h2>    
-                       {(
-                    <>
-                     <h2 style={{ textAlign: "center" }}>GENERAL INFORMATION</h2>
-                    <GeneralIntroduction
-                    year={selectedYear?.value}
-                   district={selectedDistrict?.value}
-                     hideTableDis={hideTableDis}
-                      assessmentStatus = {assessmentStatus?.status !== "Completed" }
-                  />
-                   </>
-                      )}
-                   <Table_1
-                year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}   hideTableDis={hideTableDis}  
-                 assessmentStatus = {assessmentStatus?.status === "Pending" }
-                
-                />
-                <Table_2
-                      year={selectedYear?.value} 
-                      district={selectedDistrict?.value} 
-                      period={selectedPeriod?.value} 
+                      year={selectedYear?.value}
+                      district={selectedDistrict?.value}
                       hideTableDis={hideTableDis}
-                      />
+                      assessmentStatus={assessmentStatus?.status !== "Completed"}
+                    />
+                  </>
+                )}
 
-                 <h2 style={{ textAlign: "center" }}>CHAPTER TWO (2)</h2>           
-                <Table_3 
-              year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} hideTableDis={hideTableDis}/>
-                 <Table_4 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} hideTableDis={hideTableDis} />
-                <Table_5 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}  hideTableDis={hideTableDis}/>
-                <Table_6 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} hideTableDis={hideTableDis} />
-                <Table_7 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} hideTableDis={hideTableDis} />
-                <Table_8 
-                year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} hideTableDis={hideTableDis} />
-                <Table_9 
-                year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} hideTableDis={hideTableDis} />
-                 <Table_10
-                year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} hideTableDis={hideTableDis} />               
-                 <Table_11
-                year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} hideTableDis={hideTableDis} />
-                  <Table_12
-                year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} hideTableDis={hideTableDis} />
-                 <Table_13 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} hideTableDis={hideTableDis} />
-                <Table_14 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} hideTableDis={hideTableDis} />
-                <Table_15 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} hideTableDis={hideTableDis} />
-                   {(dataElements && categories && districtWideConstant) && <Table_16
+
+                <h2 style={{ textAlign: "center" }}>CHAPTER ONE (1)</h2>
+                {(
+                  <>
+                    <h2 style={{ textAlign: "center" }}>GENERAL INFORMATION</h2>
+                    <GeneralIntroduction
+                      year={selectedYear?.value}
+                      district={selectedDistrict?.value}
+                      hideTableDis={hideTableDis}
+                      assessmentStatus={assessmentStatus?.status !== "Completed"}
+                    />
+                  </>
+                )}
+                <Table_1
+                  ref={table1Ref}
                   year={selectedYear?.value}
                   district={selectedDistrict?.value}
-                  categories={categories}
-                  dataElements={dataElements}
-                  districtWideConstant={districtWideConstant}
-                  economicDataElements={economicDataElements}
-                  socialDataElements={socialDataElements}
                   period={selectedPeriod?.value}
                   hideTableDis={hideTableDis}
-                />}
-                <Table_17 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} hideTableDis={hideTableDis} />
-                <Table_18 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} hideTableDis={hideTableDis} />
-                <Table_19 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} hideTableDis={hideTableDis} />
-                <Table_20 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}hideTableDis={hideTableDis} />
-                <Table_21 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value}hideTableDis={hideTableDis} />
-                <Table_22 year={selectedYear?.value} district={selectedDistrict?.value} period={selectedPeriod?.value} hideTableDis={hideTableDis}/>
+                  assessmentStatus={assessmentStatus?.status === "Pending"}
+                />
 
-                      <>
-                <h2 style={{ textAlign: "center" }}>CHAPTER THREE (3)</h2>
+                <Table_2
+                  ref={table2Ref}
+                  year={selectedYear?.value}
+                  district={selectedDistrict?.value}
+                  period={selectedPeriod?.value}
+                  hideTableDis={hideTableDis}
+                />
+
+                <h2 style={{ textAlign: "center" }}>CHAPTER TWO (2)</h2>
+
+                <Table_3
+                  ref={table3Ref}
+                  year={selectedYear?.value}
+                  district={selectedDistrict?.value}
+                  period={selectedPeriod?.value}
+                  hideTableDis={hideTableDis}
+                />
+
+                <Table_4
+                  ref={table4Ref}
+                  year={selectedYear?.value}
+                  district={selectedDistrict?.value}
+                  period={selectedPeriod?.value}
+                  hideTableDis={hideTableDis}
+                />
+
+                <Table_5
+                  ref={table5Ref}
+                  year={selectedYear?.value}
+                  district={selectedDistrict?.value}
+                  period={selectedPeriod?.value}
+                  hideTableDis={hideTableDis}
+                />
+
+                <Table_6
+                  ref={table6Ref}
+                  year={selectedYear?.value}
+                  district={selectedDistrict?.value}
+                  period={selectedPeriod?.value}
+                  hideTableDis={hideTableDis}
+                />
+
+                <Table_7
+                  ref={table7Ref}
+                  year={selectedYear?.value}
+                  district={selectedDistrict?.value}
+                  period={selectedPeriod?.value}
+                  hideTableDis={hideTableDis}
+                />
+
+                <Table_8
+                  ref={table8Ref}
+                  year={selectedYear?.value}
+                  district={selectedDistrict?.value}
+                  period={selectedPeriod?.value}
+                  hideTableDis={hideTableDis}
+                />
+
+                <Table_9
+                  ref={table9Ref}
+                  year={selectedYear?.value}
+                  district={selectedDistrict?.value}
+                  period={selectedPeriod?.value}
+                  hideTableDis={hideTableDis}
+                />
+
+                <Table_10
+                  ref={table10Ref}
+                  year={selectedYear?.value}
+                  district={selectedDistrict?.value}
+                  period={selectedPeriod?.value}
+                  hideTableDis={hideTableDis}
+                />
+
+                <Table_11
+                  ref={table11Ref}
+                  year={selectedYear?.value}
+                  district={selectedDistrict?.value}
+                  period={selectedPeriod?.value}
+                  hideTableDis={hideTableDis}
+                />
+
+                <Table_12
+                  ref={table12Ref}
+                  year={selectedYear?.value}
+                  district={selectedDistrict?.value}
+                  period={selectedPeriod?.value}
+                  hideTableDis={hideTableDis}
+                />
+
+                <Table_13
+                  ref={table13Ref}
+                  year={selectedYear?.value}
+                  district={selectedDistrict?.value}
+                  period={selectedPeriod?.value}
+                  hideTableDis={hideTableDis}
+                />
+
+                <Table_14
+                  ref={table14Ref}
+                  year={selectedYear?.value}
+                  district={selectedDistrict?.value}
+                  period={selectedPeriod?.value}
+                  hideTableDis={hideTableDis}
+                />
+
+                <Table_15
+                  ref={table15Ref}
+                  year={selectedYear?.value}
+                  district={selectedDistrict?.value}
+                  period={selectedPeriod?.value}
+                  hideTableDis={hideTableDis}
+                />
+
+                {(dataElements && categories && districtWideConstant) && (
+                  <Table_16
+                    ref={table16Ref}
+                    year={selectedYear?.value}
+                    district={selectedDistrict?.value}
+                    categories={categories}
+                    dataElements={dataElements}
+                    districtWideConstant={districtWideConstant}
+                    economicDataElements={economicDataElements}
+                    socialDataElements={socialDataElements}
+                    period={selectedPeriod?.value}
+                    hideTableDis={hideTableDis}
+                  />
+                )}
+
+                <Table_17
+                  ref={table17Ref}
+                  year={selectedYear?.value}
+                  district={selectedDistrict?.value}
+                  period={selectedPeriod?.value}
+                  hideTableDis={hideTableDis}
+                />
+
+                <Table_18
+                  ref={table18Ref}
+                  year={selectedYear?.value}
+                  district={selectedDistrict?.value}
+                  period={selectedPeriod?.value}
+                  hideTableDis={hideTableDis}
+                />
+
+                <Table_19
+                  ref={table19Ref}
+                  year={selectedYear?.value}
+                  district={selectedDistrict?.value}
+                  period={selectedPeriod?.value}
+                  hideTableDis={hideTableDis}
+                />
+
+                <Table_20
+                  ref={table20Ref}
+                  year={selectedYear?.value}
+                  district={selectedDistrict?.value}
+                  period={selectedPeriod?.value}
+                  hideTableDis={hideTableDis}
+                />
+
+                <Table_21
+                  ref={table21Ref}
+                  year={selectedYear?.value}
+                  district={selectedDistrict?.value}
+                  period={selectedPeriod?.value}
+                  hideTableDis={hideTableDis}
+                />
+
+                <Table_22
+                  ref={table22Ref}
+                  year={selectedYear?.value}
+                  district={selectedDistrict?.value}
+                  period={selectedPeriod?.value}
+                  hideTableDis={hideTableDis}
+                />
+
+                <>
+                  <h2 style={{ textAlign: "center" }}>CHAPTER THREE (3)</h2>
 
 
-                    <Introduction
+                  <Introduction
                     year={selectedYear?.value}
-                   district={selectedDistrict?.value}
-                     hideTableDis={hideTableDis}
-                     assessmentStatus = {assessmentStatus?.status !== "Completed" }
+                    district={selectedDistrict?.value}
+                    hideTableDis={hideTableDis}
+                    assessmentStatus={assessmentStatus?.status !== "Completed"}
                   />
-                   <Key_Issues_Addressed
+                  <Key_Issues_Addressed
                     year={selectedYear?.value}
-                   district={selectedDistrict?.value}
-                     hideTableDis={hideTableDis}
-                      assessmentStatus = {assessmentStatus?.status !== "Completed" }
+                    district={selectedDistrict?.value}
+                    hideTableDis={hideTableDis}
+                    assessmentStatus={assessmentStatus?.status !== "Completed"}
                   />
-                   <Key_Issues_yet_to_be_Addressed
+                  <Key_Issues_yet_to_be_Addressed
                     year={selectedYear?.value}
-                   district={selectedDistrict?.value}
-                     hideTableDis={hideTableDis}
-                      assessmentStatus = {assessmentStatus?.status !== "Completed" }
+                    district={selectedDistrict?.value}
+                    hideTableDis={hideTableDis}
+                    assessmentStatus={assessmentStatus?.status !== "Completed"}
                   />
-                   <Recommendations
+                  <Recommendations
                     year={selectedYear?.value}
-                   district={selectedDistrict?.value}
-                     hideTableDis={hideTableDis}
-                      assessmentStatus = {assessmentStatus?.status !== "Completed" }
+                    district={selectedDistrict?.value}
+                    hideTableDis={hideTableDis}
+                    assessmentStatus={assessmentStatus?.status !== "Completed"}
                   />
                   <Conclusion
                     year={selectedYear?.value}
-                   district={selectedDistrict?.value}
-                     hideTableDis={hideTableDis}
-                      assessmentStatus = {assessmentStatus?.status !== "Completed" }
+                    district={selectedDistrict?.value}
+                    hideTableDis={hideTableDis}
+                    assessmentStatus={assessmentStatus?.status !== "Completed"}
                   />
-                  </>
-                    
+                </>
+
 
 
               </em>
             )}
-            
+
             <div style={{ textAlign: "right" }}>
               <Button
                 type="primary"
@@ -812,49 +971,49 @@ const fetchAssessmentStatus = async () => {
               </Button>
             </div>
 
-             <Col span={10} className="gutter-row">
-                  {assessmentStatus?.status === "Start" &&
-                    normalizedUserRole !== "APR_RCC" &&
-                    normalizedUserRole !== "NDPC_USER" && (
-                      <Button
-                        type="primary"
-                        onClick={showPending} // Use the confirmation popup instead of directly calling handleStartAssessmentSubmit
-                        style={{
-                          backgroundColor: "#1890ff",
-                          borderColor: "#1890ff",
-                           marginTop: "10px",
-                        }}
-                        loading={progressLoad}
-                      >
-                        <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>
-                           SUBMIT REPORT TO RCC {selectedYear?.value}
-                        </span>
-                      </Button>
-                    )}
-                </Col>
+            <Col span={10} className="gutter-row">
+              {assessmentStatus?.status === "Start" &&
+                normalizedUserRole !== "APR_RCC" &&
+                normalizedUserRole !== "NDPC_USER" && (
+                  <Button
+                    type="primary"
+                    onClick={showPending} // Use the confirmation popup instead of directly calling handleStartAssessmentSubmit
+                    style={{
+                      backgroundColor: "#1890ff",
+                      borderColor: "#1890ff",
+                      marginTop: "10px",
+                    }}
+                    loading={progressLoad}
+                  >
+                    <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>
+                      SUBMIT REPORT TO RCC {selectedYear?.value}
+                    </span>
+                  </Button>
+                )}
+            </Col>
 
-                 <Col span={10} className="gutter-row">
-                  {assessmentStatus?.status === "Pending" &&
-                    normalizedUserRole !== "APR_RCC" &&
-                    normalizedUserRole !== "NDPC_USER" && (
-                      <Button
-                        type="primary"
-                        onClick={showCompleted} // Use the confirmation popup instead of directly calling handleStartAssessmentSubmit
-                        style={{
-                          backgroundColor: "#048311ff",
-                          borderColor: "#048311ff",
-                           marginTop: "10px",
-                        }}
-                        loading={progressLoad}
-                      >
-                        <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>
-                         SUBMIT REPORT TO NDPC {selectedYear?.value}
-                        </span>
-                      </Button>
-                    )}
-                </Col>
+            <Col span={10} className="gutter-row">
+              {assessmentStatus?.status === "Pending" &&
+                normalizedUserRole !== "APR_RCC" &&
+                normalizedUserRole !== "NDPC_USER" && (
+                  <Button
+                    type="primary"
+                    onClick={showCompleted} // Use the confirmation popup instead of directly calling handleStartAssessmentSubmit
+                    style={{
+                      backgroundColor: "#048311ff",
+                      borderColor: "#048311ff",
+                      marginTop: "10px",
+                    }}
+                    loading={progressLoad}
+                  >
+                    <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>
+                      SUBMIT REPORT TO NDPC {selectedYear?.value}
+                    </span>
+                  </Button>
+                )}
+            </Col>
 
-            
+
             {selectedTable && selectedTable.value === "table_1" && <Table_1 />}
             {selectedTable && selectedTable.value === "table_2" && <Table_2 />}
             {selectedTable && selectedTable.value === "table_3" && <Table_3 />}
@@ -868,7 +1027,7 @@ const fetchAssessmentStatus = async () => {
             {selectedTable && selectedTable.value === "table_11" && <Table_11 />}
             {selectedTable && selectedTable.value === "table_12" && <Table_12 />}
 
-        
+
             {selectedTable && selectedTable.value === "table_13" && <Table_13 />}
             {selectedTable && selectedTable.value === "table_14" && <Table_14 />}
             {selectedTable && selectedTable.value === "table_15" && <Table_15 />}
@@ -881,19 +1040,19 @@ const fetchAssessmentStatus = async () => {
             {selectedTable && selectedTable.value === "table_22" && <Table_22 />}
             {selectedTable && selectedTable.value === "table_2.7" && <Table2_7 />}
 
-            {selectedTable && !["all_tables",   "table_1", "table_2", "table_3", "table_4", "table_5", "table_6", "table_7", "table_8", "table_9", 
-              "table_10","table_11","table_13","table_14","table_15","table_16","table_17","table_18","table_19","table_20","table_21","table_22"
+            {selectedTable && !["all_tables", "table_1", "table_2", "table_3", "table_4", "table_5", "table_6", "table_7", "table_8", "table_9",
+              "table_10", "table_11", "table_13", "table_14", "table_15", "table_16", "table_17", "table_18", "table_19", "table_20", "table_21", "table_22"
             ].includes(selectedTable.value) && (
-              <div className="col-12">
-                <h3>{selectedTable.label}</h3>
-                <div className="card">
-                  <div className="card-header">{selectedTable.label}</div>
-                  <div className="card-body">
-                    <p>Content for this table is not yet implemented. Please provide data to display.</p>
+                <div className="col-12">
+                  <h3>{selectedTable.label}</h3>
+                  <div className="card">
+                    <div className="card-header">{selectedTable.label}</div>
+                    <div className="card-body">
+                      <p>Content for this table is not yet implemented. Please provide data to display.</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
             {!selectedTable && selectedTocSection && (
               <div className="col-12">
                 <h3>{selectedTocSection.label}</h3>

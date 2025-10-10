@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import axios from "../../api/axios";
 import { filterTrackedEntitiesByCreatedAt, getAttributeValue, getPlanExecutionStats } from "../../utils/utils";
 import { Bar, Pie } from "react-chartjs-2";
@@ -9,7 +9,7 @@ import APRmemo from "./APRComment.js/APRmemo";
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 
-const Table_1 = ({ year, district, period,  hideTableDis,assessmentStatus }) => {
+const Table_1 = forwardRef(({ year, district, period, hideTableDis, assessmentStatus }, ref) => {
   const [tableData, setTableData] = useState([]);
   const [allData, setAllData] = useState([]);
   const [chartData, setChartData] = useState({});
@@ -18,6 +18,13 @@ const Table_1 = ({ year, district, period,  hideTableDis,assessmentStatus }) => 
   useEffect(() => {
     getAnnualActionPlan();
   }, [year, district, period]);
+
+  useImperativeHandle(ref, () => ({
+    getData: () => ({
+      indicator: "Table_1",
+      tableData
+    }),
+  }));
 
   async function getAnnualActionPlan() {
     try {
@@ -184,7 +191,7 @@ const Table_1 = ({ year, district, period,  hideTableDis,assessmentStatus }) => 
     const totalExecuted = totalRow ? totalRow.executed : 0;
 
     // Group data by dimension and sum planned/executed
-    const dimensionStats = dimensionsData.reduce((acc, row)=> {
+    const dimensionStats = dimensionsData.reduce((acc, row) => {
       if (!acc[row.dimension]) {
         acc[row.dimension] = { planned: 0, executed: 0 };
       }
@@ -227,8 +234,8 @@ const Table_1 = ({ year, district, period,  hideTableDis,assessmentStatus }) => 
             year={year}
             districtId={district}
             tableCommentedId={`table1-${year}`}
-             hideTableDis={hideTableDis}
-            
+            hideTableDis={hideTableDis}
+
           />
           <div className="table-responsive">
             <table className="table table-bordered" style={{
@@ -297,11 +304,11 @@ const Table_1 = ({ year, district, period,  hideTableDis,assessmentStatus }) => 
           <hr />
           <h5>Performance Comparison by Development Dimension ({new Date().getFullYear() - 2}-{new Date().getFullYear()})</h5>
           {/* <div className="mt-10" style={{ height: "700px", margin: "0 auto" }}> */}
-            {Object.keys(chartData).length > 0 ? (
-              <Bar data={chartData} options={barChartOptions} />
-            ) : (
-              <p>Loading bar chart data...</p>
-            )}
+          {Object.keys(chartData).length > 0 ? (
+            <Bar data={chartData} options={barChartOptions} />
+          ) : (
+            <p>Loading bar chart data...</p>
+          )}
           {/* </div> */}
           <hr />
           <h5>Projects Implemented vs Non-Implemented ({year})</h5>
@@ -321,7 +328,7 @@ const Table_1 = ({ year, district, period,  hideTableDis,assessmentStatus }) => 
             year={year}
             districtId={district}
             tableCommentedId={`table1-${year}`}
-             assessmentStatus ={assessmentStatus}
+            assessmentStatus={assessmentStatus}
           >
             {({ renderCommentInput, renderCommentList }) => (
               <>
@@ -334,6 +341,6 @@ const Table_1 = ({ year, district, period,  hideTableDis,assessmentStatus }) => 
       </div>
     </div>
   );
-};
+});
 
 export default Table_1;

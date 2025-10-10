@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
 import { filterTrackedEntitiesByCreatedAt, formatDataGeneral, getAttributeValue, getStageValue } from "../../utils/utils";
@@ -9,7 +9,7 @@ import APRmemo from "./APRComment.js/APRmemo";
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const Table_2 = ({ year, district, period }) => {
+const Table_2 = forwardRef(({ year, district, period }, ref) => {
 
   const [tableData, setTableData] = useState([]);
   const [tableDummy, setTableDummy] = useState([]);
@@ -18,6 +18,13 @@ const Table_2 = ({ year, district, period }) => {
   useEffect(() => {
     getBaselinesAndTargets();
   }, [year, district, period]);
+
+  useImperativeHandle(ref, () => ({
+    getData: () => ({
+      indicator: "Table_2",
+      tableData
+    }),
+  }));
 
   function getBaselinesAndTargets() {
     axios
@@ -45,138 +52,157 @@ const Table_2 = ({ year, district, period }) => {
                       .get(`/tracker/events?program=ArLnAxhykoz&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31&pageSize=10000`)
                       .then(response => {
                         console.log("aap reports");
+                        const aapReports = response.data.instances;
 
                         const currentYearActual = formatDataGeneral(results.data.instances, "Year", `${year}`) || [];
-                        const currentYearActual1 = formatDataGeneral(results.data.instances, "Year", `${year -1}`) || [];
+                        const currentYearActual1 = formatDataGeneral(results.data.instances, "Year", `${year - 1}`) || [];
                         const currentYearActual2 = formatDataGeneral(results.data.instances, "Year", `${year - 2}`) || [];
+
+                        const actualFormated = formatData(currentYearActual, aapReports);
+                        const actual1Formated = formatData(currentYearActual1, aapReports);
+                        const actual2Formated = formatData(currentYearActual2, aapReports);
+                        const calculatedData = calculateActivityPercentages({ actualFormated, actual1Formated, actual2Formated });
+
+                        let completedBaseline = 0;
+                        let completedTarget = 0;
+                        let onGoingBaseline = 0;
+                        let onGoingTarget = 0;
+                        let abandonedBaseline = 0;
+                        let abandonedTarget = 0;
+                        let yetToStartBaseline = 0;
+                        let yetToStartTarget = 0;
+
+                        //old activities baselines
+                        let oldCompletedBaseline = 0;
+                        let oldOnGoingBaseline = 0;
+                        let oldAbandonedBaseline = 0;
+                        let oldYetToStartBaseline = 0;
+                        let oldMtdpBaseline = 0
+
+                        let mtdpBaseline = 0;
+                        let mtdpTarget = 0;
+                        let mtdpActual = 0;
+
+                        oldActivities.forEach((item, idx) => {
+
+                          const trackerReport = reports.filter(rep => rep.trackedEntity === item.trackedEntity);
+
+                          if (trackerReport) {
+
+                            trackerReport.forEach(currentReport => {
+                              //Completed AAP
+                              oldCompletedBaseline += getStageValue(currentReport, "dxOHO0QnZsR");
+
+                              //Ongoing AAP
+                              oldOnGoingBaseline += getStageValue(currentReport, "ZVRR4ozm2od");
+
+                              //Abandoned AAP
+                              oldAbandonedBaseline += getStageValue(currentReport, "WfyEAyQQlfr");
+
+                              //Yet to start AAP
+                              oldYetToStartBaseline += getStageValue(currentReport, "Z69ZIsB8TbP");
+
+                              //MTDP
+                              oldMtdpBaseline += getStageValue(currentReport, "WrLpyyxA5pZ");
+
+                            });
+
+
+                          };
+                        });
+
+                        currentYear.forEach((item, idx) => {
+
+                          const trackerReport = reports.filter(rep => rep.trackedEntity === item.trackedEntity);
+
+                          if (trackerReport) {
+
+                            trackerReport.forEach(currentReport => {
+                              //Completed AAP
+                              completedBaseline += getStageValue(currentReport, "dxOHO0QnZsR");
+                              completedTarget += getStageValue(currentReport, "KNoWsIA6kze");
+
+                              //Ongoing AAP
+                              onGoingBaseline += getStageValue(currentReport, "ZVRR4ozm2od");
+                              onGoingTarget += getStageValue(currentReport, "lrVDQzE3hpM");
+
+                              //Abandoned AAP
+                              abandonedBaseline += getStageValue(currentReport, "WfyEAyQQlfr");
+                              abandonedTarget += getStageValue(currentReport, "xAw7tiaoQTm");
+
+                              //Yet to start AAP
+                              yetToStartBaseline += getStageValue(currentReport, "Z69ZIsB8TbP");
+                              yetToStartTarget += getStageValue(currentReport, "QZYgxnf7mP3");
+
+                              //MTDP
+                              mtdpBaseline += getStageValue(currentReport, "WrLpyyxA5pZ");
+                              mtdpTarget += getStageValue(currentReport, "U635zrF1mKK");
+                              mtdpActual += getStageValue(currentReport, "UMxVuTWkMrC");
+
+                            });
+
+
+                          };
+
+                          const dataSet = [
+                            {
+                              oldCompletedBaseline,
+                              target: completedTarget,
+                              indicator: "Percentage of activities completed",
+                              actual2: 0,
+                              actual1: 0,
+                              actual: 0
+                            },
+                            {
+                              oldOnGoingBaseline,
+                              target: onGoingTarget,
+                              indicator: "Percentage of on-going activities",
+                              actual2: 0,
+                              actual1: 0,
+                              actual: 0
+                            },
+                            {
+                              oldAbandonedBaseline,
+                              target: abandonedTarget,
+                              indicator: "Percentage of activities abandoned",
+                              actual2: 0,
+                              actual1: 0,
+                              actual: 0
+                            },
+                            {
+                              oldYetToStartBaseline,
+                              target: yetToStartTarget,
+                              indicator: "Percentage of activities yet to start",
+                              actual2: 0,
+                              actual1: 0,
+                              actual: 0
+                            },
+                            {
+                              oldMtdpBaseline,
+                              target: mtdpTarget,
+                              actual: mtdpActual,
+                              indicator: "Proportion of the overall Medium-Term Development Plan implemented",
+                              actual2: 0,
+                              actual1: 0,
+                            }
+                          ];
+
+                          temps.push(dataSet);
+                          setTableData(dataSet);
+                        });
+
+
+                        const finalData = mergeCalculatedData({ temps, calculatedData }, year)
+                        const flattenData = finalData ? finalData[0] : [];
+                        const finalFlap = renameBaselineKey(flattenData);
+
+                        setTableDummy(finalFlap);
+                        setTableData(finalFlap);
                       })
                       .catch(err => console.log(err));
-                  } 
+                  }
                 })
                 .catch(err => console.log(err));
-
-
-              let completedBaseline = 0;
-              let completedTarget = 0;
-              let onGoingBaseline = 0;
-              let onGoingTarget = 0;
-              let abandonedBaseline = 0;
-              let abandonedTarget = 0;
-              let yetToStartBaseline = 0;
-              let yetToStartTarget = 0;
-
-              //old activities baselines
-              let oldCompletedBaseline = 0;
-              let oldOnGoingBaseline = 0;
-              let oldAbandonedBaseline = 0;
-              let oldYetToStartBaseline = 0;
-              let oldMtdpBaseline = 0
-
-              let mtdpBaseline = 0;
-              let mtdpTarget = 0;
-              let mtdpActual = 0;
-
-              oldActivities.forEach((item, idx) => {
-
-                const trackerReport = reports.filter(rep => rep.trackedEntity === item.trackedEntity);
-
-                if (trackerReport) {
-
-                  trackerReport.forEach(currentReport => {
-                    //Completed AAP
-                    oldCompletedBaseline += getStageValue(currentReport, "dxOHO0QnZsR");
-
-                    //Ongoing AAP
-                    oldOnGoingBaseline += getStageValue(currentReport, "ZVRR4ozm2od");
-
-                    //Abandoned AAP
-                    oldAbandonedBaseline += getStageValue(currentReport, "WfyEAyQQlfr");
-
-                    //Yet to start AAP
-                    oldYetToStartBaseline += getStageValue(currentReport, "Z69ZIsB8TbP");
-
-                    //MTDP
-                    oldMtdpBaseline += getStageValue(currentReport, "WrLpyyxA5pZ");
-
-                  });
-
-
-                };
-              });
-
-              currentYear.forEach((item, idx) => {
-
-                const trackerReport = reports.filter(rep => rep.trackedEntity === item.trackedEntity);
-
-                if (trackerReport) {
-
-                  trackerReport.forEach(currentReport => {
-                    //Completed AAP
-                    completedBaseline += getStageValue(currentReport, "dxOHO0QnZsR");
-                    completedTarget += getStageValue(currentReport, "KNoWsIA6kze");
-
-                    //Ongoing AAP
-                    onGoingBaseline += getStageValue(currentReport, "ZVRR4ozm2od");
-                    onGoingTarget += getStageValue(currentReport, "lrVDQzE3hpM");
-
-                    //Abandoned AAP
-                    abandonedBaseline += getStageValue(currentReport, "WfyEAyQQlfr");
-                    abandonedTarget += getStageValue(currentReport, "xAw7tiaoQTm");
-
-                    //Yet to start AAP
-                    yetToStartBaseline += getStageValue(currentReport, "Z69ZIsB8TbP");
-                    yetToStartTarget += getStageValue(currentReport, "QZYgxnf7mP3");
-
-                    //MTDP
-                    mtdpBaseline += getStageValue(currentReport, "WrLpyyxA5pZ");
-                    mtdpTarget += getStageValue(currentReport, "U635zrF1mKK");
-                    mtdpActual += getStageValue(currentReport, "UMxVuTWkMrC");
-
-                  });
-
-
-                };
-
-                const dataSet = [
-                  {
-                    oldCompletedBaseline,
-                    target: completedTarget,
-                    indicator: "Percentage of activities completed",
-                    actual: 0
-
-                  },
-                  {
-                    oldOnGoingBaseline,
-                    target: onGoingTarget,
-                    indicator: "Percentage of on-going activities",
-                    actual: 0
-                  },
-                  {
-                    oldAbandonedBaseline,
-                    target: abandonedTarget,
-                    indicator: "Percentage of activities abandoned",
-                    actual: 0
-                  },
-                  {
-                    oldYetToStartBaseline,
-                    target: yetToStartTarget,
-                    indicator: "Percentage of activities yet to start",
-                    actual: 0
-                  },
-                  {
-                    oldMtdpBaseline,
-                    target: mtdpTarget,
-                    actual: mtdpActual,
-                    indicator: "Proportion of the overall Medium-Term Development Plan implemented",
-                  }
-                ];
-
-                console.log("djiba aap impletemented data: ", dataSet)
-
-
-                temps.push(dataSet);
-                setTableData(dataSet);
-              });
 
 
 
@@ -190,38 +216,128 @@ const Table_2 = ({ year, district, period }) => {
       .catch(err => console.log(err))
   }
 
-  const formatData = (aap, reports)=>{
+  const formatData = (aap, reports) => {
 
     const temp = [];
-      aap.forEach((item, idx) => {
-    
-        const currentReport = reports.filter(rep => rep.trackedEntity === item.trackedEntity);
-        let status = "";
-    
-        if (currentReport) {
-    
-          currentReport.forEach(curReport => {
-            curReport.dataValues.forEach(rep => {
-              if (rep.dataElement === "tE3QKB203nh") {
-                status = rep.value;
-              }
-    
-            });
-          })
-    
-        }
-    
-        const dataSetTemp = {
-          year: getAttributeValue("Year", item),
-          developmentDimension: getAttributeValue("Development Dimension", item),
-          status
-        };
-    
-        temp.push(dataSetTemp);
-      });
-    
-      return temp;
+    aap.forEach((item, idx) => {
+
+      const currentReport = reports.filter(rep => rep.trackedEntity === item.trackedEntity);
+      let status = "";
+
+      if (currentReport) {
+
+        currentReport.forEach(curReport => {
+          curReport.dataValues.forEach(rep => {
+            if (rep.dataElement === "SZcHb5mvjJx") {
+              status = rep.value;
+            }
+
+          });
+        })
+
+      }
+
+      const dataSetTemp = {
+        year: getAttributeValue("Year", item),
+        developmentDimension: getAttributeValue("Development Dimension", item),
+        status
+      };
+
+      temp.push(dataSetTemp);
+    });
+
+    return temp;
   }
+
+  function mergeCalculatedData(data, year) {
+    const { temps, calculatedData } = data;
+
+    // Map indicators to statuses for easy matching
+    const statusMap = {
+      "Percentage of activities completed": "Completed",
+      "Percentage of on-going activities": "Ongoing",
+      "Percentage of activities abandoned": "Abandoned",
+      "Percentage of activities yet to start": "Yet to be started",
+    };
+
+    // Create a deep copy of temps to avoid mutating original
+    const mergedTemps = temps.map((group) =>
+      group.map((item) => {
+        const newItem = { ...item };
+
+        // Match indicator to corresponding status in calculatedData
+        const statusKey = statusMap[item.indicator];
+
+        // Assign actual values for each year (2023 = actual2, 2024 = actual1, 2025 = actual)
+        if (statusKey) {
+          newItem.actual2 = parseFloat(calculatedData[year - 2][statusKey] || 0);
+          newItem.actual1 = parseFloat(calculatedData[year - 1][statusKey] || 0);
+          newItem.actual = parseFloat(calculatedData[year][statusKey] || 0);
+        }
+
+        return newItem;
+      })
+    );
+
+    return mergedTemps;
+  }
+
+
+  function calculateActivityPercentages(data) {
+    const statuses = ["Completed", "Yet to be started", "Ongoing", "Abandoned"];
+
+    // Merge all year arrays
+    const allYears = [
+      ...(data.actualFormated || []),
+      ...(data.actual1Formated || []),
+      ...(data.actual2Formated || []),
+    ];
+
+    // Group by year
+    const grouped = allYears.reduce((acc, { year, status }) => {
+      if (!acc[year]) acc[year] = [];
+      acc[year].push(status?.trim() || "");
+      return acc;
+    }, {});
+
+    // Calculate percentages
+    const result = {};
+    for (const [year, statusList] of Object.entries(grouped)) {
+      const total = statusList.length;
+      const yearResult = {};
+
+      // Count each defined status
+      statuses.forEach((s) => {
+        const count = statusList.filter((st) => st === s).length;
+        yearResult[s] = ((count / total) * 100).toFixed(2);
+      });
+
+      // Count unspecified/empty
+      const unspecifiedCount = statusList.filter((st) => !st).length;
+      yearResult["Unspecified"] = ((unspecifiedCount / total) * 100).toFixed(2);
+      yearResult["Total"] = total;
+
+      result[year] = yearResult;
+    }
+
+    return result;
+  }
+
+  const renameBaselineKey = (data) => {
+    return data.map(item => {
+      const newItem = { ...item };
+      // Find the key that ends with "Baseline"
+      for (const key in newItem) {
+        if (key.endsWith("Baseline")) {
+          newItem["baseline"] = newItem[key]; // rename
+          delete newItem[key]; // remove old key
+        }
+      }
+      return newItem;
+    });
+  };
+
+
 
 
   // Data for the bar graph
@@ -297,6 +413,7 @@ const Table_2 = ({ year, district, period }) => {
           />
 
           <div className="table-responsive">
+            {/* {JSON.stringify(tableDummy)} */}
             <table
               className="table table-bordered"
               style={{
@@ -320,15 +437,16 @@ const Table_2 = ({ year, district, period }) => {
                 </tr>
               </thead>
               <tbody>
-                {/* {tableData.map((row, index) => (
+                {tableData.map((row, index) => (
                   <tr key={index}>
                     <td style={{ border: '1px solid #000' }}>{row.indicator}</td>
-                    <td style={{ border: '1px solid #000' }}>{row.baseline2023.toFixed(1)}</td>
-                    <td style={{ border: '1px solid #000' }}>{row.actual2024.toFixed(1)}</td>
-                    <td style={{ border: '1px solid #000' }}>{row.actual2025.toFixed(1)}</td>
-                    <td style={{ border: '1px solid #000' }}>{row.target2025.toFixed(1)}</td>
+                    <td style={{ border: '1px solid #000' }}>{row.baseline}</td>
+                    <td style={{ border: '1px solid #000' }}>{row.actual2}</td>
+                    <td style={{ border: '1px solid #000' }}>{row.actual1}</td>
+                    <td style={{ border: '1px solid #000' }}>{row.target}</td>
+                    <td style={{ border: '1px solid #000' }}>{row.actual}</td>
                   </tr>
-                ))} */}
+                ))}
               </tbody>
             </table>
           </div>
@@ -365,6 +483,6 @@ const Table_2 = ({ year, district, period }) => {
       </div>
     </div>
   );
-};
+});
 
 export default Table_2;

@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import axios from "../../api/axios";
 import APRComment from "./APRComment.js/AprComments";
 import APRmemo from "./APRComment.js/APRmemo";
@@ -262,10 +262,10 @@ const nhisData = [
 ];
 
 
-const Table_16 = ({
+const Table_16 = forwardRef(({
   year, district, dataElements, categories,
   districtWideConstant, economicDataElements,
-  socialDataElements, period , hideTableDis}) => {
+  socialDataElements, period, hideTableDis }, ref) => {
 
   const [tableData, setTableData] = useState([]);
   const [showChart, setShowChart] = useState(true);
@@ -294,6 +294,28 @@ const Table_16 = ({
     getEmergencyPlanning();
     getImplementationMonitoring();
   }, [year, district, period]);
+
+  useImperativeHandle(ref, () => ({
+    getData: () => ({
+      indicator: "Table_16",
+      data:{
+        electricity,
+        poultry,
+        newJobs,
+        schoolCompletionRate,
+        schoolPassRate,
+        network,
+        emergency,
+        schoolEnrollment,
+        healthFacility,
+        nhis,
+        implmentation,
+        governance,
+        schoolGenderParity,
+        tableData
+      }
+    }),
+  }));
 
 
   function populateEconomicDevelopmentData(economicData, constantsData) {
@@ -1562,6 +1584,6 @@ const Table_16 = ({
       </div>
     </div>
   );
-};
+});
 
 export default Table_16;

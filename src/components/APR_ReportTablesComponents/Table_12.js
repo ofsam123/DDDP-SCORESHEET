@@ -1,4 +1,4 @@
-import React from "react";
+import React, { forwardRef, useImperativeHandle } from "react";
 import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
 import APRmemo from "./APRComment.js/APRmemo";
@@ -7,7 +7,7 @@ import APRComment from "./APRComment.js/AprComments";
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const Table_12 = (year, district, hideTableDis) => {
+const Table_12 = forwardRef(({year, district, hideTableDis}, ref) => {
   const tableData = {
     throwForward: [
       {
@@ -47,6 +47,13 @@ const Table_12 = (year, district, hideTableDis) => {
       },
     ],
   };
+
+  useImperativeHandle(ref, () => ({
+    getData: () => ({
+      indicator: "Table_12",
+      tableData
+    }),
+  }));
 
   const chartData = {
     labels: tableData.projects.map(project => project.name.substring(0, 15) + "..."),
@@ -100,7 +107,7 @@ const Table_12 = (year, district, hideTableDis) => {
       <h3>Table 12: CAPEX Budget Allocation and Implementation of Active Projects</h3>
       <div className="card">
         <div className="card-body">
-            <APRmemo
+          <APRmemo
             year={year}
             districtId={district}
             tableCommentedId={`table12-${year}`}
@@ -210,26 +217,26 @@ const Table_12 = (year, district, hideTableDis) => {
 
           {/* Bar Chart */}
           <h4>Figure 12: CAPEX Project Cost Analysis, 2024</h4>
-        
-            <Bar data={chartData} options={chartOptions} />
-             <APRComment
-                        data={tableData}
-                        year={year}
-                        districtId={district}
-                        tableCommentedId={`table12-${year}`}
-                      >
-                        {({ renderCommentInput, renderCommentList }) => (
-                          <>
-                            {renderCommentInput()}
-                            {renderCommentList()}
-                          </>
-                        )}
-                      </APRComment>
-        
+
+          <Bar data={chartData} options={chartOptions} />
+          <APRComment
+            data={tableData}
+            year={year}
+            districtId={district}
+            tableCommentedId={`table12-${year}`}
+          >
+            {({ renderCommentInput, renderCommentList }) => (
+              <>
+                {renderCommentInput()}
+                {renderCommentList()}
+              </>
+            )}
+          </APRComment>
+
         </div>
       </div>
     </div>
   );
-};
+});
 
 export default Table_12;

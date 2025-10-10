@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import APRmemo from "./APRComment.js/APRmemo";
 import APRComment from "./APRComment.js/AprComments";
 import axios from "../../api/axios";
@@ -20,12 +20,19 @@ const staffStrengths = [
 ];
 
 // Table18 Component
-const Table_18 = ({ year, district, period, hideTableDis }) => {
+const Table_18 = forwardRef(({ year, district, period, hideTableDis }, ref) => {
   const [tableData, setTableData] = useState([]);
 
   useEffect(() => {
     getData();
   }, [district, year, period]);
+
+  useImperativeHandle(ref, () => ({
+      getData: () => ({
+        indicator: "Table_18",
+        tableData
+      }),
+    }));
 
   function getData() {
     axios
@@ -148,6 +155,6 @@ const Table_18 = ({ year, district, period, hideTableDis }) => {
       </div>
     </div>
   );
-};
+});
 
 export default Table_18;

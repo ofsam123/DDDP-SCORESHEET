@@ -5,29 +5,29 @@ function SideBarMenu() {
   const { user } = useAuth();
 
   const currentUserRole = user?.user?.userRoles?.find(
-    (role) => 
-      role.name === "DPAT TECHNICAL TEAM" || 
-      role.name === "DPAT QUALITY ASSURANCE" || 
-      role.name === "DPAT DISTRICT USERS" || 
+    (role) =>
+      role.name === "DPAT TECHNICAL TEAM" ||
+      role.name === "DPAT QUALITY ASSURANCE" ||
+      role.name === "DPAT DISTRICT USERS" ||
       role.name === "DPAT PETITION COMMITTEE"
   )?.name || "";
   const normalizedUserRole = currentUserRole;
 
   const currentUserRoleAPR = user?.user?.userRoles?.find(
-    (role) => 
-      role.name === "APR USER" || 
-      role.name === "APR RCC" || 
+    (role) =>
+      role.name === "APR USER" ||
+      role.name === "APR RCC" ||
       role.name === "NDPC USER"
   )?.name || "";
   const normalizedUserRoleAPR = currentUserRoleAPR;
 
-  const isSpecialUser = user?.user?.username === "ofsam" || user?.user?.username === "msow" || user?.user?.username === "kofi";
+  const isSpecialUser = user?.user?.username === "ofsam" || user?.user?.username === "msow" || user?.user?.username === "kofi" || user?.user?.username === "ayeboah";
 
   return (
     <div className="sidebar-menu">
       <ul>
         <li className="header-menu">General</li>
-        
+
         {(isSpecialUser || normalizedUserRole) && (
           <li>
             <Link to="/">
@@ -90,6 +90,13 @@ function SideBarMenu() {
             </Link>
           </li>
         )}
+
+       {isSpecialUser && <li>
+          <Link to="/bulk-load">
+            <i className="icon-upload"></i>
+            <span className="menu-text">Bulk Load</span>
+          </Link>
+        </li>}
       </ul>
     </div>
   );

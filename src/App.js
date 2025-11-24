@@ -11,6 +11,7 @@ import RequireAuth from './components/RequireAuth';
 import AAP from './components/AAP';
 import ProjectAndProgram from './components/ProjectAndProgram';
 import APRReport from './components/APR_Report';
+import BulkLoad from './pages/BulkLoad';
 // import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
                  <Route path='/aap-analytics' element={<AAP />}/>
                  <Route path='/project-and-program-analytics' element={<ProjectAndProgram />}/>
                  <Route path='/APR-report' element={<APRReport />}/>
+                 <Route path='/bulk-load' element={<BulkLoad />}/>
             </Route>
             {/* private routes */}
             

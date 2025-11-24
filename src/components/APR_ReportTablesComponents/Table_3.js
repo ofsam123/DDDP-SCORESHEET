@@ -66,6 +66,7 @@ const Table_3 = forwardRef(({ year, district, period, hideTableDis }, ref) => {
 
                 const dataSetTemp = {
                   no: idx + 1,
+                  code: getAttributeValue("ProjectID", project),
                   description: getAttributeValue("Description", project),
                   dimension: getAttributeValue("Development Dimension", project),
                   location: getAttributeValue("Location", project),
@@ -153,7 +154,7 @@ const Table_3 = forwardRef(({ year, district, period, hideTableDis }, ref) => {
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Outstanding Balance</th>
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Implementation Status %</th>
 
-                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Pictures</th>
+                  {/* <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Pictures</th> */}
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Strategies to improve project completion rate</th>
                   <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>How Citizen were involved in monitoring of works contract</th>
 
@@ -164,7 +165,7 @@ const Table_3 = forwardRef(({ year, district, period, hideTableDis }, ref) => {
                 {tableData.map((row, index) => (
                   <tr key={index}>
                     {/* <td style={{ border: '1px solid #000' }}>{row.no}</td> */}
-                    <td style={{ border: '1px solid #000' }}>{ }</td>
+                    <td style={{ border: '1px solid #000' }}>{row.code}</td>
                     <td style={{ border: '1px solid #000' }}>{row.description}</td>
                     <td style={{ border: '1px solid #000' }}>{row.dimension}</td>
                     <td style={{ border: '1px solid #000' }}>{row.location}</td>

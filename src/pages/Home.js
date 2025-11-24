@@ -19,13 +19,13 @@ function Home() {
 
   const invitationColors = [
     "rgb(28, 82, 176)", //  (minutes)
-   
+
     "rgb(155, 22, 86)", // invitation
   ];
 
   const muniteColors = [
     "rgb(11, 116, 137)", //  (minutes)
-   
+
     "rgb(134, 19, 117)", // invitation
   ];
 
@@ -60,7 +60,7 @@ function Home() {
   const [minuteInvitationData, setMinuteInvitationData] = useState([]);
   const [InvitationData, setInvitationData] = useState([]);
   const [minuteInvitationError, setMinuteInvitationError] = useState(null);
-  
+
   const [InvitationError, setInvitationError] = useState(null);
 
   // MeetingRegionalReport state
@@ -105,7 +105,7 @@ function Home() {
 
       const analyticsResponse = await axios.get(
         // '/analytics.json?dimension=dx:aeKyGvo5OIp;kaxkMvOIXwW&dimension=ou:LEVEL-2&filter=pe:2024-01-01;2024-12-31'
-         `/analytics.json?dimension=dx:aeKyGvo5OIp;kaxkMvOIXwW&dimension=ou:LEVEL-2&filter=pe:${year}-01-01;${year}-12-31`
+        `/analytics.json?dimension=dx:aeKyGvo5OIp;kaxkMvOIXwW&dimension=ou:LEVEL-2&filter=pe:${year}-01-01;${year}-12-31`
       );
       // console.log("Meetings Analytics Response:", analyticsResponse.data);
       const rows = analyticsResponse.data.rows || [];
@@ -257,7 +257,7 @@ function Home() {
           console.warn(`Unknown data element: ${dataElement}`);
         }
       });
-      
+
 
       const total = counts.RC8Fu7TLb7l + counts.RsgxfezgTyr || 1;
       const percentages = [
@@ -287,7 +287,7 @@ function Home() {
       const counts = {
         yhzMdqZp0Qh: 0,
         aeKyGvo5OIp
-: 0,
+          : 0,
       };
 
       rows.forEach(([dataElement, orgUnit, value]) => {
@@ -297,7 +297,7 @@ function Home() {
           console.warn(`Unknown data element: ${dataElement}`);
         }
       });
-      
+
 
       const total = counts.yhzMdqZp0Qh + counts.aeKyGvo5OIp || 1;
       const percentages = [
@@ -335,7 +335,7 @@ function Home() {
   //         console.warn(`Unknown data element: ${dataElement}`);
   //       }
   //     });
-      
+
 
   //     const total = counts.D67mYmLvMSi || 1;
   //     const percentages = [
@@ -344,7 +344,7 @@ function Home() {
   //       // (counts.RsgxfezgTyr / total) * 100,
   //     ].map(val => Number(val.toFixed(2)));
 
-      
+
 
   //     // console.log("Total Invitations + Non Invitation:", total);
   //     // console.log("Processed  Invitation Percentages:", percentages);
@@ -473,7 +473,7 @@ function Home() {
         // console.log(result.data);
         let temp = [];
         result.data.organisationUnits.forEach((district) => {
-          const currentDistrict = { value: { id: district.id, region: district.parent.displayName}, label: district.displayName };
+          const currentDistrict = { value: { id: district.id, region: district.parent.displayName }, label: district.displayName };
           temp.push(currentDistrict);
         });
 

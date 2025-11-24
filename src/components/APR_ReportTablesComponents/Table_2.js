@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
-import { filterTrackedEntitiesByCreatedAt, formatDataGeneral, getAttributeValue, getStageValue } from "../../utils/utils";
+import { formatDataGeneral, getAttributeValue } from "../../utils/utils";
 import axios from "../../api/axios";
 import APRComment from "./APRComment.js/AprComments";
 import APRmemo from "./APRComment.js/APRmemo";
@@ -33,182 +33,161 @@ const Table_2 = forwardRef(({ year, district, period }, ref) => {
 
         if (result.data.instances.length > 0) {
 
+          // const data = filterTrackedEntitiesByCreatedAt(result.data.instances, year, period);
+          const aapBaselinesAndTargets = result.data.instances
+          const currentYear = formatDataGeneral(aapBaselinesAndTargets, "Years", `${year}`) || [];
+          const oldActivities = formatDataGeneral(aapBaselinesAndTargets, "Years", `${year - 3}`) || [];
+
+          const temps = [];
+
           axios
-            .get(`/tracker/events?program=pcG18cDzLtf&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31&pageSize=5000`)
-            .then(resp => {
-              // const data = filterTrackedEntitiesByCreatedAt(result.data.instances, year, period);
-              const currentYear = formatDataGeneral(result.data.instances, "Years", `${year}`) || [];
-              const oldActivities = formatDataGeneral(result.data.instances, "Years", `${year - 3}`) || [];
+            .get(`/tracker/trackedEntities?orgUnit=${district}&program=ArLnAxhykoz&startDate=${year}-01-01&endDate=${year}-12-31&pageSize=5000`)
+            .then(results => {
+              if (results.data.instances.length > 0) {
 
-              const reports = resp.data.instances;
-              const temps = [];
+                axios
+                  .get(`/tracker/events?program=ArLnAxhykoz&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31&pageSize=10000`)
+                  .then(response => {
 
-              axios
-                .get(`/tracker/trackedEntities?orgUnit=${district}&program=ArLnAxhykoz&startDate=${year}-01-01&endDate=${year}-12-31&pageSize=5000`)
-                .then(results => {
-                  if (results.data.instances.length > 0) {
+                    const aapReports = response.data.instances;
+                    const plans = results.data.instances;
 
-                    axios
-                      .get(`/tracker/events?program=ArLnAxhykoz&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31&pageSize=10000`)
-                      .then(response => {
-                        console.log("aap reports");
-                        const aapReports = response.data.instances;
+                    const currentYearActual = formatDataGeneral(plans, "Year", `${year}`) || [];
+                    const currentYearActual1 = formatDataGeneral(plans, "Year", `${year - 1}`) || [];
+                    const currentYearActual2 = formatDataGeneral(plans, "Year", `${year - 2}`) || [];
 
-                        const currentYearActual = formatDataGeneral(results.data.instances, "Year", `${year}`) || [];
-                        const currentYearActual1 = formatDataGeneral(results.data.instances, "Year", `${year - 1}`) || [];
-                        const currentYearActual2 = formatDataGeneral(results.data.instances, "Year", `${year - 2}`) || [];
+                    const actualFormated = formatData(currentYearActual, aapReports);
+                    const actual1Formated = formatData(currentYearActual1, aapReports);
+                    const actual2Formated = formatData(currentYearActual2, aapReports);
 
-                        const actualFormated = formatData(currentYearActual, aapReports);
-                        const actual1Formated = formatData(currentYearActual1, aapReports);
-                        const actual2Formated = formatData(currentYearActual2, aapReports);
-                        const calculatedData = calculateActivityPercentages({ actualFormated, actual1Formated, actual2Formated });
+                    const calculatedData = calculateActivityPercentages({ actualFormated, actual1Formated, actual2Formated });
 
-                        let completedBaseline = 0;
-                        let completedTarget = 0;
-                        let onGoingBaseline = 0;
-                        let onGoingTarget = 0;
-                        let abandonedBaseline = 0;
-                        let abandonedTarget = 0;
-                        let yetToStartBaseline = 0;
-                        let yetToStartTarget = 0;
+                    let completedBaseline = 0;
+                    let completedTarget = 0;
+                    let onGoingBaseline = 0;
+                    let onGoingTarget = 0;
+                    let abandonedBaseline = 0;
+                    let abandonedTarget = 0;
+                    let yetToStartBaseline = 0;
+                    let yetToStartTarget = 0;
 
-                        //old activities baselines
-                        let oldCompletedBaseline = 0;
-                        let oldOnGoingBaseline = 0;
-                        let oldAbandonedBaseline = 0;
-                        let oldYetToStartBaseline = 0;
-                        let oldMtdpBaseline = 0
+                    //old activities baselines
+                    let oldCompletedBaseline = 0;
+                    let oldOnGoingBaseline = 0;
+                    let oldAbandonedBaseline = 0;
+                    let oldYetToStartBaseline = 0;
+                    let oldMtdpBaseline = 0
 
-                        let mtdpBaseline = 0;
-                        let mtdpTarget = 0;
-                        let mtdpActual = 0;
+                    let mtdpBaseline = 0;
+                    let mtdpTarget = 0;
+                    let mtdpActual = 0;
 
-                        oldActivities.forEach((item, idx) => {
+                    oldActivities.forEach((item, idx) => {
 
-                          const trackerReport = reports.filter(rep => rep.trackedEntity === item.trackedEntity);
+                      oldCompletedBaseline = parseFloat(getAttributeValue("Proportion of Completed AAP Baseline", item));
 
-                          if (trackerReport) {
+                      //Ongoing AAP
+                      oldOnGoingBaseline = parseFloat(getAttributeValue("Proportion of  On Going AAP Intervention Baseline", item));
 
-                            trackerReport.forEach(currentReport => {
-                              //Completed AAP
-                              oldCompletedBaseline += getStageValue(currentReport, "dxOHO0QnZsR");
+                      //Abandoned AAP
+                      oldAbandonedBaseline = parseFloat(getAttributeValue("Proportion of  Abandoned AAP Intervention Baseline", item));
 
-                              //Ongoing AAP
-                              oldOnGoingBaseline += getStageValue(currentReport, "ZVRR4ozm2od");
+                      //Yet to start AAP
+                      oldYetToStartBaseline = parseFloat(getAttributeValue("Proportion of  Yet to Start AAP Intervention Baseline", item));
 
-                              //Abandoned AAP
-                              oldAbandonedBaseline += getStageValue(currentReport, "WfyEAyQQlfr");
+                      //MTDP
+                      oldMtdpBaseline += parseFloat(getAttributeValue("Proportion of MTDP Implemented Baseline", item));
 
-                              //Yet to start AAP
-                              oldYetToStartBaseline += getStageValue(currentReport, "Z69ZIsB8TbP");
+                    });
 
-                              //MTDP
-                              oldMtdpBaseline += getStageValue(currentReport, "WrLpyyxA5pZ");
-
-                            });
+                    currentYear.forEach((item, idx) => {
 
 
-                          };
-                        });
+                      //Completed AAP
+                      completedBaseline = parseFloat(getAttributeValue("Proportion of Completed AAP Baseline", item));
+                      completedTarget = parseFloat(getAttributeValue("Proportion of Completed AAP Target", item));
 
-                        currentYear.forEach((item, idx) => {
+                      //Ongoing AAP
+                      onGoingBaseline = parseFloat(getAttributeValue("Proportion of  On Going AAP Intervention Baseline", item));
+                      onGoingTarget = parseFloat(getAttributeValue("Proportion of  On Going AAP Intervention Target", item));
 
-                          const trackerReport = reports.filter(rep => rep.trackedEntity === item.trackedEntity);
+                      //Abandoned AAP
+                      abandonedBaseline = parseFloat(getAttributeValue("Proportion of  Abandoned AAP Intervention Baseline", item));
+                      abandonedTarget = parseFloat(getAttributeValue("Proportion of  Abandoned AAP Intervention Target", item));
 
-                          if (trackerReport) {
+                      //Yet to start AAP
+                      yetToStartBaseline = parseFloat(getAttributeValue("Proportion of  Yet to Start AAP Intervention Baseline", item));
+                      yetToStartTarget = parseFloat(getAttributeValue("Proportion of  Yet to Start AAP Intervention Target", item));
 
-                            trackerReport.forEach(currentReport => {
-                              //Completed AAP
-                              completedBaseline += getStageValue(currentReport, "dxOHO0QnZsR");
-                              completedTarget += getStageValue(currentReport, "KNoWsIA6kze");
-
-                              //Ongoing AAP
-                              onGoingBaseline += getStageValue(currentReport, "ZVRR4ozm2od");
-                              onGoingTarget += getStageValue(currentReport, "lrVDQzE3hpM");
-
-                              //Abandoned AAP
-                              abandonedBaseline += getStageValue(currentReport, "WfyEAyQQlfr");
-                              abandonedTarget += getStageValue(currentReport, "xAw7tiaoQTm");
-
-                              //Yet to start AAP
-                              yetToStartBaseline += getStageValue(currentReport, "Z69ZIsB8TbP");
-                              yetToStartTarget += getStageValue(currentReport, "QZYgxnf7mP3");
-
-                              //MTDP
-                              mtdpBaseline += getStageValue(currentReport, "WrLpyyxA5pZ");
-                              mtdpTarget += getStageValue(currentReport, "U635zrF1mKK");
-                              mtdpActual += getStageValue(currentReport, "UMxVuTWkMrC");
-
-                            });
-
-
-                          };
-
-                          const dataSet = [
-                            {
-                              oldCompletedBaseline,
-                              target: completedTarget,
-                              indicator: "Percentage of activities completed",
-                              actual2: 0,
-                              actual1: 0,
-                              actual: 0
-                            },
-                            {
-                              oldOnGoingBaseline,
-                              target: onGoingTarget,
-                              indicator: "Percentage of on-going activities",
-                              actual2: 0,
-                              actual1: 0,
-                              actual: 0
-                            },
-                            {
-                              oldAbandonedBaseline,
-                              target: abandonedTarget,
-                              indicator: "Percentage of activities abandoned",
-                              actual2: 0,
-                              actual1: 0,
-                              actual: 0
-                            },
-                            {
-                              oldYetToStartBaseline,
-                              target: yetToStartTarget,
-                              indicator: "Percentage of activities yet to start",
-                              actual2: 0,
-                              actual1: 0,
-                              actual: 0
-                            },
-                            {
-                              oldMtdpBaseline,
-                              target: mtdpTarget,
-                              actual: mtdpActual,
-                              indicator: "Proportion of the overall Medium-Term Development Plan implemented",
-                              actual2: 0,
-                              actual1: 0,
-                            }
-                          ];
-
-                          temps.push(dataSet);
-                          setTableData(dataSet);
-                        });
-
-
-                        const finalData = mergeCalculatedData({ temps, calculatedData }, year)
-                        const flattenData = finalData ? finalData[0] : [];
-                        const finalFlap = renameBaselineKey(flattenData);
-
-                        setTableDummy(finalFlap);
-                        setTableData(finalFlap);
-                      })
-                      .catch(err => console.log(err));
-                  }
-                })
-                .catch(err => console.log(err));
+                      //MTDP
+                      mtdpBaseline = parseFloat(getAttributeValue("Proportion of MTDP Implemented Baseline", item));
+                      mtdpTarget = parseFloat(getAttributeValue("Proportion of MTDP Implemented Target", item));
+                      mtdpActual = parseFloat(getAttributeValue("Proportion of MTDP Implemented Actual", item));
 
 
 
+                      const dataSet = [
+                        {
+                          oldCompletedBaseline,
+                          target: completedTarget,
+                          indicator: "Percentage of activities completed",
+                          actual2: 0,
+                          actual1: 0,
+                          actual: 0
+                        },
+                        {
+                          oldOnGoingBaseline,
+                          target: onGoingTarget,
+                          indicator: "Percentage of on-going activities",
+                          actual2: 0,
+                          actual1: 0,
+                          actual: 0
+                        },
+                        {
+                          oldAbandonedBaseline,
+                          target: abandonedTarget,
+                          indicator: "Percentage of activities abandoned",
+                          actual2: 0,
+                          actual1: 0,
+                          actual: 0
+                        },
+                        {
+                          oldYetToStartBaseline,
+                          target: yetToStartTarget,
+                          indicator: "Percentage of activities yet to start",
+                          actual2: 0,
+                          actual1: 0,
+                          actual: 0
+                        },
+                        {
+                          oldMtdpBaseline,
+                          target: mtdpTarget,
+                          actual: mtdpActual,
+                          indicator: "Proportion of the overall Medium-Term Development Plan implemented",
+                          actual2: 0,
+                          actual1: 0,
+                        }
+                      ];
 
+                      temps.push(dataSet);
+                      setTableData(dataSet);
+                    });
+
+
+                    const finalData = mergeCalculatedData({ temps, calculatedData }, year)
+                    const flattenData = finalData ? finalData[0] : [];
+                    const finalFlap = renameBaselineKey(flattenData);
+
+                    setTableDummy(finalFlap);
+                    setTableData(finalFlap);
+                  })
+                  .catch(err => console.log(err));
+              }
             })
-            .catch(err => console.log(err))
+            .catch(err => console.log(err));
+
+
+
         }
 
 

@@ -11,7 +11,7 @@ import Select from "react-select";
 import SideBarWrapper from "../components/SideBarWrapper";
 import DPATAssessmentSheet from "../components/DPATAssessmentSheet";
 import { Button } from "antd";
-import { filterTrackedEntitiesByCreatedAt, filterTrackedEntitiesByYear, formatDataGeneral } from "../utils/utils";
+import { filterTrackedEntitiesByYear, formatDataGeneral } from "../utils/utils";
 import useAuth from "../hooks/useAuth";
 
 const years = [

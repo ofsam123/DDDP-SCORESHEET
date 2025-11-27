@@ -369,7 +369,7 @@ export function getPlanExecutionStats(formatedPlans, reports) {
 
     if (currentReport) {
       const isCompleted = currentReport.dataValues.some(rep =>
-        rep.dataElement === "SZcHb5mvjJx" && rep.value === "Completed"
+        rep.dataElement === "SZcHb5mvjJx" && (rep.value === "Completed" || rep.value === "Ongoing" || rep.value === "Abandoned")
       );
 
       if (isCompleted) {

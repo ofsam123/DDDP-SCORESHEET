@@ -221,253 +221,226 @@ const BulkLoad = () => {
 
       payload = getBudgetPayload(excelData.rows, orgUnit, tracker, trackedEntity);
       fields = getMandatoryFieldByTracker("Budget Allocation Tracker")
-
-    } else if (selectedProgram?.label?.includes("Operational Health Facility Tracker")) {
-
-      payload = getOperationalHealthFacilityPayload(excelData.rows, orgUnit, tracker, trackedEntity);
-      fields = getMandatoryFieldByTracker("Operational Health Facility Tracker")
-
-    } else if (selectedProgram?.label?.includes("Sport Facility Tracker")) {
-
-      payload = getSportFacilityPayload(excelData.rows, orgUnit, tracker, trackedEntity);
-      fields = getMandatoryFieldByTracker("Sport Facility Tracker")
-
-    } else if (selectedProgram?.label?.includes("Service Providers Tracker")) {
-
-      payload = getServiceProvidersPayload(excelData.rows, orgUnit, tracker, trackedEntity);
-      fields = getMandatoryFieldByTracker("Service Providers Tracker")
-
-    } else if (selectedProgram?.label?.includes("School Profile Tracker")) {
-
-      payload = getSchoolProfilePayload(excelData.rows, orgUnit, tracker, trackedEntity);
-      fields = getMandatoryFieldByTracker("School Profile Tracker")
-
-    } else if (selectedProgram?.label?.includes("Meetings Tracker")) {
-
-      payload = getMeetingsPayload(excelData.rows, orgUnit, tracker, trackedEntity);
-      fields = getMandatoryFieldByTracker("Meetings Tracker")
-      
-    
+    }
 
 
-      const messages = getMissingMandatoryFieldsMessage(fields, payload.trackedEntities);
+    const messages = getMissingMandatoryFieldsMessage(fields, payload.trackedEntities);
 
-      if (messages.includes("Missing fields")) {
-        alert(messages);
-        setIsImporting(false);
-        return;
-      }
+    if (messages.includes("Missing fields")) {
+      alert(messages);
+      setIsImporting(false);
+      return;
+    }
 
-      axios.post(
-        '/tracker?async=true&importStrategy=CREATE_AND_UPDATE&skipRuleEngine=true&skipAudit=true',
-        payload
-      )
-        .then((response) => {
-          const jobId = response?.data?.response?.id;
+    axios.post(
+      '/tracker?async=true&importStrategy=CREATE_AND_UPDATE&skipRuleEngine=true&skipAudit=true',
+      payload
+    )
+      .then((response) => {
+        const jobId = response?.data?.response?.id;
 
-          if (!jobId) {
-            throw new Error("❌ No job ID returned from DHIS2.");
-          }
+        if (!jobId) {
+          throw new Error("❌ No job ID returned from DHIS2.");
+        }
 
-          // Poll job status every few seconds
-          const interval = setInterval(() => {
-            axios.get(`/tracker/jobs/${jobId}/report`)
-              .then((resp) => {
-                const status = resp.data;
+        // Poll job status every few seconds
+        const interval = setInterval(() => {
+          axios.get(`/tracker/jobs/${jobId}/report`)
+            .then((resp) => {
+              const status = resp.data;
 
-                if (status.status === "ERROR") {
-                  let userFeedback = "Could not upload the data, kindly verify the data and try again";
-                  const errorMessage = status?.validationReport?.errorReports?.[0]?.message;
+              if (status.status === "ERROR") {
+                let userFeedback = "Could not upload the data, kindly verify the data and try again";
+                const errorMessage = status?.validationReport?.errorReports?.[0]?.message;
 
-                  if (errorMessage?.includes("Non-unique attribute value")) {
-                    userFeedback = errorMessage;
-                  }
-
-                  message.error(userFeedback);
+                if (errorMessage?.includes("Non-unique attribute value")) {
+                  userFeedback = errorMessage;
                 }
 
-                if (status.status === "OK") {
-                  message.success("Data Uploaded Successfully");
-                  handleClear();
-                }
+                message.error(userFeedback);
+              }
 
-                // ✅ Stop polling once job finishes successfully or fails
-                if (["COMPLETED", "ERROR", "OK"].includes(status.status)) {
-                  clearInterval(interval);
-                  setIsImporting(false); // ⬅️ Stop spinner
-                }
-              })
-              .catch((err) => {
-                if (err.response?.status !== 404) {
-                  console.error("Error fetching job report:", err);
-                  clearInterval(interval);
-                  setIsImporting(false); // ⬅️ Stop spinner
-                }
-              });
-          }, 3000);
-          // Check every 3 seconds
-        })
-        .catch((error) => {
-          console.error("❌ DHIS2 import failed:", error);
-          const feedbackMessage = error?.response?.data?.message;
-          message.error(feedbackMessage?.split(",")[0]);
+              if (status.status === "OK") {
+                message.success("Data Uploaded Successfully");
+                handleClear();
+              }
 
-          setIsImporting(false); // ⬅️ Stop spinner
+              // ✅ Stop polling once job finishes successfully or fails
+              if (["COMPLETED", "ERROR", "OK"].includes(status.status)) {
+                clearInterval(interval);
+                setIsImporting(false); // ⬅️ Stop spinner
+              }
+            })
+            .catch((err) => {
+              if (err.response?.status !== 404) {
+                console.error("Error fetching job report:", err);
+                clearInterval(interval);
+                setIsImporting(false); // ⬅️ Stop spinner
+              }
+            });
+        }, 3000);
+        // Check every 3 seconds
+      })
+      .catch((error) => {
+        console.error("❌ DHIS2 import failed:", error);
+        const feedbackMessage = error?.response?.data?.message;
+        message.error(feedbackMessage?.split(",")[0]);
 
-        });
+        setIsImporting(false); // ⬅️ Stop spinner
 
-
-      toast({
-        title: "Data imported successfully",
-        description: `${excelData.rowCount} rows have been loaded`,
       });
 
-    }
+
+    toast({
+      title: "Data imported successfully",
+      description: `${excelData.rowCount} rows have been loaded`,
+    });
+
   };
 
-    const handleClear = () => {
-      setExcelData(null);
-    };
+  const handleClear = () => {
+    setExcelData(null);
+  };
 
-    return (
-      <div className="page-wrapper flex min-h-screen bg-gray-50">
-        <SideBarWrapper />
-        <div className="page-content flex-1 flex flex-col">
-          <Navbar />
+  return (
+    <div className="page-wrapper flex min-h-screen bg-gray-50">
+      <SideBarWrapper />
+      <div className="page-content flex-1 flex flex-col">
+        <Navbar />
 
-          {/* Header */}
-          {/* Page header start */}
-          <div className="page-header">
-            <ol className="breadcrumb">
-              <li className="breadcrumb-item">Home</li>
-              <li className="breadcrumb-item active">DDDP Bulk Load Interface </li>
-            </ol>
+        {/* Header */}
+        {/* Page header start */}
+        <div className="page-header">
+          <ol className="breadcrumb">
+            <li className="breadcrumb-item">Home</li>
+            <li className="breadcrumb-item active">DDDP Bulk Load Interface </li>
+          </ol>
+
+        </div>
+        {/* Page header end */}
+
+        {/* Main */}
+        <div className="main-container flex-1 p-8 bg-gray-50 overflow-y-auto">
+          <div className="row gutters mb-3">
+
+            {districts && <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+              <Select
+                onChange={(val) => {
+                  setSelectedDistrict({ value: val.value.id, label: val.label });
+                }}
+                options={districts}
+                isSearchable
+                placeholder='Select District'
+              />
+            </div>}
+
+            {programs && <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+              <Select
+                onChange={setSelectedProgram}
+                options={programs}
+                isSearchable
+                placeholder='Select Program'
+              />
+            </div>}
 
           </div>
-          {/* Page header end */}
-
-          {/* Main */}
-          <div className="main-container flex-1 p-8 bg-gray-50 overflow-y-auto">
-            <div className="row gutters mb-3">
-
-              {districts && <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-                <Select
-                  onChange={(val) => {
-                    setSelectedDistrict({ value: val.value.id, label: val.label });
-                  }}
-                  options={districts}
-                  isSearchable
-                  placeholder='Select District'
-                />
-              </div>}
-
-              {programs && <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-                <Select
-                  onChange={setSelectedProgram}
-                  options={programs}
-                  isSearchable
-                  placeholder='Select Program'
-                />
-              </div>}
-
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-100 mb-4">
+              <FileSpreadsheet className="w-8 h-8 text-blue-600" />
             </div>
-            <div className="text-center mb-12">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-100 mb-4">
-                <FileSpreadsheet className="w-8 h-8 text-blue-600" />
-              </div>
-              <h2 className="text-3xl font-bold text-gray-800 mb-2">
-                Excel Bulk Importer
-              </h2>
-              <p className="text-gray-500 text-base max-w-2xl mx-auto">
-                Drag and drop your Excel file below or select from your computer.
-              </p>
-            </div>
+            <h2 className="text-3xl font-bold text-gray-800 mb-2">
+              Excel Bulk Importer
+            </h2>
+            <p className="text-gray-500 text-base max-w-2xl mx-auto">
+              Drag and drop your Excel file below or select from your computer.
+            </p>
+          </div>
 
-            {!excelData ? (
-              <FileUploadZone
-                isDragOver={isDragOver}
-                isLoading={isLoading}
-                onDrop={handleDrop}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onFileInput={handleFileInput}
-              />
-            ) : (
-              <div className="space-y-8 animate-in fade-in duration-500">
-                <Card className="p-6 border-2 border-gray-200 bg-white shadow-md rounded-2xl">
-                  <div className="flex items-start justify-between mb-6">
-                    <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center">
-                        <CheckCircle2 className="w-6 h-6 text-green-600" />
-                      </div>
-                      <div>
-                        <h2 className="text-lg font-semibold text-gray-800 mb-1">
-                          {excelData.fileName}
-                        </h2>
-                        <div className="flex gap-4 text-sm text-gray-500">
-                          <span>Size: {excelData.fileSize}</span>
-                          <span>•</span>
-                          <span>{excelData.rowCount} rows</span>
-                          <span>•</span>
-                          <span>{excelData.columnCount} columns</span>
-                        </div>
+          {!excelData ? (
+            <FileUploadZone
+              isDragOver={isDragOver}
+              isLoading={isLoading}
+              onDrop={handleDrop}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onFileInput={handleFileInput}
+            />
+          ) : (
+            <div className="space-y-8 animate-in fade-in duration-500">
+              <Card className="p-6 border-2 border-gray-200 bg-white shadow-md rounded-2xl">
+                <div className="flex items-start justify-between mb-6">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center">
+                      <CheckCircle2 className="w-6 h-6 text-green-600" />
+                    </div>
+                    <div>
+                      <h2 className="text-lg font-semibold text-gray-800 mb-1">
+                        {excelData.fileName}
+                      </h2>
+                      <div className="flex gap-4 text-sm text-gray-500">
+                        <span>Size: {excelData.fileSize}</span>
+                        <span>•</span>
+                        <span>{excelData.rowCount} rows</span>
+                        <span>•</span>
+                        <span>{excelData.columnCount} columns</span>
                       </div>
                     </div>
-                    <Button variant="outline" onClick={handleClear}>
-                      Clear
-                    </Button>
-                    <Button variant="outline" onClick={handleBulkLoad} disabled={isImporting}>
-                      {isImporting ? (
-                        <>
-                          <svg
-                            className="animate-spin h-2 w-2 mr-2"
-                            viewBox="0 0 24 24"
-                          >
-                            <circle
-                              className="opacity-25"
-                              cx="12"
-                              cy="12"
-                              r="10"
-                              stroke="currentColor"
-                              strokeWidth="4"
-                              fill="none"
-                            ></circle>
-                            <path
-                              className="opacity-75"
-                              fill="currentColor"
-                              d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z"
-                            ></path>
-                          </svg>
-                          Importing...
-                        </>
-                      ) : (
-                        <>
-                          <Upload className="w-3 h-3" />
-                          Import Data
-                        </>
-                      )}
-                    </Button>
                   </div>
+                  <Button variant="outline" onClick={handleClear}>
+                    Clear
+                  </Button>
+                  <Button variant="outline" onClick={handleBulkLoad} disabled={isImporting}>
+                    {isImporting ? (
+                      <>
+                        <svg
+                          className="animate-spin h-2 w-2 mr-2"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                            fill="none"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z"
+                          ></path>
+                        </svg>
+                        Importing...
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="w-3 h-3" />
+                        Import Data
+                      </>
+                    )}
+                  </Button>
+                </div>
 
-                  <div className="overflow-x-auto">
-                    <ExcelPreviewTable
-                      headers={excelData.headers}
-                      rows={excelData.rows}
-                    />
-                  </div>
+                <div className="overflow-x-auto">
+                  <ExcelPreviewTable
+                    headers={excelData.headers}
+                    rows={excelData.rows}
+                  />
+                </div>
 
-                  <div className="mt-6 flex gap-3 justify-end">
+                <div className="mt-6 flex gap-3 justify-end">
 
 
 
-                  </div>
-                </Card>
-              </div>
-            )}
-          </div>
+                </div>
+              </Card>
+            </div>
+          )}
         </div>
       </div>
-    );
-  };
+    </div>
+  );
+};
 
-  export default BulkLoad;
+export default BulkLoad;

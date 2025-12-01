@@ -223,7 +223,6 @@ const BulkLoad = () => {
       fields = getMandatoryFieldByTracker("Budget Allocation Tracker")
     }
 
-
     const messages = getMissingMandatoryFieldsMessage(fields, payload.trackedEntities);
 
     if (messages.includes("Missing fields")) {

@@ -1,4 +1,3 @@
-
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import axios from "../../api/axios";
 import { filterTrackedEntitiesByCreatedAt, formatDataGeneral, getAttributeValue } from "../../utils/utils";
@@ -37,7 +36,6 @@ const Table_8 = forwardRef(({ year, district, period, hideTableDis }, ref) => {
 
               const reports = filterTrackedEntitiesByCreatedAt(resp.data.instances, startDate, endDate);
 
-              // console.log("djiba reports 1: ", reports);
               const temps = [];
 
               projects.forEach((project, idx) => {
@@ -50,12 +48,10 @@ const Table_8 = forwardRef(({ year, district, period, hideTableDis }, ref) => {
 
                   currentReport.dataValues.forEach(rep => {
                     if (rep.dataElement === "jr8gk707kAw") {
-                      // console.log("expendature: ",rep.value)
                       expendature = rep.value;
                     }
 
                     if (rep.dataElement === "f1T48vHfJc1") {
-                      console.log("percentage: ", rep.value)
                       percentage = rep.value;
                     }
                   });
@@ -95,22 +91,29 @@ const Table_8 = forwardRef(({ year, district, period, hideTableDis }, ref) => {
       })
       .catch(err => console.log(err))
   }
-  // Pictorial evidence data
-  const pictorialEvidence = [
-    {
-      url: "https://cdn1.img.sputniknews.africa/img/07e7/07/02/1060284138_451:0:3134:2012_1920x0_80_0_0_43d738a714a35edc0190c43cbaa47b86.jpg",
-      caption: "Construction of Community Center - 2022",
-    },
-    {
-      url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRegQFFElp18bejV_lABjBxFymQizmSFnbmBQ&s",
-      caption: "Road Improvement Project - Phase 1",
-    },
-    {
-      url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ84AeJyjvmIiYJZaK5Nz3lTPHUFSJVKyuybw&s",
-      caption: "School Renovation - Completed 2022",
-    },
-  ];
+  
+  const tableStyle = {
+    tableLayout: "fixed",
+    border: '1px solid #000',
+    borderCollapse: 'collapse',
+    width: '100%',
+    marginTop: "20px",
+    minWidth: '950px' // Ensure enough width for horizontal scroll
+  };
 
+  const thStyle = {
+    border: '1px solid #000',
+    fontWeight: 'bold',
+    backgroundColor: '#d4edda',
+    textAlign: 'center',
+    verticalAlign: 'middle'
+  };
+
+  const tdStyle = {
+    border: '1px solid #000',
+    verticalAlign: 'top',
+    padding: '8px'
+  };
 
   return (
     <div className="col-12">
@@ -122,77 +125,131 @@ const Table_8 = forwardRef(({ year, district, period, hideTableDis }, ref) => {
             year={year}
             districtId={district}
             tableCommentedId={`table8-${year}`}
-
             hideTableDis={hideTableDis}
-
           />
-          <div className="table-responsive">
-            <table className="table table-bordered" style={{
-              tableLayout: "fixed",
-              border: '1px solid #000',
-              borderCollapse: 'collapse',
-              width: '100%',
-              marginTop: "20px"
-            }}>
-              <thead style={{ backgroundColor: '#d4edda', fontWeight: 'bold', border: '1px solid #000' }}>
-                <tr >
-                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>No.</th>
-                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Programme Description</th>
-                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Development Dimension of Policy Framework</th>
-                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Amount Involved GH¢</th>
-                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Source of Funding</th>
-                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Date Started</th>
-                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Expected Date of Completion</th>
-                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Expenditure to Date</th>
-                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Outstanding Balance</th>
-                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Implementation Status (%)</th>
-                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Pictures</th>
-                  <th colSpan="2" style={{ border: '1px solid #000', fontWeight: 'bold' }}>Total Beneficiaries</th>
-                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Remarks</th>
-                </tr>
-                <tr>
-                  <th style={{ borderBottom: '1px solid #000', borderLeft: '1px solid #000' }}></th>
-                  <th style={{ borderBottom: '1px solid #000' }}></th>
-                  <th style={{ borderBottom: '1px solid #000' }}></th>
-                  <th style={{ borderBottom: '1px solid #000' }}></th>
-                  <th style={{ borderBottom: '1px solid #000' }}></th>
-                  <th style={{ borderBottom: '1px solid #000' }}></th>
-                  <th style={{ borderBottom: '1px solid #000' }}></th>
-                  <th style={{ borderBottom: '1px solid #000' }}></th>
-                  <th style={{ borderBottom: '1px solid #000' }}></th>
-                  <th style={{ borderBottom: '1px solid #000' }}></th>
-                  <th style={{ border: '1px solid #000' }}></th>
-                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Male</th>
-                  <th style={{ border: '1px solid #000', fontWeight: 'bold' }}>Female</th>
-                  <th style={{ border: '1px solid #000' }}></th>
-                </tr>
-              </thead>
-              <tbody>
-                {tableData.map((row, index) => (
-                  <tr key={index}>
-                    <td style={{ border: '1px solid #000' }}>{row.no}</td>
-                    <td style={{ border: '1px solid #000' }}>{row.description}</td>
-                    <td style={{ border: '1px solid #000' }}>{row.dimension}</td>
-                    <td style={{ border: '1px solid #000' }}>{row.contractSum}</td>
-                    <td style={{ border: '1px solid #000' }}>{row.fundingSource}</td>
-                    <td style={{ border: '1px solid #000' }}>{row.dateStarted}</td>
-                    <td style={{ border: '1px solid #000' }}>{row.expectedCompletion}</td>
-                    <td style={{ border: '1px solid #000' }}>{row.expenditure}</td>
-                    <td style={{ border: '1px solid #000' }}>{row.outstanding}</td>
-                    <td style={{ border: '1px solid #000' }}>{row.implementationStatus}</td>
-                    <td style={{ border: '1px solid #000' }}>{ }</td>
-                    <td style={{ border: '1px solid #000' }}>{row.beneficiariesMale}</td>
-                    <td style={{ border: '1px solid #000' }}>{row.beneficiariesFemale}</td>
-                    <td style={{ border: '1px solid #000' }}>{row.remarks}</td>
+          
+          {/* --- Two Horizontal Scrollable Tables for Screen View --- */}
+          <div className="screen-view-tables">
+             {/* Part 1: Identification, Dates, and Financials */}
+            <h4>Part 1: Programme Details, Dates, and Financials</h4>
+            <div className="table-responsive">
+              <table className="table table-bordered" style={tableStyle}>
+                <thead>
+                  <tr style={{ backgroundColor: '#d4edda', fontWeight: 'bold' }}>
+                    <th style={{ ...thStyle, width: '5%' }} rowSpan="2">#</th>
+                    <th style={{ ...thStyle, width: '25%' }} rowSpan="2">Programme Description</th>
+                    <th style={{ ...thStyle, width: '20%' }} rowSpan="2">Development Dimension of Policy Framework</th>
+                    <th style={{ ...thStyle, width: '15%' }} rowSpan="2">Amount Involved GH¢</th>
+                    <th style={{ ...thStyle, width: '15%' }} rowSpan="2">Source of Funding</th>
+                    <th style={{ ...thStyle, width: '10%' }} rowSpan="2">Date Started</th>
+                    <th style={{ ...thStyle, width: '10%' }} rowSpan="2">Expected Date of Completion</th>
+                    <th style={{ ...thStyle, width: '15%' }} colSpan="2">Balance</th>
                   </tr>
-                ))}
-              </tbody>
+                  <tr style={{ backgroundColor: '#d4edda', fontWeight: 'bold' }}>
+                     <th style={{ ...thStyle, width: '7.5%' }}>Expenditure to Date</th>
+                     <th style={{ ...thStyle, width: '7.5%' }}>Outstanding Balance</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {tableData.map((row, index) => (
+                    <tr key={index}>
+                      <td style={tdStyle}>{row.no}</td>
+                      <td style={tdStyle}>{row.description}</td>
+                      <td style={tdStyle}>{row.dimension}</td>
+                      <td style={tdStyle}>{row.contractSum}</td>
+                      <td style={tdStyle}>{row.fundingSource}</td>
+                      <td style={tdStyle}>{row.dateStarted}</td>
+                      <td style={tdStyle}>{row.expectedCompletion}</td>
+                      <td style={tdStyle}>{row.expenditure}</td>
+                      <td style={tdStyle}>{row.outstanding}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-
-            </table>
+            {/* Part 2: Status, Pictures, and Beneficiaries */}
+            <h4 style={{ marginTop: '30px' }}>Part 2: Status, Pictures, and Beneficiaries/Remarks</h4>
+            <div className="table-responsive">
+              <table className="table table-bordered" style={{...tableStyle, minWidth: '550px'}}>
+                <thead>
+                  <tr style={{ backgroundColor: '#d4edda', fontWeight: 'bold' }}>
+                    <th style={{ ...thStyle, width: '10%' }} rowSpan="2">Implementation Status (%)</th>
+                    <th style={{ ...thStyle, width: '10%' }} rowSpan="2">Pictures</th>
+                    <th style={{ ...thStyle, width: '20%' }} colSpan="2">Total Beneficiaries</th>
+                    <th style={{ ...thStyle, width: '20%' }} rowSpan="2">Remarks</th>
+                  </tr>
+                  <tr style={{ backgroundColor: '#d4edda', fontWeight: 'bold' }}>
+                    <th style={{ ...thStyle, width: '10%' }}>Male</th>
+                    <th style={{ ...thStyle, width: '10%' }}>Female</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {tableData.map((row, index) => (
+                    <tr key={index}>
+                      <td style={tdStyle}>{row.implementationStatus}</td>
+                      <td style={tdStyle}>{/* Insert image link/component here if available */}</td>
+                      <td style={tdStyle}>{row.beneficiariesMale}</td>
+                      <td style={tdStyle}>{row.beneficiariesFemale}</td>
+                      <td style={tdStyle}>{row.remarks}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-
-
+          
+          {/* --- Printable Version (Compact) --- */}
+          <div className="table-printable-version" style={{ display: 'none' }}>
+            <div className="table-responsive">
+              <table className="table table-bordered" style={{ ...tableStyle, tableLayout: 'auto' }}>
+                <thead>
+                   <tr style={{ backgroundColor: '#d4edda', fontWeight: 'bold' }}>
+                    <th style={{ ...thStyle, fontSize: '10px' }} rowSpan="2">No.</th>
+                    <th style={{ ...thStyle, fontSize: '10px' }} rowSpan="2">Programme / Dimension</th>
+                    <th style={{ ...thStyle, fontSize: '10px' }} rowSpan="2">Amount GH¢ / Source</th>
+                    <th style={{ ...thStyle, fontSize: '10px' }} rowSpan="2">Start/Expected Completion Dates</th>
+                    <th style={{ ...thStyle, fontSize: '10px' }} rowSpan="2">Expenditure / Outstanding Balance</th>
+                    <th style={{ ...thStyle, fontSize: '10px' }} rowSpan="2">Impl. Status (%)</th>
+                    <th style={{ ...thStyle, fontSize: '10px' }} colSpan="2">Total Beneficiaries</th>
+                    <th style={{ ...thStyle, fontSize: '10px' }} rowSpan="2">Remarks</th>
+                  </tr>
+                  <tr style={{ backgroundColor: '#d4edda', fontWeight: 'bold' }}>
+                    <th style={{ ...thStyle, fontSize: '10px' }}>Male</th>
+                    <th style={{ ...thStyle, fontSize: '10px' }}>Female</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {tableData.map((row, index) => (
+                    <tr key={index}>
+                      <td style={{ ...tdStyle, fontSize: '9px' }}>{row.no}</td>
+                      <td style={{ ...tdStyle, fontSize: '9px' }}>
+                        **Desc:** {row.description}<br />
+                        **Dim:** {row.dimension}
+                      </td>
+                      <td style={{ ...tdStyle, fontSize: '9px' }}>
+                         **Amt:** {row.contractSum}<br />
+                         **Src:** {row.fundingSource}
+                      </td>
+                      <td style={{ ...tdStyle, fontSize: '9px' }}>
+                        **Start:** {row.dateStarted}<br />
+                        **Exp. Comp:** {row.expectedCompletion}
+                      </td>
+                      <td style={{ ...tdStyle, fontSize: '9px' }}>
+                        **Exp.:** {row.expenditure}<br />
+                        **Out.:** {row.outstanding}
+                      </td>
+                      <td style={{ ...tdStyle, fontSize: '9px' }}>{row.implementationStatus}</td>
+                      <td style={{ ...tdStyle, fontSize: '9px' }}>{row.beneficiariesMale}</td>
+                      <td style={{ ...tdStyle, fontSize: '9px' }}>{row.beneficiariesFemale}</td>
+                      <td style={{ ...tdStyle, fontSize: '9px' }}>{row.remarks}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
           <p className="mt-2">
             <small>Source: MPCU</small>
           </p>
@@ -202,7 +259,6 @@ const Table_8 = forwardRef(({ year, district, period, hideTableDis }, ref) => {
             year={year}
             districtId={district}
             tableCommentedId={`table8-${year}`}
-
           >
             {({ renderCommentInput, renderCommentList }) => (
               <>

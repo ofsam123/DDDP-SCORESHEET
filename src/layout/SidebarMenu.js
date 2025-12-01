@@ -21,7 +21,7 @@ function SideBarMenu() {
   )?.name || "";
   const normalizedUserRoleAPR = currentUserRoleAPR;
 
-  const isSpecialUser = user?.user?.username === "ofsam" || user?.user?.username === "msow" || user?.user?.username === "kofi" || user?.user?.username === "ayeboah";
+  const isSpecialUser = user?.user?.username === "ofsam" || user?.user?.username === "msow" || user?.user?.username === "kofi" || user?.user?.username === "ayeboah" || user?.user?.username === "rockson";
 
   return (
     <div className="sidebar-menu">

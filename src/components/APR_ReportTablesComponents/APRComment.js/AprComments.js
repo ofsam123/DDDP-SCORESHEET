@@ -14,7 +14,7 @@ function APRComment({ data, year, districtId, tableCommentedId, children,  asses
   const [showCommentInput, setShowCommentInput] = useState(false);
   const [commentText, setCommentText] = useState("");
   const [comments, setComments] = useState([]);
-  const [editingCommentId, setEditingCommentId] = useState(null);
+  const [editingCommentId, setEditingCommentId]  = useState(null);
   const [editText, setEditText] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);

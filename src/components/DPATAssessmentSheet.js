@@ -65,12 +65,9 @@ import { budgetApprovalColumns, ECAMeetingColumns, ETCMeetingColumns, gaMeetingC
 import DeepeningGenderMainstreaming from "./DeepeningGenderMainstreaming";
 import instance from "../api/cmsapi";
 import ScoreSheetSummary from "./ScoreSheetSummary";
-<<<<<<< HEAD
 import Petition from "./Petition";
-=======
 import CommentAndGabsSummary from "./CommentAndGabsSummary";
 import PetitionCommittee from "./PetitionCommittee";
->>>>>>> origin/main
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
@@ -122,7 +119,7 @@ const DPATAssessmentSheet = ({ props }) => {
     const [decisionServiceData, setDecisionServiceData] = useState(null);
     const [decisionDeliveryData, setDecisionDeliveryData] = useState(null);
     const [decisionDeliveryListData, setDecisionDeliveryListData] = useState(null);
-    const [managementActionServiceDeliveryData, setManagementActionServiceDeliveryData] = useState(null);
+    const [managementActionServiceDeliveryData, setManagementActionServiceDeliveryData] = useState([]);
     const [ecaMeetingData, setEcaMeetingData] = useState(null);
     const [prccMeetingData, setPrccMeetingData] = useState(null);
     const [auditCommitteeMeetingData, setAuditCommitteeMeetingData] = useState(null);
@@ -206,7 +203,7 @@ const DPATAssessmentSheet = ({ props }) => {
     const agricultureSupportRef = useRef();
 const [showPetition, setShowPetition] = useState(true); 
     const currentUserRole = user?.user?.userRoles?.find(
-        (role) => role.name === "DPAT TECHNICAL TEAM" || role.name === "DPAT QUALITY ASSURANCE" || role.name === "DPAT DISTRICT USERS"
+        (role) => role.name === "DPAT TECHNICAL TEAM" || role.name === "DPAT QUALITY ASSURANCE" || role.name === "DPAT DISTRICT USERS" || role.name === "DPAT PETITION COMMITTEE"
     )?.name || "";
     const normalizedUserRole = currentUserRole ? currentUserRole.replace(" ", "_").toUpperCase() : "";
     const currentUsername = user?.user?.username || "";
@@ -222,6 +219,7 @@ const [showPetition, setShowPetition] = useState(true);
 
     // Fetch assessment status on component mount
     useEffect(() => {
+        
         const fetchAssessmentStatus = async () => {
             try {
                 const response = await instance.get(
@@ -236,6 +234,7 @@ const [showPetition, setShowPetition] = useState(true);
 
         if (district?.value && year) {
             fetchAssessmentStatus();
+         
         }
     }, [district?.value, year]);
 
@@ -524,44 +523,44 @@ const [showPetition, setShowPetition] = useState(true);
         );
     };
 
-    const setSanitationServiceDataDisplay = () => {
+   const setSanitationServiceDataDisplay = () => {
         const aap = props?.plans?.aap;
         const ifg = props?.ifg?.data;
         const sanitationPlan = formatDataGeneral(aap, "Sector", "Sanitation") || [];
-        const sanitationPlans = formatDataGeneral(sanitationPlan, "Year", "2024") || [];       
-
+        const sanitationPlans = formatDataGeneral(sanitationPlan, "Year", "2024") || [];      
+ 
         const temp = [];
         let totalBudget = 0;
         let totalIGF = 0;
-
+ 
         sanitationPlans?.forEach(plan => {
             const currentBudget = getAttributeValue("Budget Allocated", plan);
             const tempDataSet = {
                 plan: getAttributeValue("Activity Name", plan),
                 budget: currentBudget
             };
-
+ 
             temp.push(tempDataSet);
-
+ 
             totalBudget += currentBudget !== 'N/A' ? parseFloat(currentBudget) : 0;
         });
-
+ 
         ifg?.forEach(ig => {
             const currentIGFBudget = getAttributeValue("Amt Collected", ig);
             totalIGF += currentIGFBudget !== 'N/A' ?  parseFloat(currentIGFBudget) : 0;
         });
-
+ 
         const percentage = calculatePercentage(totalIGF, totalBudget);
         const sanitationData = {
             ifgCollected: totalIGF,
             igfSpentOnSanitation: totalBudget,
             percentage
         };
-
+ 
         setSanitationProvidersData([sanitationData]);
-
+ 
     }
-
+ 
     const sanitationServiceData = () => {
         const temp = getAAPAndMTDPLinks("Sanitation");
         setSanitationServiceList(temp);
@@ -979,6 +978,10 @@ const [showPetition, setShowPetition] = useState(true);
                 fulfillment = "Not Fulfilled";
             }
         });
+
+        if(formattedData.length === 0){
+            fulfillment = "Not Fulfilled";
+        }
 
         setSubStructuresMeetingData({ data: temp.concat(formattedData), fulfillment, subMeeting: formattedData });
     };
@@ -2189,6 +2192,8 @@ const [showPetition, setShowPetition] = useState(true);
         const reviewEndDate = new Date().toISOString().split("T")[0];
         const assessmentStartDate = assessmentStatus?.assessmentStartDate || new Date().toISOString().split("T")[0]; // Use existing start date or fallback to today
         const assessmentEndDate = assessmentStatus?.assessmentEndDate || new Date().toISOString().split("T")[0]; // Use existing end date or fallback to today
+         const reviewCloseDate = new Date().toISOString().split("T")[0];
+        
 
         // Ensure assessmentStatus has an ID
         if (!assessmentStatus?.id) {
@@ -2210,7 +2215,7 @@ const [showPetition, setShowPetition] = useState(true);
             assessmentEndDate: assessmentEndDate,
             reviewStartDate: assessmentStatus?.reviewStartDate || assessmentEndDate, // Use existing review start date or fallback to assessmentEndDate
             reviewEndDate: reviewEndDate,
-            closedDate: null,
+            closedDate: reviewCloseDate,
         };
 
         try {
@@ -2247,7 +2252,9 @@ const [showPetition, setShowPetition] = useState(true);
     };
     const hideComment = !assessmentStatus || assessmentStatus?.status === "Pending" || assessmentStatus?.status === "Completed" || assessmentStatus?.status === "Closed";
 const shouldRenderQualityAssuranceEditor = assessmentStatus?.status && !["Completed", "Closed", "null", "Start", ].includes(assessmentStatus.status);
+
 const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatus?.status === "Start" || assessmentStatus?.status === "Pending";
+// console.log("quality assurance: ", {assessmentStatus});
   const showConfirm = () => {
     Modal.confirm({
       title: 'Start Assessment',
@@ -2402,7 +2409,24 @@ const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatu
 )}
 
                     <Col align="end" style={{ marginBottom: "20px" }}>
-        {normalizedUserRole === "DPAT_DISTRICT USERS" && assessmentStatus?.status === "Completed" && (
+        
+      </Col>
+                
+
+     
+
+      {(assessmentStatus?.status === "Closed" || 
+        (assessmentStatus?.status === "Completed" && normalizedUserRole !== "DPAT_TECHNICAL TEAM" && normalizedUserRole !== "DPAT_PETITION COMMITTEE")) && 
+        showPetition && (
+        <Petition
+          year={year}
+          districtId={district?.value}
+          hideComment={hideComment}
+          assessmentStatus = {assessmentStatus?.status !== "Closed" }
+          district={district?.value}
+        />
+      )}
+      {/* {normalizedUserRole === "DPAT_DISTRICT USERS" && assessmentStatus?.status === "Completed" && (
           
           <Button
             type="primary"
@@ -2418,16 +2442,11 @@ const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatu
               {showPetition ? "COLLAPSE PETITION FORMS" : `RAISE A PETITION FOR ${district?.label}`}
             </span>
           </Button>
-     )}
-      </Col>
-                
+     )} */}
 
-     
-
-      {(assessmentStatus?.status === "Closed" || 
-        (assessmentStatus?.status === "Completed" && normalizedUserRole !== "DPAT_TECHNICAL TEAM")) && 
-        showPetition && (
-        <Petition
+       {(assessmentStatus?.status === "Closed" || 
+        (assessmentStatus?.status === "Completed" && normalizedUserRole !== "DPAT_TECHNICAL TEAM")) &&  (
+        <PetitionCommittee
           year={year}
           districtId={district?.value}
           hideComment={hideComment}
@@ -2435,6 +2454,8 @@ const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatu
           district={district?.value}
         />
       )}
+
+   
 
                     <h3 style={{ textAlign: "center", padding: "10px" }}>
                         Annex 1: SECTION A - COMPLIANCE INDICATORS
@@ -2681,6 +2702,7 @@ const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatu
                         year={year}
                         districtId={district?.value}
                         publications={props.publications}
+                        hideComment={hideComment}
                     />
                     <hr />
 
@@ -2735,19 +2757,12 @@ const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatu
                     />
                     <hr />
 
-                    <ShelterTransactionalHousing
-                        ref={shelterTransactionalHousingRef}
-                        year={year}
-                        districtId={district?.value}
-                        hideComment={hideComment}
-                        district={district?.value}
-                    />
-                    <hr />
 
                     <DistrictHotlineNumber
                         ref={districtHotlineNumberRef}
                         year={year}
                         districtId={district?.value}
+                        hideComment={hideComment}
                     />
                     <hr />
 
@@ -2765,6 +2780,7 @@ const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatu
                         year={year}
                         districtId={district?.value}
                         data={deepGenderData}
+                        hideComment={hideComment}
                     />
                     <hr />
 
@@ -2884,14 +2900,14 @@ const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatu
                     />
                     <hr />
 
-                    <ContractManagementAndAdmins
+                  {pAndP &&  <ContractManagementAndAdmins
                         ref={contractManagementAndAdminsRef}
                         year={year}
                         districtId={district?.value}
                         hideComment={hideComment}
                         district={district?.value}
                         data={pAndP}
-                    />
+                    />}
                     <hr />
 
                     <FollowUpDeduction
@@ -2909,10 +2925,11 @@ const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatu
                         year={year}
                         districtId={district?.value}
                         guards={guards}
+                        hideComment={hideComment}
                     />
                     <hr />
 
-                    <CapacityBuildingImplementation
+                    {/* <CapacityBuildingImplementation
                         ref={capacityBuildingImplementationRef}
                         year={year}
                         districtId={district?.value}
@@ -2928,7 +2945,7 @@ const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatu
                         hideComment={hideComment}
                         district={district?.value}
                     />
-                    <hr />
+                    <hr /> */}
 
                     <RateableRevenu
                         ref={rateableRevenueRef}
@@ -3000,20 +3017,27 @@ const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatu
                         year={year} />
 
                     <hr />
+
+
+
+                    
+                    
+
+                    
                     </>
                      )}
 
-                   
-
-                    <h3 style={{ textAlign: "center", padding: "10px" }}>
-                        ANNEX 5 SUMMARY OF COMMENTS AND GAPS
+                     <h3 style={{ textAlign: "center", padding: "10px" }}>
+                        ANNEX 5 SUMMARY OF COMMENTS
                     </h3>
                     <CommentAndGabsSummary
                         district={district}
                         region={region}
                         year={year} />
+<hr />
+                     
 
-                    <hr />
+                   
 
                     <div style={{ height: '4px', backgroundColor: '#000', width: '100%', margin: '20px 0' }} />
 
@@ -3028,7 +3052,6 @@ const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatu
 
                     {shouldRenderQualityAssuranceEditor && (
  
-
                     <QualityAssuranceEditor
                         year={year}
                         districtId={district?.value}
@@ -3036,7 +3059,7 @@ const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatu
                         assessmentStatus = {assessmentStatus?.status !== "Closed" }
                         district={district?.value}
                     />
-                    )}
+                    )} 
 
                     {/* Print Button */}
 
@@ -3101,7 +3124,7 @@ const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatu
                     </Button>
                 )}
 
-                {normalizedUserRole === "DPAT_QUALITY ASSURANCE" && assessmentStatus?.status === "Completed" && (
+                {normalizedUserRole === "DPAT_PETITION COMMITTEE" && assessmentStatus?.status === "Completed" && (
                     <Button
                         type="primary"
                         onClick={showClose}
@@ -3113,7 +3136,7 @@ const shouldRenderQualityAssuranceEditor1 = !assessmentStatus || assessmentStatu
                         loading={progressLoad}
                     >
                         <span style={{ color: "white", fontSize: "14px", fontWeight: "bold" }}>
-                            CLOSE REVIEW
+                            CLOSE ASSESSMENT
                         </span>
                     </Button>
                 )}

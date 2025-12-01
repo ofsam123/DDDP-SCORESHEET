@@ -287,10 +287,10 @@ const Table_2 = ({ year, district, period }) => {
   return (
     <div className="col-12">
       <div className="card">
-        <div className="card-header">Table 1.1 – Proportion of the DMTDP Implemented </div>
+        <div className="card-header">Table 2 – Proportion of the DMTDP Implemented </div>
         <div className="card-body">
 
-          <h5></h5>
+       
          
           <APRmemo
             year={year}

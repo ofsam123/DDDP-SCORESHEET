@@ -242,6 +242,262 @@ export const getAAPPayload = (data, orgUnit, program, trackedEntityType) => {
 
 }
 
+export const getOperationalHealthFacilityPayload = (data, orgUnit, program, trackedEntityType) => {
+
+    const payload = [];
+
+    data.forEach(row => {
+        const tempDataSet = {
+            orgUnit,
+            trackedEntityType,
+            attributes: [
+                { attribute: "wca7mlI2exE", value: row[5] || "" }, // Name
+                { attribute: "pF64ANEoPYx", value: row[6] || "" }, // Location
+                { attribute: "KeSsfvs1awo", value: row[7] || "" }, // Owner/leader
+                { attribute: "vIkEALDVio6", value: row[8] || "" }, // Ownersip Type
+
+                { attribute: "IztkGQj5EqM", value: row[4] || "" }, // Unique id
+                { attribute: "Xpj7aFWa3ii", value: row[9] || "" }, // Health FacilityType
+                { attribute: "SKeHl5XTZVG", value: row[10] || "" }, // Email Address
+                { attribute: "vUVEUS3VXbF", value: row[11] || "" }, // Postal Address
+                // { attribute: "cPGCeyMceZl", value: row[12] || "" }, // Site Coordinates
+                { attribute: "YqP6CROSeSq", value: row[13] || "" }, // Digital Postal Address
+                { attribute: "HgemfhhsXBc", value: row[14] || "" }, // Mobile Number
+                { attribute: "yqvSryblNL4", value: row[15] || "" }, // Construction Start Date
+                { attribute: "wSuCvQcwby6", value: row[16] || "" }, // Construction End Date
+            ],
+            enrollments: [
+                {
+                    program,
+                    orgUnit,
+                    enrolledAt: row[2] || "2025-01-01",
+                    occurredAt: row[3] || "2025-01-01",
+                    status: "ACTIVE",
+                    attributes: [
+                        { attribute: "wca7mlI2exE", value: row[5] || "" }, // Name
+                        { attribute: "pF64ANEoPYx", value: row[6] || "" }, // Location
+                        { attribute: "KeSsfvs1awo", value: row[7] || "" }, // Owner/leader
+                        { attribute: "vIkEALDVio6", value: row[8] || "" }, // Ownersip Type
+                    ]
+                }
+            ]
+        };
+
+        payload.push(tempDataSet);
+    });
+
+    return {
+        "trackedEntities": payload
+    }
+
+}
+
+export const getSportFacilityPayload = (data, orgUnit, program, trackedEntityType) => {
+    const payload = [];
+
+    data.forEach(row => {
+        const tempDataSet = {
+            orgUnit,
+            trackedEntityType,
+            attributes: [
+
+                { attribute: "d4vGACWAj7R", value: row[4] || "" }, // Name of sport facility
+                { attribute: "NU2g62mWHJQ", value: row[5] || "" }, // facility ownership type
+
+                { attribute: "yqvSryblNL4", value: row[6] || "" }, // Construction Start Date
+                { attribute: "wSuCvQcwby6", value: row[7] || "" }, // Construction End Date
+                { attribute: "jBaDMK6rqCA", value: row[9] || "" }, // Number of direct beneficiary
+                { attribute: "pF64ANEoPYx", value: row[8] || "" }, // Location
+                { attribute: "fGfO0hrRRgq", value: row[10] || "" }, // Description
+                { attribute: "EjkjhZFlslh", value: row[13] || "" }, // Purpose of sport facility
+                { attribute: "EzZnJRWxDdN", value: row[14] || "" }, // Specify purpose of sport facility
+
+            ],
+            enrollments: [
+                {
+                    program,
+                    orgUnit,
+                    enrolledAt: row[2] || "2025-01-01",
+                    occurredAt: row[3] || "2025-01-01",
+                    status: "ACTIVE",
+                    attributes: [
+                        { attribute: "d4vGACWAj7R", value: row[4] || "" }, // Name of sport facility
+                        { attribute: "NU2g62mWHJQ", value: row[5] || "" }, // facility ownership type
+                    ]
+                }
+            ],
+        };
+
+        payload.push(tempDataSet);
+
+    });
+
+    return {
+        "trackedEntities": payload
+    }
+
+}
+
+export const getServiceProvidersPayload = (data, orgUnit, program, trackedEntityType) => {
+    const payload = [];
+
+    data.forEach(row => {
+        const tempDataSet = {
+            orgUnit,
+            trackedEntityType,
+            attributes: [
+
+                { attribute: "Hq8it9qapWz", value: row[4] || "" }, // Service Provider
+                { attribute: "ttyKWvSBAZH", value: row[6] || "" }, // Name of Business 
+                { attribute: "XDjgAYmON2o", value: row[7] || "" }, // Address location
+                { attribute: "SKeHl5XTZVG", value: row[12] || "" }, // Period of contract
+                { attribute: "tb0nGRwpQEw", value: row[13] || "" }, // Start date
+
+                { attribute: "YqP6CROSeSq", value: row[8] || "" }, // Digital postal address
+                { attribute: "pF64ANEoPYx", value: row[9] || "" }, // Location
+                { attribute: "sGe7MGw4BVN", value: row[10] || "" }, // Phone
+                { attribute: "SKeHl5XTZVG", value: row[11] || "" }, // Email address
+
+            ],
+            enrollments: [
+                {
+                    program,
+                    orgUnit,
+                    enrolledAt: row[2] || "2025-01-01",
+                    occurredAt: row[3] || "2025-01-01",
+                    status: "ACTIVE",
+                    attributes: [
+                        { attribute: "Hq8it9qapWz", value: row[4] || "" }, // Service Provider
+                        { attribute: "ttyKWvSBAZH", value: row[6] || "" }, // Name of Business 
+                        { attribute: "XDjgAYmON2o", value: row[7] || "" }, // Address location
+                        { attribute: "SKeHl5XTZVG", value: row[12] || "" }, // Period of contract
+                        { attribute: "tb0nGRwpQEw", value: row[13] || "" }, // Start date 
+
+                    ]
+                }
+            ],
+        };
+
+        payload.push(tempDataSet);
+
+    });
+
+    return {
+        "trackedEntities": payload
+    }
+
+}
+
+export const getSchoolProfilePayload = (data, orgUnit, program, trackedEntityType) => {
+    const payload = [];
+
+    data.forEach(row => {
+        const tempDataSet = {
+            orgUnit,
+            trackedEntityType,
+            attributes: [
+                { attribute: "UJBblniqPOI", value: row[10] || "" }, // Community
+
+                { attribute: "IztkGQj5EqM", value: row[4] || "" }, // Unique id
+                { attribute: "aNfKUv5kVo7", value: row[5] || "" }, // Name of School
+                { attribute: "PX7m8i2KVgT", value: row[7] || "" }, // Is school faith based
+                { attribute: "AlVMRjjWuVo", value: row[11] || "" }, // Established date
+                { attribute: "YqP6CROSeSq", value: row[12] || "" }, // Digital postal address
+                { attribute: "cPGCeyMceZl", value: row[13] || "" }, // Site coordinates
+                { attribute: "wO2BqNRuILL", value: row[21] || "" }, // Site photo
+            ],
+            enrollments: [
+                {
+                    program,
+                    orgUnit,
+                    enrolledAt: row[2] || "2025-01-01",
+                    occurredAt: row[3] || "2025-01-01",
+                    status: "ACTIVE",
+                    attributes: [
+                        { attribute: "UJBblniqPOI", value: row[10] || "" }, // Community
+
+                    ]
+                }
+            ],
+        };
+
+        payload.push(tempDataSet);
+
+    });
+
+    return {
+        "trackedEntities": payload
+    }
+
+}
+
+export const getMeetingsPayload = (data, orgUnit, program, trackedEntityType) => {
+    const payload = [];
+
+    data.forEach(row => {
+        const tempDataSet = {
+            orgUnit,
+            trackedEntityType,
+            attributes: [
+                { attribute: "eOsejnvfYiV", value: row[4] || "" }, // Invitation letter date
+                { attribute: "Mm3f9fbAT8r", value: row[5] || "" }, // Invitation letter reference number
+                { attribute: "rSKzHSBlOyB", value: row[7] || "" }, // Who signed the invitation letter
+                { attribute: "Ub0V9Z06aBc", value: row[8] || "" }, // Meeting date
+                { attribute: "kghpIZgHFsT", value: row[10] || "" }, // Meeting type
+                { attribute: "b7uAJaX9obN", value: row[15] || "" }, // Meeting title
+                { attribute: "HmdJqjjAZZ4", value: row[17] || "" }, // Meeting venue
+                { attribute: "Br9IEOZyKPW", value: row[21] || "" }, // Number of desicions
+                { attribute: "U2RjiIApoYu", value: row[24] || "" }, // Number of Attendance Male
+                { attribute: "iHz18pXkmMd", value: row[25] || "" }, // Number of Attendance Female
+
+                { attribute: "AiPyh2A2DZ8", value: row[6] || "" }, // Means of invitation letter distribution
+                { attribute: "unVPW9dCS5B", value: row[9] || "" }, // Minute file number
+                { attribute: "j0kNoCtC8pj", value: row[11] || "" }, // General assembly meeting types
+                { attribute: "hfCSE8B2L9p", value: row[12] || "" }, // Statutory committee types
+                { attribute: "sI8Kj3pfa6k", value: row[13] || "" }, // Name of sub structure
+                { attribute: "f1V1vDibPCS", value: row[14] || "" }, // Other (specify)
+                { attribute: "mH8uydlfv03", value: row[16] || "" }, // Meeting agenda
+                { attribute: "uRdPt6OIxvU", value: row[22] || "" }, // Number of cpmplaints
+                { attribute: "DGDc7z1ESlb", value: row[23] || "" }, // Number of recommendations made
+                { attribute: "SdtJSE3jJkV", value: row[26] || "" }, // Number of participant HoDs Male
+                { attribute: "RFSUywjaDRi", value: row[27] || "" }, // Number of participant HoDs Female
+                { attribute: "Fup3ibG5EJc", value: row[29] || "" }, // Was the annual action plan approved
+                { attribute: "xh6NIEHa8xg", value: row[30] || "" }, // AAP approval date
+            ],
+            enrollments: [
+                {
+                    program,
+                    orgUnit,
+                    enrolledAt: row[2] || "2025-01-01",
+                    occurredAt: row[3] || "2025-01-01",
+                    status: "ACTIVE",
+                    attributes: [
+                        { attribute: "eOsejnvfYiV", value: row[4] || "" }, // Invitation letter date
+                        { attribute: "Mm3f9fbAT8r", value: row[5] || "" }, // Invitation letter reference number
+                        { attribute: "rSKzHSBlOyB", value: row[7] || "" }, // Who signed the invitation letter
+                        { attribute: "Ub0V9Z06aBc", value: row[8] || "" }, // Meeting date
+                        { attribute: "kghpIZgHFsT", value: row[10] || "" }, // Meeting type
+                        { attribute: "b7uAJaX9obN", value: row[15] || "" }, // Meeting title
+                        { attribute: "HmdJqjjAZZ4", value: row[17] || "" }, // Meeting venue
+                        { attribute: "Br9IEOZyKPW", value: row[21] || "" }, // Number of desicions
+                        { attribute: "U2RjiIApoYu", value: row[24] || "" }, // Number of Attendance Male
+                        { attribute: "iHz18pXkmMd", value: row[25] || "" }, // Number of Attendance Female
+                    ]
+                }
+            ],
+        };
+
+        payload.push(tempDataSet);
+
+    });
+
+    return {
+        "trackedEntities": payload
+    }
+
+}
+
+
 const clean = (val) => (val === "-" || val === undefined ? "" : val);
 
 function generateProjectId() {
@@ -388,10 +644,46 @@ export const getMandatoryFieldByTracker = (tracker) => {
             { attribute: "DVNScIHo9ik", description: "Budget Categroy" },
             { attribute: "t9GmH5N6fuW", description: "Allocated Budget" }
         ],
+
+        "Operational Health Facility Tracker": [
+            { attribute: "wca7mlI2exE", decription: "Name" }, // Name
+            { attribute: "pF64ANEoPYx", description: "Location" }, // Location
+            { attribute: "KeSsfvs1awo", decription: "Owner/leader" }, // Owner/leader
+            { attribute: "vIkEALDVio6", description: "Ownersip Type" }, // Ownersip Type
+        ],
+        "Sport Facility Tracker": [
+            { attribute: "d4vGACWAj7R", decription: "Name of sport facility" }, // Name of sport facility
+            { attribute: "NU2g62mWHJQ", decription: "Facility ownership type" }, // facility ownership type
+        ],
+        "Service Providers Tracker": [
+            { attribute: "Hq8it9qapWz", decription: "Service Provider" }, // Service Provider
+            { attribute: "ttyKWvSBAZH", decription: "Name of Business" }, // Name of Business 
+            { attribute: "XDjgAYmON2o", decription: "Address location" }, // Address location
+            { attribute: "SKeHl5XTZVG", decription: "Period of contract" }, // Period of contract
+            { attribute: "tb0nGRwpQEw", decription: "Start date" }, // Start date
+        ],
+        "School Profile Tracker": [
+            { attribute: "UJBblniqPOI", decription: "Community" }, // Community
+        ],
+        "Meetings Tracker": [
+            { attribute: "eOsejnvfYiV", decription: "Invitation letter date" }, // Invitation letter date
+            { attribute: "Mm3f9fbAT8r", decription: "Invitation letter reference number" }, // Invitation letter reference number
+            { attribute: "rSKzHSBlOyB", decription: "Who signed the invitation letter?" }, // Who signed the invitation letter
+            { attribute: "Ub0V9Z06aBc", decription: "Meeting date" }, // Meeting date
+            { attribute: "kghpIZgHFsT", decription: "Meeting type" }, // Meeting type
+            { attribute: "b7uAJaX9obN", decription: "Meeting title" }, // Meeting title
+            { attribute: "HmdJqjjAZZ4", decription: "Meeting venue" }, // Meeting venue
+            { attribute: "Br9IEOZyKPW", decription: "Number of desicions" }, // Number of desicions
+            { attribute: "U2RjiIApoYu", decription: "Number of Attendance Male" }, // Number of Attendance Male
+            { attribute: "iHz18pXkmMd", decription: "Number of Attendance Female" }, // Number of Attendance Female
+        ],
+
     };
 
     return trackerFields[tracker] || [];
 };
+
+
 
 export const getMissingMandatoryFieldsMessage = (fields, payload) => {
     let messages = [];

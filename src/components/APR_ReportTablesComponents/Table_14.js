@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -18,12 +18,19 @@ import axios from "../../api/axios";
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 // Table14 Component
-const Table_14 = ({ year, district, period , hideTableDis}) => { // Updated to 2025 as per current date
+const Table_14 = forwardRef(({ year, district, period , hideTableDis}, ref) => { // Updated to 2025 as per current date
   const [tableData, setTableData] = useState([]);
 
   useEffect(() => {
     getData();
   }, [district, year, period]);
+
+  useImperativeHandle(ref, () => ({
+      getData: () => ({
+        indicator: "Table_14",
+        tableData
+      }),
+    }));
 
 
   function getData() {
@@ -180,6 +187,6 @@ const Table_14 = ({ year, district, period , hideTableDis}) => { // Updated to 2
       </div>
     </div>
   );
-};
+});
 
 export default Table_14;

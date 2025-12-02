@@ -1,11 +1,11 @@
 
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import axios from "../../api/axios";
 import { filterTrackedEntitiesByCreatedAt, formatDataGeneral, getAttributeValue } from "../../utils/utils";
 import APRComment from "./APRComment.js/AprComments";
 import APRmemo from "./APRComment.js/APRmemo";
 
-const Table_22 = ({ year, district, period,hideTableDis }) => {
+const Table_22 = forwardRef(({ year, district, period, hideTableDis }, ref) => {
   const [tableData, setTableData] = useState([]);
   const [showChart, setShowChart] = useState(true);
   const [total, setTotal] = useState(null);
@@ -14,13 +14,20 @@ const Table_22 = ({ year, district, period,hideTableDis }) => {
     getData();
   }, [year, district, period]);
 
+  useImperativeHandle(ref, () => ({
+    getData: () => ({
+      indicator: "Table_22",
+      tableData
+    }),
+  }));
+
   function getData() {
     axios
       .get(`/tracker/trackedEntities?orgUnit=${district}&program=UfMl96n7nnX&startDate=${year}-01-01&endDate=${year}-12-31`)
       .then(result => {
 
         if (result.data.instances.length > 0) {
-          
+
 
           axios
             .get(`/tracker/events?program=UfMl96n7nnX&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31`)
@@ -70,12 +77,12 @@ const Table_22 = ({ year, district, period,hideTableDis }) => {
         <div className="card-header"></div>
         <div className="card-body">
           <APRmemo
-                    year={year}
-                    districtId = {district}
-                      tableCommentedId={`table22-${year}`}
-                      hideTableDis={hideTableDis}
-                   
-                  />
+            year={year}
+            districtId={district}
+            tableCommentedId={`table22-${year}`}
+            hideTableDis={hideTableDis}
+
+          />
           <div className="table-responsive">
             <table className="table table-bordered">
               <thead style={{ backgroundColor: '#d4edda', fontWeight: 'bold', border: '1px solid #000' }}>
@@ -105,24 +112,24 @@ const Table_22 = ({ year, district, period,hideTableDis }) => {
           <p className="mt-2">
             <small>Source: MPCU</small>
           </p>
-              <APRComment
-                      data={tableData}
-                      year={year}
-                      districtId={district}
-                      tableCommentedId={`table22-${year}`}
-                     
-                    >
-                      {({ renderCommentInput, renderCommentList }) => (
-                        <>
-                          {renderCommentInput()}
-                          {renderCommentList()}
-                        </>
-                      )}
-                    </APRComment>
+          <APRComment
+            data={tableData}
+            year={year}
+            districtId={district}
+            tableCommentedId={`table22-${year}`}
+
+          >
+            {({ renderCommentInput, renderCommentList }) => (
+              <>
+                {renderCommentInput()}
+                {renderCommentList()}
+              </>
+            )}
+          </APRComment>
         </div>
       </div>
     </div>
   );
-};
+});
 
 export default Table_22;

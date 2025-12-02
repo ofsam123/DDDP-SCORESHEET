@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
 import APRmemo from "./APRComment.js/APRmemo";
@@ -9,13 +9,20 @@ import { formatDataGeneral } from "../../utils/utils";
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const Table_11 = ({year, district, period, hideTableDis}) => {
+const Table_11 = forwardRef(({year, district, period, hideTableDis}, ref) => {
   const [tableData, setTableData] = useState([]);
   const [showChart, setShowChart] = useState(true);
   
     useEffect(() => {
       getData();
     }, [year, district, period]);
+
+    useImperativeHandle(ref, () => ({
+        getData: () => ({
+          indicator: "Table_11",
+          tableData
+        }),
+      }));
   
      const mapData = (data, report) => {
 
@@ -304,6 +311,6 @@ const Table_11 = ({year, district, period, hideTableDis}) => {
       </div>
     </div>
   );
-};
+});
 
 export default Table_11;

@@ -1,16 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import APRmemo from "./APRComment.js/APRmemo";
 import APRComment from "./APRComment.js/AprComments";
 import axios from "../../api/axios";
 import { getProjectDetails, groupProjectsBySectorAmountWithoutBudget } from "../../utils/utils";
 
 // Table15 Component
-const Table_15 = ({ year, district, period,hideTableDis }) => {
+const Table_15 = forwardRef(({ year, district, period, hideTableDis }, ref) => {
   const [tableData, setTableData] = useState([]);
 
   useEffect(() => {
     getData();
   }, [district, year, period]);
+
+  useImperativeHandle(ref, () => ({
+    getData: () => ({
+      indicator: "Table_15",
+      tableData
+    }),
+  }));
 
 
   function getData() {
@@ -70,7 +77,7 @@ const Table_15 = ({ year, district, period,hideTableDis }) => {
               </thead>
               <tbody>
                 {tableData.map((row, index) => (
-                  
+
                   <tr key={index}>
                     <td style={{ border: '1px solid #000' }}>{row.sector}</td>
                     <td style={{ border: '1px solid #000' }}>{row.contractSum?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
@@ -106,6 +113,6 @@ const Table_15 = ({ year, district, period,hideTableDis }) => {
       </div>
     </div>
   );
-};
+});
 
 export default Table_15;

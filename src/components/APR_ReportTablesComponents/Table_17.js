@@ -1,12 +1,12 @@
 
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 
 import axios from "../../api/axios";
 import { filterTrackedEntitiesByCreatedAt, formatDataGeneral, getAttributeValue } from "../../utils/utils";
 import APRComment from "./APRComment.js/AprComments";
 import APRmemo from "./APRComment.js/APRmemo";
 
-const Table_17 = ({ year, district, period, hideTableDis }) => {
+const Table_17 = forwardRef(({ year, district, period, hideTableDis }, ref) => {
 
   const [tableData, setTableData] = useState([]);
   const [showChart, setShowChart] = useState(true);
@@ -15,6 +15,13 @@ const Table_17 = ({ year, district, period, hideTableDis }) => {
   useEffect(() => {
     getData();
   }, [year, district, period]);
+
+  useImperativeHandle(ref, () => ({
+      getData: () => ({
+        indicator: "Table_17",
+        tableData
+      }),
+    }));
 
 
   function getData() {
@@ -29,13 +36,7 @@ const Table_17 = ({ year, district, period, hideTableDis }) => {
           axios
             .get(`/tracker/events?program=QoHFZ6cd3Nm&orgUnit=${district}&startDate=${year}-01-01&endDate=${year}-12-31&pageSize=5000`)
             .then(resp => {
-              //  const data = filterTrackedEntitiesByCreatedAt(result.data.instances, year, period);
-
-              //  const disbursements = formatDataGeneral(data, "Years", "2025") || [];
-
-              //  const reports = filterTrackedEntitiesByCreatedAt(resp.data.instances, startDate, endDate);
-
-              //  console.log("disbursement: ", disbursements)
+            
               const data = result.data.instances;
               const reports = resp.data.instances;
 
@@ -170,6 +171,6 @@ Details of the various interventions have been given below.</h7>
       </div>
     </div>
   );
-};
+});
 
 export default Table_17;

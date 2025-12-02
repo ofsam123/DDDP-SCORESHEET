@@ -5,10 +5,12 @@ import { getAttributeValue } from "../../utils/utils";
 
 const ReportCover = ({ district, year }) => {
   const [profile, setProfile] = useState("");
+  const [level, setLevel] = useState("");
 
     useEffect(() => {
         if (district?.value) {
             setProfile("");
+            setLevel("");
             getData();
         }
     }, [district]);
@@ -22,6 +24,8 @@ const ReportCover = ({ district, year }) => {
       const data = result.data.instances;
       if (data.length > 0) {
         const pictureAttr = getAttributeValue("District Logo", data[0]);
+        const level = getAttributeValue("District Level", data[0]);
+        setLevel(level);
 
         if (pictureAttr) {
           const imageResp = await axios.get(
@@ -54,7 +58,7 @@ const ReportCover = ({ district, year }) => {
 
       <div className="footer">
         <p>Prepared by</p>
-        <h3>{district?.label} Municipal Assembly</h3>
+        <h3>{district?.label} {level && <> {level === "Municipal" ? level : ""}</>} Assembly</h3>
         <p>{new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" })}</p>
       </div>
     </div>

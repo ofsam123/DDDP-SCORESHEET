@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import axios from "../../api/axios";
 import { filterTrackedEntitiesByCreatedAt, formatDataGeneral, getAttributeValue } from "../../utils/utils";
 import { Bar } from "react-chartjs-2";
@@ -9,15 +9,22 @@ import APRmemo from "./APRComment.js/APRmemo";
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const Table_9 = ({ year, district, period,hideTableDis }) => {
+const Table_9 = forwardRef(({ year, district, period, hideTableDis }, ref) => {
   const [tableData, setTableData] = useState([]);
   const [total, setTotal] = useState(null);
   const currentYear = new Date().getFullYear(); // 2025
-  const years = [currentYear - 3, currentYear - 2, currentYear - 1, currentYear]; // [2021, 2022, 2023, 2024]
+  const years = [currentYear - 3, currentYear - 2, currentYear - 1, currentYear];
 
   useEffect(() => {
     getProjects();
   }, [year, district, period]);
+
+  useImperativeHandle(ref, () => ({
+    getData: () => ({
+      indicator: "Table_9",
+      tableData
+    }),
+  }));
 
   const mapRevenueData = (data, report) => {
     const revenueNames = [
@@ -178,16 +185,16 @@ const Table_9 = ({ year, district, period,hideTableDis }) => {
             hideTableDis={hideTableDis}
           />
           <div className="table-responsive">
-            <h6>The funding sources of the Assembly, over the years have been the Central Government 
-transfers to MMDAs (GOG Grants), the District Assembly Common Fund (DACF), the 
-District Assembly Common Fund-Responsive Factor Grant (DACF-RFG), the Minerals 
-Development Fund, Donor Grants and the Assembly’s own Internally Generated Funds 
-(IGF). Others are the Member of Parliament’s Common Fund (MP’sCF).</h6>
+            <h6>The funding sources of the Assembly, over the years have been the Central Government
+              transfers to MMDAs (GOG Grants), the District Assembly Common Fund (DACF), the
+              District Assembly Common Fund-Responsive Factor Grant (DACF-RFG), the Minerals
+              Development Fund, Donor Grants and the Assembly’s own Internally Generated Funds
+              (IGF). Others are the Member of Parliament’s Common Fund (MP’sCF).</h6>
             <h7>
-During the year under review, funds received included the Internally Generated Funds;
-District Assembly’s Common Fund; Persons with Disability Common Fund; Member of 
-Parliament’s Common Fund and the District Assemblies Common Fund-Responsive Factor 
-Grant. Table 2.3 shows the updates from the various sources and their targets.</h7>
+              During the year under review, funds received included the Internally Generated Funds;
+              District Assembly’s Common Fund; Persons with Disability Common Fund; Member of
+              Parliament’s Common Fund and the District Assemblies Common Fund-Responsive Factor
+              Grant. Table 2.3 shows the updates from the various sources and their targets.</h7>
 
             <table
               className="table table-bordered"
@@ -250,9 +257,9 @@ Grant. Table 2.3 shows the updates from the various sources and their targets.</
           <h6>
             Figure 2.1 further shows the revenue trends of {years[0]} baseline and actual receipts for {years[3]}. It can be realized that the major source of funding for implementation of projects during the period remained the IGF which includes receipts from mineral revenue.
           </h6>
-        
-            <Bar data={chartData} options={chartOptions} />
-       
+
+          <Bar data={chartData} options={chartOptions} />
+
           <p className="mt-2">
             <small>Source: MPCU</small>
           </p>
@@ -274,6 +281,6 @@ Grant. Table 2.3 shows the updates from the various sources and their targets.</
       </div>
     </div>
   );
-};
+});
 
 export default Table_9;

@@ -1,18 +1,25 @@
 
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import axios from "../../api/axios";
 import { filterTrackedEntitiesByCreatedAt, formatDataGeneral, getAttributeValue, getDataByTypes } from "../../utils/utils";
 import APRComment from "./APRComment.js/AprComments";
 import APRmemo from "./APRComment.js/APRmemo";
 
 
-const Table_7 = ({ year, district, period,hideTableDis }) => {
+const Table_7 = forwardRef(({ year, district, period,hideTableDis }, ref) => {
 
   const [tableData, setTableData] = useState([]);
 
   useEffect(() => {
     getProjects();
   }, [year, district, period]);
+
+  useImperativeHandle(ref, () => ({
+      getData: () => ({
+        indicator: "Table_7",
+        tableData
+      }),
+    }));
 
   function getProjects() {
     axios
@@ -161,6 +168,6 @@ const Table_7 = ({ year, district, period,hideTableDis }) => {
       </div>
     </div>
   );
-};
+});
 
 export default Table_7;

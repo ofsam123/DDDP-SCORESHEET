@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -17,13 +17,20 @@ import { getProjectDetails, groupProjectByDevelopmentDimension } from "../../uti
 // Register chart components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const Table_4 = ({ year, district, period,   hideTableDis }) => { // Default year set to 2024, adjustable via prop
+const Table_4 = forwardRef(({ year, district, period,   hideTableDis }, ref) => { // Default year set to 2024, adjustable via prop
   const [tableData, setTableData] = useState([]);
   const [tableDataDummy, setTableDataDummy] = useState([]);
 
   useEffect(() => {
     getData();
   }, [district, year, period]);
+
+   useImperativeHandle(ref, () => ({
+      getData: () => ({
+        indicator: "Table_4",
+        tableData
+      }),
+    }));
 
 
   function getData() {
@@ -211,6 +218,6 @@ const Table_4 = ({ year, district, period,   hideTableDis }) => { // Default yea
       </div>
     </div>
   );
-};
+});
 
 export default Table_4;

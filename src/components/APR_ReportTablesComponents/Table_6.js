@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import axios from "../../api/axios";
 import { filterTrackedEntitiesByCreatedAt, formatDataGeneral, getAttributeValue } from "../../utils/utils";
 import moment from "moment";
@@ -22,7 +22,7 @@ const ranges = [
   { label: "Projects that are 0 years but less than 1 years", min: 0, max: 1 }
 ];
 
-const Table_6 = ({ year, district, period, hideTableDis }) => {
+const Table_6 = forwardRef(({ year, district, period, hideTableDis }, ref) => {
 
   const [tableData, setTableData] = useState([]);
   const [tableDataDummy, setTableDataDummy] = useState([]);
@@ -30,6 +30,13 @@ const Table_6 = ({ year, district, period, hideTableDis }) => {
   useEffect(() => {
     getProjects();
   }, [year, district, period]);
+
+  useImperativeHandle(ref, () => ({
+    getData: () => ({
+      indicator: "Table_6",
+      tableData
+    }),
+  }));
 
   function getProjects() {
     axios
@@ -234,10 +241,10 @@ const Table_6 = ({ year, district, period, hideTableDis }) => {
             year={year}
             districtId={district}
             tableCommentedId={`table6-${year}`}
-              hideTableDis={hideTableDis}
+            hideTableDis={hideTableDis}
 
           />
-          
+
 
           <div className="table-responsive">
             <table className="table table-bordered">
@@ -297,6 +304,6 @@ const Table_6 = ({ year, district, period, hideTableDis }) => {
       </div>
     </div>
   );
-};
+});
 
 export default Table_6;

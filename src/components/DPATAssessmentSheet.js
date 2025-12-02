@@ -523,44 +523,44 @@ const [showPetition, setShowPetition] = useState(true);
         );
     };
 
-    const setSanitationServiceDataDisplay = () => {
+   const setSanitationServiceDataDisplay = () => {
         const aap = props?.plans?.aap;
         const ifg = props?.ifg?.data;
         const sanitationPlan = formatDataGeneral(aap, "Sector", "Sanitation") || [];
-        const sanitationPlans = formatDataGeneral(sanitationPlan, "Year", "2024") || [];       
-
+        const sanitationPlans = formatDataGeneral(sanitationPlan, "Year", "2024") || [];      
+ 
         const temp = [];
         let totalBudget = 0;
         let totalIGF = 0;
-
+ 
         sanitationPlans?.forEach(plan => {
             const currentBudget = getAttributeValue("Budget Allocated", plan);
             const tempDataSet = {
                 plan: getAttributeValue("Activity Name", plan),
                 budget: currentBudget
             };
-
+ 
             temp.push(tempDataSet);
-
+ 
             totalBudget += currentBudget !== 'N/A' ? parseFloat(currentBudget) : 0;
         });
-
+ 
         ifg?.forEach(ig => {
             const currentIGFBudget = getAttributeValue("Amt Collected", ig);
             totalIGF += currentIGFBudget !== 'N/A' ?  parseFloat(currentIGFBudget) : 0;
         });
-
+ 
         const percentage = calculatePercentage(totalIGF, totalBudget);
         const sanitationData = {
             ifgCollected: totalIGF,
             igfSpentOnSanitation: totalBudget,
             percentage
         };
-
+ 
         setSanitationProvidersData([sanitationData]);
-
+ 
     }
-
+ 
     const sanitationServiceData = () => {
         const temp = getAAPAndMTDPLinks("Sanitation");
         setSanitationServiceList(temp);
@@ -2192,6 +2192,8 @@ const [showPetition, setShowPetition] = useState(true);
         const reviewEndDate = new Date().toISOString().split("T")[0];
         const assessmentStartDate = assessmentStatus?.assessmentStartDate || new Date().toISOString().split("T")[0]; // Use existing start date or fallback to today
         const assessmentEndDate = assessmentStatus?.assessmentEndDate || new Date().toISOString().split("T")[0]; // Use existing end date or fallback to today
+         const reviewCloseDate = new Date().toISOString().split("T")[0];
+        
 
         // Ensure assessmentStatus has an ID
         if (!assessmentStatus?.id) {
@@ -2213,7 +2215,7 @@ const [showPetition, setShowPetition] = useState(true);
             assessmentEndDate: assessmentEndDate,
             reviewStartDate: assessmentStatus?.reviewStartDate || assessmentEndDate, // Use existing review start date or fallback to assessmentEndDate
             reviewEndDate: reviewEndDate,
-            closedDate: null,
+            closedDate: reviewCloseDate,
         };
 
         try {

@@ -6,7 +6,7 @@ import "react-quill/dist/quill.snow.css";
 import useAuth from "../../../hooks/useAuth";
 import instance from "../../../api/cmsapi";
 
-function APRmemo({ year, districtId, tableCommentedId,  }) {
+function APRmemo({ year, districtId, tableCommentedId }) {
   const { user } = useAuth();
   const [memoContent, setMemoContent] = useState("");
   const [loading, setLoading] = useState(false);
@@ -19,6 +19,39 @@ function APRmemo({ year, districtId, tableCommentedId,  }) {
   const currentUsername = user?.user?.username || "";
   const currentFullName = user?.user?.fullName || "";
   const isQualityAssurance = currentUserRole === "APR USER";
+
+  const [assessmentStatus, setAssessmentStatus] = useState(null);
+
+  const fetchAssessmentStatus = async () => {
+    if (!districtId || !year) {
+      console.error("District or year not selected");
+      return;
+    }
+
+    try {
+      const assessmentStatusResponse = await instance.get(
+        `assessments/dpat/${districtId}/${year}/APR`
+      );
+      const fetchedStatus = assessmentStatusResponse.data?.status || "Not Started";
+      setAssessmentStatus(assessmentStatusResponse.data);
+      console.log("Current assessment status:", fetchedStatus);
+      return fetchedStatus;
+    } catch (error) {
+      console.error("Failed to fetch assessment status:", {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+      });
+      // message.error(`Failed to fetch status: ${error.response?.data?.message || error.message}`);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    if (districtId && year) {
+      fetchAssessmentStatus();
+    }
+  }, [districtId, year]);
 
   // Fetch both APR_USER memos and APR_RCC comments
   const fetchComments = useCallback(async () => {
@@ -165,10 +198,12 @@ function APRmemo({ year, districtId, tableCommentedId,  }) {
                 </Col>
                 <div style={{ flex: 1 }}>
                   <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", width: "800px" }}>
-                    <h4 style={{ margin: 0, fontSize: "13px" }}>
-                      {comment.fullName} ({comment.userRole.replace("_", " ")})
-                    </h4>
-                    {comment.userRole === "APR_USER" && comment.username === currentUsername && canEditMemo() && (
+                    {assessmentStatus?.status?.toLowerCase() !== "closed" && (
+                      <h4 style={{ margin: 0, fontSize: "13px" }}>
+                        {comment.fullName} ({comment.userRole.replace("_", " ")})
+                      </h4>
+                    )}
+                    {assessmentStatus?.status?.toLowerCase() !== "closed" && comment.userRole === "APR_USER" && comment.username === currentUsername && canEditMemo() && (
                       <EditOutlined
                         style={{ cursor: "pointer", color: "#000000ff", marginLeft: "10px" }}
                         onClick={handleEdit}
@@ -199,8 +234,17 @@ function APRmemo({ year, districtId, tableCommentedId,  }) {
 
   return (
     <div style={{ padding: "20px" }}>
-      { canEditMemo() && (
-        <div style={{ display: editing || !comments.some((c) => c.userRole === "APR_USER") ? "block" : "none" }}>
+      {canEditMemo() && (
+        <div
+          style={{
+            display:
+              (editing || !comments.some((c) => c.userRole === "APR_USER")) &&
+              ["start", "pending"].includes(assessmentStatus?.status?.toLowerCase()) &&
+              !["closed", "completed"].includes(assessmentStatus?.status?.toLowerCase())
+                ? "block"
+                : "none",
+          }}
+        >
           <Spin spinning={loading}>
             <ReactQuill
               value={memoContent}

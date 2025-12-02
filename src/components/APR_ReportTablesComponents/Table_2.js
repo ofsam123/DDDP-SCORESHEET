@@ -11,6 +11,10 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
 const Table_2 = forwardRef(({ year, district, period }, ref) => {
 
+  const currentYear = new Date().getFullYear(); // 2025
+  const years = [currentYear - 2, currentYear - 1, currentYear]; // [2023, 2024, 2025]
+
+
   const [tableData, setTableData] = useState([]);
   const [tableDummy, setTableDummy] = useState([]);
 
@@ -378,17 +382,17 @@ const Table_2 = forwardRef(({ year, district, period }, ref) => {
   return (
     <div className="col-12">
       <div className="card">
-        <div className="card-header">Table 1.1 – Proportion of the DMTDP Implemented </div>
+        <div className="card-header">Table 2 – Proportion of the DMTDP Implemented </div>
         <div className="card-body">
-          <h5>1.1 Summary of Achievement of the Implementation of the District
-            Medium Term Development Plan (DMTDP)</h5>
 
+       
+         
           <APRmemo
             year={year}
             districtId={district}
-            tableCommentedId={`table1_1-${year}`}
+           tableCommentedId={`table2-${year}`}
 
-
+        
           />
 
           <div className="table-responsive">
@@ -448,7 +452,8 @@ const Table_2 = forwardRef(({ year, district, period }, ref) => {
             data={tableData}
             year={year}
             districtId={district}
-            tableCommentedId={`table1_1-${year}`}
+
+            tableCommentedId={`table2-${year}`}
 
           >
             {({ renderCommentInput, renderCommentList }) => (

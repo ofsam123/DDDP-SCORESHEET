@@ -350,8 +350,8 @@ export const getServiceProvidersPayload = (data, orgUnit, program, trackedEntity
                 { attribute: "Hq8it9qapWz", value: row[4] || "" }, // Service Provider
                 { attribute: "ttyKWvSBAZH", value: row[6] || "" }, // Name of Business 
                 { attribute: "XDjgAYmON2o", value: row[7] || "" }, // Address location
-                { attribute: "SKeHl5XTZVG", value: row[12] || "" }, // Period of contract
-                { attribute: "tb0nGRwpQEw", value: row[13] || "" }, // Start date
+                { attribute: "tb0nGRwpQEw", value: row[12] || "" }, // Period of contract
+                { attribute: "gkqU35LKO4t", value: row[13] || "" }, // Start date
 
                 { attribute: "YqP6CROSeSq", value: row[8] || "" }, // Digital postal address
                 { attribute: "pF64ANEoPYx", value: row[9] || "" }, // Location
@@ -370,8 +370,8 @@ export const getServiceProvidersPayload = (data, orgUnit, program, trackedEntity
                         { attribute: "Hq8it9qapWz", value: row[4] || "" }, // Service Provider
                         { attribute: "ttyKWvSBAZH", value: row[6] || "" }, // Name of Business 
                         { attribute: "XDjgAYmON2o", value: row[7] || "" }, // Address location
-                        { attribute: "SKeHl5XTZVG", value: row[12] || "" }, // Period of contract
-                        { attribute: "tb0nGRwpQEw", value: row[13] || "" }, // Start date 
+                        { attribute: "tb0nGRwpQEw", value: row[12] || "" }, // Period of contract
+                        { attribute: "gkqU35LKO4t", value: row[13] || "" }, // Start date 
 
                     ]
                 }
@@ -392,29 +392,42 @@ export const getSchoolProfilePayload = (data, orgUnit, program, trackedEntityTyp
     const payload = [];
 
     data.forEach(row => {
+        const schoolId = generateProjectId();
         const tempDataSet = {
             orgUnit,
             trackedEntityType,
             attributes: [
                 { attribute: "UJBblniqPOI", value: row[10] || "" }, // Community
+                { attribute: "RYU3GpNzokp", value: row[6] || "" }, // Type
 
-                { attribute: "IztkGQj5EqM", value: row[4] || "" }, // Unique id
+                { attribute: "IztkGQj5EqM", value: schoolId }, // Unique id
                 { attribute: "aNfKUv5kVo7", value: row[5] || "" }, // Name of School
-                { attribute: "PX7m8i2KVgT", value: row[7] || "" }, // Is school faith based
+                { attribute: "PX7m8i2KVgT", value: row[7] === "-" ? "" : row[7] === "Yes" ? true : false }, // Is school faith based
+                // { attribute: "anVTuGti6SK", value: row[8] || "" }, // School level
+                { attribute: "anVTuGti6SK", value: row[8] === "Technical-Vocational (TVET)" ? "TVET" : (row[8] || "") }, // School level
+
+                { attribute: "kThAAJFKIcE", value: row[9] || "" }, // Secondary school type
                 { attribute: "AlVMRjjWuVo", value: row[11] || "" }, // Established date
                 { attribute: "YqP6CROSeSq", value: row[12] || "" }, // Digital postal address
-                { attribute: "cPGCeyMceZl", value: row[13] || "" }, // Site coordinates
-                { attribute: "wO2BqNRuILL", value: row[21] || "" }, // Site photo
+                // { attribute: "cPGCeyMceZl", value: row[13] || "" }, // Site coordinates
+                { attribute: "cPGCeyMceZl", value: (row[13] && row[13] !== "-" && row[13].includes(",")) ? `[${row[13]}]` : "" },
+                // { attribute: "wO2BqNRuILL", value: row[22] || "" }, // Site photo
+                { attribute: "wO2BqNRuILL", value: (row[22] && row[22] !== "-") ? row[22] : "" }
+
             ],
             enrollments: [
                 {
                     program,
                     orgUnit,
-                    enrolledAt: row[2] || "2025-01-01",
-                    occurredAt: row[3] || "2025-01-01",
+                    // enrolledAt: row[2] || "2025-01-01",
+                    // occurredAt: row[3] || "2025-01-01",
+                    enrolledAt: (row[2] && row[2] !== "-") ? row[2] : "2025-01-01T00:00:00.000",
+                    occurredAt: (row[3] && row[3] !== "-") ? row[3] : "2025-01-01T00:00:00.000",
+
                     status: "ACTIVE",
                     attributes: [
                         { attribute: "UJBblniqPOI", value: row[10] || "" }, // Community
+                        { attribute: "RYU3GpNzokp", value: row[6] || "" }, // Type
 
                     ]
                 }
@@ -441,9 +454,11 @@ export const getMeetingsPayload = (data, orgUnit, program, trackedEntityType) =>
             attributes: [
                 { attribute: "eOsejnvfYiV", value: row[4] || "" }, // Invitation letter date
                 { attribute: "Mm3f9fbAT8r", value: row[5] || "" }, // Invitation letter reference number
-                { attribute: "rSKzHSBlOyB", value: row[7] || "" }, // Who signed the invitation letter
+                // { attribute: "rSKzHSBlOyB", value: row[7] || "" }, // Who signed the invitation letter
+                { attribute: "rSKzHSBlOyB", value: getSignerMapping(row[7]) },
                 { attribute: "Ub0V9Z06aBc", value: row[8] || "" }, // Meeting date
-                { attribute: "kghpIZgHFsT", value: row[10] || "" }, // Meeting type
+                // { attribute: "kghpIZgHFsT", value: row[10] || "" }, // Meeting type
+                { attribute: "kghpIZgHFsT", value: getMeetingTypeMapping(row[10]) },
                 { attribute: "b7uAJaX9obN", value: row[15] || "" }, // Meeting title
                 { attribute: "HmdJqjjAZZ4", value: row[17] || "" }, // Meeting venue
                 { attribute: "Br9IEOZyKPW", value: row[21] || "" }, // Number of desicions
@@ -452,31 +467,33 @@ export const getMeetingsPayload = (data, orgUnit, program, trackedEntityType) =>
 
                 { attribute: "AiPyh2A2DZ8", value: row[6] || "" }, // Means of invitation letter distribution
                 { attribute: "unVPW9dCS5B", value: row[9] || "" }, // Minute file number
-                { attribute: "j0kNoCtC8pj", value: row[11] || "" }, // General assembly meeting types
+                // { attribute: "j0kNoCtC8pj", value: row[11] || "" }, // General assembly meeting types
+                { attribute: "j0kNoCtC8pj", value: getAssemblyTypeMapping(row[11]) },
                 { attribute: "hfCSE8B2L9p", value: row[12] || "" }, // Statutory committee types
                 { attribute: "sI8Kj3pfa6k", value: row[13] || "" }, // Name of sub structure
                 { attribute: "f1V1vDibPCS", value: row[14] || "" }, // Other (specify)
                 { attribute: "mH8uydlfv03", value: row[16] || "" }, // Meeting agenda
                 { attribute: "uRdPt6OIxvU", value: row[22] || "" }, // Number of cpmplaints
                 { attribute: "DGDc7z1ESlb", value: row[23] || "" }, // Number of recommendations made
-                { attribute: "SdtJSE3jJkV", value: row[26] || "" }, // Number of participant HoDs Male
+                // { attribute: "SdtJSE3jJkV", value: row[26] || "" }, // Number of participant HoDs Male
+                { attribute: "SdtJSE3jJkV", value: (row[26] && row[26] !== "-" && !isNaN(row[26])) ? parseInt(row[26]) : 0 },
                 { attribute: "RFSUywjaDRi", value: row[27] || "" }, // Number of participant HoDs Female
-                { attribute: "Fup3ibG5EJc", value: row[29] || "" }, // Was the annual action plan approved
+                { attribute: "Fup3ibG5EJc", value: row[29] === "-" ? "" : row[29] === "Yes" ? true : false }, // Was the annual action plan approved
                 { attribute: "xh6NIEHa8xg", value: row[30] || "" }, // AAP approval date
             ],
             enrollments: [
                 {
                     program,
                     orgUnit,
-                    enrolledAt: row[2] || "2025-01-01",
-                    occurredAt: row[3] || "2025-01-01",
+                    enrolledAt: (row[2] && row[2] !== "-") ? row[2] : "2025-01-01T00:00:00.000",
+                    occurredAt: (row[3] && row[3] !== "-") ? row[3] : "2025-01-01T00:00:00.000",
                     status: "ACTIVE",
                     attributes: [
                         { attribute: "eOsejnvfYiV", value: row[4] || "" }, // Invitation letter date
                         { attribute: "Mm3f9fbAT8r", value: row[5] || "" }, // Invitation letter reference number
-                        { attribute: "rSKzHSBlOyB", value: row[7] || "" }, // Who signed the invitation letter
+                        { attribute: "rSKzHSBlOyB", value: getSignerMapping(row[7]) }, // Who signed the invitation letter
                         { attribute: "Ub0V9Z06aBc", value: row[8] || "" }, // Meeting date
-                        { attribute: "kghpIZgHFsT", value: row[10] || "" }, // Meeting type
+                        { attribute: "kghpIZgHFsT", value: getMeetingTypeMapping(row[10]) },  // Meeting type
                         { attribute: "b7uAJaX9obN", value: row[15] || "" }, // Meeting title
                         { attribute: "HmdJqjjAZZ4", value: row[17] || "" }, // Meeting venue
                         { attribute: "Br9IEOZyKPW", value: row[21] || "" }, // Number of desicions
@@ -499,6 +516,33 @@ export const getMeetingsPayload = (data, orgUnit, program, trackedEntityType) =>
 
 
 const clean = (val) => (val === "-" || val === undefined ? "" : val);
+
+// Mapping functions
+const getMeetingTypeMapping = (value) => {
+  const mappings = {
+    "General Assembly": "GA",
+    "Management Meeting": "Management Meetings", 
+    "Public Relations and Complaints Committee(PRCC)": "PRCC"
+  };
+  return mappings[value] || value || "";
+};
+
+const getSignerMapping = (value) => {
+  const mappings = {
+    "Presiding Member": "PM",
+    "Convener": "C"
+  };
+  return mappings[value] || value || "";
+};
+
+const getAssemblyTypeMapping = (value) => {
+  const mappings = {
+    "Extra Ordinary Meeting": "Special Meeting",
+    "Emergency Meeting": "Special Meeting"
+  };
+  return mappings[value] || value || "";
+};
+
 
 function generateProjectId() {
     const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -664,6 +708,7 @@ export const getMandatoryFieldByTracker = (tracker) => {
         ],
         "School Profile Tracker": [
             { attribute: "UJBblniqPOI", decription: "Community" }, // Community
+            { attribute: "RYU3GpNzokp", decription: "Type" }, // Type
         ],
         "Meetings Tracker": [
             { attribute: "eOsejnvfYiV", decription: "Invitation letter date" }, // Invitation letter date

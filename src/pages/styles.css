@@ -228,3 +228,17 @@ button.ghost {
   padding: 10px 20px;
   cursor: pointer;
 }
+
+/* FileUploadZone Custom Styles */
+.file-upload-container {
+  padding: 30px;
+  text-align: center;
+}
+
+.file-upload-button {
+  margin-bottom: 15px;
+}
+
+.file-support-text {
+  margin-top: 10px;
+}

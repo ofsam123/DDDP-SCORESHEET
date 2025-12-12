@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 import { Upload, FileSpreadsheet, CheckCircle2 } from "lucide-react";
+import Spinner from "../components/ui/Spinner";
 
 import { FileUploadZone } from "../components/bulkload/FileUploadZone";
 import { ExcelPreviewTable } from "../components/bulkload/ExcelPreviewTable";
@@ -193,6 +194,9 @@ const BulkLoad = () => {
     let payload = [];
     let fields = [];
 
+    console.log('selectedProgram: ',selectedProgram);
+    console.log('excelData.rows: ',excelData.rows);
+
     if (selectedProgram?.label?.includes("Plan Baselines and Targets")) {
 
       payload = getAAPBaselineAndTargetPayload(excelData.rows, orgUnit, tracker, trackedEntity);
@@ -232,10 +236,12 @@ const BulkLoad = () => {
       payload = getSportFacilityPayload(excelData.rows, orgUnit, tracker, trackedEntity);
       fields = getMandatoryFieldByTracker("Sport Facility Tracker")
 
-    } else if (selectedProgram?.label?.includes("Service Providers Tracker")) {
-
+    } else if (selectedProgram?.label?.includes("Service Providers")) {
+       console.log('service provider')
       payload = getServiceProvidersPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      console.log('payload: ',payload)
       fields = getMandatoryFieldByTracker("Service Providers Tracker")
+       console.log('payload 2: ',fields)
 
     } else if (selectedProgram?.label?.includes("School Profile Tracker")) {
 
@@ -413,30 +419,12 @@ const BulkLoad = () => {
                     <Button variant="outline" onClick={handleBulkLoad} disabled={isImporting}>
                       {isImporting ? (
                         <>
-                          <svg
-                            className="animate-spin h-2 w-2 mr-2"
-                            viewBox="0 0 24 24"
-                          >
-                            <circle
-                              className="opacity-25"
-                              cx="12"
-                              cy="12"
-                              r="10"
-                              stroke="currentColor"
-                              strokeWidth="4"
-                              fill="none"
-                            ></circle>
-                            <path
-                              className="opacity-75"
-                              fill="currentColor"
-                              d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z"
-                            ></path>
-                          </svg>
+                          <Spinner size="xs" className="mr-2" />
                           Importing...
                         </>
                       ) : (
                         <>
-                          <Upload className="w-3 h-3" />
+                          <Upload className="w-3 h-3 mr-2" />
                           Import Data
                         </>
                       )}

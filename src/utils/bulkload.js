@@ -403,16 +403,13 @@ export const getSchoolProfilePayload = (data, orgUnit, program, trackedEntityTyp
                 { attribute: "IztkGQj5EqM", value: schoolId }, // Unique id
                 { attribute: "aNfKUv5kVo7", value: row[5] || "" }, // Name of School
                 { attribute: "PX7m8i2KVgT", value: row[7] === "-" ? "" : row[7] === "Yes" ? true : false }, // Is school faith based
-                // { attribute: "anVTuGti6SK", value: row[8] || "" }, // School level
                 { attribute: "anVTuGti6SK", value: row[8] === "Technical-Vocational (TVET)" ? "TVET" : (row[8] || "") }, // School level
 
                 { attribute: "kThAAJFKIcE", value: row[9] || "" }, // Secondary school type
                 { attribute: "AlVMRjjWuVo", value: row[11] || "" }, // Established date
                 { attribute: "YqP6CROSeSq", value: row[12] || "" }, // Digital postal address
-                // { attribute: "cPGCeyMceZl", value: row[13] || "" }, // Site coordinates
-                { attribute: "cPGCeyMceZl", value: (row[13] && row[13] !== "-" && row[13].includes(",")) ? `[${row[13]}]` : "" },
-                // { attribute: "wO2BqNRuILL", value: row[22] || "" }, // Site photo
-                { attribute: "wO2BqNRuILL", value: (row[22] && row[22] !== "-") ? row[22] : "" }
+                { attribute: "cPGCeyMceZl", value: (row[13] && row[13] !== "-" && row[13].includes(",")) ? `[${row[13]}]` : "" }, // Site coordinates
+                { attribute: "wO2BqNRuILL", value: (row[22] && row[22] !== "-") ? row[22] : "" }, // Site photo
 
             ],
             enrollments: [
@@ -454,11 +451,11 @@ export const getMeetingsPayload = (data, orgUnit, program, trackedEntityType) =>
             attributes: [
                 { attribute: "eOsejnvfYiV", value: row[4] || "" }, // Invitation letter date
                 { attribute: "Mm3f9fbAT8r", value: row[5] || "" }, // Invitation letter reference number
-                // { attribute: "rSKzHSBlOyB", value: row[7] || "" }, // Who signed the invitation letter
-                { attribute: "rSKzHSBlOyB", value: getSignerMapping(row[7]) },
+                // { attribute: "rSKzHSBlOyB", value: row[7] || "" }, 
+                { attribute: "rSKzHSBlOyB", value: getSignerMapping(row[7]) }, // Who signed the invitation letter
                 { attribute: "Ub0V9Z06aBc", value: row[8] || "" }, // Meeting date
-                // { attribute: "kghpIZgHFsT", value: row[10] || "" }, // Meeting type
-                { attribute: "kghpIZgHFsT", value: getMeetingTypeMapping(row[10]) },
+                // { attribute: "kghpIZgHFsT", value: row[10] || "" }, 
+                { attribute: "kghpIZgHFsT", value: getMeetingTypeMapping(row[10]) }, // Meeting type
                 { attribute: "b7uAJaX9obN", value: row[15] || "" }, // Meeting title
                 { attribute: "HmdJqjjAZZ4", value: row[17] || "" }, // Meeting venue
                 { attribute: "Br9IEOZyKPW", value: row[21] || "" }, // Number of desicions
@@ -467,16 +464,16 @@ export const getMeetingsPayload = (data, orgUnit, program, trackedEntityType) =>
 
                 { attribute: "AiPyh2A2DZ8", value: row[6] || "" }, // Means of invitation letter distribution
                 { attribute: "unVPW9dCS5B", value: row[9] || "" }, // Minute file number
-                // { attribute: "j0kNoCtC8pj", value: row[11] || "" }, // General assembly meeting types
-                { attribute: "j0kNoCtC8pj", value: getAssemblyTypeMapping(row[11]) },
+                // { attribute: "j0kNoCtC8pj", value: row[11] || "" }, 
+                { attribute: "j0kNoCtC8pj", value: getAssemblyTypeMapping(row[11]) }, // General assembly meeting types
                 { attribute: "hfCSE8B2L9p", value: row[12] || "" }, // Statutory committee types
                 { attribute: "sI8Kj3pfa6k", value: row[13] || "" }, // Name of sub structure
                 { attribute: "f1V1vDibPCS", value: row[14] || "" }, // Other (specify)
                 { attribute: "mH8uydlfv03", value: row[16] || "" }, // Meeting agenda
                 { attribute: "uRdPt6OIxvU", value: row[22] || "" }, // Number of cpmplaints
                 { attribute: "DGDc7z1ESlb", value: row[23] || "" }, // Number of recommendations made
-                // { attribute: "SdtJSE3jJkV", value: row[26] || "" }, // Number of participant HoDs Male
-                { attribute: "SdtJSE3jJkV", value: (row[26] && row[26] !== "-" && !isNaN(row[26])) ? parseInt(row[26]) : 0 },
+                // { attribute: "SdtJSE3jJkV", value: row[26] || "" }, 
+                { attribute: "SdtJSE3jJkV", value: (row[26] && row[26] !== "-" && !isNaN(row[26])) ? parseInt(row[26]) : 0 }, // Number of participant HoDs Male
                 { attribute: "RFSUywjaDRi", value: row[27] || "" }, // Number of participant HoDs Female
                 { attribute: "Fup3ibG5EJc", value: row[29] === "-" ? "" : row[29] === "Yes" ? true : false }, // Was the annual action plan approved
                 { attribute: "xh6NIEHa8xg", value: row[30] || "" }, // AAP approval date
@@ -514,33 +511,152 @@ export const getMeetingsPayload = (data, orgUnit, program, trackedEntityType) =>
 
 }
 
+export const getPeopleWithDisabilityPayload = (data, orgUnit, program, trackedEntityType) => {
+    const payload = [];
+
+    data.forEach(row => {
+        const tempDataSet = {
+            orgUnit,
+            trackedEntityType,
+            attributes: [
+                { attribute: "yPvU4sPN9hh", value: row[4] || "" }, //First Name
+                { attribute: "PtqWutejid0", value: row[5] || "" }, //Last Name
+                { attribute: "j3CyzRTfdAk", value: row[6] || "" }, //Gender
+                { attribute: "NA5Bek1ME81", value: row[7] || "" }, //Disability type
+                { attribute: "yUDWmWXB08P", value: row[9] || "" }, //Does this PWD have a caretaker
+
+                { attribute: "sGe7MGw4BVN", value: row[10] || "" }, //Phone
+                { attribute: "IQv3CJDmDna", value: row[11] || "" }, //Ghanacardnumber
+                { attribute: "XDjgAYmON2o", value: row[12] || "" }, //Addrees Location
+                { attribute: "YqP6CROSeSq", value: row[13] || "" }, //DigitalPostalAddress
+                { attribute: "SKeHl5XTZVG", value: row[14] || "" }, //Email Address
+                { attribute: "Ax9xIaMCs52", value: "" }, //Picture
+                { attribute: "dxbGTrab2xY", value: row[16] || "" }, //Caretaker Name
+                { attribute: "eOMv6uYjj9q", value: row[17] || "" }, //Caretaker telephone no
+                { attribute: "T1YQ9ekJBno", value: row[18] || "" }, //Caretaker Ghana card
+
+
+            ],
+
+
+            enrollments: [
+                {
+                    program,
+                    orgUnit,
+                    enrolledAt: (row[2] && row[2] !== "-") ? row[2] : "2025-01-01T00:00:00.000",
+                    occurredAt: (row[3] && row[3] !== "-") ? row[3] : "2025-01-01T00:00:00.000",
+                    status: "ACTIVE",
+                    attributes: [
+                        { attribute: "yPvU4sPN9hh", value: row[4] || "" }, //First Name
+                        { attribute: "PtqWutejid0", value: row[5] || "" }, //Last Name
+                        { attribute: "j3CyzRTfdAk", value: row[6] || "" }, //Gender
+                        { attribute: "NA5Bek1ME81", value: row[7] || "" }, //Disability type
+                        { attribute: "yUDWmWXB08P", value: row[9] || "" }, //Does this PWD have a caretaker
+                    ]
+                }
+            ],
+        };
+
+        payload.push(tempDataSet);
+
+    });
+
+    return {
+        "trackedEntities": payload
+    }
+
+}
+
+// Program type mapping function
+const getProgramTypeMapping = (value) => {
+    const mappings = {
+        "Economic Empowerment": "Capacity Building",
+        "Health Support": "Capacity Building", 
+        "Education Support": "Capacity Building",
+        "Social Support": "Capacity Building",
+        "Vocational Training": "Vocation",
+        "Skills Development": "Vocation"
+    };
+    return mappings[value] || "Capacity Building"; // Default to Capacity Building
+};
+
+export const getProgramPayload = (data, orgUnit, program, trackedEntityType) => {
+    const payload = [];
+
+    data.forEach(row => {
+        const tempDataSet = {
+            orgUnit,
+            trackedEntityType,
+            attributes: [
+                { attribute: "wca7mlI2exE", value: row[4] || "" }, //Name
+                { attribute: "Y7ts1V4n4Gc", value: row[6] || "" }, //PWD Activity Description
+                { attribute: "k0JMgRqxmiJ", value: getProgramTypeMapping(row[12]) }, //PWD Program type
+
+                { attribute: "XDjgAYmON2o", value: row[5] || "" }, //Address Location
+                { attribute: "FVPxJuIxIrM", value: row[7] || "" }, //Primary Funding Source
+                { attribute: "JDAhouXsGGO", value: row[9] === "-" ? null : row[9] === "Yes" ? true : row[9] === "No" ? false : null }, //Is there additional funding
+                { attribute: "QRX2hooQpCo", value: row[11] || "" }, //PWD program budget
+                { attribute: "MjCjeCH2TbP", value: row[13] || "" }, //Start Date
+                { attribute: "EKTp0a9qtum", value: row[14] || "" }, //End Date
+                { attribute: "Ax9xIaMCs52", value: "" }, //Picture
+                { attribute: "I8AqLbJESVm", value: row[16] || "" }, //Number of direct beneficiaries female
+                { attribute: "nFPavqcYnNs", value: row[17] || "" }, //Number of direct beneficiaries Male
+
+            ],
+
+            enrollments: [
+                {
+                    program,
+                    orgUnit,
+                    enrolledAt: (row[2] && row[2] !== "-") ? row[2] : "2025-01-01T00:00:00.000",
+                    occurredAt: (row[3] && row[3] !== "-") ? row[3] : "2025-01-01T00:00:00.000",
+                    status: "ACTIVE",
+                    attributes: [
+                        { attribute: "wca7mlI2exE", value: row[4] || "" }, //Name
+                        { attribute: "Y7ts1V4n4Gc", value: row[6] || "" }, //PWD Activity Description
+                        { attribute: "k0JMgRqxmiJ", value: getProgramTypeMapping(row[12]) }, //PWD Program type - FIXED
+                    ]
+                }
+            ],
+        };
+
+        payload.push(tempDataSet);
+
+    });
+
+    return {
+        "trackedEntities": payload
+    }
+
+}
+
 
 const clean = (val) => (val === "-" || val === undefined ? "" : val);
 
 // Mapping functions
 const getMeetingTypeMapping = (value) => {
-  const mappings = {
-    "General Assembly": "GA",
-    "Management Meeting": "Management Meetings", 
-    "Public Relations and Complaints Committee(PRCC)": "PRCC"
-  };
-  return mappings[value] || value || "";
+    const mappings = {
+        "General Assembly": "GA",
+        "Management Meeting": "Management Meetings",
+        "Public Relations and Complaints Committee(PRCC)": "PRCC"
+    };
+    return mappings[value] || value || "";
 };
 
 const getSignerMapping = (value) => {
-  const mappings = {
-    "Presiding Member": "PM",
-    "Convener": "C"
-  };
-  return mappings[value] || value || "";
+    const mappings = {
+        "Presiding Member": "PM",
+        "Convener": "C"
+    };
+    return mappings[value] || value || "";
 };
 
 const getAssemblyTypeMapping = (value) => {
-  const mappings = {
-    "Extra Ordinary Meeting": "Special Meeting",
-    "Emergency Meeting": "Special Meeting"
-  };
-  return mappings[value] || value || "";
+    const mappings = {
+        "Extra Ordinary Meeting": "Special Meeting",
+        "Emergency Meeting": "Special Meeting"
+    };
+    return mappings[value] || value || "";
 };
 
 
@@ -722,6 +838,18 @@ export const getMandatoryFieldByTracker = (tracker) => {
             { attribute: "U2RjiIApoYu", decription: "Number of Attendance Male" }, // Number of Attendance Male
             { attribute: "iHz18pXkmMd", decription: "Number of Attendance Female" }, // Number of Attendance Female
         ],
+        "People With Disability Tracker": [
+            { attribute: "yPvU4sPN9hh", description: "First Name" }, //First Name
+            { attribute: "PtqWutejid0", description: "Last Name" }, //Last Name
+            { attribute: "j3CyzRTfdAk", description: "Gender" }, //Gender
+            { attribute: "NA5Bek1ME81", description: "Disability type" }, //Disability type
+            { attribute: "yUDWmWXB08P", description: "Does this PWD have a caretaker" }, //Does this PWD have a caretaker
+        ],
+        "Program Tracker": [
+            { attribute: "wca7mlI2exE", decription: "Name" }, //Name
+            { attribute: "Y7ts1V4n4Gc", decription: "PWD Activity Description" }, //PWD Activity Description
+            { attribute: "k0JMgRqxmiJ", decription: "PWD Program type" }, //PWD Program type
+        ]
 
     };
 

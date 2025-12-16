@@ -10,7 +10,7 @@ import { Button } from "../components/ui/button";
 import { useToast } from "hooks/useToast";
 import SideBarWrapper from "components/SideBarWrapper";
 import Navbar from "layout/Navbar";
-import { getAAPBaselineAndTargetPayload, getAAPPayload, getBillingPayload, getBudgetPayload, getGeneralDistrictPayload, getMandatoryFieldByTracker, getMissingMandatoryFieldsMessage, getProjectPayload, getOperationalHealthFacilityPayload, getSportFacilityPayload, getServiceProvidersPayload, getSchoolProfilePayload, getMeetingsPayload } from "utils/bulkload";
+import { getAAPBaselineAndTargetPayload, getAAPPayload, getBillingPayload, getBudgetPayload, getGeneralDistrictPayload, getMandatoryFieldByTracker, getMissingMandatoryFieldsMessage, getProjectPayload, getOperationalHealthFacilityPayload, getSportFacilityPayload, getServiceProvidersPayload, getSchoolProfilePayload, getMeetingsPayload, getPeopleWithDisabilityPayload, getProgramPayload } from "utils/bulkload";
 import axios from "api/axios";
 import useAuth from "hooks/useAuth";
 import Select from "react-select";
@@ -194,8 +194,6 @@ const BulkLoad = () => {
     let payload = [];
     let fields = [];
 
-    console.log('selectedProgram: ',selectedProgram);
-    console.log('excelData.rows: ',excelData.rows);
 
     if (selectedProgram?.label?.includes("Plan Baselines and Targets")) {
 
@@ -237,11 +235,9 @@ const BulkLoad = () => {
       fields = getMandatoryFieldByTracker("Sport Facility Tracker")
 
     } else if (selectedProgram?.label?.includes("Service Providers")) {
-       console.log('service provider')
+
       payload = getServiceProvidersPayload(excelData.rows, orgUnit, tracker, trackedEntity);
-      console.log('payload: ',payload)
       fields = getMandatoryFieldByTracker("Service Providers Tracker")
-       console.log('payload 2: ',fields)
 
     } else if (selectedProgram?.label?.includes("School Profile Tracker")) {
 
@@ -252,6 +248,16 @@ const BulkLoad = () => {
 
       payload = getMeetingsPayload(excelData.rows, orgUnit, tracker, trackedEntity);
       fields = getMandatoryFieldByTracker("Meetings Tracker")
+     }
+     else if (selectedProgram?.label?.includes("PWD People With  Disability")) {
+
+      payload = getPeopleWithDisabilityPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("People With Disability Tracker")
+     }
+     else if (selectedProgram?.label?.includes("Program Tracker")) {
+
+      payload = getProgramPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Program Tracker")
      }
 
     const messages = getMissingMandatoryFieldsMessage(fields, payload.trackedEntities);

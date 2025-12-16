@@ -404,12 +404,19 @@ export const getSchoolProfilePayload = (data, orgUnit, program, trackedEntityTyp
                 { attribute: "aNfKUv5kVo7", value: row[5] || "" }, // Name of School
                 { attribute: "PX7m8i2KVgT", value: row[7] === "-" ? "" : row[7] === "Yes" ? true : false }, // Is school faith based
                 { attribute: "anVTuGti6SK", value: row[8] === "Technical-Vocational (TVET)" ? "TVET" : (row[8] || "") }, // School level
-
                 { attribute: "kThAAJFKIcE", value: row[9] || "" }, // Secondary school type
                 { attribute: "AlVMRjjWuVo", value: row[11] || "" }, // Established date
                 { attribute: "YqP6CROSeSq", value: row[12] || "" }, // Digital postal address
                 { attribute: "cPGCeyMceZl", value: (row[13] && row[13] !== "-" && row[13].includes(",")) ? `[${row[13]}]` : "" }, // Site coordinates
-                { attribute: "wO2BqNRuILL", value: (row[22] && row[22] !== "-") ? row[22] : "" }, // Site photo
+                { attribute: "HkovKF0eqVg", value: row[14] === "-" ? "" : row[14] === "Yes" ? true : false }, // Does the school have a creche
+                { attribute: "kz1eZdE9hm3", value: row[15] === "-" ? "" : row[15] === "Yes" ? true : false }, //KG
+                { attribute: "kNHdPyj6ed3", value: row[16] === "-" ? "" : row[16] === "Yes" ? true : false }, //Primary
+                { attribute: "ZljvuDqsPJJ", value: row[17] === "-" ? "" : row[17] === "Yes" ? true : false }, //JHS
+                { attribute: "qORPfeTsPeX", value: row[18] === "-" ? "" : row[18] === "Yes" ? true : false }, //Secondary
+                { attribute: "x0oK399l4RA", value: row[19] === "-" ? "" : row[19] === "Yes" ? true : false }, //Tertiary
+                { attribute: "tsn8ekA92aR", value: row[20] === "-" ? "" : row[20] === "Yes" ? true : false }, //TVETs/Vocational
+                { attribute: "wO2BqNRuILL", value: "" }, // Site photo
+                { attribute: "YBC49GnEfdi", value: row[23] === "-" ? "" : row[23] === "Yes" ? true : false }, //Schools with changing rooms for girls
 
             ],
             enrollments: [
@@ -450,11 +457,9 @@ export const getMeetingsPayload = (data, orgUnit, program, trackedEntityType) =>
             trackedEntityType,
             attributes: [
                 { attribute: "eOsejnvfYiV", value: row[4] || "" }, // Invitation letter date
-                { attribute: "Mm3f9fbAT8r", value: row[5] || "" }, // Invitation letter reference number
-                // { attribute: "rSKzHSBlOyB", value: row[7] || "" }, 
+                { attribute: "Mm3f9fbAT8r", value: row[5] || "" }, // Invitation letter reference number 
                 { attribute: "rSKzHSBlOyB", value: getSignerMapping(row[7]) }, // Who signed the invitation letter
-                { attribute: "Ub0V9Z06aBc", value: row[8] || "" }, // Meeting date
-                // { attribute: "kghpIZgHFsT", value: row[10] || "" }, 
+                { attribute: "Ub0V9Z06aBc", value: row[8] || "" }, // Meeting date 
                 { attribute: "kghpIZgHFsT", value: getMeetingTypeMapping(row[10]) }, // Meeting type
                 { attribute: "b7uAJaX9obN", value: row[15] || "" }, // Meeting title
                 { attribute: "HmdJqjjAZZ4", value: row[17] || "" }, // Meeting venue
@@ -464,7 +469,6 @@ export const getMeetingsPayload = (data, orgUnit, program, trackedEntityType) =>
 
                 { attribute: "AiPyh2A2DZ8", value: row[6] || "" }, // Means of invitation letter distribution
                 { attribute: "unVPW9dCS5B", value: row[9] || "" }, // Minute file number
-                // { attribute: "j0kNoCtC8pj", value: row[11] || "" }, 
                 { attribute: "j0kNoCtC8pj", value: getAssemblyTypeMapping(row[11]) }, // General assembly meeting types
                 { attribute: "hfCSE8B2L9p", value: row[12] || "" }, // Statutory committee types
                 { attribute: "sI8Kj3pfa6k", value: row[13] || "" }, // Name of sub structure

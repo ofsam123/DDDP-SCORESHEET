@@ -10,7 +10,7 @@ import { Button } from "../components/ui/button";
 import { useToast } from "hooks/useToast";
 import SideBarWrapper from "components/SideBarWrapper";
 import Navbar from "layout/Navbar";
-import { getAAPBaselineAndTargetPayload, getAAPPayload, getBillingPayload, getBudgetPayload, getGeneralDistrictPayload, getMandatoryFieldByTracker, getMissingMandatoryFieldsMessage, getProjectPayload, getOperationalHealthFacilityPayload, getSportFacilityPayload, getServiceProvidersPayload, getSchoolProfilePayload, getMeetingsPayload, getPeopleWithDisabilityPayload, getProgramPayload } from "utils/bulkload";
+import { getAAPBaselineAndTargetPayload, getAAPPayload, getBillingPayload, getBudgetPayload, getMandatoryFieldByTracker, getMissingMandatoryFieldsMessage, getProjectPayload, getOperationalHealthFacilityPayload, getSportFacilityPayload, getServiceProvidersPayload, getSchoolProfilePayload, getMeetingsPayload, getPeopleWithDisabilityPayload, getProgramPayload, getBoundaryDisputePayload, getComputerizedBillingSystemPayload, getCapacityBuildingNeedsPayload, getConsultingAndContractorsPayload, getDecisionsAndComplaintsPayload, getDisasterPayload, getDistrictGeneralPayload, getExpenditurePayload, getDistrictAssemblyDepartmentsPayload, getJobPayload, getFoodVendorsRegisterPayload, getEvaluationAndPMEPayload, getDumpingSiteOrEngineeredLandfillsPayload, getDPATScoringSheetPayload, getInspectorateUnitActivityPayload, getKeyCriticalPovertyIssuesPayload, getPermitsRequestPayload, getStreetNamingPayload, getStatutoryMemberPayload, getLogisticPayload, getVulnerabilityPayload, getLegalCasePayload, getLEDRelatedProgramsPayload, getPropertyTrackerPayload, getMarketingBusinessTrackerPayload, getPaymentPointPayload, getAuditIssuesPayload, getAnnualProgressReportPayload, getRevenuePayload, getPublicationsPayload} from "utils/bulkload";
 import axios from "api/axios";
 import useAuth from "hooks/useAuth";
 import Select from "react-select";
@@ -205,10 +205,10 @@ const BulkLoad = () => {
       payload = getAAPPayload(excelData.rows, orgUnit, tracker, trackedEntity);
       fields = getMandatoryFieldByTracker("Annual Action Plan (AAP)")
 
-    } else if (selectedProgram?.label?.includes("District General Tracker")) {
+    // } else if (selectedProgram?.label?.includes("District General Tracker")) {
 
-      payload = getGeneralDistrictPayload(excelData.rows, orgUnit, tracker, trackedEntity);
-      fields = getMandatoryFieldByTracker("District General Tracker")
+    //   payload = getGeneralDistrictPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+    //   fields = getMandatoryFieldByTracker("District General Tracker")
 
     } else if (selectedProgram?.label?.includes("Projects & Programmes")) {
 
@@ -259,6 +259,158 @@ const BulkLoad = () => {
       payload = getProgramPayload(excelData.rows, orgUnit, tracker, trackedEntity);
       fields = getMandatoryFieldByTracker("Program Tracker")
      }
+     else if (selectedProgram?.label?.includes("Boundary Dispute Tracker")) {
+
+      payload = getBoundaryDisputePayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Boundary Dispute Tracker")
+     }
+     else if (selectedProgram?.label?.includes("Computerized Billing System")) {
+
+      payload = getComputerizedBillingSystemPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Computerized Billing System")
+     }
+     else if (selectedProgram?.label?.includes("Capacity Building Needs")) {
+
+      payload = getCapacityBuildingNeedsPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Capacity Building Needs")
+     }
+     else if (selectedProgram?.label?.includes("Consulting and Contractors Tracker")) {
+
+      payload =  getConsultingAndContractorsPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Consulting And Contractors")
+     }
+     else if (selectedProgram?.label?.includes("Decisions and Complaints Tracker")) {
+
+      payload =  getDecisionsAndComplaintsPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Decisions And Complaints")
+     }
+     else if (selectedProgram?.label?.includes("Disaster Tracker")) {
+
+      payload =  getDisasterPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Disaster Tracker")
+     }
+     else if (selectedProgram?.label?.includes("District General Tracker")) {
+
+      payload =  getDistrictGeneralPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("District General Tracker")
+     }
+     else if (selectedProgram?.label?.includes("Expenditure Tracker")) {
+
+      payload =  getExpenditurePayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Expenditure Tracker")
+     }
+     else if (selectedProgram?.label?.includes("District Assembly Departments")) {
+
+      payload =  getDistrictAssemblyDepartmentsPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("District Assembly Departments")
+     }
+     else if (selectedProgram?.label?.includes("Job Tracker")) {
+
+      payload =  getJobPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Job Tracker")
+     }
+     else if (selectedProgram?.label?.includes("Food Vendors Register")) {
+
+      payload =  getFoodVendorsRegisterPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Food Vendors Register")
+     }
+     else if (selectedProgram?.label?.includes("Evaluation and PME Tracker")) {
+
+      payload =  getEvaluationAndPMEPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Evaluation And PME Tracker")
+     }
+     else if (selectedProgram?.label?.includes("Dumping Site or engineered landfills")) {
+
+      payload =  getDumpingSiteOrEngineeredLandfillsPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Dumping Site or engineered landfills")
+     }
+     else if (selectedProgram?.label?.includes("DPAT Scoring Sheet")) {
+
+      payload =  getDPATScoringSheetPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("DPAT Scoring Sheet")
+     }
+     else if (selectedProgram?.label?.includes("Inspectorate Unit Activity Tracker")) {
+
+      payload =  getInspectorateUnitActivityPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Inspectorate Unit Activity Tracker")
+     }
+     else if (selectedProgram?.label?.includes("Key Critical Poverty Issues Tracker")) {
+
+      payload =  getKeyCriticalPovertyIssuesPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Key Critical Poverty Issues Tracker")
+     }
+     else if (selectedProgram?.label?.includes("Permits Request Tracker")) {
+
+      payload =  getPermitsRequestPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Permits Request Tracker")
+     }
+     else if (selectedProgram?.label?.includes("Street Naming Tracker")) {
+
+      payload =  getStreetNamingPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Street Naming Tracker")
+     }
+     else if (selectedProgram?.label?.includes("Statutory Member Tracker")) {
+
+      payload =  getStatutoryMemberPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Statutory Member Tracker")
+     }
+     else if (selectedProgram?.label?.includes("Logistic Tracker")) {
+
+      payload =  getLogisticPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Logistic Tracker")
+     }
+     else if (selectedProgram?.label?.includes("Vulnerability Tracker")) {
+
+      payload =  getVulnerabilityPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Vulnerability Tracker")
+     }
+     else if (selectedProgram?.label?.includes("Legal Case Tracker")) {
+
+      payload =  getLegalCasePayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Legal Case Tracker")
+     }
+     else if (selectedProgram?.label?.includes("LED Related Programs")) {
+
+      payload =  getLEDRelatedProgramsPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("LED Related Programs")
+     }
+     else if (selectedProgram?.label?.includes("Property Tracker")) {
+
+      payload =  getPropertyTrackerPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Property Tracker")
+     }
+     else if (selectedProgram?.label?.includes("Marketing Business Tracker")) {
+
+      payload =  getMarketingBusinessTrackerPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Marketing Business Tracker")
+     }
+     else if (selectedProgram?.label?.includes("Payment Point Tracker")) {
+
+      payload =  getPaymentPointPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Payment Point Tracker")
+     }
+     else if (selectedProgram?.label?.includes("Audit Issues Tracker")) {
+
+      payload =  getAuditIssuesPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Audit Issues Tracker")
+     }
+     else if (selectedProgram?.label?.includes("Annual Progress Report Tracker")) {
+
+      payload =  getAnnualProgressReportPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Annual Progress Report Tracker")
+     }
+     else if (selectedProgram?.label?.includes("Revenue Tracker")) {
+
+      payload =  getRevenuePayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Revenue Tracker")
+     }
+     else if (selectedProgram?.label?.includes("Publications Tracker")) {
+
+      payload =  getPublicationsPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Publications Tracker")
+     }
+
+
 
     const messages = getMissingMandatoryFieldsMessage(fields, payload.trackedEntities);
 

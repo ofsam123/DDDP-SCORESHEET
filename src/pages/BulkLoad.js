@@ -10,7 +10,7 @@ import { Button } from "../components/ui/button";
 import { useToast } from "hooks/useToast";
 import SideBarWrapper from "components/SideBarWrapper";
 import Navbar from "layout/Navbar";
-import { getAAPBaselineAndTargetPayload, getAAPPayload, getBillingPayload, getBudgetPayload, getMandatoryFieldByTracker, getMissingMandatoryFieldsMessage, getProjectPayload, getOperationalHealthFacilityPayload, getSportFacilityPayload, getServiceProvidersPayload, getSchoolProfilePayload, getMeetingsPayload, getPeopleWithDisabilityPayload, getProgramPayload, getBoundaryDisputePayload, getComputerizedBillingSystemPayload, getCapacityBuildingNeedsPayload, getConsultingAndContractorsPayload, getDecisionsAndComplaintsPayload, getDisasterPayload, getDistrictGeneralPayload, getExpenditurePayload, getDistrictAssemblyDepartmentsPayload, getJobPayload, getFoodVendorsRegisterPayload, getEvaluationAndPMEPayload, getDumpingSiteOrEngineeredLandfillsPayload, getDPATScoringSheetPayload, getInspectorateUnitActivityPayload, getKeyCriticalPovertyIssuesPayload, getPermitsRequestPayload, getStreetNamingPayload, getStatutoryMemberPayload, getLogisticPayload, getVulnerabilityPayload, getLegalCasePayload, getLEDRelatedProgramsPayload, getPropertyTrackerPayload, getMarketingBusinessTrackerPayload, getPaymentPointPayload, getAuditIssuesPayload, getAnnualProgressReportPayload, getRevenuePayload, getPublicationsPayload} from "utils/bulkload";
+import { getAAPBaselineAndTargetPayload, getAAPPayload, getBillingPayload, getBudgetPayload, getMandatoryFieldByTracker, getMissingMandatoryFieldsMessage, getProjectPayload, getOperationalHealthFacilityPayload, getSportFacilityPayload, getServiceProvidersPayload, getSchoolProfilePayload, getMeetingsPayload, getPeopleWithDisabilityPayload, getProgramPayload, getBoundaryDisputePayload, getComputerizedBillingSystemPayload, getCapacityBuildingNeedsPayload, getConsultingAndContractorsPayload, getDecisionsAndComplaintsPayload, getDisasterPayload, getDistrictGeneralPayload, getExpenditurePayload, getDistrictAssemblyDepartmentsPayload, getJobPayload, getFoodVendorsRegisterPayload, getEvaluationAndPMEPayload, getDumpingSiteOrEngineeredLandfillsPayload, getDPATScoringSheetPayload, getInspectorateUnitActivityPayload, getKeyCriticalPovertyIssuesPayload, getPermitsRequestPayload, getStreetNamingPayload, getStatutoryMemberPayload, getLogisticPayload, getVulnerabilityPayload, getLegalCasePayload, getLEDRelatedProgramsPayload, getPropertyTrackerPayload, getMarketingBusinessTrackerPayload, getPaymentPointPayload, getAuditIssuesPayload, getAnnualProgressReportPayload, getRevenuePayload, getPublicationsPayload, getSanitationAndWasteTrackerPayload, getSocialInclusiveProgramTrackerPayload, getSubStructureActivityTrackerPayload, getTestFruitApplicationPayload ,getResidentialHomeCentrePayload ,getUserProfilePayload} from "utils/bulkload";
 import axios from "api/axios";
 import useAuth from "hooks/useAuth";
 import Select from "react-select";
@@ -408,6 +408,36 @@ const BulkLoad = () => {
 
       payload =  getPublicationsPayload(excelData.rows, orgUnit, tracker, trackedEntity);
       fields = getMandatoryFieldByTracker("Publications Tracker")
+     }
+     else if (selectedProgram?.label?.includes("Sanitation and Waste Tracker")) {
+
+      payload =  getSanitationAndWasteTrackerPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Sanitation and Waste Tracker")
+     }
+     else if (selectedProgram?.label?.includes("Social Inclusive Program Tracker")) {
+
+      payload =  getSocialInclusiveProgramTrackerPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Social Inclusive Program Tracker")
+     }
+     else if (selectedProgram?.label?.includes("Sub Structure Activity Tracker")) {
+
+      payload =  getSubStructureActivityTrackerPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Sub Structure Activity Tracker")
+     }
+     else if (selectedProgram?.label?.includes("Test Fruit Application")) {
+
+      payload =  getTestFruitApplicationPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Test Fruit Application")
+     }
+     else if (selectedProgram?.label?.includes("Residential Home Centre")) {
+
+      payload =  getResidentialHomeCentrePayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Residential Home Centre")
+     }
+     else if (selectedProgram?.label?.includes("User Profile")) {
+
+      payload =  getUserProfilePayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("User Profile")
      }
 
 

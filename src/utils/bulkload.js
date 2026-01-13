@@ -2078,7 +2078,338 @@ export const getPublicationsPayload = (data, orgUnit, program, trackedEntityType
 
 }
 
-// export const getPropertyTrackerPayload = (data, orgUnit, program, trackedEntityType) => {
+export const getSanitationAndWasteTrackerPayload = (data, orgUnit, program, trackedEntityType) => {
+    const payload = [];
+
+    data.forEach(row => {
+        const tempDataSet = {
+            orgUnit,
+            trackedEntityType,
+            attributes: [
+                { attribute: "YfoGKu8N6An", value: row[5] || "" }, //Date
+            ],
+
+
+            enrollments: [
+                {
+                    program,
+                    orgUnit,
+                    enrolledAt: (row[2] && row[2] !== "-") ? row[2] : "2025-01-01T00:00:00.000",
+                    occurredAt: (row[3] && row[3] !== "-") ? row[3] : "2025-01-01T00:00:00.000",
+                    status: "ACTIVE",
+                    attributes: [
+                        { attribute: "YfoGKu8N6An", value: row[5] || "" }, //Date
+                    ]
+                }
+            ],
+        };
+
+        payload.push(tempDataSet);
+
+    });
+
+    return {
+        "trackedEntities": payload
+    }
+
+}
+// INCOPLETE  TESTING>>
+export const getSocialInclusiveProgramTrackerPayload = (data, orgUnit, program, trackedEntityType) => {
+    const payload = [];
+
+    // Date formatting function
+    const formatDate = (dateStr) => {
+        if (!dateStr || dateStr === "-") return "";
+        // Handle dates like "2023-10-1" -> "2023-10-01"
+        const parts = dateStr.split("-");
+        if (parts.length === 3) {
+            const year = parts[0];
+            const month = parts[1].padStart(2, '0');
+            const day = parts[2].padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        return dateStr;
+    };
+
+    data.forEach(row => {
+        const tempDataSet = {
+            orgUnit,
+            trackedEntityType,
+            attributes: [
+                { attribute: "CxW1R33QUV2", value: row[5] || "" }, //Social Inclusive Programme
+                { attribute: "FVPxJuIxIrM", value: row[7] || "" }, //Primary Funding Source
+                { attribute: "ZERTtsbXXc7", value: row[9] || "" }, //Supervisor
+                { attribute: "n7h6V5qo8Td", value: row[10] || "" }, //Number of Target Beneficiaries
+                { attribute: "mdO1ngv0Qt0", value: row[13] || "" }, //Budget Allocated (Ghana cedis)
+                { attribute: "gkqU35LKO4t", value: formatDate(row[14]) }, //Start Date
+
+                { attribute: "IztkGQj5EqM", value: row[4] || "" }, //Unique ID
+                { attribute: "ZXbvKuyurxe", value: row[6] || "" }, //Other (specify)
+                { attribute: "Z4ibyZpPR1T", value: row[8] || "" }, //Other (specify)
+                { attribute: "ilVNpuD0NUj", value: row[11] || "" }, //Target Male Beneficiary
+                { attribute: "N2RLXZiGLBy", value: row[12] || "" }, //Target Female Beneficiary
+                { attribute: "qkHXURztKyc", value: row[15] || "" }, //End Date
+                { attribute: "x4qBAYjalCD", value: row[16] || "" }, //Remarks
+            ],
+
+
+            enrollments: [
+                {
+                    program,
+                    orgUnit,
+                    enrolledAt: (row[2] && row[2] !== "-") ? row[2] : "2025-01-01T00:00:00.000",
+                    occurredAt: (row[3] && row[3] !== "-") ? row[3] : "2025-01-01T00:00:00.000",
+                    status: "ACTIVE",
+                    attributes: [
+                        { attribute: "CxW1R33QUV2", value: row[5] || "" }, //Social Inclusive Programme
+                        { attribute: "FVPxJuIxIrM", value: row[7] || "" }, //Primary Funding Source
+                        { attribute: "ZERTtsbXXc7", value: row[9] || "" }, //Supervisor
+                        { attribute: "n7h6V5qo8Td", value: row[10] || "" }, //Number of Target Beneficiaries
+                        { attribute: "mdO1ngv0Qt0", value: row[13] || "" }, //Budget Allocated (Ghana cedis)
+                        { attribute: "gkqU35LKO4t", value: formatDate(row[14]) }, //Start Date
+                    ]
+                }
+            ],
+        };
+
+        payload.push(tempDataSet);
+
+    });
+
+    return {
+        "trackedEntities": payload
+    }
+
+}
+
+export const getSubStructureActivityTrackerPayload = (data, orgUnit, program, trackedEntityType) => {
+    const payload = [];
+
+    data.forEach(row => {
+        const tempDataSet = {
+            orgUnit,
+            trackedEntityType,
+            attributes: [
+                { attribute: "sI8Kj3pfa6k", value: row[4] || "" }, //Name of Sub structure
+                { attribute: "hQVox0xawJI", value: row[5] || "" }, //Amount
+                { attribute: "VjFxjvQk0cO", value: row[8] || "" }, //Activity Description
+
+                { attribute: "PReqkv3CYaE", value: row[6] || "" }, //Activity funding source
+                { attribute: "YfoGKu8N6An", value: row[7] || "" }, //Date
+
+
+            ],
+
+
+            enrollments: [
+                {
+                    program,
+                    orgUnit,
+                    enrolledAt: (row[2] && row[2] !== "-") ? row[2] : "2025-01-01T00:00:00.000",
+                    occurredAt: (row[3] && row[3] !== "-") ? row[3] : "2025-01-01T00:00:00.000",
+                    status: "ACTIVE",
+                    attributes: [
+                        { attribute: "sI8Kj3pfa6k", value: row[4] || "" }, //Name of Sub structure
+                        { attribute: "hQVox0xawJI", value: row[5] || "" }, //Amount
+                        { attribute: "VjFxjvQk0cO", value: row[8] || "" }, //Activity Description
+                    ]
+                }
+            ],
+        };
+
+        payload.push(tempDataSet);
+
+    });
+
+    return {
+        "trackedEntities": payload
+    }
+
+}
+
+export const getSubStructureCommitteePayload = (data, orgUnit, program, trackedEntityType) => {
+    const payload = [];
+
+    data.forEach(row => {
+        const tempDataSet = {
+            orgUnit,
+            trackedEntityType,
+            attributes: [
+                { attribute: "sI8Kj3pfa6k", value: row[4] || "" }, //Name of Sub Structure	
+                { attribute: "HpWdkwq4K4Q", value: row[5] || "" }, //Sub Structure Committee Category
+                { attribute: "AlVMRjjWuVo", value: row[7] || "" }, //Established Date
+
+                { attribute: "f1V1vDibPCS", value: row[6] || "" }, //Other (specify)       
+                { attribute: "yWbhfTquC4O", value: row[8] || "" }, //Committee Established Type
+                { attribute: "bSO81USC3ZN", value: row[9] || "" }, //Electoral Area
+                { attribute: "bIGyTZp8ORb", value: row[10] || "" }, //Names of Assembly Members
+                { attribute: "sGe7MGw4BVN", value: row[11] || "" }, //Phone
+                { attribute: "h6jVcd8pSCZ", value: row[12] || "" }, //Location Coordinate
+            ],
+
+
+            enrollments: [
+                {
+                    program,
+                    orgUnit,
+                    enrolledAt: (row[2] && row[2] !== "-") ? row[2] : "2025-01-01T00:00:00.000",
+                    occurredAt: (row[3] && row[3] !== "-") ? row[3] : "2025-01-01T00:00:00.000",
+                    status: "ACTIVE",
+                    attributes: [
+                        { attribute: "sI8Kj3pfa6k", value: row[4] || "" }, //Name of Sub Structure	
+                        { attribute: "HpWdkwq4K4Q", value: row[5] || "" }, //Sub Structure Committee Category
+                        { attribute: "AlVMRjjWuVo", value: row[7] || "" }, //Established Date
+                    ]
+                }
+            ],
+        };
+
+        payload.push(tempDataSet);
+
+    });
+
+    return {
+        "trackedEntities": payload
+    }
+
+}
+
+export const getTestFruitApplicationPayload = (data, orgUnit, program, trackedEntityType) => {
+    const payload = [];
+
+    data.forEach(row => {
+        const tempDataSet = {
+            orgUnit,
+            trackedEntityType,
+            attributes: [
+                { attribute: "JsjIwEt18J0", value: parseBool(row[4]) }, //Fruit | On the scale of 1 - 5
+
+                { attribute: "mB5J8mki06Q", value: row[5] || "" }, //Fruit Option 1
+                { attribute: "N4S0i2fi0xa", value: row[6] || "" }, //Fruit Option 2
+                { attribute: "fNavKvngj9W", value: parseBool(row[7]) }, //Do you like mango?
+                { attribute: "GwCgBmiICKl", value: parseBool(row[8]) }, //Do you like orange?
+                { attribute: "Z7Fgg9OWyHg", value: parseBool(row[9]) }, //Do you like coconut?
+            ],
+
+
+            enrollments: [
+                {
+                    program,
+                    orgUnit,
+                    enrolledAt: (row[2] && row[2] !== "-") ? row[2] : "2025-01-01T00:00:00.000",
+                    occurredAt: (row[3] && row[3] !== "-") ? row[3] : "2025-01-01T00:00:00.000",
+                    status: "ACTIVE",
+                    attributes: [
+                        { attribute: "JsjIwEt18J0", value: parseBool(row[4]) }, //Fruit | On the scale of 1 - 5
+                    ]
+                }
+            ],
+        };
+
+        payload.push(tempDataSet);
+
+    });
+
+    return {
+        "trackedEntities": payload
+    }
+
+}
+
+export const getResidentialHomeCentrePayload = (data, orgUnit, program, trackedEntityType) => {
+    const payload = [];
+
+    data.forEach(row => {
+        const tempDataSet = {
+            orgUnit,
+            trackedEntityType,
+            attributes: [
+                { attribute: "wca7mlI2exE", value: row[4] || "" }, //Name 
+                { attribute: "sGe7MGw4BVN", value: row[8] || "" }, //Phone
+                { attribute: "BZbNSkBY5w5", value: row[9] || "" }, //Public Hotline
+
+                { attribute: "SKeHl5XTZVG", value: row[5] || "" }, //Email Address
+                { attribute: "pF64ANEoPYx", value: row[6] || "" }, //Location
+                { attribute: "YqP6CROSeSq", value: row[7] || "" }, //Digital Postal Address
+                { attribute: "XDjgAYmON2o", value: row[10] || "" }, //Address Location
+            ],
+
+
+            enrollments: [
+                {
+                    program,
+                    orgUnit,
+                    enrolledAt: (row[2] && row[2] !== "-") ? row[2] : "2025-01-01T00:00:00.000",
+                    occurredAt: (row[3] && row[3] !== "-") ? row[3] : "2025-01-01T00:00:00.000",
+                    status: "ACTIVE",
+                    attributes: [
+                        { attribute: "wca7mlI2exE", value: row[4] || "" }, //Name
+                        { attribute: "sGe7MGw4BVN", value: row[8] || "" }, //Phone
+                        { attribute: "BZbNSkBY5w5", value: row[9] || "" }, //Public Hotline
+                    ]
+                }
+            ],
+        };
+
+        payload.push(tempDataSet);
+
+    });
+
+    return {
+        "trackedEntities": payload
+    }
+
+}
+
+export const getUserProfilePayload = (data, orgUnit, program, trackedEntityType) => {
+    const payload = [];
+
+    data.forEach(row => {
+        const tempDataSet = {
+            orgUnit,
+            trackedEntityType,
+            attributes: [
+                { attribute: "yPvU4sPN9hh", value: row[4] || "" }, //First Name
+                { attribute: "PtqWutejid0", value: row[5] || "" }, //Last Name
+                { attribute: "j3CyzRTfdAk", value: row[6] || "" }, //Gender
+
+                { attribute: "MQ7qa7gOxzb", value: row[7] || "" }, //Date of Birth
+                { attribute: "sGe7MGw4BVN", value: row[8] || "" }, //Phone
+                { attribute: "mUHeOAckLf1", value: row[9] || "" }, //Password
+                { attribute: "Ax9xIaMCs52", value: row[10] || "" }, //Picture
+                { attribute: "mewas520GEZ", value: row[11] || "" }, //NHIS
+                { attribute: "XsUFsoszfgr", value: row[12] || "" }, //Next of Kin name
+                { attribute: "Ada5shKwWZB", value: row[13] || "" }, //Next of Kin phone
+            ],
+
+
+            enrollments: [
+                {
+                    program,
+                    orgUnit,
+                    enrolledAt: (row[2] && row[2] !== "-") ? row[2] : "2025-01-01T00:00:00.000",
+                    occurredAt: (row[3] && row[3] !== "-") ? row[3] : "2025-01-01T00:00:00.000",
+                    status: "ACTIVE",
+                    attributes: [
+                        { attribute: "yPvU4sPN9hh", value: row[4] || "" }, //First Name
+                        { attribute: "PtqWutejid0", value: row[5] || "" }, //Last Name
+                        { attribute: "j3CyzRTfdAk", value: row[6] || "" }, //Gender
+                    ]
+                }
+            ],
+        };
+
+        payload.push(tempDataSet);
+
+    });
+
+    return {
+        "trackedEntities": payload
+    }
+
+}
+
+// export const getUserProfilePayload = (data, orgUnit, program, trackedEntityType) => {
 //     const payload = [];
 
 //     data.forEach(row => {
@@ -2086,14 +2417,17 @@ export const getPublicationsPayload = (data, orgUnit, program, trackedEntityType
 //             orgUnit,
 //             trackedEntityType,
 //             attributes: [
-//                 { attribute: "", value: row[4] || "" }, //
-//                 { attribute: "", value: row[5] || "" }, //
-//                 { attribute: "", value: row[6] || "" }, //
-//                 { attribute: "", value: row[7] || "" }, //
-//                 { attribute: "", value: row[8] || "" }, //
-//                 { attribute: "", value: row[9] || "" }, //
-//                 { attribute: "", value: row[10] || "" }, //
-//                 { attribute: "", value: row[11] || "" }, //
+//                 { attribute: "yPvU4sPN9hh", value: row[4] || "" }, //First Name
+//                 { attribute: "PtqWutejid0", value: row[5] || "" }, //Last Name
+//                 { attribute: "j3CyzRTfdAk", value: row[6] || "" }, //Gender
+
+//                 { attribute: "MQ7qa7gOxzb", value: row[7] || "" }, //Date of Birth
+//                 { attribute: "sGe7MGw4BVN", value: row[8] || "" }, //Phone
+//                 { attribute: "mUHeOAckLf1", value: row[9] || "" }, //Password
+//                 { attribute: "Ax9xIaMCs52", value: row[10] || "" }, //Picture
+//                 { attribute: "mewas520GEZ", value: row[11] || "" }, //NHIS
+//                 { attribute: "XsUFsoszfgr", value: row[12] || "" }, //Next of Kin name
+//                 { attribute: "Ada5shKwWZB", value: row[13] || "" }, //Next of Kin phone
 //             ],
 
 
@@ -2105,134 +2439,9 @@ export const getPublicationsPayload = (data, orgUnit, program, trackedEntityType
 //                     occurredAt: (row[3] && row[3] !== "-") ? row[3] : "2025-01-01T00:00:00.000",
 //                     status: "ACTIVE",
 //                     attributes: [
-
-//                     ]
-//                 }
-//             ],
-//         };
-
-//         payload.push(tempDataSet);
-
-//     });
-
-//     return {
-//         "trackedEntities": payload
-//     }
-
-// }
-
-// export const getPropertyTrackerPayload = (data, orgUnit, program, trackedEntityType) => {
-//     const payload = [];
-
-//     data.forEach(row => {
-//         const tempDataSet = {
-//             orgUnit,
-//             trackedEntityType,
-//             attributes: [
-//                 { attribute: "", value: row[4] || "" }, //
-//                 { attribute: "", value: row[5] || "" }, //
-//                 { attribute: "", value: row[6] || "" }, //
-//                 { attribute: "", value: row[7] || "" }, //
-//                 { attribute: "", value: row[8] || "" }, //
-//                 { attribute: "", value: row[9] || "" }, //
-//                 { attribute: "", value: row[10] || "" }, //
-//                 { attribute: "", value: row[11] || "" }, //
-//             ],
-
-
-//             enrollments: [
-//                 {
-//                     program,
-//                     orgUnit,
-//                     enrolledAt: (row[2] && row[2] !== "-") ? row[2] : "2025-01-01T00:00:00.000",
-//                     occurredAt: (row[3] && row[3] !== "-") ? row[3] : "2025-01-01T00:00:00.000",
-//                     status: "ACTIVE",
-//                     attributes: [
-
-//                     ]
-//                 }
-//             ],
-//         };
-
-//         payload.push(tempDataSet);
-
-//     });
-
-//     return {
-//         "trackedEntities": payload
-//     }
-
-// }
-// export const getPropertyTrackerPayload = (data, orgUnit, program, trackedEntityType) => {
-//     const payload = [];
-
-//     data.forEach(row => {
-//         const tempDataSet = {
-//             orgUnit,
-//             trackedEntityType,
-//             attributes: [
-//                 { attribute: "", value: row[4] || "" }, //
-//                 { attribute: "", value: row[5] || "" }, //
-//                 { attribute: "", value: row[6] || "" }, //
-//                 { attribute: "", value: row[7] || "" }, //
-//                 { attribute: "", value: row[8] || "" }, //
-//                 { attribute: "", value: row[9] || "" }, //
-//                 { attribute: "", value: row[10] || "" }, //
-//                 { attribute: "", value: row[11] || "" }, //
-//             ],
-
-
-//             enrollments: [
-//                 {
-//                     program,
-//                     orgUnit,
-//                     enrolledAt: (row[2] && row[2] !== "-") ? row[2] : "2025-01-01T00:00:00.000",
-//                     occurredAt: (row[3] && row[3] !== "-") ? row[3] : "2025-01-01T00:00:00.000",
-//                     status: "ACTIVE",
-//                     attributes: [
-
-//                     ]
-//                 }
-//             ],
-//         };
-
-//         payload.push(tempDataSet);
-
-//     });
-
-//     return {
-//         "trackedEntities": payload
-//     }
-
-// }
-// export const getPropertyTrackerPayload = (data, orgUnit, program, trackedEntityType) => {
-//     const payload = [];
-
-//     data.forEach(row => {
-//         const tempDataSet = {
-//             orgUnit,
-//             trackedEntityType,
-//             attributes: [
-//                 { attribute: "", value: row[4] || "" }, //
-//                 { attribute: "", value: row[5] || "" }, //
-//                 { attribute: "", value: row[6] || "" }, //
-//                 { attribute: "", value: row[7] || "" }, //
-//                 { attribute: "", value: row[8] || "" }, //
-//                 { attribute: "", value: row[9] || "" }, //
-//                 { attribute: "", value: row[10] || "" }, //
-//                 { attribute: "", value: row[11] || "" }, //
-//             ],
-
-
-//             enrollments: [
-//                 {
-//                     program,
-//                     orgUnit,
-//                     enrolledAt: (row[2] && row[2] !== "-") ? row[2] : "2025-01-01T00:00:00.000",
-//                     occurredAt: (row[3] && row[3] !== "-") ? row[3] : "2025-01-01T00:00:00.000",
-//                     status: "ACTIVE",
-//                     attributes: [
-
+// { attribute: "yPvU4sPN9hh", value: row[4] || "" }, //First Name
+//                 { attribute: "PtqWutejid0", value: row[5] || "" }, //Last Name
+//                 { attribute: "j3CyzRTfdAk", value: row[6] || "" }, //Gender
 //                     ]
 //                 }
 //             ],
@@ -2682,7 +2891,41 @@ export const getMandatoryFieldByTracker = (tracker) => {
             { attribute: "ozmSnpGukjT", description: "Published Date" }, //Published Date
             { attribute: "VYCQ5lh0HdP", description: "Publication Channel" }, //Publication Channel
             { attribute: "Iu8c8cj8Dyy", description: "Document Published" }, //Document Published
-        ]
+        ],
+        "Sanitation and Waste Tracker": [
+            { attribute: "YfoGKu8N6An", description: "Date" }, //Date
+        ],
+        "Social Inclusive Program Tracker": [
+            { attribute: "CxW1R33QUV2", description: "Social Inclusive Programme" }, //Social Inclusive Programme
+            { attribute: "FVPxJuIxIrM", description: "Primary Funding Source" }, //Primary Funding Source
+            { attribute: "ZERTtsbXXc7", description: "Supervisor" }, //Supervisor
+            { attribute: "n7h6V5qo8Td", description: "umber of Target Beneficiaries" }, //Number of Target Beneficiaries
+            { attribute: "mdO1ngv0Qt0", description: "Budget Allocated(Ghana cedis)" }, //Budget Allocated (Ghana cedis)
+            { attribute: "gkqU35LKO4t", description: "Start Date" }, //Start Date
+        ],
+        "Sub Structure Activity Tracker": [
+            { attribute: "sI8Kj3pfa6k", description: "Name of Sub structure" }, //Name of Sub structure
+            { attribute: "hQVox0xawJI", description: "Amount" }, //Amount
+            { attribute: "VjFxjvQk0cO", description: "Activity Description" }, //Activity Description
+        ],
+        "Sub Structure Committee": [
+            { attribute: "sI8Kj3pfa6k", description: "Sub Structure Committee" }, //Sub Structure Committee	
+            { attribute: "HpWdkwq4K4Q", description: "Sub Structure Committee Category" }, //Sub Structure Committee Category
+            { attribute: "AlVMRjjWuVo", description: "Established Date" }, //Established Date
+        ],
+        "Test Fruit Application": [
+            { attribute: "JsjIwEt18J0", description: "Fruit | On the scale of 1 - 5" }, //Fruit | On the scale of 1 - 5
+        ],
+        "Residential Home Centre": [
+            { attribute: "wca7mlI2exE", description: "Name" }, //Name
+            { attribute: "sGe7MGw4BVN", description: "Phone" }, //Phone
+            { attribute: "BZbNSkBY5w5", description: "Public Hotline" }, //Public Hotline
+        ],
+        "User Profile": [
+            { attribute: "yPvU4sPN9hh", description: "First Name" }, //First Name
+            { attribute: "PtqWutejid0", description: "Last Name" }, //Last Name
+            { attribute: "j3CyzRTfdAk", description: "Gender" }, //Gender 
+        ],
     };
 
     return trackerFields[tracker] || [];

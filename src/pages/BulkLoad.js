@@ -10,7 +10,7 @@ import { Button } from "../components/ui/button";
 import { useToast } from "hooks/useToast";
 import SideBarWrapper from "components/SideBarWrapper";
 import Navbar from "layout/Navbar";
-import { getAAPBaselineAndTargetPayload, getAAPPayload, getBillingPayload, getBudgetPayload, getMandatoryFieldByTracker, getMissingMandatoryFieldsMessage, getProjectPayload, getOperationalHealthFacilityPayload, getSportFacilityPayload, getServiceProvidersPayload, getSchoolProfilePayload, getMeetingsPayload, getPeopleWithDisabilityPayload, getProgramPayload, getBoundaryDisputePayload, getComputerizedBillingSystemPayload, getCapacityBuildingNeedsPayload, getConsultingAndContractorsPayload, getDecisionsAndComplaintsPayload, getDisasterPayload, getDistrictGeneralPayload, getExpenditurePayload, getDistrictAssemblyDepartmentsPayload, getJobPayload, getFoodVendorsRegisterPayload, getEvaluationAndPMEPayload, getDumpingSiteOrEngineeredLandfillsPayload, getDPATScoringSheetPayload, getInspectorateUnitActivityPayload, getKeyCriticalPovertyIssuesPayload, getPermitsRequestPayload, getStreetNamingPayload, getStatutoryMemberPayload, getLogisticPayload, getVulnerabilityPayload, getLegalCasePayload, getLEDRelatedProgramsPayload, getPropertyTrackerPayload, getMarketingBusinessTrackerPayload, getPaymentPointPayload, getAuditIssuesPayload, getAnnualProgressReportPayload, getRevenuePayload, getPublicationsPayload, getSanitationAndWasteTrackerPayload, getSocialInclusiveProgramTrackerPayload, getSubStructureActivityTrackerPayload, getTestFruitApplicationPayload ,getResidentialHomeCentrePayload ,getUserProfilePayload} from "utils/bulkload";
+import { getAAPBaselineAndTargetPayload, getAAPPayload, getBillingPayload, getBudgetPayload, getMandatoryFieldByTracker, getMissingMandatoryFieldsMessage, getProjectPayload, getOperationalHealthFacilityPayload, getSportFacilityPayload, getServiceProvidersPayload, getSchoolProfilePayload, getMeetingsPayload, getPeopleWithDisabilityPayload, getProgramPayload, getBoundaryDisputePayload, getComputerizedBillingSystemPayload, getCapacityBuildingNeedsPayload, getConsultingAndContractorsPayload, getDecisionsAndComplaintsPayload, getDisasterPayload, getDistrictGeneralPayload, getExpenditurePayload, getDistrictAssemblyDepartmentsPayload, getJobPayload, getFoodVendorsRegisterPayload, getEvaluationAndPMEPayload, getDumpingSiteOrEngineeredLandfillsPayload, getDPATScoringSheetPayload, getInspectorateUnitActivityPayload, getKeyCriticalPovertyIssuesPayload, getPermitsRequestPayload, getStreetNamingPayload, getStatutoryMemberPayload, getLogisticPayload, getVulnerabilityPayload, getLegalCasePayload, getLEDRelatedProgramsPayload, getPropertyTrackerPayload, getMarketingBusinessTrackerPayload, getPaymentPointPayload, getAuditIssuesPayload, getAnnualProgressReportPayload, getRevenuePayload, getPublicationsPayload, getSanitationAndWasteTrackerPayload, getSocialInclusiveProgramTrackerPayload, getSubStructureActivityTrackerPayload, getSubStructureCommitteePayload, getTestFruitApplicationPayload ,getResidentialHomeCentrePayload ,getUserProfilePayload, getDocumentsHubPayload, getInspectorateUnitEstablishmentTrackerPayload, getInternallyGeneratedFundTrackerPayload, getOneDistrictOneWarehouseTrackerPayload, getSocialInclusiveProgramBeneficiariesTrackerPayload, getCommunityProfilePayload, getClientServiceUnitTrackerPayload, getATSheetTrainingAttendanceSheetTrackerPayload, getAgriculturalExtensionandSupportOfficersPayload} from "utils/bulkload";
 import axios from "api/axios";
 import useAuth from "hooks/useAuth";
 import Select from "react-select";
@@ -424,6 +424,11 @@ const BulkLoad = () => {
       payload =  getSubStructureActivityTrackerPayload(excelData.rows, orgUnit, tracker, trackedEntity);
       fields = getMandatoryFieldByTracker("Sub Structure Activity Tracker")
      }
+     else if (selectedProgram?.label?.includes("Sub Structure Committee")) {
+
+      payload =  getSubStructureCommitteePayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Sub Structure Committee")
+     }
      else if (selectedProgram?.label?.includes("Test Fruit Application")) {
 
       payload =  getTestFruitApplicationPayload(excelData.rows, orgUnit, tracker, trackedEntity);
@@ -438,6 +443,51 @@ const BulkLoad = () => {
 
       payload =  getUserProfilePayload(excelData.rows, orgUnit, tracker, trackedEntity);
       fields = getMandatoryFieldByTracker("User Profile")
+     }
+     else if (selectedProgram?.label?.includes("Documents Hub")) {
+
+      payload =  getDocumentsHubPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Documents Hub")
+     }
+     else if (selectedProgram?.label?.includes("Inspectorate Unit Establishment Tracker")) {
+
+      payload =  getInspectorateUnitEstablishmentTrackerPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Inspectorate Unit Establishment Tracker")
+     }
+     else if (selectedProgram?.label?.includes("Internally Generated Fund Tracker")) {
+
+      payload =  getInternallyGeneratedFundTrackerPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Internally Generated Fund Tracker")
+     }
+     else if (selectedProgram?.label?.includes("One District One Warehouse Tracker")) {
+
+      payload =  getOneDistrictOneWarehouseTrackerPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("One District One Warehouse Tracker")
+     }
+     else if (selectedProgram?.label?.includes("Social Inclusive Program Beneficiaries Tracker")) {
+
+      payload =  getSocialInclusiveProgramBeneficiariesTrackerPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Social Inclusive Program Beneficiaries Tracker")
+     }
+     else if (selectedProgram?.label?.includes("Community Profile")) {
+
+      payload =  getCommunityProfilePayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Community Profile")
+     }
+     else if (selectedProgram?.label?.includes("Client Service Unit Tracker")) {
+
+      payload =  getClientServiceUnitTrackerPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Client Service Unit Tracker")
+     }
+     else if (selectedProgram?.label?.includes("ATSheet Training Attendance Sheet Tracker")) {
+
+      payload =  getATSheetTrainingAttendanceSheetTrackerPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("ATSheet Training Attendance Sheet Tracker")
+     }
+     else if (selectedProgram?.label?.includes("Agricultural Extension and Support Officers")) {
+
+      payload =  getAgriculturalExtensionandSupportOfficersPayload(excelData.rows, orgUnit, tracker, trackedEntity);
+      fields = getMandatoryFieldByTracker("Agricultural Extension and Support Officers")
      }
 
 

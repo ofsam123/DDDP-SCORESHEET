@@ -1722,7 +1722,7 @@ export const getPropertyTrackerPayload = (data, orgUnit, program, trackedEntityT
 export const getMarketingBusinessTrackerPayload = (data, orgUnit, program, trackedEntityType) => {
     const payload = [];
 
-    // Quality Standard mapping
+    // Quality Standard mapping 
     const getQualityStandardMapping = (value) => {
         const mappings = {
             "EU Standards": "EU Standard",
@@ -2117,18 +2117,11 @@ export const getSanitationAndWasteTrackerPayload = (data, orgUnit, program, trac
 export const getSocialInclusiveProgramTrackerPayload = (data, orgUnit, program, trackedEntityType) => {
     const payload = [];
 
-    // Date formatting function
-    const formatDate = (dateStr) => {
-        if (!dateStr || dateStr === "-") return "";
-        // Handle dates like "2023-10-1" -> "2023-10-01"
-        const parts = dateStr.split("-");
-        if (parts.length === 3) {
-            const year = parts[0];
-            const month = parts[1].padStart(2, '0');
-            const day = parts[2].padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        }
-        return dateStr;
+    // Number validation function
+    const parseNumber = (value) => {
+        if (!value || value === "-") return "";
+        const num = parseInt(value);
+        return isNaN(num) ? "" : num.toString();
     };
 
     data.forEach(row => {
@@ -2139,19 +2132,18 @@ export const getSocialInclusiveProgramTrackerPayload = (data, orgUnit, program, 
                 { attribute: "CxW1R33QUV2", value: row[5] || "" }, //Social Inclusive Programme
                 { attribute: "FVPxJuIxIrM", value: row[7] || "" }, //Primary Funding Source
                 { attribute: "ZERTtsbXXc7", value: row[9] || "" }, //Supervisor
-                { attribute: "n7h6V5qo8Td", value: row[10] || "" }, //Number of Target Beneficiaries
-                { attribute: "mdO1ngv0Qt0", value: row[13] || "" }, //Budget Allocated (Ghana cedis)
-                { attribute: "gkqU35LKO4t", value: formatDate(row[14]) }, //Start Date
+                { attribute: "n7h6V5qo8Td", value: parseNumber(row[10]) }, //Number of Target Beneficiaries
+                { attribute: "mdO1ngv0Qt0", value: parseNumber(row[13]) }, //Budget Allocated (Ghana cedis)
+                { attribute: "gkqU35LKO4t", value: row[14] || "" }, //Start Date
 
+                { attribute: "qkHXURztKyc", value: row[15] || "" }, //End Date
                 { attribute: "IztkGQj5EqM", value: row[4] || "" }, //Unique ID
                 { attribute: "ZXbvKuyurxe", value: row[6] || "" }, //Other (specify)
                 { attribute: "Z4ibyZpPR1T", value: row[8] || "" }, //Other (specify)
-                { attribute: "ilVNpuD0NUj", value: row[11] || "" }, //Target Male Beneficiary
-                { attribute: "N2RLXZiGLBy", value: row[12] || "" }, //Target Female Beneficiary
-                { attribute: "qkHXURztKyc", value: row[15] || "" }, //End Date
+                { attribute: "ilVNpuD0NUj", value: parseNumber(row[11]) }, //Target Male Beneficiary
+                { attribute: "N2RLXZiGLBy", value: parseNumber(row[12]) }, //Target Female Beneficiary
                 { attribute: "x4qBAYjalCD", value: row[16] || "" }, //Remarks
             ],
-
 
             enrollments: [
                 {
@@ -2164,26 +2156,45 @@ export const getSocialInclusiveProgramTrackerPayload = (data, orgUnit, program, 
                         { attribute: "CxW1R33QUV2", value: row[5] || "" }, //Social Inclusive Programme
                         { attribute: "FVPxJuIxIrM", value: row[7] || "" }, //Primary Funding Source
                         { attribute: "ZERTtsbXXc7", value: row[9] || "" }, //Supervisor
-                        { attribute: "n7h6V5qo8Td", value: row[10] || "" }, //Number of Target Beneficiaries
-                        { attribute: "mdO1ngv0Qt0", value: row[13] || "" }, //Budget Allocated (Ghana cedis)
-                        { attribute: "gkqU35LKO4t", value: formatDate(row[14]) }, //Start Date
+                        { attribute: "n7h6V5qo8Td", value: parseNumber(row[10]) }, //Number of Target Beneficiaries
+                        { attribute: "mdO1ngv0Qt0", value: parseNumber(row[13]) }, //Budget Allocated (Ghana cedis)
+                        { attribute: "gkqU35LKO4t", value: row[14] || "" }, //Start Date
                     ]
                 }
             ],
         };
 
         payload.push(tempDataSet);
-
     });
 
     return {
         "trackedEntities": payload
     }
-
 }
 
 export const getSubStructureActivityTrackerPayload = (data, orgUnit, program, trackedEntityType) => {
     const payload = [];
+
+    // Activity funding source mapping
+    const getFundingSourceMapping = (value) => {
+        if (!value || value === "-") return "";
+
+        const mappings = {
+            "2% of DACF": "DACF",
+            "DACF": "DACF",
+            "Revenue Ceded": "Revenue Ceded",
+            "IGF": "Revenue Ceded", // Map IGF to Revenue Ceded if that's the closest match
+            "Internally Generated Fund": "Revenue Ceded",
+            "Other": "Revenue Ceded" // Default fallback
+        };
+
+        // Check for partial matches
+        const lowerValue = value.toLowerCase();
+        if (lowerValue.includes('dacf')) return "DACF";
+        if (lowerValue.includes('revenue') || lowerValue.includes('igf')) return "Revenue Ceded";
+
+        return mappings[value] || "Revenue Ceded"; // Default to Revenue Ceded
+    };
 
     data.forEach(row => {
         const tempDataSet = {
@@ -2194,12 +2205,9 @@ export const getSubStructureActivityTrackerPayload = (data, orgUnit, program, tr
                 { attribute: "hQVox0xawJI", value: row[5] || "" }, //Amount
                 { attribute: "VjFxjvQk0cO", value: row[8] || "" }, //Activity Description
 
-                { attribute: "PReqkv3CYaE", value: row[6] || "" }, //Activity funding source
+                { attribute: "PReqkv3CYaE", value: getFundingSourceMapping(row[6]) }, //Activity funding source
                 { attribute: "YfoGKu8N6An", value: row[7] || "" }, //Date
-
-
             ],
-
 
             enrollments: [
                 {
@@ -2218,14 +2226,12 @@ export const getSubStructureActivityTrackerPayload = (data, orgUnit, program, tr
         };
 
         payload.push(tempDataSet);
-
     });
 
     return {
         "trackedEntities": payload
     }
-
-}
+}//TESTED
 
 export const getSubStructureCommitteePayload = (data, orgUnit, program, trackedEntityType) => {
     const payload = [];
@@ -2244,7 +2250,7 @@ export const getSubStructureCommitteePayload = (data, orgUnit, program, trackedE
                 { attribute: "bSO81USC3ZN", value: row[9] || "" }, //Electoral Area
                 { attribute: "bIGyTZp8ORb", value: row[10] || "" }, //Names of Assembly Members
                 { attribute: "sGe7MGw4BVN", value: row[11] || "" }, //Phone
-                { attribute: "h6jVcd8pSCZ", value: row[12] || "" }, //Location Coordinate
+                { attribute: "h6jVcd8pSCZ", value: parseCoordinate(row[12]) }, //Location Coordinate
             ],
 
 
@@ -2272,7 +2278,7 @@ export const getSubStructureCommitteePayload = (data, orgUnit, program, trackedE
         "trackedEntities": payload
     }
 
-}
+}//TESTED
 
 export const getTestFruitApplicationPayload = (data, orgUnit, program, trackedEntityType) => {
     const payload = [];
@@ -2314,7 +2320,7 @@ export const getTestFruitApplicationPayload = (data, orgUnit, program, trackedEn
         "trackedEntities": payload
     }
 
-}
+}//TESTED
 
 export const getResidentialHomeCentrePayload = (data, orgUnit, program, trackedEntityType) => {
     const payload = [];
@@ -2325,7 +2331,7 @@ export const getResidentialHomeCentrePayload = (data, orgUnit, program, trackedE
             trackedEntityType,
             attributes: [
                 { attribute: "wca7mlI2exE", value: row[4] || "" }, //Name 
-                { attribute: "sGe7MGw4BVN", value: row[8] || "" }, //Phone
+                { attribute: "sGe7MGw4BVN", value: parseNumeric(row[8]) }, //Phone
                 { attribute: "BZbNSkBY5w5", value: row[9] || "" }, //Public Hotline
 
                 { attribute: "SKeHl5XTZVG", value: row[5] || "" }, //Email Address
@@ -2344,7 +2350,7 @@ export const getResidentialHomeCentrePayload = (data, orgUnit, program, trackedE
                     status: "ACTIVE",
                     attributes: [
                         { attribute: "wca7mlI2exE", value: row[4] || "" }, //Name
-                        { attribute: "sGe7MGw4BVN", value: row[8] || "" }, //Phone
+                        { attribute: "sGe7MGw4BVN", value: parseNumeric(row[8]) }, //Phone
                         { attribute: "BZbNSkBY5w5", value: row[9] || "" }, //Public Hotline
                     ]
                 }
@@ -2359,7 +2365,7 @@ export const getResidentialHomeCentrePayload = (data, orgUnit, program, trackedE
         "trackedEntities": payload
     }
 
-}
+}//TESTED
 
 export const getUserProfilePayload = (data, orgUnit, program, trackedEntityType) => {
     const payload = [];
@@ -2374,9 +2380,9 @@ export const getUserProfilePayload = (data, orgUnit, program, trackedEntityType)
                 { attribute: "j3CyzRTfdAk", value: row[6] || "" }, //Gender
 
                 { attribute: "MQ7qa7gOxzb", value: row[7] || "" }, //Date of Birth
-                { attribute: "sGe7MGw4BVN", value: row[8] || "" }, //Phone
+                { attribute: "sGe7MGw4BVN", value: parseNumeric(row[8]) }, //Phone
                 { attribute: "mUHeOAckLf1", value: row[9] || "" }, //Password
-                { attribute: "Ax9xIaMCs52", value: row[10] || "" }, //Picture
+                { attribute: "Ax9xIaMCs52", value: parseFile(row[10]) }, //Picture
                 { attribute: "mewas520GEZ", value: row[11] || "" }, //NHIS
                 { attribute: "XsUFsoszfgr", value: row[12] || "" }, //Next of Kin name
                 { attribute: "Ada5shKwWZB", value: row[13] || "" }, //Next of Kin phone
@@ -2407,55 +2413,437 @@ export const getUserProfilePayload = (data, orgUnit, program, trackedEntityType)
         "trackedEntities": payload
     }
 
+}//TESTED
+
+export const getDocumentsHubPayload = (data, orgUnit, program, trackedEntityType) => {
+    const payload = [];
+
+    data.forEach(row => {
+        const tempDataSet = {
+            orgUnit,
+            trackedEntityType,
+            attributes: [
+                { attribute: "wca7mlI2exE", value: row[4] || "" }, //Name
+                { attribute: "HegQ9f2EvbC", value: row[5] || "" }, //Document Type
+                { attribute: "wPNjapyO0Jl", value: row[6] || "" }, //Validity Period
+                { attribute: "iSGLs8Qaq7E", value: row[7] || "" }, //Reference Number
+
+                { attribute: "tigrJR4126b", value: row[8] || "" }, //Frequency of monitoring
+                { attribute: "mfvOjwBcpEMV", value: row[9] || "" }, //District Supervisory Body
+                { attribute: "MZWUSf9PCHv", value: row[10] || "" }, //Version
+                { attribute: "RtVONJyhKAh", value: row[11] || "" }, //Document Approval Date
+            ],
+
+
+            enrollments: [
+                {
+                    program,
+                    orgUnit,
+                    enrolledAt: (row[2] && row[2] !== "-") ? row[2] : "2025-01-01T00:00:00.000",
+                    occurredAt: (row[3] && row[3] !== "-") ? row[3] : "2025-01-01T00:00:00.000",
+                    status: "ACTIVE",
+                    attributes: [
+                        { attribute: "wca7mlI2exE", value: row[4] || "" }, //Name
+                        { attribute: "HegQ9f2EvbC", value: row[5] || "" }, //Document Type
+                        { attribute: "wPNjapyO0Jl", value: row[6] || "" }, //Validity Period
+                        { attribute: "iSGLs8Qaq7E", value: row[7] || "" }, //Reference Number
+                    ]
+                }
+            ],
+        };
+
+        payload.push(tempDataSet);
+
+    });
+
+    return {
+        "trackedEntities": payload
+    }
+
 }
 
-// export const getUserProfilePayload = (data, orgUnit, program, trackedEntityType) => {
-//     const payload = [];
+export const getInspectorateUnitEstablishmentTrackerPayload = (data, orgUnit, program, trackedEntityType) => {
+    const payload = [];
 
-//     data.forEach(row => {
-//         const tempDataSet = {
-//             orgUnit,
-//             trackedEntityType,
-//             attributes: [
-//                 { attribute: "yPvU4sPN9hh", value: row[4] || "" }, //First Name
-//                 { attribute: "PtqWutejid0", value: row[5] || "" }, //Last Name
-//                 { attribute: "j3CyzRTfdAk", value: row[6] || "" }, //Gender
+    data.forEach(row => {
+        const tempDataSet = {
+            orgUnit,
+            trackedEntityType,
+            attributes: [
+                { attribute: "AlVMRjjWuVo", value: row[4] || "" }, //Established Date
+                { attribute: "RXTTz95xaoO", value: row[5] || "" }, //List of Staff
 
-//                 { attribute: "MQ7qa7gOxzb", value: row[7] || "" }, //Date of Birth
-//                 { attribute: "sGe7MGw4BVN", value: row[8] || "" }, //Phone
-//                 { attribute: "mUHeOAckLf1", value: row[9] || "" }, //Password
-//                 { attribute: "Ax9xIaMCs52", value: row[10] || "" }, //Picture
-//                 { attribute: "mewas520GEZ", value: row[11] || "" }, //NHIS
-//                 { attribute: "XsUFsoszfgr", value: row[12] || "" }, //Next of Kin name
-//                 { attribute: "Ada5shKwWZB", value: row[13] || "" }, //Next of Kin phone
-//             ],
+                { attribute: "w9leRrwWrLB", value: parseBool(row[6]) }, //Has an office been made available for the unit?
+                { attribute: "fGfO0hrRRgq", value: row[7] || "" }, //Description
+            ],
 
 
-//             enrollments: [
-//                 {
-//                     program,
-//                     orgUnit,
-//                     enrolledAt: (row[2] && row[2] !== "-") ? row[2] : "2025-01-01T00:00:00.000",
-//                     occurredAt: (row[3] && row[3] !== "-") ? row[3] : "2025-01-01T00:00:00.000",
-//                     status: "ACTIVE",
-//                     attributes: [
-// { attribute: "yPvU4sPN9hh", value: row[4] || "" }, //First Name
-//                 { attribute: "PtqWutejid0", value: row[5] || "" }, //Last Name
-//                 { attribute: "j3CyzRTfdAk", value: row[6] || "" }, //Gender
-//                     ]
-//                 }
-//             ],
-//         };
+            enrollments: [
+                {
+                    program,
+                    orgUnit,
+                    enrolledAt: (row[2] && row[2] !== "-") ? row[2] : "2025-01-01T00:00:00.000",
+                    occurredAt: (row[3] && row[3] !== "-") ? row[3] : "2025-01-01T00:00:00.000",
+                    status: "ACTIVE",
+                    attributes: [
+                        { attribute: "AlVMRjjWuVo", value: row[4] || "" }, //Established Date
+                        { attribute: "RXTTz95xaoO", value: row[5] || "" }, //List of Staff
+                    ]
+                }
+            ],
+        };
 
-//         payload.push(tempDataSet);
+        payload.push(tempDataSet);
 
-//     });
+    });
 
-//     return {
-//         "trackedEntities": payload
-//     }
+    return {
+        "trackedEntities": payload
+    }
 
-// }
+}//TESTED
+
+export const getInternallyGeneratedFundTrackerPayload = (data, orgUnit, program, trackedEntityType) => {
+    const payload = [];
+
+    data.forEach(row => {
+        const tempDataSet = {
+            orgUnit,
+            trackedEntityType,
+            attributes: [
+                { attribute: "pWkYqcKukAY", value: row[4] || "" }, //Year
+                { attribute: "jcFWiKH0Kud", value: row[5] || "" }, //IGF Source
+                { attribute: "tsmYBpRcYxU", value: row[6] || "" }, //Total Number Issued
+                { attribute: "xSAif899MME", value: row[7] || "" }, //Amount Budgeted
+                { attribute: "nlZbT98zSio", value: row[8] || "" }, //Amount Collected
+
+                { attribute: "x4qBAYjalCD", value: row[9] || "" }, //Remarks
+            ],
+
+
+            enrollments: [
+                {
+                    program,
+                    orgUnit,
+                    enrolledAt: (row[2] && row[2] !== "-") ? row[2] : "2025-01-01T00:00:00.000",
+                    occurredAt: (row[3] && row[3] !== "-") ? row[3] : "2025-01-01T00:00:00.000",
+                    status: "ACTIVE",
+                    attributes: [
+                        { attribute: "pWkYqcKukAY", value: row[4] || "" }, //Year
+                        { attribute: "jcFWiKH0Kud", value: row[5] || "" }, //IGF Source
+                        { attribute: "tsmYBpRcYxU", value: row[6] || "" }, //Total Number Issued
+                        { attribute: "xSAif899MME", value: row[7] || "" }, //Amount Budgeted
+                        { attribute: "nlZbT98zSio", value: row[8] || "" }, //Amount Collected
+                    ]
+                }
+            ],
+        };
+
+        payload.push(tempDataSet);
+
+    });
+
+    return {
+        "trackedEntities": payload
+    }
+
+}
+
+export const getOneDistrictOneWarehouseTrackerPayload = (data, orgUnit, program, trackedEntityType) => {
+    const payload = [];
+
+    data.forEach(row => {
+        const tempDataSet = {
+            orgUnit,
+            trackedEntityType,
+            attributes: [
+                { attribute: "YLKXcF4M13E", value: row[4] || "" }, //Ownership Type
+                { attribute: "DdrX62P5Fnm", value: row[5] || "" }, //1D1W Component
+                { attribute: "tTbvdaHiwu2", value: row[6] || "" }, //Status of implementation
+
+                { attribute: "xzxLzkpzWsc", value: row[7] || "" }, //Application requirement for beneficiaries
+                { attribute: "IhvthaZKFv5", value: row[8] || "" }, //Name of responsible institution or schedule officer
+                { attribute: "C3p06b9wwvc", value: row[9] || "" }, //Contact details of institution or schedule officer
+                { attribute: "MotoRaHYNig", value: row[10] || "" }, //Number of male beneficiaries
+                { attribute: "HpEdGx1AVWM", value: row[11] || "" }, //Number of beneficiaries - Male
+                { attribute: "zFxTIbayz4U", value: row[12] || "" }, //Estimated Beneficiaries
+                { attribute: "VjFxjvQk0cO", value: row[13] || "" }, //Activity Description
+                { attribute: "cPGCeyMceZl", value: parseCoordinate(row[14]) }, //Site Coordinates
+                { attribute: "wO2BqNRuILL", value: parseFile(row[15]) }, //Site Photo
+                { attribute: "S3O6siQ5UBo", value: row[16] || "" }, //Relationship
+            ],
+
+
+            enrollments: [
+                {
+                    program,
+                    orgUnit,
+                    enrolledAt: (row[2] && row[2] !== "-") ? row[2] : "2025-01-01T00:00:00.000",
+                    occurredAt: (row[3] && row[3] !== "-") ? row[3] : "2025-01-01T00:00:00.000",
+                    status: "ACTIVE",
+                    attributes: [
+                        { attribute: "YLKXcF4M13E", value: row[4] || "" }, //Ownership Type
+                        { attribute: "DdrX62P5Fnm", value: row[5] || "" }, //1D1W Component
+                        { attribute: "tTbvdaHiwu2", value: row[6] || "" }, //Status of implementation
+                    ]
+                }
+            ],
+        };
+
+        payload.push(tempDataSet);
+
+    });
+
+    return {
+        "trackedEntities": payload
+    }
+
+}//TESTED
+
+export const getSocialInclusiveProgramBeneficiariesTrackerPayload = (data, orgUnit, program, trackedEntityType) => {
+    const payload = [];
+
+    data.forEach(row => {
+        const tempDataSet = {
+            orgUnit,
+            trackedEntityType,
+            attributes: [
+                { attribute: "yPvU4sPN9hh", value: row[5] || "" }, //First Name
+                { attribute: "PtqWutejid0", value: row[6] || "" }, //Last Name
+                { attribute: "j3CyzRTfdAk", value: row[7] || "" }, //Gender
+                { attribute: "UJBblniqPOI", value: row[8] || "" }, //Community
+
+                { attribute: "IztkGQj5EqM", value: row[4] || "" }, //Unique ID
+                { attribute: "HgemfhhsXBc", value: row[9] || "" }, //Mobile Number
+                { attribute: "vUVEUS3VXbF", value: row[10] || "" }, //Postal Address
+                { attribute: "SKeHl5XTZVG", value: row[11] || "" }, //Email Address 
+            ],
+
+
+            enrollments: [
+                {
+                    program,
+                    orgUnit,
+                    enrolledAt: (row[2] && row[2] !== "-") ? row[2] : "2025-01-01T00:00:00.000",
+                    occurredAt: (row[3] && row[3] !== "-") ? row[3] : "2025-01-01T00:00:00.000",
+                    status: "ACTIVE",
+                    attributes: [
+                        { attribute: "yPvU4sPN9hh", value: row[5] || "" }, //First Name
+                        { attribute: "PtqWutejid0", value: row[6] || "" }, //Last Name
+                        { attribute: "j3CyzRTfdAk", value: row[7] || "" }, //Gender
+                        { attribute: "UJBblniqPOI", value: row[8] || "" }, //Community
+                    ]
+                }
+            ],
+        };
+
+        payload.push(tempDataSet);
+
+    });
+
+    return {
+        "trackedEntities": payload
+    }
+
+}
+
+export const getCommunityProfilePayload = (data, orgUnit, program, trackedEntityType) => {
+    const payload = [];
+
+    data.forEach(row => {
+        const tempDataSet = {
+            orgUnit,
+            trackedEntityType,
+            attributes: [
+                { attribute: "wca7mlI2exE", value: row[5] || "" }, //Name
+                { attribute: "qdDngSjZY9H", value: row[6] || "" }, //Classification
+
+                { attribute: "IztkGQj5EqM", value: row[4] || "" }, //Unique ID
+                { attribute: "jX9DTUsh6mx", value: parseCoordinate(row[7]) }, //GIS Coordinates
+            ],
+
+
+            enrollments: [
+                {
+                    program,
+                    orgUnit,
+                    enrolledAt: (row[2] && row[2] !== "-") ? row[2] : "2025-01-01T00:00:00.000",
+                    occurredAt: (row[3] && row[3] !== "-") ? row[3] : "2025-01-01T00:00:00.000",
+                    status: "ACTIVE",
+                    attributes: [
+                        { attribute: "wca7mlI2exE", value: row[5] || "" }, //Name
+                        { attribute: "qdDngSjZY9H", value: row[6] || "" }, //Classification
+                    ]
+                }
+            ],
+        };
+
+        payload.push(tempDataSet);
+
+    });
+
+    return {
+        "trackedEntities": payload
+    }
+}//TESTED
+
+export const getClientServiceUnitTrackerPayload = (data, orgUnit, program, trackedEntityType) => {
+    const payload = [];
+
+    data.forEach(row => {
+        const tempDataSet = {
+            orgUnit,
+            trackedEntityType,
+            attributes: [
+                { attribute: "KKvCqPE0o4r", value: parseBool(row[5]) }, //Office Available (Yes/No)
+                { attribute: "AfBfUzcvMVC", value: parseBool(row[6]) }, //Complaint’s Book available (Yes/No)
+                { attribute: "YPoOqFSzwjc", value: parseBool(row[7]) }, //Work plan available (Yes/No)
+                { attribute: "HnIZkFq81E4", value: row[8] || "" }, //Schedule Officer Name  
+                { attribute: "Xwogv0s7lDX", value: row[9] || "" }, //Dedicated Mobile Number
+
+                { attribute: "AlVMRjjWuVo", value: row[4] || "" }, //Established Date
+                { attribute: "SKeHl5XTZVG", value: row[10] || "" }, //Email Address
+
+            ],
+
+
+            enrollments: [
+                {
+                    program,
+                    orgUnit,
+                    enrolledAt: (row[2] && row[2] !== "-") ? row[2] : "2025-01-01T00:00:00.000",
+                    occurredAt: (row[3] && row[3] !== "-") ? row[3] : "2025-01-01T00:00:00.000",
+                    status: "ACTIVE",
+                    attributes: [
+                        { attribute: "KKvCqPE0o4r", value: parseBool(row[5]) }, //Office Available (Yes/No)
+                        { attribute: "AfBfUzcvMVC", value: parseBool(row[6]) }, //Complaint’s Book available (Yes/No)
+                        { attribute: "YPoOqFSzwjc", value: parseBool(row[7]) }, //Work plan available (Yes/No)
+                        { attribute: "HnIZkFq81E4", value: row[8] || "" }, //Schedule Officer Name  
+                        { attribute: "Xwogv0s7lDX", value: row[9] || "" }, //Dedicated Mobile Number
+                    ]
+                }
+            ],
+        };
+
+        payload.push(tempDataSet);
+
+    });
+
+    return {
+        "trackedEntities": payload
+    }
+
+}//TESTED
+export const getATSheetTrainingAttendanceSheetTrackerPayload = (data, orgUnit, program, trackedEntityType) => {
+    const payload = [];
+
+    // Designation mapping
+    const parseDesignationMapping = (value) => {
+        const mappings = {
+            "Director": "Director",
+            "Accounts Officer": "Accounts Officer",
+            "Other": "Other (Specify)"
+        };
+        return mappings[value] || value;
+    };
+
+    data.forEach(row => {
+        const tempDataSet = {
+            orgUnit,
+            trackedEntityType,
+            attributes: [
+                { attribute: "s0psXh4E3zv", value: row[4] || "" }, //Fullname
+                { attribute: "deLo7BbZ8Z3", value: row[5] || "" }, //Institution
+                { attribute: "J7IrEy5foBT", value: parseDesignationMapping(row[6]) }, //Designation
+                { attribute: "HgemfhhsXBc", value: parseNumeric(row[7]) }, //Mobile Number
+
+                { attribute: "SKeHl5XTZVG", value: row[8] || "" }, //Email Address
+            ],
+            enrollments: [
+                {
+                    program,
+                    orgUnit,
+                    enrolledAt: (row[2] && row[2] !== "-") ? row[2] : "2025-01-01T00:00:00.000",
+                    occurredAt: (row[3] && row[3] !== "-") ? row[3] : "2025-01-01T00:00:00.000",
+                    status: "ACTIVE",
+                    attributes: [
+                        { attribute: "s0psXh4E3zv", value: row[4] || "" }, //Fullname
+                        { attribute: "deLo7BbZ8Z3", value: row[5] || "" }, //Institution
+                        { attribute: "J7IrEy5foBT", value: parseDesignationMapping(row[6]) }, //Designation
+                        { attribute: "HgemfhhsXBc", value: parseNumeric(row[7]) }, //Mobile Number
+                    ]
+                }
+            ],
+        };
+
+        payload.push(tempDataSet);
+
+    });
+
+    return {
+        "trackedEntities": payload
+    }
+
+}
+export const getAgriculturalExtensionandSupportOfficersPayload = (data, orgUnit, program, trackedEntityType) => {
+    const payload = [];
+
+    data.forEach(row => {
+        const tempDataSet = {
+            orgUnit,
+            trackedEntityType,
+            attributes: [
+                { attribute: "yPvU4sPN9hh", value: row[5] || "" }, //First Name *
+                { attribute: "PtqWutejid0", value: row[6] || "" }, //Last Name *
+                { attribute: "j3CyzRTfdAk", value: row[7] || "" }, //Gender *
+
+                { attribute: "IztkGQj5EqM", value: row[4] || "" }, //Unique ID
+                { attribute: "MQ7qa7gOxzb", value: row[8] || "" }, //Date of Birth
+                { attribute: "Ax9xIaMCs52", value: parseFile(row[9]) }, //Picture	
+                { attribute: "HgemfhhsXBc", value: parseNumeric(row[10]) }, //Mobile Number
+                { attribute: "SKeHl5XTZVG", value: row[11] || "" }, //Email Address
+                { attribute: "IQv3CJDmDna", value: row[12] || "" }, //Ghana Card Number
+                { attribute: "YqP6CROSeSq", value: row[13] || "" }, //Digital Postal Address
+                { attribute: "vUVEUS3VXbF", value: row[14] || "" }, //Postal Address
+                { attribute: "MlZZaEBs9uC", value: row[15] || "" }, //Date of Employment
+                { attribute: "gpfdSyKVC9R", value: row[16] || "" }, //Officers Position/Specialization
+                { attribute: "ijaTnXxuWKJ", value: row[17] || "" }, //Other Position/Specialization (specify)
+                { attribute: "uOSiNltNDjn", value: row[18] || "" }, //Grades
+                { attribute: "I0z9Oq0lrj8", value: row[19] || "" }, //Academic Qualification
+                { attribute: "kuqX8ZqvbhS", value: row[20] || "" }, //Promotion Details
+                { attribute: "eYhNbIb7nYk", value: row[21] || "" }, //Professional Qualification
+                { attribute: "SbsvgoYMOps", value: row[22] || "" }, //Duty Station
+                { attribute: "saSCm0QDfyU", value: row[23] || "" }, //Current Date Post
+                { attribute: "q88J6EIuC5p", value: parseCoordinate(row[24]) }, //Duty Location Coordinates
+                { attribute: "x4qBAYjalCD", value: row[25] || "" }, //Remarks
+            ],
+
+
+            enrollments: [
+                {
+                    program,
+                    orgUnit,
+                    enrolledAt: (row[2] && row[2] !== "-") ? row[2] : "2025-01-01T00:00:00.000",
+                    occurredAt: (row[3] && row[3] !== "-") ? row[3] : "2025-01-01T00:00:00.000",
+                    status: "ACTIVE",
+                    attributes: [
+                        { attribute: "yPvU4sPN9hh", value: row[5] || "" }, //First Name *
+                        { attribute: "PtqWutejid0", value: row[6] || "" }, //Last Name *
+                        { attribute: "j3CyzRTfdAk", value: row[7] || "" }, //Gender *
+                    ]
+                }
+            ],
+        };
+
+        payload.push(tempDataSet);
+
+    });
+
+    return {
+        "trackedEntities": payload
+    }
+
+}
 
 // Program type mapping function
 const getProgramTypeMapping = (value) => {
@@ -2926,6 +3314,56 @@ export const getMandatoryFieldByTracker = (tracker) => {
             { attribute: "PtqWutejid0", description: "Last Name" }, //Last Name
             { attribute: "j3CyzRTfdAk", description: "Gender" }, //Gender 
         ],
+        "Documents Hub": [
+            { attribute: "wca7mlI2exE", description: "Name" }, //Name
+            { attribute: "HegQ9f2EvbC", description: "Document Type" }, //Document Type
+            { attribute: "wPNjapyO0Jl", description: "Validity Period" }, //Validity Period
+            { attribute: "iSGLs8Qaq7E", description: "Reference Number" }, //Reference Number
+        ],
+        "Inspectorate Unit Establishment Tracker": [
+            { attribute: "AlVMRjjWuVo", description: "Established Date" }, //Established Date
+            { attribute: "RXTTz95xaoO", description: "List of Staff" }, //List of Staff
+        ],
+        "Internally Generated Fund Tracker": [
+            { attribute: "pWkYqcKukAY", description: "Year" }, //Year
+            { attribute: "jcFWiKH0Kud", description: "IGF Source" }, //IGF Source
+            { attribute: "tsmYBpRcYxU", description: "Total Number Issued" }, //Total Number Issued
+            { attribute: "xSAif899MME", description: "Amount Budgeted" }, //Amount Budgeted
+            { attribute: "nlZbT98zSio", description: "Amount Collected " }, //Amount Collected
+        ],
+        "One District One Warehouse Tracker": [
+            { attribute: "YLKXcF4M13E", description: "Ownership Type" }, //Ownership Type
+            { attribute: "DdrX62P5Fnm", description: "1D1W Component" }, //1D1W Component
+            { attribute: "tTbvdaHiwu2", description: "Status of implementation" }, //Status of implementation
+        ],
+        "Social Inclusive Program Beneficiaries Tracker": [
+            { attribute: "yPvU4sPN9hh", description: "First Name" }, //First Name
+            { attribute: "PtqWutejid0", description: "Last Name" }, //Last Name
+            { attribute: "j3CyzRTfdAk", description: "Gender" }, //Gender
+            { attribute: "UJBblniqPOI", description: "Community" }, //Community
+        ],
+        "Community Profile": [
+            { attribute: "wca7mlI2exE", description: "Community" }, //Name
+            { attribute: "qdDngSjZY9H", description: "Classification" }, //Classification
+        ],
+        "Client Service Unit Tracker": [
+            { attribute: "KKvCqPE0o4r", description: "Office Available (Yes/No)" }, //Office Available (Yes/No)
+            { attribute: "AfBfUzcvMVC", description: "Complaints Book available (Yes/No)" }, //Complaint’s Book available (Yes/No)
+            { attribute: "YPoOqFSzwjc", description: "Work plan available (Yes/No)" }, //Work plan available (Yes/No)
+            { attribute: "HnIZkFq81E4", description: "Schedule Officer Name" }, //Schedule Officer Name  
+            { attribute: "Xwogv0s7lDX", description: "Dedicated Mobile Number" }, //Dedicated Mobile Number
+        ],
+        "ATSheet Training Attendance Sheet Tracker": [
+            { attribute: "s0psXh4E3zv", description: "Fullname" }, //Fullname
+            { attribute: "deLo7BbZ8Z3", description: "Institution" }, //Institution
+            { attribute: "J7IrEy5foBT", description: "Designation" }, //Designation
+            { attribute: "HgemfhhsXBc", description: "Mobile Number" }, //Mobile Number
+        ],
+        "Agricultural Extension and Support Officers": [
+            { attribute: "yPvU4sPN9hh", description: "First Name" }, //First Name
+            { attribute: "PtqWutejid0", description: "Last Name" }, //Last Name
+            { attribute: "j3CyzRTfdAk", description: "Gender" }, //Gender
+        ]
     };
 
     return trackerFields[tracker] || [];

@@ -2117,11 +2117,29 @@ export const getSanitationAndWasteTrackerPayload = (data, orgUnit, program, trac
 export const getSocialInclusiveProgramTrackerPayload = (data, orgUnit, program, trackedEntityType) => {
     const payload = [];
 
-    // Number validation function
+    // Enhanced date formatting 
+    const formatDate = (dateStr) => {
+        if (!dateStr || dateStr === "-") return "";
+        try {
+            const parts = dateStr.split("-");
+            if (parts.length === 3) {
+                const year = parts[0];
+                const month = parts[1].padStart(2, '0');
+                const day = parts[2].padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            }
+        } catch (e) {
+            return "";
+        }
+        return "";
+    };
+
+    // Enhanced number validation
     const parseNumber = (value) => {
-        if (!value || value === "-") return "";
-        const num = parseInt(value);
-        return isNaN(num) ? "" : num.toString();
+        if (!value || value === "-" || value === "") return "";
+        const cleanValue = value.toString().replace(/[^0-9]/g, '');
+        const num = parseInt(cleanValue);
+        return (isNaN(num) || num < 0) ? "" : num.toString();
     };
 
     data.forEach(row => {
@@ -2170,7 +2188,7 @@ export const getSocialInclusiveProgramTrackerPayload = (data, orgUnit, program, 
     return {
         "trackedEntities": payload
     }
-}
+}// INCOPLETE  TESTING>>
 
 export const getSubStructureActivityTrackerPayload = (data, orgUnit, program, trackedEntityType) => {
     const payload = [];
@@ -2418,23 +2436,94 @@ export const getUserProfilePayload = (data, orgUnit, program, trackedEntityType)
 export const getDocumentsHubPayload = (data, orgUnit, program, trackedEntityType) => {
     const payload = [];
 
+    const getDocumentTypeMapping = (value) => {
+        if (!value || value === "-" || value === "") return "Financial Reports";
+
+        const validTypes = [
+            "Adherence to Occupational Health and Safety Standards",
+            "Annual Action Plan Progress Report",
+            "Annual Progress Report",
+            "Annual Progress Reports on PWD",
+            "Approved Assemblies Client Service Charter",
+            "Auditor-General Reports",
+            "Business Forum Meeting Report",
+            "Certification reports on food vendors",
+            "Climate Adaptation Report",
+            "Climate change activity reports",
+            "CSU activity report",
+            "Disaster Risk Reduction and Management Plan (DRRMP)",
+            "District Education Progress Reports",
+            "District Health Progress Reports",
+            "Documents on industrial enclave",
+            "Electricity Service Provider",
+            "Emergency Response Preparedness Plan",
+            "Environmental Health Reports",
+            "File on ceded revenue",
+            "Food and Beverage Vendors Monitoring Report",
+            "Housing Reports",
+            "Implementation of Decisions by General Assembly & Management Report",
+            "Implementation Report",
+            "Internal Audit Report for 2021",
+            "Land Use Progress reports",
+            "LED Activities Report",
+            "LED Activity Report",
+            "Liquid and Solid Waste disposal reports",
+            "Local Planning Scheme",
+            "Minutes of Town Hall Meetings",
+            "MMDCE's itinerary for Community Engagements Annual Progress Reports (APR)",
+            "Monitoring Checklist and Report",
+            "Monitoring, Building and Inspection  Reports",
+            "OHLGS Training Report",
+            "Operations and Maintenance Plan",
+            "Payment Points Report",
+            "Procurement Plan",
+            "Register for Public Transport",
+            "Reports of Community engagements",
+            "Reports on agricultural activities",
+            "Reports on Communal service",
+            "Reports on Investor Engagements",
+            "Revenue Improvement Action Plan",
+            "Sanitation Monitoring Reports",
+            "Sanitation Reports",
+            "Sanitation Service Provider",
+            "Schools Reports",
+            "Social Services activity implementation Reports",
+            "Social Welfare Progress Report",
+            "Street Names and Report on installation of street addressing/directional signage",
+            "Support to Health Centre Reports",
+            "Training Impact assessment reports",
+            "Client Service Unit Report",
+            "Water Service Provider",
+            "Medium Term Development Plan (MTDP)",
+            "Capacity Building Report",
+            "Financial Reports"
+        ];
+
+        if (value === "Sanitation Service Provider Reports") return "Sanitation Service Provider";
+
+        return validTypes.includes(value) ? value : "Financial Reports";
+    };
+
+    const parseVersion = (value) => {
+        if (!value || value === "-" || value === "") return "";
+        const num = Math.floor(parseFloat(value));
+        return (isNaN(num) || num <= 0) ? "" : num.toString();
+    };
+
     data.forEach(row => {
         const tempDataSet = {
             orgUnit,
             trackedEntityType,
             attributes: [
-                { attribute: "wca7mlI2exE", value: row[4] || "" }, //Name
-                { attribute: "HegQ9f2EvbC", value: row[5] || "" }, //Document Type
-                { attribute: "wPNjapyO0Jl", value: row[6] || "" }, //Validity Period
-                { attribute: "iSGLs8Qaq7E", value: row[7] || "" }, //Reference Number
-
-                { attribute: "tigrJR4126b", value: row[8] || "" }, //Frequency of monitoring
-                { attribute: "mfvOjwBcpEMV", value: row[9] || "" }, //District Supervisory Body
-                { attribute: "MZWUSf9PCHv", value: row[10] || "" }, //Version
-                { attribute: "RtVONJyhKAh", value: row[11] || "" }, //Document Approval Date
+                { attribute: "wca7mlI2exE", value: row[4] || "" },
+                { attribute: "HegQ9f2EvbC", value: getDocumentTypeMapping(row[5]) },
+                { attribute: "wPNjapyO0Jl", value: row[6] || "" },
+                { attribute: "iSGLs8Qaq7E", value: row[7] || "" },
+                { attribute: "tigrJR4126b", value: row[8] || "" },
+                { attribute: "fvOjwBcpEMV", value: row[9] || "" },
+                { attribute: "MZWUSf9PCHv", value: parseVersion(row[10]) },
+                { attribute: "RtVONJyhKAh", value: row[11] || "" },
             ],
-
-
             enrollments: [
                 {
                     program,
@@ -2443,24 +2532,19 @@ export const getDocumentsHubPayload = (data, orgUnit, program, trackedEntityType
                     occurredAt: (row[3] && row[3] !== "-") ? row[3] : "2025-01-01T00:00:00.000",
                     status: "ACTIVE",
                     attributes: [
-                        { attribute: "wca7mlI2exE", value: row[4] || "" }, //Name
-                        { attribute: "HegQ9f2EvbC", value: row[5] || "" }, //Document Type
-                        { attribute: "wPNjapyO0Jl", value: row[6] || "" }, //Validity Period
-                        { attribute: "iSGLs8Qaq7E", value: row[7] || "" }, //Reference Number
+                        { attribute: "wca7mlI2exE", value: row[4] || "" },
+                        { attribute: "HegQ9f2EvbC", value: getDocumentTypeMapping(row[5]) },
+                        { attribute: "wPNjapyO0Jl", value: row[6] || "" },
+                        { attribute: "iSGLs8Qaq7E", value: row[7] || "" },
                     ]
                 }
             ],
         };
-
         payload.push(tempDataSet);
-
     });
 
-    return {
-        "trackedEntities": payload
-    }
-
-}
+    return { "trackedEntities": payload }
+}//TESTED
 
 export const getInspectorateUnitEstablishmentTrackerPayload = (data, orgUnit, program, trackedEntityType) => {
     const payload = [];
@@ -2507,6 +2591,9 @@ export const getInternallyGeneratedFundTrackerPayload = (data, orgUnit, program,
     const payload = [];
 
     data.forEach(row => {
+        const enrolledAt = (row[2] && row[2] !== "-" && row[2].trim() !== "") ? row[2] : "2025-01-01T00:00:00.000";
+        const occurredAt = (row[3] && row[3] !== "-" && row[3].trim() !== "") ? row[3] : "2025-01-01T00:00:00.000";
+
         const tempDataSet = {
             orgUnit,
             trackedEntityType,
@@ -2520,13 +2607,12 @@ export const getInternallyGeneratedFundTrackerPayload = (data, orgUnit, program,
                 { attribute: "x4qBAYjalCD", value: row[9] || "" }, //Remarks
             ],
 
-
             enrollments: [
                 {
                     program,
                     orgUnit,
-                    enrolledAt: (row[2] && row[2] !== "-") ? row[2] : "2025-01-01T00:00:00.000",
-                    occurredAt: (row[3] && row[3] !== "-") ? row[3] : "2025-01-01T00:00:00.000",
+                    enrolledAt: enrolledAt,
+                    occurredAt: occurredAt,
                     status: "ACTIVE",
                     attributes: [
                         { attribute: "pWkYqcKukAY", value: row[4] || "" }, //Year
@@ -2540,14 +2626,12 @@ export const getInternallyGeneratedFundTrackerPayload = (data, orgUnit, program,
         };
 
         payload.push(tempDataSet);
-
     });
 
     return {
         "trackedEntities": payload
     }
-
-}
+}//TESTED
 
 export const getOneDistrictOneWarehouseTrackerPayload = (data, orgUnit, program, trackedEntityType) => {
     const payload = [];
@@ -2600,6 +2684,7 @@ export const getOneDistrictOneWarehouseTrackerPayload = (data, orgUnit, program,
 
 }//TESTED
 
+// INCOPLETE  TESTING>>
 export const getSocialInclusiveProgramBeneficiariesTrackerPayload = (data, orgUnit, program, trackedEntityType) => {
     const payload = [];
 
@@ -2645,7 +2730,7 @@ export const getSocialInclusiveProgramBeneficiariesTrackerPayload = (data, orgUn
         "trackedEntities": payload
     }
 
-}
+}// INCOPLETE  TESTING>>
 
 export const getCommunityProfilePayload = (data, orgUnit, program, trackedEntityType) => {
     const payload = [];
@@ -2734,17 +2819,18 @@ export const getClientServiceUnitTrackerPayload = (data, orgUnit, program, track
     }
 
 }//TESTED
+
 export const getATSheetTrainingAttendanceSheetTrackerPayload = (data, orgUnit, program, trackedEntityType) => {
     const payload = [];
 
-    // Designation mapping
     const parseDesignationMapping = (value) => {
         const mappings = {
             "Director": "Director",
             "Accounts Officer": "Accounts Officer",
-            "Other": "Other (Specify)"
+            "Other": "Other",
+            "Other (Specify)": "Other"
         };
-        return mappings[value] || value;
+        return mappings[value] || "Other";
     };
 
     data.forEach(row => {
@@ -2777,16 +2863,32 @@ export const getATSheetTrainingAttendanceSheetTrackerPayload = (data, orgUnit, p
         };
 
         payload.push(tempDataSet);
-
     });
 
     return {
         "trackedEntities": payload
     }
+}//TESTED
 
-}
 export const getAgriculturalExtensionandSupportOfficersPayload = (data, orgUnit, program, trackedEntityType) => {
     const payload = [];
+
+    const parseOfficerPosition = (value) => {
+        const mappings = {
+            "District Director of Agriculture (DDA)": "District Director of Agriculture (DDA)",
+            "District Agric. Officer (DAO)": "District Agric. Officer (DAO)",
+            "Agric. Extension Agent (AEA)": "Agric. Extension Agent (AEA)",
+            "Veterinary officer (s)": "Veterinary officer (s)",
+            "Veterinary officer (DAO)": "Veterinary officer (s)",
+            "Women in Agricultural Development (WIAD) officer": "Women in Agricultural Development (WIAD) officer",
+            "Livestock (DAO)": "Livestock (DAO)",
+            "Crops (DAO)": "Crops (DAO)",
+            "MIS Officer (DAO)": "MIS Officer (DAO)",
+            "Fisheries (DAO)": "Fisheries (DAO)",
+            "Other (specify)": "Other (specify)"
+        };
+        return mappings[value] || "Other (specify)";
+    };
 
     data.forEach(row => {
         const tempDataSet = {
@@ -2806,7 +2908,7 @@ export const getAgriculturalExtensionandSupportOfficersPayload = (data, orgUnit,
                 { attribute: "YqP6CROSeSq", value: row[13] || "" }, //Digital Postal Address
                 { attribute: "vUVEUS3VXbF", value: row[14] || "" }, //Postal Address
                 { attribute: "MlZZaEBs9uC", value: row[15] || "" }, //Date of Employment
-                { attribute: "gpfdSyKVC9R", value: row[16] || "" }, //Officers Position/Specialization
+                { attribute: "gpfdSyKVC9R", value: parseOfficerPosition(row[16]) }, //Officers Position/Specialization
                 { attribute: "ijaTnXxuWKJ", value: row[17] || "" }, //Other Position/Specialization (specify)
                 { attribute: "uOSiNltNDjn", value: row[18] || "" }, //Grades
                 { attribute: "I0z9Oq0lrj8", value: row[19] || "" }, //Academic Qualification
@@ -2817,8 +2919,6 @@ export const getAgriculturalExtensionandSupportOfficersPayload = (data, orgUnit,
                 { attribute: "q88J6EIuC5p", value: parseCoordinate(row[24]) }, //Duty Location Coordinates
                 { attribute: "x4qBAYjalCD", value: row[25] || "" }, //Remarks
             ],
-
-
             enrollments: [
                 {
                     program,
@@ -2836,14 +2936,12 @@ export const getAgriculturalExtensionandSupportOfficersPayload = (data, orgUnit,
         };
 
         payload.push(tempDataSet);
-
     });
 
     return {
         "trackedEntities": payload
     }
-
-}
+}//TESTED
 
 // Program type mapping function
 const getProgramTypeMapping = (value) => {
